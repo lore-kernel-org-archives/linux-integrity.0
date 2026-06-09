@@ -1,44 +1,51 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA493FA5FC;
-	Tue,  9 Jun 2026 11:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D4D43C06C;
+	Tue,  9 Jun 2026 15:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781003597; cv=none; b=n+KxnVi3Yn7V3lMgfFQCxWhavB1Qs/9drIXYtjeSHxsq1ObM4fhxsAGiRdo22VQth0dDA5VUuHcU24YkViPvxMUU4eVxV7aSEKEcoxYZHJNCWDZjOK7AR6i2FETwXIwpj9tsRAh6e+RxDp6+ahHA2/RUt7IuQun54l2s6PQc9D0=
+	t=1781019861; cv=none; b=sYEmjzTq3wCTZwMDN8ixFY9W8ToaQL74EWQ2pmjlurnRyAld8iZZPfXN5ApY7H6j4OcEEBLROQHXlYc4m2iVTF6mwF4/nN82iTW2GCl81r1HNHWLSx2+7UOgvkYjM8RsPuzs2J9fTSKy2GFVh2oZoHj3IeECuGRLbXQKMPAaF40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781003597; c=relaxed/simple;
-	bh=Vjz2+iFZYdlo2OYyffu2Q1yRZUsz6tff/8vuVOxBg14=;
+	s=arc-20240116; t=1781019861; c=relaxed/simple;
+	bh=+dAUjj6vNE3Mt200Mcrwkt02kuAG1stb/QoD0y/CywY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naoWyMqsdqU3yyJeQfA36WuM9dJEGu9BEhEUHFvlbzGpDBfhZw9oQMVTn8T0yQxmhRr6LJN61DrA6Sy4xOQqrm0ha1kvKznFPpmbdF5sr+61dgAfa+snyDWXSWbMWIUvMxPkbZSeWtC6/b/Ioak/Th8N1HY4D8TEK9gbDKzolmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=AKirKuQg; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ckW75gwbQU6+/ON6vA2udru0IHOBw8R6fzARxlfQKQ9Xcx7qx3l1wLrz8br+nDPLTQ24X9zbv2YI23deDoxubTbXeYmQcG86rZ8xeiluu5JzpYPnDYCYcfS26t26j0b3McPCNuen8vJ+gFeWN2IH6+TKyDzL4omcohKbixUFT3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXYsraaB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="AKirKuQg"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C4CE1691;
-	Tue,  9 Jun 2026 04:13:09 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C1103FE53;
-	Tue,  9 Jun 2026 04:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1781003593; bh=Vjz2+iFZYdlo2OYyffu2Q1yRZUsz6tff/8vuVOxBg14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AKirKuQgdFr2TWO3EGe38IPJQWWhQwgKDsDT5waP46HdEFeZxvWm/3mPWayiVNvgn
-	 WIrRlZ8R088NMQWpF7Aw1HRnsL/usY+KOOZxPZO+YNYsfK5HfjjTIr9T5bmMWOfNEc
-	 y9tn9JiDfqt+XlWokvVE0QudlT1b8csFhyWYBgho=
-Date: Tue, 9 Jun 2026 12:13:09 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org, paul@paul-moore.com,
-	roberto.sassu@huaweicloud.com, noodles@earth.li, jarkko@kernel.org,
-	sudeep.holla@kernel.org, jmorris@namei.org, serge@hallyn.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jgg@ziepe.ca
-Subject: Re: [PATCH v6 2/4] security: ima: introduce IMA_INIT_LATE_SYNC option
-Message-ID: <aif1RaFsRvipxEDr@e129823.arm.com>
-References: <20260605144325.434436-1-yeoreum.yun@arm.com>
- <20260605144325.434436-3-yeoreum.yun@arm.com>
- <f135eab04611432040e4ba66cef2786424af8cc8.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXYsraaB"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 046FC1F00893;
+	Tue,  9 Jun 2026 15:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781019859;
+	bh=ce8L9DISpwG1PJQJprZn1hYi7eQgp6fXvlvdL6UkEEw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=eXYsraaBQI6xIRRnyvAoBPsxOwFBxKoQiCFLppBLREP3vijfvXtA83w/mxmGr15h5
+	 BprZwK55p5JKm/Ao1aWvcaJnl7qBIww8MWrh4qXxyOSAERHx1JvFOIJjQUpW49iFDY
+	 a4yh0FYYGaUhTt4MXGhK69bQw238STV6P+KPVfU1vK3hFcNPcvZTcOcE0kbBQGeLWk
+	 4BmiUbiAez+t6nUNbCqYFLXVVafyirojstjbo8PoS+F/FXyv02plVJ2BwmxV/4HHet
+	 0GyrAEANN1n89tmvp6vapE9+4dvOBA7xVuMGGPumkeO6ExTE5CTnL6EWkno07Jujut
+	 ehaf98HpJhPYg==
+Date: Tue, 9 Jun 2026 18:44:15 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Benoit HOUYERE <benoit.houyere@st.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+	=?iso-8859-1?Q?Fr=E9d=E9ric?= Jouen <fjouen@sealsq.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	Laurent CHARPENTIER <laurent.charpentier@st.com>
+Subject: Re: [PATCH v2] tpm: use a map for tpm2_calc_ordinal_duration()
+Message-ID: <aig0zxWAvbrQuQnQ@kernel.org>
+References: <20250918193019.4018706-1-jarkko@kernel.org>
+ <aMzSyCQks3NlMhPI@mail.hallyn.com>
+ <DB5PR10MB766844D5478D63272584A12AFE1C2@DB5PR10MB7668.EURPRD10.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -48,94 +55,290 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f135eab04611432040e4ba66cef2786424af8cc8.camel@linux.ibm.com>
+In-Reply-To: <DB5PR10MB766844D5478D63272584A12AFE1C2@DB5PR10MB7668.EURPRD10.PROD.OUTLOOK.COM>
 
-On Mon, Jun 08, 2026 at 01:40:00PM -0400, Mimi Zohar wrote:
-> On Fri, 2026-06-05 at 15:43 +0100, Yeoreum Yun wrote:
-> > To generate the boot_aggregate log in the IMA subsystem with
-> > TPM PCR values, the TPM driver must be built as built-in and
-> > must be probed before the IMA subsystem is initialized.
-> > 
-> > However, when the TPM device operates over the FF-A protocol using
-> > the CRB interface, probing fails and returns -EPROBE_DEFER if
-> > the tpm_crb_ffa device — an FF-A device that provides the communication
-> > interface to the tpm_crb driver — has not yet been probed.
-> > 
-> > To ensure the TPM device operating over the FF-A protocol with
-> > the CRB interface is probed before IMA initialization,
-> > the following conditions must be met:
-> > 
-> > 1. The corresponding ffa_device must be registered,
-> >    which is done via ffa_init().
-> > 
-> > 2. The tpm_crb_driver must successfully probe this device via
-> >    tpm_crb_ffa_init().
-> > 
-> > 3. The tpm_crb driver using CRB over FF-A can then
-> >    be probed successfully. (See crb_acpi_add() and
-> >    tpm_crb_ffa_init() for reference.)
-> > 
-> > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init()
-> > are all registered with device_initcall, which means
-> > crb_acpi_driver_init() may be invoked before ffa_init() and
-> > tpm_crb_ffa_init() are completed.
-> > 
-> > When this occurs, probing the TPM device is deferred.
-> > However, the deferred probe can happen after the IMA subsystem
-> > has already been initialized, since IMA initialization is performed
-> > during late_initcall, and deferred_probe_initcall() is performed
-> > at the same level.
-> > 
-> > And the similar situation is reported on TPM devices attached on SPI
-> > bus[0].
-> > 
-> > To resolve this, introduce IMA_INIT_LATE_SYNC option to initialise
-> > IMA at late_inicall_sync so that IMA is initialized with the TPM
-> > device probed deferred.
-> > 
-> > When this option is enabled, modules that access files in the
-> > initramfs through usermode helper calls such as request_module()
-> > during initcall must not be built-in. Otherwise, IMA may miss
-> > measuring those files [1].
-> > 
-> > Link: https://lore.kernel.org/all/aYXEepLhUouN5f99@earth.li/ [0]
-> > Link: https://lore.kernel.org/all/2b3782398cc17ce9d355490a0c42ebce9120a9ae.camel@linux.ibm.com/ [1]
-> > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > ---
-> >  security/integrity/ima/Kconfig    | 10 ++++++++++
-> >  security/integrity/ima/ima_main.c |  4 ++++
-> >  2 files changed, 14 insertions(+)
-> > 
-> > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> > index 862fbee2b174..75f71401fba3 100644
-> > --- a/security/integrity/ima/Kconfig
-> > +++ b/security/integrity/ima/Kconfig
-> > @@ -332,4 +332,14 @@ config IMA_KEXEC_EXTRA_MEMORY_KB
-> >  	  If set to the default value of 0, an extra half page of memory for those
-> >  	  additional measurements will be allocated.
-> >  
-> > +config IMA_INIT_LATE_SYNC
-> > +	bool "Initialise IMA at late_initcall_sync"
-> > +	default n
-> > +	help
-> > +	  This option initialises IMA at late_initcall_sync for platforms
-> > +	  where TPM device probing is deferred.
-> > +	  When this option is enabled, modules that access files in the
-> > +	  initramfs through usermode helper calls such as request_module()
-> > +	  during initcall must not be built-in. Otherwise, IMA may miss
-> > +	  file measurements for them.
-> >  endif
+On Mon, Jun 08, 2026 at 02:46:28PM +0000, Benoit HOUYERE wrote:
+> Hello Serge and Jarkko,
 > 
-> I fixed the merge conflict with the "ima: Exporting and deleting IMA measurement
-> records from kernel memory" patch set.  These patches are now queued in next-
-> integrity-testing awaiting Paul's Ack.
+> 
+> We have detected a regression with this fix. Indeed, it miss one zero on TPM_LONG_LONG. Initial value was 300000 and not 30000.
+> 
+> > +	{TPM2_CC_CREATE_PRIMARY, 30000},
+> > +	{TPM2_CC_CREATE, 30000},
+> > +	{TPM2_CC_CREATE_LOADED, 30000},
+> 
+> > +enum tpm2_durations {
+> >  	TPM2_DURATION_SHORT     =     20,
+> > -	TPM2_DURATION_MEDIUM    =    750,
+> >  	TPM2_DURATION_LONG      =   2000,
+> > -	TPM2_DURATION_LONG_LONG = 300000,
+> >  	TPM2_DURATION_DEFAULT   = 120000,
+> >  };
+> 
+> Best Regards,  Cordialement, Cordialmente, Hälsningar, 最好的问候, Mit besten Grüßen, 真心を込めて, 진심으로
+> 
+> 
+> Benoit HOUYERE | Tel: +33 6 14 22 81 30
+> TPM specialist
 
-Thanks!
+This has been fixed in 478a3f949a43822dc6ce089345ae80e8dcde3300.
 
-[...]
+> 
+> -----Original Message-----
+> From: Serge E. Hallyn <serge@hallyn.com> 
+> Sent: Friday, September 19, 2025 5:49 AM
+> To: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: linux-integrity@vger.kernel.org; Frédéric Jouen <fjouen@sealsq.com>; Peter Huewe <peterhuewe@gmx.de>; Jason Gunthorpe <jgg@ziepe.ca>; James Bottomley <James.Bottomley@hansenpartnership.com>; Mimi Zohar <zohar@linux.ibm.com>; David Howells <dhowells@redhat.com>; Paul Moore <paul@paul-moore.com>; James Morris <jmorris@namei.org>; Serge E. Hallyn <serge@hallyn.com>; open list <linux-kernel@vger.kernel.org>; open list:KEYS-TRUSTED <keyrings@vger.kernel.org>; open list:SECURITY SUBSYSTEM <linux-security-module@vger.kernel.org>
+> Subject: Re: [PATCH v2] tpm: use a map for tpm2_calc_ordinal_duration()
+> 
+> On Thu, Sep 18, 2025 at 10:30:18PM +0300, Jarkko Sakkinen wrote:
+> > The current shenanigans for duration calculation introduce too much 
+> > complexity for a trivial problem, and further the code is hard to 
+> > patch and maintain.
+> > 
+> > Address these issues with a flat look-up table, which is easy to 
+> > understand and patch. If leaf driver specific patching is required in 
+> > future, it is easy enough to make a copy of this table during driver 
+> > initialization and add the chip parameter back.
+> > 
+> > 'chip->duration' is retained for TPM 1.x.
+> > 
+> > As the first entry for this new behavior address TCG spec update 
+> > mentioned in this issue:
+> > 
+> > https://github.com/raspberrypi/linux/issues/7054
+> > 
+> > Therefore, for TPM_SelfTest the duration is set to 3000 ms.
+> > 
+> > This does not categorize a as bug, given that this is introduced to 
+> > the spec after the feature was originally made.
+> > 
+> > Cc: Frédéric Jouen <fjouen@sealsq.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> fwiw (which shouldn't be much) looks good to me, but two questions, one here and one below.
+> 
+> First, it looks like in the existing code it is possible for a tpm2 chip to set its own timeouts and then set the TPM_CHIP_FLAG_HAVE_TIMEOUTS flag to avoid using the defaults, but I don't see anything using that in-tree.  Is it possible that there are out of tree drivers that will be sabotaged here?  Or am I misunderstanding that completely?
+> 
+> > ---
+> > v2:
+> > - Add the missing msec_to_jiffies() calls.
+> > - Drop redundant stuff.
+> > ---
+> >  drivers/char/tpm/tpm-interface.c |   2 +-
+> >  drivers/char/tpm/tpm.h           |   2 +-
+> >  drivers/char/tpm/tpm2-cmd.c      | 127 ++++++++-----------------------
+> >  include/linux/tpm.h              |   5 +-
+> >  4 files changed, 37 insertions(+), 99 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm-interface.c 
+> > b/drivers/char/tpm/tpm-interface.c
+> > index b71725827743..c9f173001d0e 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -52,7 +52,7 @@ MODULE_PARM_DESC(suspend_pcr,  unsigned long 
+> > tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)  {
+> >  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> > -		return tpm2_calc_ordinal_duration(chip, ordinal);
+> > +		return tpm2_calc_ordinal_duration(ordinal);
+> >  	else
+> >  		return tpm1_calc_ordinal_duration(chip, ordinal);  } diff --git 
+> > a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index 
+> > 7bb87fa5f7a1..2726bd38e5ac 100644
+> > --- a/drivers/char/tpm/tpm.h
+> > +++ b/drivers/char/tpm/tpm.h
+> > @@ -299,7 +299,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 
+> > property_id,  ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);  
+> > int tpm2_auto_startup(struct tpm_chip *chip);  void 
+> > tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type); -unsigned 
+> > long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> > +unsigned long tpm2_calc_ordinal_duration(u32 ordinal);
+> >  int tpm2_probe(struct tpm_chip *chip);  int 
+> > tpm2_get_cc_attrs_tbl(struct tpm_chip *chip);  int tpm2_find_cc(struct 
+> > tpm_chip *chip, u32 cc); diff --git a/drivers/char/tpm/tpm2-cmd.c 
+> > b/drivers/char/tpm/tpm2-cmd.c index 524d802ede26..7d77f6fbc152 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -28,120 +28,57 @@ static struct tpm2_hash tpm2_hash_map[] = {
+> >  
+> >  int tpm2_get_timeouts(struct tpm_chip *chip)  {
+> > -	/* Fixed timeouts for TPM2 */
+> >  	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
+> >  	chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
+> >  	chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
+> >  	chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
+> > -
+> > -	/* PTP spec timeouts */
+> > -	chip->duration[TPM_SHORT] = msecs_to_jiffies(TPM2_DURATION_SHORT);
+> > -	chip->duration[TPM_MEDIUM] = msecs_to_jiffies(TPM2_DURATION_MEDIUM);
+> > -	chip->duration[TPM_LONG] = msecs_to_jiffies(TPM2_DURATION_LONG);
+> > -
+> > -	/* Key creation commands long timeouts */
+> > -	chip->duration[TPM_LONG_LONG] =
+> > -		msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
+> > -
+> >  	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
+> > -
+> >  	return 0;
+> >  }
+> >  
+> > -/**
+> > - * tpm2_ordinal_duration_index() - returns an index to the chip 
+> > duration table
+> > - * @ordinal: TPM command ordinal.
+> > - *
+> > - * The function returns an index to the chip duration table
+> > - * (enum tpm_duration), that describes the maximum amount of
+> > - * time the chip could take to return the result for a  particular ordinal.
+> > - *
+> > - * The values of the MEDIUM, and LONG durations are taken
+> > - * from the PC Client Profile (PTP) specification (750, 2000 msec)
+> > - *
+> > - * LONG_LONG is for commands that generates keys which empirically 
+> > takes
+> > - * a longer time on some systems.
+> > - *
+> > - * Return:
+> > - * * TPM_MEDIUM
+> > - * * TPM_LONG
+> > - * * TPM_LONG_LONG
+> > - * * TPM_UNDEFINED
+> > +/*
+> > + * Contains the maximum durations in milliseconds for TPM2 commands.
+> >   */
+> > -static u8 tpm2_ordinal_duration_index(u32 ordinal) -{
+> > -	switch (ordinal) {
+> > -	/* Startup */
+> > -	case TPM2_CC_STARTUP:                 /* 144 */
+> > -		return TPM_MEDIUM;
+> > -
+> > -	case TPM2_CC_SELF_TEST:               /* 143 */
+> > -		return TPM_LONG;
+> > -
+> > -	case TPM2_CC_GET_RANDOM:              /* 17B */
+> > -		return TPM_LONG;
+> > -
+> > -	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
+> > -		return TPM_MEDIUM;
+> > -	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
+> > -		return TPM_MEDIUM;
+> > -	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
+> > -		return TPM_MEDIUM;
+> > -	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
+> > -		return TPM_MEDIUM;
+> > -
+> > -	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
+> > -		return TPM_LONG_LONG;
+> > -
+> > -	case TPM2_CC_PCR_EXTEND:              /* 182 */
+> > -		return TPM_MEDIUM;
+> > -
+> > -	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
+> > -		return TPM_LONG;
+> > -	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
+> > -		return TPM_LONG;
+> > -
+> > -	case TPM2_CC_GET_CAPABILITY:          /* 17A */
+> > -		return TPM_MEDIUM;
+> > -
+> > -	case TPM2_CC_NV_READ:                 /* 14E */
+> > -		return TPM_LONG;
+> > -
+> > -	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
+> > -		return TPM_LONG_LONG;
+> > -	case TPM2_CC_CREATE:                  /* 153 */
+> > -		return TPM_LONG_LONG;
+> > -	case TPM2_CC_CREATE_LOADED:           /* 191 */
+> > -		return TPM_LONG_LONG;
+> > -
+> > -	default:
+> > -		return TPM_UNDEFINED;
+> > -	}
+> > -}
+> > +static const struct {
+> > +	unsigned long ordinal;
+> > +	unsigned long duration;
+> > +} tpm2_ordinal_duration_map[] = {
+> > +	{TPM2_CC_STARTUP, 750},
+> > +	{TPM2_CC_SELF_TEST, 3000},
+> 
+> I assume you intended to increase TPM2_CC_SELF_TEST from 2000 to 3000 here?  But it's not mentioned in the commit, so making sure...
+> 
+> > +	{TPM2_CC_GET_RANDOM, 2000},
+> > +	{TPM2_CC_SEQUENCE_UPDATE, 750},
+> > +	{TPM2_CC_SEQUENCE_COMPLETE, 750},
+> > +	{TPM2_CC_EVENT_SEQUENCE_COMPLETE, 750},
+> > +	{TPM2_CC_HASH_SEQUENCE_START, 750},
+> > +	{TPM2_CC_VERIFY_SIGNATURE, 30000},
+> > +	{TPM2_CC_PCR_EXTEND, 750},
+> > +	{TPM2_CC_HIERARCHY_CONTROL, 2000},
+> > +	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
+> > +	{TPM2_CC_GET_CAPABILITY, 750},
+> > +	{TPM2_CC_NV_READ, 2000},
+> > +	{TPM2_CC_CREATE_PRIMARY, 30000},
+> > +	{TPM2_CC_CREATE, 30000},
+> > +	{TPM2_CC_CREATE_LOADED, 30000},
+> > +};
+> >  
+> >  /**
+> > - * tpm2_calc_ordinal_duration() - calculate the maximum command duration
+> > - * @chip:    TPM chip to use.
+> > + * tpm2_calc_ordinal_duration() - Calculate the maximum command 
+> > + duration
+> >   * @ordinal: TPM command ordinal.
+> >   *
+> > - * The function returns the maximum amount of time the chip could 
+> > take
+> > - * to return the result for a particular ordinal in jiffies.
+> > - *
+> > - * Return: A maximal duration time for an ordinal in jiffies.
+> > + * Returns the maximum amount of time the chip is expected by kernel 
+> > + to
+> > + * take in jiffies.
+> >   */
+> > -unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 
+> > ordinal)
+> > +unsigned long tpm2_calc_ordinal_duration(u32 ordinal)
+> >  {
+> > -	unsigned int index;
+> > +	int i;
+> >  
+> > -	index = tpm2_ordinal_duration_index(ordinal);
+> > +	for (i = 0; i < ARRAY_SIZE(tpm2_ordinal_duration_map); i++)
+> > +		if (ordinal == tpm2_ordinal_duration_map[i].ordinal)
+> > +			return msecs_to_jiffies(tpm2_ordinal_duration_map[i].duration);
+> >  
+> > -	if (index != TPM_UNDEFINED)
+> > -		return chip->duration[index];
+> > -	else
+> > -		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> > +	return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> >  }
+> >  
+> > -
+> >  struct tpm2_pcr_read_out {
+> >  	__be32	update_cnt;
+> >  	__be32	pcr_selects_cnt;
+> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index 
+> > b0e9eb5ef022..dc0338a783f3 100644
+> > --- a/include/linux/tpm.h
+> > +++ b/include/linux/tpm.h
+> > @@ -228,10 +228,11 @@ enum tpm2_timeouts {
+> >  	TPM2_TIMEOUT_B          =   4000,
+> >  	TPM2_TIMEOUT_C          =    200,
+> >  	TPM2_TIMEOUT_D          =     30,
+> > +};
+> > +
+> > +enum tpm2_durations {
+> >  	TPM2_DURATION_SHORT     =     20,
+> > -	TPM2_DURATION_MEDIUM    =    750,
+> >  	TPM2_DURATION_LONG      =   2000,
+> > -	TPM2_DURATION_LONG_LONG = 300000,
+> >  	TPM2_DURATION_DEFAULT   = 120000,
+> >  };
+> >  
+> > --
+> > 2.39.5
+> 
 
--- 
-Sincerely,
-Yeoreum Yun
+BR, Jarkko
