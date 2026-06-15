@@ -1,110 +1,112 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23FC274FD1;
-	Mon, 15 Jun 2026 07:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B0B3E51EB;
+	Mon, 15 Jun 2026 12:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781509422; cv=none; b=rFOYsXh5+ESArMXD/FT+PfAHPWBStwMTQt3C27S6HrZipK03r/zWiuM/aC2RV2n9uRU+nG/stxK+OBEOlpNRsI0gIMD+dhOCPYWRCWcjbcKNmTczMfh6Ukcx7xLlfvpcKdouLFnBjHanIzX6FDNeVfcZnPgGagEvecEgz3Sxbrk=
+	t=1781525025; cv=none; b=t7BFa2kSpT2LPbXaef3Vcazf9JH85d27nNhqIt+3uDtD1xkm+Hx4ZpTIAK3HjU60gClNRlSMit3bwIW00lXUnmf/9E5taW74UFEGv0nUcuLTLcBIGlnSenMCQ9kVDlM7uUY+lfJJ+GihMvjh2dLz4a08q2pjAGStnq6iHsvl0og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781509422; c=relaxed/simple;
-	bh=28K2j26aCqXtjw5gXz4mCkYmJ6UK5OnO/rXxJMgdvLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hrGla1c+DeFyUYt2vWfJ4qwWDqiWcVG71abKO1yJmHYAtyzjfxRBwtMq9dn5WWvMTwfVbZrM7Os//NouCy35do8jayJYUGIbfCSh+2VXSAU0snB/yxv7A7nz6u/YFFHhgvLDwNcPOM6twbt/k+eReMD0qtPCzKDkeJGFZuiL4zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4gf1jc2WPTzsWPl;
-	Mon, 15 Jun 2026 15:20:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id BCE2140572;
-	Mon, 15 Jun 2026 15:25:30 +0800 (CST)
-Received: from [10.81.207.22] (unknown [10.81.207.22])
-	by APP1 (Coremail) with SMTP id LxC2BwBn087WqC9qE+P7AA--.50004S2;
-	Mon, 15 Jun 2026 08:25:30 +0100 (CET)
-Message-ID: <d86a9834-5f0e-4e6c-a181-0b6bd81caec5@huaweicloud.com>
-Date: Mon, 15 Jun 2026 09:25:23 +0200
+	s=arc-20240116; t=1781525025; c=relaxed/simple;
+	bh=lqfFkNbDQmrOC6uPqWShpBYFXKM9j3+Er+odvPFcJZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQhl0Vnk+h7OIeUo07E1AAOLn2a7Mz7nvLGiyw7ukEGPrVAAHXQRN0hoFXuVlq8ekPvHseZYSE6nCWBbnlt9M07W3uBzqauV2H5zHzXjIE23OA1N3hwiUtNiz5X3s5Q57CzWqRWTSZ81Pl2FsP3bvOFMlgC5kz7p42l0ZAsFSVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohXGazeL; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohXGazeL"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 10B7C1F000E9;
+	Mon, 15 Jun 2026 12:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781525023;
+	bh=lauTaU/hwbI7xelp70CYTlNMJ9kOm8UZP4bhCl24enE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ohXGazeLe6Sn/FNoq58e51RKpK+E6dxlTE9V0BG/P9JqxKJ7++kDvzJOcUN7RZTZY
+	 9eo0Mlw0LiEXf1trE52NWcpV6IgcHZxkO4Io+IniQQv6axLPNBcwx0Jzh148tkRsnr
+	 besInMeNXWBKjCkR3LpH0Iib6HmhougIhXupAnxRyUeKUOQWExYhWA1+z2w4Wg2Nw3
+	 1UrXFUTJbfwU0qVqjSjrHKZmLurQfN+bmSFML7PpBwiwMOx+1dfYEYHJsK5qf978PO
+	 ugQ9cmrnOna7QNXybdS3MfI9K334nB9rWvZuzGbo0y9Rx8J/BA0zlc6rUYtcEDSFX4
+	 DA3EZoJVoFyeQ==
+Date: Mon, 15 Jun 2026 15:03:40 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Harald Hoyer <harald@redhat.com>, stable@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tpm: fix event_size output in
+ tpm1_binary_bios_measurements_show
+Message-ID: <ai_qHCQXhCakDUHV@kernel.org>
+References: <20260522094440.583766-2-thorsten.blum@linux.dev>
+ <ahBSJ-hVcVHEWTeZ@kernel.org>
+ <ainKo2YOGN0hxWwE@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 v2] evm: check return values of crypto_shash functions
-To: Mimi Zohar <zohar@linux.ibm.com>, Daniel Hodges <git@danielhodges.dev>
-Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <aYNprpzxppKE0Gf2@fb.com>
- <20260206024240.19059-1-git@danielhodges.dev>
- <6ce273a26b396232f3ee64a980575562e766c501.camel@huaweicloud.com>
- <c1d570271884159e6c14617fa7dcd39bc2103e45.camel@linux.ibm.com>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <c1d570271884159e6c14617fa7dcd39bc2103e45.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwBn087WqC9qE+P7AA--.50004S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4UGFyxCw1xGr18Kw1ftFb_yoW8AFWxpF
-	WrWayDtrWDKFyUCFnxt3Z5ZrykC3ySkw15Jry8GryYva9FvFsYqr4xC3WFga4kGr18Gw1Y
-	qr4ay39xZ3WqvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrs
-	qXDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBGovakYaugABsI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ainKo2YOGN0hxWwE@linux.dev>
 
-On 3/9/2026 4:03 PM, Mimi Zohar wrote:
-> On Thu, 2026-02-19 at 10:26 +0100, Roberto Sassu wrote:
->> On Thu, 2026-02-05 at 21:42 -0500, Daniel Hodges wrote:
->>> The crypto_shash_update() and crypto_shash_final() functions can fail
->>> and return error codes, but their return values were not being checked
->>> in several places in security/integrity/evm/evm_crypto.c:
->>>
->>> - hmac_add_misc() ignored returns from crypto_shash_update() and
->>>    crypto_shash_final()
->>> - evm_calc_hmac_or_hash() ignored returns from crypto_shash_update()
->>> - evm_init_hmac() ignored returns from crypto_shash_update()
->>>
->>> If these hash operations fail silently, the resulting HMAC could be
->>> invalid or incomplete, which could weaken the integrity verification
->>> security that EVM provides.
->>>
->>> This patch converts hmac_add_misc() from void to int return type and
->>> adds proper error checking and propagation for all crypto_shash_*
->>> function calls. All callers are updated to handle the new return values.
->>> Additionally, error messages are logged when cryptographic operations
->>> fail to provide visibility into the failure rather than silently
->>> returning error codes.
->>>
->>> Fixes: 66dbc325afce ("evm: re-release")
->>> Signed-off-by: Daniel Hodges <git@danielhodges.dev>
->>
->> After fixing the minor issue below:
->>
->> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, Jun 10, 2026 at 10:35:47PM +0200, Thorsten Blum wrote:
+> On Fri, May 22, 2026 at 03:55:03PM +0300, Jarkko Sakkinen wrote:
+> > On Fri, May 22, 2026 at 11:44:38AM +0200, Thorsten Blum wrote:
+> > > Commit 186d124f07da ("tpm_eventlog.c: fix binary_bios_measurements")
+> > > split the output to write the endian-converted event header first and
+> > > then the variable-length event data.
+> > > 
+> > > However, the split was at sizeof(struct tcpa_event) - 1, even though
+> > > event_data was a zero-length array, and later a flexible array member,
+> > > both of which already excluded the event data.
+> > > 
+> > > Therefore, the current code writes the first three bytes of event_size
+> > > from the endian-converted header and then the last byte from the raw
+> > > header, which can emit a corrupted event_size on PPC64, where
+> > > do_endian_conversion() maps to be32_to_cpu().
+> > > 
+> > > Split one byte later to write the full endian-converted header first,
+> > > followed by the variable-length event->event_data.
+> > > 
+> > > Fixes: 186d124f07da ("tpm_eventlog.c: fix binary_bios_measurements")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> > > ---
+> > > Changes in v2:
+> > > - Minimal fix without using seq_write()
+> > > - v1: https://lore.kernel.org/lkml/20260521093639.162095-3-thorsten.blum@linux.dev/
+> > > ---
+> > >  drivers/char/tpm/eventlog/tpm1.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+> > > index e7913b2853d5..0397e3361020 100644
+> > > --- a/drivers/char/tpm/eventlog/tpm1.c
+> > > +++ b/drivers/char/tpm/eventlog/tpm1.c
+> > > @@ -236,12 +236,12 @@ static int tpm1_binary_bios_measurements_show(struct seq_file *m, void *v)
+> > >  
+> > >  	temp_ptr = (char *) &temp_event;
+> > >  
+> > > -	for (i = 0; i < (sizeof(struct tcpa_event) - 1) ; i++)
+> > > +	for (i = 0; i < sizeof(struct tcpa_event); i++)
+> > >  		seq_putc(m, temp_ptr[i]);
+> > >  
+> > >  	temp_ptr = (char *) v;
+> > >  
+> > > -	for (i = (sizeof(struct tcpa_event) - 1);
+> > > +	for (i = sizeof(struct tcpa_event);
+> > >  	     i < (sizeof(struct tcpa_event) + temp_event.event_size); i++)
+> > >  		seq_putc(m, temp_ptr[i]);
+> > >  
+> > 
+> > This was really good catch, thank you. I'll apply in a minute.
 > 
-> Thanks Daniel, Roberto.  Daniel there are a couple of places where the line
-> length is greater than 80.  To see them, add "--max-line-length=80" to
-> scripts/checkpatch.pl.  I'd appreciate your fixing them.  Otherwise, the patch
-> looks good.
+> Has this already been applied somewhere?
 
-Daniel, do you have time to fix the style issues, so that we upstream 
-your patch?
+My bad, and thanks for pingin! queued
 
-Thanks
+> 
+> Thanks,
+> Thorsten
 
-Roberto
-
+BR, Jarkko
