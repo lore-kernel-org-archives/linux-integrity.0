@@ -1,60 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16810343D7B;
-	Fri, 19 Jun 2026 19:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54953346FB0;
+	Fri, 19 Jun 2026 19:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781897104; cv=none; b=KpYDYwV+5Qi5/Mw0yVe7pXfGEBjtFr7FvHb4+sWqBK284P8Qmo8XIEXIdJi3OXF/Epwig2DDJir9v9oL3t1dImf05KKMOfcANwQTi801pUkDSb2qNVMzHAHQs4IW6TQF8M0aERYI9gvp8mA+A/lsVL+F4eALjwaJWLx2hrHY5Bc=
+	t=1781897107; cv=none; b=PtZiJbSeSKUvyqCePL+Kesd6K2/clz4TjR1xEu+D05pNgNF1oQBjDgRUkatYtGCwPZIhdWgLxhdmMY/cr8ApiR6yL4NyhyKlepqnmNm8EFNiyfhyiKVHNo8TkBbRKjISUj5i252x0Dk3sUgeY/rRWxxjbX+HkCRDQdCWW+wAiDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781897104; c=relaxed/simple;
-	bh=6N19KjCQA3e3C/yvz1V/+p4cgWE/QN6EsUNeS5iC5/U=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jGwRRbFZYtyaezq7TCAp43ctmH0mgGwheYgGrc3JqG1WgVEwHyC7S0DjhyV8usWAXOql5gs155GHBxRdUCHvt23CBBHYcta8YpW8ifKi11B4owybDowVNh5qbrzfmITQg5XcRQsy9M1sBcwR3j8QP+cpGGb7Vs0KD9USCil8wqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WK69Rno4; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781897107; c=relaxed/simple;
+	bh=UGnk2RC54tSfyMoaS0aqJkgMFxdUmHvhGBk0q4mIJjQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DZBIDq5WDgp6gktCQUgkNUV8030xn6uW3Cl3RYOA6LtvqueHFKgtNWARACz8/XvtcC457ZqzORVdvgC2hRlLxg6LC+u9P9/bVzm819IT9ohol4WnaV6fH+e+Fk27gQBNbiasggyn+JUy0Rg8S5vH75lMWxikqQspg6b9vkYPRlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XApynUs0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WK69Rno4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F18011F000E9;
-	Fri, 19 Jun 2026 19:25:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XApynUs0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39AC61F000E9;
+	Fri, 19 Jun 2026 19:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781897104;
-	bh=kDjfA20/ngjPYsSdjNQMWOcUxyzGk4HcXsstUvZcXQQ=;
+	s=k20260515; t=1781897106;
+	bh=Z3FydwmTWJXvoQ8BEXqGFu8msvCVysTXPPI1kYYSP3o=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=WK69Rno415a9DDLHmX5LnDHKIR2mzJmaI/LaiF0RmIYrOeNmhsivKzqDfP9pQwWdr
-	 ut4zyMzIOA78+oeRVqxHbNh9qA0M/K9xQuGf19RxBGLJ9Mp0hEzHPGZzrriuFw7JKm
-	 kmtSBGEI4Yli7jfI0+mldCAJLbqnR0e2hfBYMsQevkoaaCiS0UP6Kj3rFVljbHxmZN
-	 fv+0GD2BPRlshNb9ADbGmHKILI90Xo/ujV2oN+MbY254ua+rpnMOPGiMZA/nI/hNSv
-	 UlvjrfQGuaE1y/HWyXwNqB3xP1Fnn5iadI6X3MThLJrwAJMrw6+kEt5ojalz240LSI
-	 Ww2GbF5S4rHDw==
+	b=XApynUs0Lw41YqfxJS45IlncGoHGSeTUrFbGal7/fK8ttAUV3uVexQVf7UhncpBd1
+	 0VuVLyinOIymHQzueBIlMGXPuWE6sxR/MYKcdNOVs5WdtJ+108V/kLipHUmQH9kOcj
+	 ORwxtYfluUBw/TY6RwrsdJ1AXVI0cdYoB2NyRUO6kbleOHmJv/+RyU/LTiR93xdkby
+	 7sLjrODX4qCKZ2j6Pzsvr7OW765kBIzZXfhf2GhUqZWPjBsWrKMNNhxF4JB8KZxkZM
+	 2CTUx/KpzJ0kkJXSaSmtrkvCy8eTgh4sW42AzLdvPlURoN/K0qB/06HBimkloVhLMH
+	 qnadrfW+eGIFQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 199F73AAA0F6;
-	Fri, 19 Jun 2026 19:24:58 +0000 (UTC)
-Subject: Re: [GIT PULL] integrity: subsystem fixes for v7.2
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 56B663AAA0F6;
+	Fri, 19 Jun 2026 19:25:00 +0000 (UTC)
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: for-next-keys-7.2-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <2a5a07ef24454c295c3a63ae8cedcd6c47578101.camel@linux.ibm.com>
-References: <2a5a07ef24454c295c3a63ae8cedcd6c47578101.camel@linux.ibm.com>
+In-Reply-To: <ajSR22PC_X6HWjo2@kernel.org>
+References: <ajSR22PC_X6HWjo2@kernel.org>
 X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
-X-PR-Tracked-Message-Id: <2a5a07ef24454c295c3a63ae8cedcd6c47578101.camel@linux.ibm.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/ tags/integrity-v7.2
-X-PR-Tracked-Commit-Id: 35d6f5e788dae0dcc4c42d1280360f19aef9ab52
+X-PR-Tracked-Message-Id: <ajSR22PC_X6HWjo2@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/for-next-keys-7.2-rc1
+X-PR-Tracked-Commit-Id: 1b9524250996b1f2f49833a1b2ae21c34e486f85
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0798268aa4c26ece25020b3ddeeef9a5941209c0
-Message-Id: <178189709668.4037507.12635092401561450213.pr-tracker-bot@kernel.org>
-Date: Fri, 19 Jun 2026 19:24:56 +0000
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-integrity <linux-integrity@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Roberto Sassu <roberto.sassu@huaweicloud.com>
+X-PR-Merge-Commit-Id: e2c0595b56e9526e67ddd228fc35fa9ff20724ec
+Message-Id: <178189709892.4037507.15759304723989789471.pr-tracker-bot@kernel.org>
+Date: Fri, 19 Jun 2026 19:24:58 +0000
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Thu, 18 Jun 2026 10:06:01 -0400:
+The pull request you sent on Fri, 19 Jun 2026 03:48:27 +0300:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/ tags/integrity-v7.2
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/for-next-keys-7.2-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0798268aa4c26ece25020b3ddeeef9a5941209c0
+https://git.kernel.org/torvalds/c/e2c0595b56e9526e67ddd228fc35fa9ff20724ec
 
 Thank you!
 
