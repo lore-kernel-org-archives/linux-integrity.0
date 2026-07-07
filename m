@@ -1,71 +1,71 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E26413B293
-	for <linux-integrity@vger.kernel.org>; Tue,  7 Jul 2026 03:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6E63603EE
+	for <linux-integrity@vger.kernel.org>; Tue,  7 Jul 2026 03:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783393448; cv=none; b=kaCsvBufSP/mPv6W5qadjKE7H7tsBWcJT9Q2bR08KkEi4/Dx44TC836nOSnCHphscCCT+IhOUuBcDBzDbPmqsx5ANedQaO7B1p2UrL0PHr0C92B1hKu9VWOAQF6BpW6GcYRctca2r2MBW+83IpdIHy1elz9lHsGb3SC5B3lg77w=
+	t=1783393467; cv=none; b=l/fx0JFIahaG2Uj+lEvoN49VaYJwi8tjECr5MV3NC2zNzli9k9wCB3x3pwc/8KniT3gKR9tWmDYBURyat9lPSpN5FawWjwHzyP97REhAPj47su8LlIu1VhE0yhxJl00Vuq9qBtVuR+xCSe3IKOohyZIlQAAcqusrKSR7NbVaQkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783393448; c=relaxed/simple;
-	bh=uiLuoXsrUE6nZ0UzQ8U9rScoVdPDNp9BDW6lnRHeF50=;
+	s=arc-20240116; t=1783393467; c=relaxed/simple;
+	bh=pMqtrTlKEae21aY64leA/ucfOsXWSV/9anlcpP7M4BY=;
 	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=ny5Qudoq4xbvZ2uwpdKqKjNi/5JX06QFXdiDty6Tsprjuh+t3Wtzvim/0YyPnUTnzVK4S8Rg8vrQ8yw+AajwVt04e16BIrB6We7f39PNF+dhPSBPKMXNGjI0HfCU9gEhd0XMJmb5PeTRyOiiqpIIr8U1RYd+GyvkhY8kWUFGcTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s+sMeewO; arc=none smtp.client-ip=148.163.156.1
+	 Date:MIME-Version; b=mjt4+PQMRjnrzzthMTgn1fUT98BruhTGmsLcXpcOe5AHQnj5heMvbnIXkVTIBSRNgyg4NgNQtGlX8hT1WAB3F4l93kd7ojBTvDcItgjzJytWp3iUTwUhzvSmn8CDmBPRMB1ZE2zfazqwPUA+CivolsC32xvSbFrESc/KJsY+9BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PJ99Ix8y; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s+sMeewO"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 666KIVGD1289475;
-	Tue, 7 Jul 2026 03:03:52 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PJ99Ix8y"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 666KIWfa534425;
+	Tue, 7 Jul 2026 03:04:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=bC9MGJ
-	aQjuPTTZgS7B5K3D8n+kGKl0Lsx0qQSq44VoQ=; b=s+sMeewODaIeXvzgcqgE/T
-	XmJSYr2jjVznuqJLs4jWMOIu3auSIeWJtBVJGRtTQAlOAIKGqzlqi7TncTTV0Ll5
-	N1SRkamr2ZKQiWuub/f+IstQkg8p/4rBH8PTIIZEuMTGjK/3K2wv7ZAjzn/wGTDn
-	gLdRibpLZaXeFQBrPzoFoSjhQkphh/81Dgh+9VNEMx0tBTkH994B04OUo+th+qUZ
-	nO+eep4+u1DlLgNEXXIcvxZuvFzGcihPnOZbyo6ozKjH1Ll0t96IuNySf8sTGkpn
-	yx5yEeU2+Ssc4XahMSHHD7vH66XpIguPHVvHj8OpZfGSyKcuPxGKEU8UWRrMzFrg
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Kry3wF
+	Bb3zqTMDGLHJvSoL6vVcRARg7li4fEj2khA68=; b=PJ99Ix8yYyzvdkp0KmobNp
+	w3UsKZmEUU/IedCICqI4Cx5AVBM5tSH4bm9kviTtnESRpRrTgJud1TEAVuIxh6bx
+	vD+X7ImKWwDYzkWb93DE+h6GJz0rcPqAZgTyemk6V8hEJXm2dS352baO39JcHLSV
+	veS12s8sx11NIf5w6Xldy//9kuiYvqE4alVBiT7l+8pgDwa7p+DY/ViALsmFVHix
+	lioTIsmgmaVIleBH1E7/YHlYOdW1Y8eWhIR+x1iaHYDnWkfWuxhVnIf63adZ0NSN
+	cnIY3Y4oPTys7PF3VxTOsOIdHdR4vDAuv03Gf97jSDafenf6quZESMQVxYhCdWAQ
 	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4f6sp3mryp-1
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4f6stsn5sm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Jul 2026 03:03:52 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 6672nalh030487;
-	Tue, 7 Jul 2026 03:03:51 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4f7f6y07vc-1
+	Tue, 07 Jul 2026 03:04:14 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 6672ngQG023264;
+	Tue, 7 Jul 2026 03:04:13 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4f7cgq0rq5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Jul 2026 03:03:51 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 66733omU30802648
+	Tue, 07 Jul 2026 03:04:13 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 66734DlG21758680
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 Jul 2026 03:03:50 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 93A505805F;
-	Tue,  7 Jul 2026 03:03:50 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F136F58054;
-	Tue,  7 Jul 2026 03:03:49 +0000 (GMT)
+	Tue, 7 Jul 2026 03:04:13 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 27CE458056;
+	Tue,  7 Jul 2026 03:04:13 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BD8CF58052;
+	Tue,  7 Jul 2026 03:04:12 +0000 (GMT)
 Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.12.88])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 Jul 2026 03:03:49 +0000 (GMT)
-Message-ID: <002330a72cdec8eaa554fddd5b8d428245ed83e4.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 2/2] ima: measure userspace policy writes before
- parsing
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  7 Jul 2026 03:04:12 +0000 (GMT)
+Message-ID: <23b77eb601a40063738e0d9c4253fff51e304a11.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 1/2] ima: add critical data measurement for loaded
+ policy
 From: Mimi Zohar <zohar@linux.ibm.com>
 To: Enrico Bravi <enrico.bravi@polito.it>, linux-integrity@vger.kernel.org,
         dmitry.kasatkin@gmail.com, roberto.sassu@huawei.com
 Cc: eric.snowberg@oracle.com
-In-Reply-To: <20260702190403.5844-3-enrico.bravi@polito.it>
+In-Reply-To: <20260702190403.5844-2-enrico.bravi@polito.it>
 References: <20260702190403.5844-1-enrico.bravi@polito.it>
-	 <20260702190403.5844-3-enrico.bravi@polito.it>
+	 <20260702190403.5844-2-enrico.bravi@polito.it>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 06 Jul 2026 23:03:49 -0400
+Date: Mon, 06 Jul 2026 23:04:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -75,67 +75,138 @@ MIME-Version: 1.0
 User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 X-TM-AS-GCONF: 00
 X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=KsJ9H2WN c=1 sm=1 tr=0 ts=6a4c6c98 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+X-Proofpoint-ORIG-GUID: MMj-BQTwtxFiCZgVeglhY8di1a_F0kRy
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA3MDAyNSBTYWx0ZWRfXwVROOdGD663t
+ JibS+83a3oV8ka/Y7Uo86NQBswXSRfiED3VnMTBQ73DeQKkrmQ9ZSx+oEfPC1B0tJqtF20lrUuE
+ u848d61Rf1hCaG9xjd0A9qg3ZwCrfVU=
+X-Authority-Analysis: v=2.4 cv=DKW/JSNb c=1 sm=1 tr=0 ts=6a4c6cae cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
  a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=k-j7cIN_mrTqlliAKiUA:9
+ a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=RNHT0xqgNCNJLLHkEisA:9
  a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA3MDAyNSBTYWx0ZWRfX64zh0fPbmtyS
- 5sp81F8oObL6cUERtWaVRTCS9/eFv/FT3rdJw8iYEEf3DKH42VvU8U+NUKPwlN/P488r25xTchd
- cDGova+KkkWRyBZGn/OwXa6FlvjzZuA=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA3MDAyNSBTYWx0ZWRfXzJQknCwvjyU2
- /y8knQMc1lgZI9c6XPq1oaMTbqCodqMf1sxK8OjHpe930tFcRRaHv6vk+w9CTjJRs3wCy35I5K5
- JJCMSr2jNQiIiwGAppQvAd3wOxkt5PLS6FRBiZReH4yOMiYsAuplq2vSXY9oK5TsFSiOIIHHXXY
- /ZQi6H1y0BaGOIA0XyoZ1mp7M0ZbDhAYSBmqAZpoxrbMoCDbaqo0M712t/JBFed+e9ft+o2axUq
- cqLYX9ItYvC+S0RWJfyiR5CVzRxbHk1GGbcdcpidscyiU948bsD4Cinyd92+hkVus11+Rh2G3yX
- WexCrkLvkK/+4nJr/IcFp7sORmYeXQ+BUiDFlJdAuIHBUbC/qOqBVCiOiOO/eDY7fUWZ0KKPbCr
- OfsqhrkBvpXplLAfZKzpxPGoO3mNfBugW6ChOS+xMzbhYv5V9c3Zklj0GFDDxa6sMEU3nQ8hBya
- m+fy2cC2fZAoDTugT8g==
-X-Proofpoint-ORIG-GUID: DJI2F0XYPXIWnu2tc2xZAAKwqvpvuzhh
-X-Proofpoint-GUID: ye_QblJ_pHBDUwwg5I6hRflz6AUP9tuY
+X-Proofpoint-GUID: w0CIH2lApqhDPjOzVbzDaEgioR0NRJR_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA3MDAyNSBTYWx0ZWRfX1nd0kdUvIZnQ
+ zkRMlvzxNluTMpprcDpj4AGtLzPdsSVCdCnH5zpp9F6FLwQdtZcRzDF3FLWg2jQ9vZzWh7cZf5A
+ hqVnl9kMyUM3Mi3aCZvZjs4Lqpw85IK46WWz06JEsAyK1Q1PhtOIZ24qoYvPYOou+oUNZiZHmK3
+ APn2CD4ajsHEm/e4bvHKWggltG5mvR6UctPleb4Esuk5S3bUUJQfkNV2iJxC4/uX236LDxhtcJY
+ XvxjL9GosXQmIs1mxqWK3+Ar1JRxQ2vYVEgx/5KIKmDY66uhvUcYY8iTvJkqFlJGjXtns4kTQWx
+ 8KM4gGkyYE3wkNrKRxZcdgfkrwortwm1o+wQNu+bqY+YF2PGfNR+qVOd3lnheTv/M5zsbXt5pT0
+ kdxvl+LyoYMRyClVF2X0n0KGyTOnSfaEMrwK/PSy+lYPqRNsh0rlPF5KBbC8Acl0hOC/jI/kd3x
+ e+vGa9RxvpoBFr0uAyA==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-06_03,2026-07-06_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 adultscore=0 clxscore=1015
- suspectscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607070025
+ spamscore=0 bulkscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ priorityscore=1501 adultscore=0 lowpriorityscore=0 suspectscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607070025
 
 On Thu, 2026-07-02 at 21:04 +0200, Enrico Bravi wrote:
-
 > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
 /ima_policy.c
-> index a65b7e4b64d6..d6d249190705 100644
+> index f7f940a76922..a65b7e4b64d6 100644
 > --- a/security/integrity/ima/ima_policy.c
 > +++ b/security/integrity/ima/ima_policy.c
-> @@ -591,6 +593,7 @@ static bool ima_match_rules(struct ima_rule_entry *ru=
-le,
->  	switch (func) {
->  	case KEY_CHECK:
->  	case CRITICAL_DATA:
-> +	case POLICY_CHECK:
->  		return ((rule->func =3D=3D func) &&
->  			ima_match_rule_data(rule, func_data, cred));
->  	default:
+> @@ -2379,3 +2385,82 @@ bool ima_appraise_signature(enum kernel_read_file_=
+id id)
+>  	return found;
+>  }
+>  #endif /* CONFIG_IMA_APPRAISE && CONFIG_INTEGRITY_TRUSTED_KEYRING */
+> +
+> +/**
+> + * ima_measure_loaded_policy - measure the active IMA policy ruleset
+> + *
+> + * Must be called with ima_write_mutex held, as it performs two
+> + * separate RCU read passes over ima_rules and relies on the mutex
+> + * to prevent concurrent policy updates between them.
+> + */
+> +void ima_measure_loaded_policy(void)
+> +{
+> +	const char *event_name =3D "ima_policy_loaded";
+> +	const char *op =3D "measure_loaded_ima_policy";
+> +	size_t rule_len =3D max_rule_len + 2;
+> +	struct ima_rule_entry *rule_entry;
+> +	struct list_head *ima_rules_tmp;
+> +	struct seq_file file;
 
 Hi Enrico,
 
-Unlike the other hooks, KEY_CHECK and CRITICAL_DATA are special cases, whic=
-h
-only allow a set of keyrings or labels respectively.  POLICY_CHECK rules ca=
-n be
-defined in terms of other file metadata (e.g. uid, gid, ...). With this cha=
-nge,
-any options specified on the rule will be not be matched.
+FYI, there's a merge conflict with commit 51bedcd803e0 ("ima: Mediate
+open/release method of the measurements list".
 
-ima_match_rule_data() should only be called for buffer measurements, when t=
-here
-is no inode.=20
+As long as 2/2 needs to be update, there are two nits: initialize seq_file =
+like
+"file =3D { 0 };".
 
-+               return ((rule->func =3D=3D func) && !inode &&
-                        ima_match_rule_data(rule, func_data, cred));
+> +	int result =3D -ENOMEM;
+> +	size_t file_len =3D 0;
+> +	char *rule;
+> +
+> +	lockdep_assert_held(&ima_write_mutex);
+> +
+> +	rule =3D vmalloc(rule_len);
+> +	if (!rule) {
+> +		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, event_name,
+> +				    op, "ENOMEM", result, 0);
+> +		return;
+> +	}
+> +
+> +	/* calculate IMA policy rules memory size */
+> +	file.buf =3D rule;
+> +	file.read_pos =3D 0;
+> +	file.size =3D rule_len;
+> +	file.count =3D 0;
+> +
+> +	rcu_read_lock();
+> +	ima_rules_tmp =3D rcu_dereference(ima_rules);
+> +	list_for_each_entry_rcu(rule_entry, ima_rules_tmp, list) {
+> +		ima_policy_show(&file, rule_entry);
+> +
+> +		if (seq_has_overflowed(&file)) {
+> +			result =3D -E2BIG;
+> +			integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, event_name,
+> +					    op, "rule_length", result, 0);
+
+and limit the integrity_audit_msg to 80 chars.
 
 Otherwise the patch looks good.
 
 Mimi
+
+> +			rcu_read_unlock();
+> +			goto free_rule;
+> +		}
+> +
+> +		file_len +=3D file.count;
+> +		file.count =3D 0;
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	/* copy IMA policy rules to a buffer for measuring */
+> +	file.buf =3D vmalloc(file_len);
+> +	if (!file.buf) {
+> +		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, event_name,
+> +				    op, "ENOMEM", result, 0);
+> +		goto free_rule;
+> +	}
+> +
+> +	file.read_pos =3D 0;
+> +	file.size =3D file_len;
+> +	file.count =3D 0;
+> +
+> +	rcu_read_lock();
+> +	ima_rules_tmp =3D rcu_dereference(ima_rules);
+> +	list_for_each_entry_rcu(rule_entry, ima_rules_tmp, list) {
+> +		ima_policy_show(&file, rule_entry);
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	ima_measure_critical_data("ima_policy", event_name, file.buf,
+> +				  file.count, false, NULL, 0);
+> +
+> +	vfree(file.buf);
+> +free_rule:
+> +	vfree(rule);
+> +}
