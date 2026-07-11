@@ -1,251 +1,132 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C89D3A9DA9
-	for <linux-integrity@vger.kernel.org>; Sat, 11 Jul 2026 16:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1912989B5;
+	Sat, 11 Jul 2026 17:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783785709; cv=none; b=PD8uEHlE4KIRvr+UDyaWDtKuVa2JzSwunR3DTGVjEAlVVfM9ytKGzrykyxSUwdvOpw//MBRDKRC+Cw5VoogCA2o2tRsyVGtAndn+FCzsHP5P/hjEEUNcPtZcFEKItt61JQ732VB8Qu+FoZSsWw6uL4AuFCqhoOcGZHCTViJzfg8=
+	t=1783789688; cv=none; b=l5BZRkQ/qVZumMwFmEusFMB7zFSbt/8lDYVth4uWLlxAgGN2u02mmxOwayaAPNVec52ryyPR2Sd4VP502j1PW8j1d6todvCKK8U6kvlA5IZr89inu9/zwrJjdl5w1igrUqebSoS3MnoKYlHbeQvSZ9NZC6qnwMLQA2EK/7wu+QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783785709; c=relaxed/simple;
-	bh=mmmPhL/ghHf8mTlJKqyHo4h/T0ggIZB9mghCUZZIJHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YZ07GHKty17mGvIFko/DZ2pQBqz0qIXoz1kOT37hv2ic8mk3zStbmSmYAgar+7NRo4lDB4xery0I+ORk26C1zVOHsKMZvcSFwPBQUHTjTKSM/wxKRWmtHNC8XNW/J2CnAx5GufiNNFu0dWypgbTStacte6wtMEMwKlTaJU4sb08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iT6fCAG2; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783789688; c=relaxed/simple;
+	bh=OIwonjqMp7dWIWG4PnfKQhhJY1pDQ8rSAUWl0CuxTeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjy4nE5B+KA0sn6b4VFgXNyk+Yxo6jzKYdvxVHfxkvuCfUZEP+549/bg41ofWGrjPupR8WH1eOh8EUmCi1JbdnRtbqxj8/PjK5/FHscAPS2CCbCqjhpnL6dFoe9g7ZSROOQrd5SnCTa1ddbhXVvdYGkEu3509r92PJapz4REYNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lC7Tp3Mz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iT6fCAG2"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2ce7d2adef4so24483375ad.3
-        for <linux-integrity@vger.kernel.org>; Sat, 11 Jul 2026 09:01:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783785707; x=1784390507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=O3xupweIjZun88NywNw0fLBjpCQuWDRT98MUrOXcsbg=;
-        b=iT6fCAG2Jd3dSOYBchOLSK/BQ9vx9aWtc1KVgu4SOG/c2Gb7VKJdJ4vTizFIO91aoS
-         IRAIyhoZzYx6BVN1A0kEQBL2/8XVEfZtiZfDPGfE1zssb/XDBpB5Eya2J4rQAfU23xox
-         8X1aA/FF30m6mUiWrTmUtMrt1ZuyCgOzunjMy5Xs+pm5jxT0X+wNS6PpnuNdl3mDXZBP
-         Yp7RN24Y049nVyWV1PY9rUOmwmwWuFQ9rn9AtKN3t84jG4L2AgIktsLeErpmyG3prNmd
-         +4hlPR5w3dPVCwPHX9+Hl+FDM9nQWUEXc+5WB9xWcXgKPTt8laSU5PrpQIOPVTmkiGUI
-         gQEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783785707; x=1784390507;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=O3xupweIjZun88NywNw0fLBjpCQuWDRT98MUrOXcsbg=;
-        b=ds0v9GWeynk72jMd9l7IH7YvsEyZFXfsy7BttQCfKZ3xqdMiLp1tuM5FUvPZHIJBWz
-         LwFfCRCgvCcnSvFDmHddxeqU/AFf/cWJlaCzs0cAgFTliGNUVrcmxUMnQoRh/sLeW6Cv
-         diDzHobNCKeDRP9A2DwzHrMnWhzbBOJNsh4pmY6/PZhaijvOj9l18iBoYkV9SZee0pAY
-         annxvDmQYVkPwe6Hv92OPSs+P+8wdtKL7n0YLqSCTM1+KAQ56g7LnCoXHQxD9rJ6bUxv
-         sQZ731b96OjvSDgKyYQ7kGUw35UiaK5XyQj+h10GhF8oVoeHj0YRrgoPwZ/j/a92yHW8
-         BOPg==
-X-Forwarded-Encrypted: i=1; AHgh+Rrbv4/XRFZowAnf9n2mzqKNqws90VKT3H5vek/yveCT7QQe4j579FA0caA2v7Wa94i3Hj4CJA+uQKYHWz5wMsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQvEx3wzMv8JuUYrdNTlNVyyzRCjIOgMqFHHWaoMzGWtKr7jod
-	hkJFr4Njcb++cHUHQ9rD3vaC4WkEeKrFEoCaeyq9XWxGxnCAjIFuyNeQ
-X-Gm-Gg: AfdE7cm8hUGWDEoLwuronctpLPMDShdHSTLUGQNqXL8PGF6DD/1T8i/98X6hsdUWJDA
-	RAzv7CMA23A8SmbWoaTfLW5SO8oDMWARkHETy7VhDhXFapjjC924u3mjeio3xp2E20IHit7gaiO
-	tcqkNM6alBH+XmsaeIle4xKm2zMD2sEcIEjtPnLdu0OGEduyXQs7SUyYpTSWyC7H9j32fJQZyn3
-	e5jdrzHfdD4bH0UQDCTWJ1yrozSOc8+vdYlUVb6s3r6QWD2MP4rHZi7T/NskBppEoh50G/g6+aT
-	drM6pWhC770OuamDIz2F4WnKF05B5OOnq+O0cXY4jYs/5W042hvs/Gwxh217nyY2GX4og6/He8P
-	9M9JsJOMwwC8ypKesCmPmvfKEGwztglQi+rSttYmEu8ajhQN2vlpqvAahkUd1o7k9Ld97IVapvY
-	NGaceHRiPODlsatEfShT04
-X-Received: by 2002:a17:90a:c106:b0:381:20b:a9ee with SMTP id 98e67ed59e1d1-38dc74cf96amr3305712a91.14.1783785706827;
-        Sat, 11 Jul 2026 09:01:46 -0700 (PDT)
-Received: from titan.lan ([2603:8000:df01:38f7:255c:dd03:30a6:e57b])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3120c8e41fcsm20955490eec.15.2026.07.11.09.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jul 2026 09:01:46 -0700 (PDT)
-From: Ross Philipson <ross.philipson@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Cc: ross.philipson@gmail.com,
-	dpsmith@apertussolutions.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	dave.hansen@linux.intel.com,
-	ardb@kernel.org,
-	mjg59@srcf.ucam.org,
-	James.Bottomley@hansenpartnership.com,
-	peterhuewe@gmx.de,
-	jarkko@kernel.org,
-	luto@amacapital.net,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	corbet@lwn.net,
-	kanth.ghatraju@oracle.com,
-	daniel.kiper@oracle.com,
-	andrew.cooper3@citrix.com,
-	trenchboot-devel@googlegroups.com
-Subject: [PATCH v2 10/10] tpm-buf: Add TPM buffer support header for standalone reuse
-Date: Sat, 11 Jul 2026 09:01:10 -0700
-Message-ID: <20260711160110.267780-11-ross.philipson@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260711160110.267780-1-ross.philipson@gmail.com>
-References: <20260711160110.267780-1-ross.philipson@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lC7Tp3Mz"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2C5D81F000E9;
+	Sat, 11 Jul 2026 17:08:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783789686;
+	bh=BeSfnYUcBZ1zKJRBXQYVLE4gncL2fS5F7g22PTtI1rA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=lC7Tp3MzHmkUDLjUV0zucSip8zEnFMTaXA/NSH6U9uCSBXlqAA2Tk68mnF5Q2JcxO
+	 1mDjxDQ80Ev9b7TPMOaQ1sfOW/0ydNaMrywZGPy/SPt0kDCeKwIboDvjbRlAdomr6b
+	 mDCH28KwQuU45TZ2P+vw5+N3FmXvzMHOzZzwB0SMFAvddFhnj1HpVNiNZtKJGTwpoP
+	 +AGT5rd6UCj5xXi6MjDMipkGNBeSw8P/E9PckhQhzxHaIL4D7bDheKSvCLlfHUfl4e
+	 dVfvkkgXX8Xl6cnVDhJ+TxaN4XuVUzU4S9w5iKYk/Nb9uQiZYtzwkFAKfE8g3bO1+F
+	 moGLSv8OR+YLA==
+Date: Sat, 11 Jul 2026 20:08:02 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jaewon Yang <yong010301@gmail.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	security@kernel.org
+Subject: Re: [PATCH] tpm: Reject reads outside the response buffer
+Message-ID: <alJ4cg_lWo1mdLl8@kernel.org>
+References: <20260710090217.191289-1-yong010301@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260710090217.191289-1-yong010301@gmail.com>
 
-Extract all the functions and definitions for TPM buffer handling
-and separate them into their own header.
+On Fri, Jul 10, 2026 at 06:02:17PM +0900, Jaewon Yang wrote:
+> tpm_common_read() clamps the transfer length to priv->response_length but
+> does not validate the file offset (*off) before using it to index the
+> fixed TPM_BUFSIZE-byte priv->data_buffer:
+> 
+> 	ret_size = min_t(ssize_t, size, priv->response_length);
+> 	copy_to_user(buf, priv->data_buffer + *off, ret_size);
+> 	memset(priv->data_buffer + *off, 0, ret_size);
+> 
+> Sequential read() keeps *off in range, but the fops use the legacy .read
+> callback and neither tpm_open() nor tpmrm_open() calls nonseekable_open(),
+> so FMODE_PREAD stays set and pread(2) passes an arbitrary offset straight
+> into *off. An out-of-range offset then accesses memory beyond data_buffer,
+> causing an out-of-bounds read through copy_to_user() and, when the copy
+> succeeds, an out-of-bounds zero-write through memset().
+> 
+> Reject any read whose offset and length leave the response buffer.
+> 
+> Fixes: 9488585b21be ("tpm: add support for partial reads")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jaewon Yang <yong010301@gmail.com>
+> ---
+> Notes for reviewers (not part of the commit):
+> 
+> Reproduced on a KASAN 6.12 build with a swtpm TPM2 device. After a command
+> leaves a response pending, pread(fd, buf, 16, 0x1400) triggers two
+> slab-out-of-bounds reports, one for the copy_to_user() read and one for the
+> memset() write; on that x86-64 build the faulting access was 962 bytes past
+> a 4344-byte struct tpmrm_priv served from kmalloc-8k. With this patch,
+> out-of-range preads (offset past the buffer, at the end, or an in-range
+> offset whose length crosses the end) return -EINVAL with no KASAN report,
+> while sequential partial reads still return the full response and a normal
+> read after a rejected pread still works.
+> 
+> Reaching it needs a process that can open the TPM device and send a command.
+> Access depends on the device-node permissions; the upstream tpm2-tss udev
+> rules set tpmrm devices to mode 0660 with group tss. My reproduction ran as
+> root, so I have not shown non-root reach on a specific distribution or built
+> a privilege-escalation chain.
+> 
+> I searched public archives on 2026-07-10 and found no matching report, which
+> does not rule out a private, very recent, or unindexed one. Found through
+> AI-assisted source review; the code path and reproduction were verified by
+> hand. A reproducer and full logs are available on request.
 
-Signed-off-by: Ross Philipson <ross.philipson@gmail.com>
----
- drivers/char/tpm/tpm-buf.c |  3 +-
- include/linux/tpm.h        | 34 +--------------------
- include/linux/tpm_buf.h    | 60 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 63 insertions(+), 34 deletions(-)
- create mode 100644 include/linux/tpm_buf.h
+I will choose to skip reading most of the text as already commit
+message had zero relevant information.
 
-diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
-index 1e5c11c312a8..233e81d3f149 100644
---- a/drivers/char/tpm/tpm-buf.c
-+++ b/drivers/char/tpm/tpm-buf.c
-@@ -4,7 +4,8 @@
-  */
- 
- #include <linux/module.h>
--#include <linux/tpm.h>
-+#include <linux/tpm_command.h>
-+#include <linux/tpm_buf.h>
- 
- static void __tpm_buf_size_invariant(struct tpm_buf *buf, u16 buf_size)
- {
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 598dd53a10d8..0db277af45c3 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -26,6 +26,7 @@
- #include <crypto/aes.h>
- 
- #include <linux/tpm_command.h>
-+#include <linux/tpm_buf.h>
- 
- struct tpm_chip;
- struct trusted_key_payload;
-@@ -200,44 +201,11 @@ enum tpm_chip_flags {
- 
- #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
- 
--enum tpm_buf_flags {
--	/* TPM2B format: */
--	TPM_BUF_TPM2B		= BIT(0),
--	/* The buffer is in invalid and unusable state: */
--	TPM_BUF_INVALID		= BIT(1),
--};
--
--/*
-- * A buffer for constructing and parsing TPM commands, responses and sized
-- * (TPM2B) buffers.
-- */
--struct tpm_buf {
--	u8 flags;
--	u16 length;
--	u16 capacity;
--	u8 handles;
--	u8 data[];
--};
--
- struct tpm2_hash {
- 	unsigned int crypto_id;
- 	unsigned int tpm_id;
- };
- 
--void tpm_buf_init(struct tpm_buf *buf, u16 buf_size);
--void tpm_buf_init_sized(struct tpm_buf *buf, u16 buf_size);
--void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal);
--void tpm_buf_reset_sized(struct tpm_buf *buf);
--u16 tpm_buf_length(struct tpm_buf *buf);
--void tpm_buf_append(struct tpm_buf *buf, const u8 *new_data, u16 new_length);
--void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value);
--void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value);
--void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value);
--u8 tpm_buf_read_u8(struct tpm_buf *buf, off_t *offset);
--u16 tpm_buf_read_u16(struct tpm_buf *buf, off_t *offset);
--u32 tpm_buf_read_u32(struct tpm_buf *buf, off_t *offset);
--void tpm_buf_append_handle(struct tpm_buf *buf, u32 handle);
--
- /*
-  * Check if TPM device is in the firmware upgrade mode.
-  */
-diff --git a/include/linux/tpm_buf.h b/include/linux/tpm_buf.h
-new file mode 100644
-index 000000000000..f8c105d8b8bf
---- /dev/null
-+++ b/include/linux/tpm_buf.h
-@@ -0,0 +1,60 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Following copyright information was take from the original file
-+ * <include/linux/tpm.h> where the definitions were moved from:
-+ *
-+ * Copyright (C) 2004,2007,2008 IBM Corporation
-+ *
-+ * Authors:
-+ * Leendert van Doorn <leendert@watson.ibm.com>
-+ * Dave Safford <safford@watson.ibm.com>
-+ * Reiner Sailer <sailer@watson.ibm.com>
-+ * Kylene Hall <kjhall@us.ibm.com>
-+ * Debora Velarde <dvelarde@us.ibm.com>
-+ *
-+ * Maintained by: <tpmdd_devel@lists.sourceforge.net>
-+ *
-+ * Device driver for TCG/TCPA TPM (trusted platform module).
-+ * Specifications at www.trustedcomputinggroup.org
-+ */
-+
-+#ifndef __LINUX_TPM_BUF_H__
-+#define __LINUX_TPM_BUF_H__
-+
-+#include <linux/types.h>
-+#include <linux/bits.h>
-+
-+enum tpm_buf_flags {
-+	/* TPM2B format: */
-+	TPM_BUF_TPM2B		= BIT(0),
-+	/* The buffer is in invalid and unusable state: */
-+	TPM_BUF_INVALID		= BIT(1),
-+};
-+
-+/*
-+ * A buffer for constructing and parsing TPM commands, responses and sized
-+ * (TPM2B) buffers.
-+ */
-+struct tpm_buf {
-+	u8 flags;
-+	u8 handles;
-+	u16 length;
-+	u16 capacity;
-+	u8 data[];
-+};
-+
-+void tpm_buf_init(struct tpm_buf *buf, u16 buf_size);
-+void tpm_buf_init_sized(struct tpm_buf *buf, u16 buf_size);
-+void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal);
-+void tpm_buf_reset_sized(struct tpm_buf *buf);
-+u16 tpm_buf_length(struct tpm_buf *buf);
-+void tpm_buf_append(struct tpm_buf *buf, const u8 *new_data, u16 new_length);
-+void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value);
-+void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value);
-+void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value);
-+u8 tpm_buf_read_u8(struct tpm_buf *buf, off_t *offset);
-+u16 tpm_buf_read_u16(struct tpm_buf *buf, off_t *offset);
-+u32 tpm_buf_read_u32(struct tpm_buf *buf, off_t *offset);
-+void tpm_buf_append_handle(struct tpm_buf *buf, u32 handle);
-+
-+#endif
--- 
-2.55.0
+Thus, NAK.
 
+Please don't delegate the work for me that  you should doing i.e.
+looking at your reproducer and describing the scenario/sequence
+that would lead to infeasible consequence.
+
+
+> 
+>  drivers/char/tpm/tpm-dev-common.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> index f942c0c8e..dbf049028 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -145,6 +145,16 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+>  			goto out;
+>  		}
+>  
+> +		/*
+> +		 * Reject reads whose offset and length fall outside the fixed
+> +		 * response buffer.
+> +		 */
+> +		if (*off < 0 || *off >= TPM_BUFSIZE ||
+> +		    ret_size > TPM_BUFSIZE - *off) {
+> +			ret_size = -EINVAL;
+> +			goto out;
+> +		}
+> +
+>  		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
+>  		if (rc) {
+>  			memset(priv->data_buffer, 0, TPM_BUFSIZE);
+> -- 
+> 2.43.0
+> 
+
+BR, Jarkko
