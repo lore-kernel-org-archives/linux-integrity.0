@@ -1,133 +1,136 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AA220ED
-	for <linux-integrity@vger.kernel.org>; Thu, 16 Jul 2026 00:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740163AA1BF;
+	Thu, 16 Jul 2026 07:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784160266; cv=none; b=Bgdt1f/WBE4Qohi5GPMHGwvdiIRK9JRam2za7xIXp2V0cm8+anZZGp3f5fzfVeQjuxYYeXCl7gKs/0tQ0O3AGckxjYsLayizKkfIvS7NdhnlzPK2lvI8I/jGFARC4Pb0H7oz+OcKf96hyhMaH3w8gnb+KaJN2NuII0PQO7YL8+U=
+	t=1784186989; cv=none; b=B95fdjB0y8FcFS3D3XyjLS3kxeVJahCd8hT0SVWqhjLs9XhiqtFb85AD3m80TZRr76aGKDiGVOScEgjaMVr7PDl66TvvUX1D4BwqSgVNBSF/m7hWsxUfTHXZPuSqK5osMaERk8DdUSgPDJBncm3LcxsWFpSTI/EiQM+JBAaFWkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784160266; c=relaxed/simple;
-	bh=cjSbt+GVSzgutghVrfQP8/3UXe81/EKamqssfS+Gc+Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=StcxLMxQmYTcRVPf9Nr9JvHND7jhhuzOImPUm7uCUTTd5FBaw6zdEl0KKg63kAacpAH5CRIOufuuroMz7i8bNneF+r9uXnqCw+6Wyfu9e0HR38ra7cvhGkyRmX7cTdtn8jFaQ/WTE5dBlJM0W0wpyWzMJaSG1vqqIUuXuJqoKv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7gymfd/; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7gymfd/"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2cca0c5799eso34372605ad.0
-        for <linux-integrity@vger.kernel.org>; Wed, 15 Jul 2026 17:04:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784160265; x=1784765065; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=z1kBdUU9x3GgTo7sRVI3Isnfl0f5gHbcdHM43ihRGMg=;
-        b=Q7gymfd/NIpqd3fZoID/tMaf3eXJRddw0YqlkK//DLSU3HtSA5Ce02Et5caxJ58hAz
-         uOKkcqXHzxwCTtpHz43s7N0npxWdwM8i+uTt1kCeYPxo03ZdVcES5SdlodcFkBSAcoU1
-         yjDiPNZoNn3OxbJDtB1seMnzzfgXPm9NEBH+ScslapduFrh/yIKQNWteMUoNxV/WtQ0k
-         Jybju0fZFR6doBK3TVLoPLm9EU7Akb4Q7VQZBNYey8dA/6Lgg2/c2h0mwNMjt/3V79jY
-         8kmpXs3Y7tniZhd9A5DLKyo/wkY0rKLW/ysuO1oBRsXnVdHvf+AOv5aMwc5ecCc3iaTo
-         ve9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784160265; x=1784765065;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=z1kBdUU9x3GgTo7sRVI3Isnfl0f5gHbcdHM43ihRGMg=;
-        b=WnucjI+dp29eZNBFQtjYSs02IOrq6Z0IynL8tQG4OkP4JSLGaMtRuNKclKg0kSXR8C
-         I/My+DfnF/qKp9V5oRMdW6mBsYuPAQ65ioRp2UlEeWs/A+JbVHEIKRkBdWxIxlErYHd2
-         sQf5m9WnO1Dv9JRWTl016i7Pe6C6WkQ4iOLBSEtPgyH8W8Fmu7sfWuN0Ng+1mgb0nelc
-         Leti2CICCvvkyXDT289Zvpo6V+EuajC0kdfc6bZ6JQ5sMZ+cdfuzqdjPgsDhHpJkg4+P
-         5+5xce1ff/eLKHk0c6G5j4RfREDGechJPm1oyVWZ/Ga5KwIGldgjERD2W2JlYPaz3RHV
-         T3VA==
-X-Forwarded-Encrypted: i=1; AHgh+Rpc6u41GbTmcjQnjdoEPv/N1yD2OT8UoiOWkxEjyVkfqb5y9pUKFedrxl5IfKme8aKSS/322hEeTdBb+nrBrO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOVgDN58rfwRf7pdGTBJtq9VM1rSfyLW22RPTH4qxHaqluckHu
-	n8PkvX7S7gHhYl3bIZEI5YAf799dZfewY+K95Jlgj3Vk4BJLrMumeoTe
-X-Gm-Gg: AfdE7cl6jd7E371YCJRaKCLw6DUHgL0G5dyvTd3HEQPoTmr33N46sNbFZfHnEM6iKvk
-	mVtGKViIgCUusryFzh6a8nFF74VfOOb7oFed5qn0K0P3mBb6AmkhvA7jLaUdJeMf7x0vOJfGWuj
-	JRb7YlvVUT8BPRxOLzZT11vp42F/MhVD58lEtI+pxlOED9UoazK+2wFYCHR4fe9af1tvEB5PEi4
-	cDrzkYBhXNkVwqaSHQh6IVZEPFPnqdyVPNDe+6TNs7C63jbS+1i0dP0nNWn4/BjLjhVitz9ol95
-	cYoQ33IcmC5GVFNhKI33UFAG83lKqT5hxxYobQNKAbl4y/CplOK1l4olhUOmujOX8c5NnBmhwWy
-	SgB2B8oCqoY+sFBxyK8yfCUS0YKSHkMs2v9VStCVNK6UCxCHN443z+x3nkHqqMSG5vl1y2ecPyJ
-	HYs89inBfWKa1+75lDTjFPbjRU5xvraudE7IfKwXyPceRv/fKw29fFVlJqim2jXXpZGWMK3jX0W
-	g==
-X-Received: by 2002:a17:902:d2cf:b0:2c9:97a8:aff4 with SMTP id d9443c01a7336-2ce9f3d8422mr191906295ad.45.1784160264802;
-        Wed, 15 Jul 2026 17:04:24 -0700 (PDT)
-Received: from bloom.localdomain ([2604:3d09:178e:e100::9dab])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf1055f193sm10177695ad.46.2026.07.15.17.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 17:04:24 -0700 (PDT)
-From: Ivy Lopez <skunkolee@gmail.com>
-To: peterhuewe@gmx.de,
-	jarkko@kernel.org
-Cc: jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ivy Lopez <skunkolee@gmail.com>
-Subject: [PATCH] tpm: use kfree_sensitive() for context and session buffers
-Date: Wed, 15 Jul 2026 18:03:55 -0600
-Message-ID: <20260716000355.13825-1-skunkolee@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	s=arc-20240116; t=1784186989; c=relaxed/simple;
+	bh=jOspFsn9RWqd4RO+5Lg48YoXIYnKBFJeZ7juQ3BdMvk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qGw6H7NpUB+UCVqwVp+q5YsPwfWS8mjQjWyCG6Wgase7Lhr7OYbsZ7r3vzBbEBih+89WsLAsP61ftQ0bq2EcGovzBdZI8jSuSZha0OnCCpuKye/cFguwIBb+5QEe7bZgjfoa2Akj1kaFQvl7aKdlshyTRA2siS8tDiFvoaotknY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4h14K33gwjzpTKt;
+	Thu, 16 Jul 2026 15:23:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id AE46640577;
+	Thu, 16 Jul 2026 15:29:41 +0800 (CST)
+Received: from [10.45.154.222] (unknown [10.45.154.222])
+	by APP2 (Coremail) with UTF8SMTPA id GxC2BwAXKAZciFhqGmi+AA--.8840S2;
+	Thu, 16 Jul 2026 08:29:41 +0100 (CET)
+Message-ID: <f6ecaaf1-e226-42a5-91f9-37ecce66a5d4@huaweicloud.com>
+Date: Thu, 16 Jul 2026 09:29:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next,v2] ima: add cond_resched() in
+ ima_calc_file_hash_tfm loop
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Gaosheng Cui <cuigaosheng1@huawei.com>, lujialin4@huawei.com,
+ zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20260714091708.2802272-1-cuigaosheng1@huawei.com>
+ <e6270a062ebfdbc6d9e50ffe80ee5e77b4f0678c.camel@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <e6270a062ebfdbc6d9e50ffe80ee5e77b4f0678c.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwAXKAZciFhqGmi+AA--.8840S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF15Jw13AFyDWF15uw13CFg_yoW8Krykpa
+	9agayvkrWqyryUuFsrKas3tF18C3yxJFy3WrZ5tryUJF90vr1vvry7Ar4YgryfCr1Fyw1r
+	tayqgryDA3Wqy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBGpYT0YRDwABsx
 
-The context_buf and session_buf fields in struct tpm_space contain
-TPM context blobs which may include sensitive cryptographic material.
-Use kfree_sensitive() instead of kfree() to ensure the memory is
-zeroed before being freed, consistent with how chip->auth is handled
-in the same tpm_dev_release() function since commit c424d2664f08
-("tpm: Use kfree_sensitive() to free auth session in tpm_dev_release()")
+On 7/14/2026 11:26 AM, Roberto Sassu wrote:
+> On Tue, 2026-07-14 at 17:17 +0800, Gaosheng Cui wrote:
+>> When hashing large files, the while loop in ima_calc_file_hash_tfm
+>> processes PAGE_SIZE chunks without any scheduling point, which can
+>> cause soft lockup warnings:
+>> watchdog: BUG: soft lockup - CPU#0 stuck for 50s!
+>> Call Trace:
+>>    _sha256_update+0x12d/0x1a0
+>>    ima_calc_file_hash_tfm+0xfb/0x150
+>>    ima_calc_file_hash+0x6e/0x160
+>>    ima_collect_measurement+0x202/0x340
+>>    process_measurement+0x3a9/0xb30
+>>    ima_file_check+0x56/0xa0
+>>    do_open+0x11b/0x250
+>>    path_openat+0x10b/0x1d0
+>>    do_filp_open+0xa9/0x150
+>>    do_sys_openat2+0x223/0x2a0
+>>    __x64_sys_openat+0x54/0xa0
+>>    do_syscall_64+0x59/0x110
+>>    entry_SYSCALL_64_after_hwframe+0x78/0xe2
+>>
+>> Call cond_resched() every 4MB to yield the CPU when needed, rather
+>> than at every loop iteration, to reduce overhead.
+>>
+>> Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
+>> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+> 
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Signed-off-by: Ivy Lopez <skunkolee@gmail.com>
----
- drivers/char/tpm/tpm-chip.c   | 4 ++--
- drivers/char/tpm/tpm2-space.c | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Actually, as Sashiko pointed out, alignment does not work well, since 
+__kernel_read() can return fewer than PAGE_SIZE bytes, causing the 
+offset to be always misaligned. Instead, we can keep a variable with the 
+number of bytes read since last cond_resched(), which we reset when we 
+hit 4 MB.
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 12b7394b34bd..6f16fc358175 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -244,8 +244,8 @@ static void tpm_dev_release(struct device *dev)
- 	idr_remove(&dev_nums_idr, chip->dev_num);
- 	mutex_unlock(&idr_lock);
- 
--	kfree(chip->work_space.context_buf);
--	kfree(chip->work_space.session_buf);
-+	kfree_sensitive(chip->work_space.context_buf);
-+	kfree_sensitive(chip->work_space.session_buf);
- #ifdef CONFIG_TCG_TPM2_HMAC
- 	kfree_sensitive(chip->auth);
- #endif
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 60354cd53b5c..a7200e6dc462 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -46,7 +46,7 @@ int tpm2_init_space(struct tpm_space *space, unsigned int buf_size)
- 
- 	space->session_buf = kzalloc(buf_size, GFP_KERNEL);
- 	if (space->session_buf == NULL) {
--		kfree(space->context_buf);
-+		kfree_sensitive(space->context_buf);
- 		/* Prevent caller getting a dangling pointer. */
- 		space->context_buf = NULL;
- 		return -ENOMEM;
-@@ -64,8 +64,8 @@ void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
- 		tpm_put_ops(chip);
- 	}
- 
--	kfree(space->context_buf);
--	kfree(space->session_buf);
-+	kfree_sensitive(space->context_buf);
-+	kfree_sensitive(space->session_buf);
- }
- 
- int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
--- 
-2.55.0
+Sashiko also noted that the same mechanism could apply for 
+calc_buffer_shash_tfm(), but we can add it later if we have a warning 
+(note that in this case we already have the buffer, we are not doing
+I/O).
+
+Thanks
+
+Roberto
+
+> Thanks
+> 
+> Roberto
+> 
+>> ---
+>> v2: call cond_resched() every 4MB to yield the CPU when needed
+>>   security/integrity/ima/ima_crypto.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+>> index 0d72b48249ee..aab2349c0c33 100644
+>> --- a/security/integrity/ima/ima_crypto.c
+>> +++ b/security/integrity/ima/ima_crypto.c
+>> @@ -233,6 +233,9 @@ static int ima_calc_file_hash_tfm(struct file *file,
+>>   		rc = crypto_shash_update(shash, rbuf, rbuf_len);
+>>   		if (rc)
+>>   			break;
+>> +
+>> +		if (IS_ALIGNED(offset, SZ_4M))
+>> +			cond_resched();
+>>   	}
+>>   	kfree(rbuf);
+>>   out:
+> 
 
