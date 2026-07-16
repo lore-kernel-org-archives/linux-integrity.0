@@ -1,152 +1,340 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363A6443307
-	for <linux-integrity@vger.kernel.org>; Thu, 16 Jul 2026 19:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D13E3C3F7B
+	for <linux-integrity@vger.kernel.org>; Thu, 16 Jul 2026 21:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784229062; cv=none; b=SNGXnsa4mXVlQunUHoajlAv02Rq66XVCevDQf1LgYC1DcjEUe1u2GD+eetch8rFIPbPQB/Xff6Xk/yqsl+c+0/RpaUTq+lQJXl2Y+0oeDqMmncddHyv6URo4xQVQpAyaDiKjW/PcAbrf82Zx+9KOyr6RKrSUEdjoNNGYyENSJ5I=
+	t=1784238919; cv=none; b=aTYxa2JvZUqe8zzO51CdxhQ7rPRxcnACz316VnvfdThaBHloFNhGNRsMbV35RGucuNPmLnwrtgDpM3EZY0UzmUYE6dJsMOGcz/5mHhYAk3vdjhQ9nwNXvR58zYx8ETeHVuPvPYEXqcbOJZ+ggRChkTYkXmj9DQSLQFUzU3x5dFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784229062; c=relaxed/simple;
-	bh=6rQO5dLbgGRQ+1ZAuu7llJFe1zRdMpO/COtyJ3jbmRY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OuVVXd2Weyomb9UvqtHa/Q1U/oK03JECqACNZpPlxAR61tLOskli8ehAc40heHdWFKBORXE6TVxDY3rhhYyDFv920jwFZnCrZQZ+4QPhfotqZKopBrjCgbKOuSvVGySkfa84sutdP3yMggivsZS/pGvZn1AgEUKdU2+Li8w/sMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=aL4NfT/w; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1784238919; c=relaxed/simple;
+	bh=Y7QT/z8tGhHeuhj94SZCfq0isVdadvA6fmfBR+qwY+c=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=aSWIEs9T/vIhNCVaP/PzwTdRmJQe6+ctO1cJYsHGcSIwkeuskCsqzR9IUvzvftS22loBtxi7WfRCNtiEbJidbctKmCewkZCTWLz+Cn+0UbbkUYQ0yuDfo7mE+dmrNRzKATLCzPlIUm5SH3SG+X2hxQMV4nhamfyxezRp62VHVsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QEBsnEUc; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="aL4NfT/w"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-81ec29f1d07so38766517b3.1
-        for <linux-integrity@vger.kernel.org>; Thu, 16 Jul 2026 12:11:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QEBsnEUc"
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-51c167c58f2so52618631cf.0
+        for <linux-integrity@vger.kernel.org>; Thu, 16 Jul 2026 14:55:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1784229060; x=1784833860; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=R6zePSti7ASS1ok69EYQ+PkxSi0XpyrM1Y8fQpPG17Q=;
-        b=aL4NfT/w2DTQM/eRc8mJt1DiZrPKt36EYfo8Vf8TvmSlrntB7TA9Za6CfURrW75Hqs
-         dHnueMjIl+6wRJf4EuwEOvWLxdiKLU3ZUW30rQb3d023/0N5htfodWORkSIVFgCMEf2g
-         xt2DP2eA6kVu8iJOlLj5WaS+JH9m/teMe3Y0VqN3Cu5yXHgkYw4Ek7SSza5eeOXbwDy7
-         AUsEH9Dl7HNYg2KBW7AcBjr/S39Pt9x5t5sWcZddhxpORtd2ouvVU/wLhQrMeqlZv2Gb
-         Bmh03fFkjJcc2Bxjw67RHpclI414TP5QSxlrbppijIcmqnnT40HCZlCtahscI4snjuPG
-         bP4w==
+        d=paul-moore.com; s=google; t=1784238915; x=1784843715; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=8ESnqIrxhVsIPeRHe4fD4n3nEQ5qHjOKJcorrN5crBo=;
+        b=QEBsnEUcN4vveLo9AfEJq73S+lQZb2EznLt8gWeiD1XX0ryM03nsfrd+5z9fiMyaR8
+         V9a1iXEIdaaswM8ul+/SzOBmHVpE6cPU6xA+s92KWenH6yG9RBu54OcqIzwkQhwVXkh/
+         X4qkY14xTDtpJwA9O0/q7H/yKv/jzhW1ZteGdHx49KfzxND+Y57cGthHRpFdklIPcSAr
+         RiBRGl+ImotCRR7NzOxSWXGVM0/X44QG9WgbeGlPyt0Oa9XSGz+Cr7D4LgFqzrqeDypb
+         /6/4O+HVXXE7GK3I137UBEdb8rYf0hjooFuIXndVKuNtA3kTHY2EJQMSSAixk3rS8a/d
+         bFow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784229060; x=1784833860;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=R6zePSti7ASS1ok69EYQ+PkxSi0XpyrM1Y8fQpPG17Q=;
-        b=UuB6zKB0vG+ZDWdSEhMVITaJ/aVKi9/pfHA4uLZMZZH5/TDQdWC1ezr4M/BZo3AR89
-         84Tv7SmQUmjBNDcNlKBZzP7SPj5Ry9ZmQmeZ1ygYmRu2JCGjExyobRYYc8BGxOzDgJjg
-         8cwGIBjgu6r+3uN+Yhjxyhf//m4kZEMpq2a4p03dmt+yU/b1CvekKBE4cjGx1woq9Gaj
-         npZ3VrW4F37yagiSCAfv4R/hdBjRFrgtpUlKr774zaTh/45/Tyzn6F4tZ6Iop0dyi8t/
-         fSBNCB0FvHtTiLm0TVQ3tCKZGk54PB2hcwzlnhRYqtLOyAsdlwc98jX5BjHyPrUkKJ20
-         QRTw==
-X-Gm-Message-State: AOJu0Yy3RhHVtdQ1z2E7N3J1KkFhGBMRfh6GQUu2OAm60nZ1JgkYDdUU
-	p78m9uaj7cg27P7XMNNPquuL2KndNFSakjZwvYyLqr0ICSPU6v4CDJS9rLlfYqZe2uA=
-X-Gm-Gg: AfdE7cm6sjeeklSezn+bkFnP9Jvk3rEMQ9EGtmCYhUsEF/GZKEJze2rDVltBSEVMbdi
-	v9qZAEmXvpspxfiUS/4Ru4YbmIU7dD+p7RK97OpN4v7okp2DyrOxSzBBZM30hWT9mcfAqKaV/Vo
-	R+MCCnpg+FGl96XrU/C+js8aAjD45I1Pqdyuj/cwRgqavP0dPxHJlotUG+VlwNjrvvejzaAw9xR
-	ocqDEeJN1Abwt50VHXnaGaFQw4KojkNzHYvt82bGRT5PfnPUNlPwOZkQVTe+zio1onW247fB8NB
-	vjZnkLycK1UIzpsmruVzEq68NXEUz96H5mhxcVHa7+QZJAi0497OQMFLmtca3OM9d2ZoTw1VGxY
-	3QSmVdM19dnhTU/WQIfH3DGx5S7W3Oj0advMBJxvu27CWdTvlzfAhgIpLDyUJxA==
-X-Received: by 2002:a05:690c:b89:b0:81e:6c2e:f112 with SMTP id 00721157ae682-81ebb143827mr99516067b3.29.1784229059946;
-        Thu, 16 Jul 2026 12:10:59 -0700 (PDT)
-Received: from [127.0.1.1] ([2a09:bac6:947f:3af::5e:5d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81e6c1feb43sm203389297b3.40.2026.07.16.12.10.58
+        d=1e100.net; s=20251104; t=1784238915; x=1784843715;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8ESnqIrxhVsIPeRHe4fD4n3nEQ5qHjOKJcorrN5crBo=;
+        b=ne3swHEbS4y/nrdK1a0t6S9S8Z67RMmflfAsdjb7pkHUptuLP+1ATYgjVkbSeiH6XA
+         2UMXnvnfA+IcVobwI1WI2mKo99bBLOBskv5Onja9j08La6x6MFZrkeJd+xRetsG/hie1
+         rApV5k6s6tHo+brN1hj9dehf32RTsB9vu4AFgVKcyUwN/a4d+OPHh1lDfGRMGvL+lbOm
+         ZlBGSRmi7YHoE9d3JRuydX00vTpUZBz7UPqOVNNr1kbbh2pJSdMSiuVtZicPGawXbnRC
+         ciWl/saVLTNV1g5zN3i71PgzAJqV3JuuvO/GUXxZ/MmBkYbUYEP4hw/7FtMprUDEZrWS
+         B8sQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrSqSjqQrKtLUxRQn3cxwy1iEv+4Litn5kSJQ2BnsuBZ0E9x8SpaVN8DI8e+1VKF10PUzRjP12m0Vdsqg94r9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLRh9UtTtugIWQwBhonozkQPZI6SnHPrhwta3qftfVFXLJaLXZ
+	ostVuCYBe/YsB+DCMVGh4vhCcXgQPbPL8BRagsBVFnAayOBUtkubOl6JZYJE1RNS0g==
+X-Gm-Gg: AfdE7cmofzBIraUhY5g2cdwfopodfDM20TgyYolIyC0fcl9atb4E/8qbtZh3MDCqXrd
+	O8t83lrdkLqs9Twkl9cr9ZkXBIhc848tDpMSqTJKWNcN/0T2JtTX4pas9DR3Z1IpPAkXPmxFAvj
+	vzZdHh4lesstnqr4nS+htgEIOeFKhIpD7VMYFXDAm1eV3vsectnuSPz/ndR3GFiVbDDYv4FgeHw
+	vFelOYudH/6SoBJC8MEEdqtEowPrDoxB0gkRqXubKRhncZKtT+e7Y9JrUi/R8OBg7Xpp5dnBnRL
+	9ase1WVkS1XKOwLaem6bPa0w4JWLAEsAO9K2cu0je5uvABlNKBRg/W4XIY9+fJ6xLV+Kcz4Dwrw
+	KZ7jH/feDwXQ0pouTde01AbUpfyZHxMdR/C7C1DPRouBqGvtZCmdp2A7urm2okkiliAvyZznpKm
+	wWQYF6Cu2XHwj6s/bi7DehBDCakctrX8RJQ7DHvVd9FCMDj10=
+X-Received: by 2002:a05:622a:281:b0:51c:7b12:5fe9 with SMTP id d75a77b69052e-51e424c1e45mr137041111cf.85.1784238914880;
+        Thu, 16 Jul 2026 14:55:14 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd56bf455sm226276746d6.13.2026.07.16.14.55.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2026 12:10:58 -0700 (PDT)
-From: Frederick Lawler <fred@cloudflare.com>
-Date: Thu, 16 Jul 2026 14:10:52 -0500
-Subject: [PATCH] ima: Report errno for failed hash collection to audit
+        Thu, 16 Jul 2026 14:55:13 -0700 (PDT)
+Date: Thu, 16 Jul 2026 17:55:12 -0400
+Message-ID: <cb9f84292a7f1d41ff8388d8c0c8c3d0@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260716-report-hash-error-v1-1-ac19281112e4@cloudflare.com>
-X-B4-Tracking: v=1; b=H4sIALssWWoC/x3MMQqAMBAF0avI1i4kUSN4FbEQ/ZptjGxEBMndD
- ZavmHkpQQWJhuolxS1J4lFg64qWMB87WNZicsZ501vPijPqxWFOgaEalTtnmtVv8GhBpTsVmzz
- /c5xy/gA2KUeiYwAAAA==
-X-Change-ID: 20260716-report-hash-error-5203d6fe6e4e
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2177; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=6rQO5dLbgGRQ+1ZAuu7llJFe1zRdMpO/COtyJ3jbmRY=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqWSzBUkGz1q/QWLeGB1fUyWH3Z64mEUvXwOwq4
- rEqWEqSD5iJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCalkswQAKCRCrJbR2A5LT
- bX1kD/0TA2W9QxMW7K02h4WlhGcpConfF15FeMjj9TZ9OPmdJk1Fes35cjdNx9np9ZH09pwiqo6
- a7kOX4Rcku9DkXALke+HytAruvoN6aKsHVsloyD4YUBHzA6dxoKnC8mKabwYk8sV2y+nU2dTFDT
- 2PCFtVKCGA9yrLXi6vXOgl/+7ObSVhJPnB4A3wzamyYw9o43U6pbh6RzHbAMGuEvL1B5PnrGIgT
- Zq0tcPLTJhgK1IC2BBDHNHPvSu7Rylz2YYIMAFcvnxBlrYSADon8/pwksT4KvD5TskblzMbS6Cx
- Ef7QfFtq9+3jN72kdB2n3brzW8lupYhV+cmBSiPBOpqZBwRDfPWCklDe1AXk8KcZxmiKZRDvbk8
- Ox3OJ28L+im7SQ5fg+Za2pnxZzfGr9uBNkePSbYDGxTmF8+W/t2jdLGPK+p2R4XvghMpLTDT2el
- 4DqBpN+FIcEE/7rkuomWimoxHvHb65n7LO3PQATzQdL7VZKIFF7sdjDn6AjBRgyaim/7GBB1K7N
- /v9CfdB5SpphXmglVM8yb3Ll09meRUc2S/OEAQV6LMw0QKXjEsG8e9CxLAgLJBHSAk72sJicq86
- +Jth6lPe39EkCyjsxLQP9EMsoPt4EPxAsJmLt8hUllNMIJcGH2lsX4UTicjv/V2nmWSfl8WgRUs
- dK9Z3IZjEKvyUAA==
-X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
- fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20260715_1900/pstg-lib:20260715_1853/pstg-pwork:20260715_1900
+From: Paul Moore <paul@paul-moore.com>
+To: David Windsor <dwindsor@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Emil Tsalapatis <emil@etsalapatis.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Shuah Khan <shuah@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, David Windsor <dwindsor@gmail.com>
+Subject: Re: [PATCH v5 1/3] security: rework inode_init_security xattr handling
+References: <20260708000956.46138-2-dwindsor@gmail.com>
+In-Reply-To: <20260708000956.46138-2-dwindsor@gmail.com>
 
-integrity_audit_msg() wraps integrity_audit_message() such that errno is
-always set to zero. When debugging for failed hashes, it'd be nice to
-understand the corresponding error code with the cause.
+On Jul  7, 2026 David Windsor <dwindsor@gmail.com> wrote:
+> 
+> In preparation for bpf_init_inode_xattr(), a kfunc that lets bpf LSM
+> programs atomically label new inodes, rework how inode_init_security
+> xattrs are managed.
+> 
+> inode_init_security receives the LSM xattr array and its count as
+> separate parameters. For better compatibility with the bpf verifier,
+> update inode_init_security and its callers to consolidate these
+> parameters into a single context object: struct lsm_xattrs.
+> 
+> Also, add security_lsmxattr_add(), which claims a slot in the
+> inode_init_security xattr array on behalf of the calling LSM and
+> fills it with a copy of the given name and value.
+> 
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: David Windsor <dwindsor@gmail.com>
+> ---
+>  include/linux/bpf_lsm.h           |   3 +
+>  include/linux/evm.h               |   9 +--
+>  include/linux/lsm_hook_defs.h     |   4 +-
+>  include/linux/lsm_hooks.h         |  16 ++---
+>  include/linux/security.h          |  15 +++++
+>  security/bpf/hooks.c              |   1 +
+>  security/integrity/evm/evm_main.c |   8 ++-
+>  security/security.c               | 108 ++++++++++++++++++++++++++----
+>  security/selinux/hooks.c          |   4 +-
+>  security/smack/smack_lsm.c        |  27 ++++----
+>  10 files changed, 148 insertions(+), 47 deletions(-)
 
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
----
- security/integrity/ima/ima_api.c          | 6 +++---
- security/integrity/ima/ima_template_lib.c | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+...
 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 122d127e108dcca8ddae6575c908144859783fb6..15883e4f077e0aa950f3fdd4b573873929da68aa 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -328,9 +328,9 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 
- 		take_dentry_name_snapshot(&filename, file->f_path.dentry);
- 
--		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
--				    filename.name.name, "collect_data",
--				    audit_cause, result, 0);
-+		integrity_audit_message(AUDIT_INTEGRITY_DATA, inode,
-+					filename.name.name, "collect_data",
-+					audit_cause, result, 0, result);
- 
- 		release_dentry_name_snapshot(&filename);
- 	}
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 8a89236f926c10af0dd2b2ef08fbe59bd8a78b66..6d163312fb4c47ce256766e997aac5f7375088a8 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -390,9 +390,9 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 	    ima_hash_algo : HASH_ALGO_SHA1;
- 	result = ima_calc_file_hash(event_data->file, hash_hdr);
- 	if (result) {
--		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
--				    event_data->filename, "collect_data",
--				    "failed", result, 0);
-+		integrity_audit_message(AUDIT_INTEGRITY_DATA, inode,
-+					event_data->filename, "collect_data",
-+					"failed", result, 0, result);
- 		return result;
- 	}
- 	cur_digest = hash_hdr->digest;
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 153e9043058f..647f7b88358b 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -68,6 +68,11 @@ struct watch;
+>  struct watch_notification;
+>  struct lsm_ctx;
+>  
+> +struct lsm_xattrs {
+> +	struct xattr *xattrs;
+> +	unsigned int xattr_count;
+> +};
 
----
-base-commit: 1da739feb31b4fecae465ebf87ba44a97e44101b
-change-id: 20260716-report-hash-error-5203d6fe6e4e
+Please separate out the 'struct lsm_xattrs' related changes into a
+separate patch from the security_lsmxattr_add() changes.  I know they
+are related, but they are different things.
 
-Best regards,
--- 
-Frederick Lawler <fred@cloudflare.com>
+> diff --git a/security/security.c b/security/security.c
+> index 71aea8fdf014..261f68e17cfd 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -12,6 +12,7 @@
+>  #define pr_fmt(fmt) "LSM: " fmt
+>  
+>  #include <linux/bpf.h>
+> +#include <linux/bpf_lsm.h>
+>  #include <linux/capability.h>
+>  #include <linux/dcache.h>
+>  #include <linux/export.h>
+> @@ -1333,8 +1334,8 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  				 const initxattrs initxattrs, void *fs_data)
+>  {
+>  	struct lsm_static_call *scall;
+> -	struct xattr *new_xattrs = NULL;
+> -	int ret = -EOPNOTSUPP, xattr_count = 0;
+> +	struct lsm_xattrs xattrs = {};
+> +	int ret = -EOPNOTSUPP;
+>  
+>  	if (unlikely(IS_PRIVATE(inode)))
+>  		return 0;
+> @@ -1344,15 +1345,15 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  
+>  	if (initxattrs) {
+>  		/* Allocate +1 as terminator. */
+> -		new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 1,
+> -				     sizeof(*new_xattrs), GFP_NOFS);
+> -		if (!new_xattrs)
+> +		xattrs.xattrs = kcalloc(blob_sizes.lbs_xattr_count + 1,
+> +					sizeof(*xattrs.xattrs), GFP_NOFS);
+> +		if (!xattrs.xattrs)
+>  			return -ENOMEM;
+>  	}
+>  
+>  	lsm_for_each_hook(scall, inode_init_security) {
+> -		ret = scall->hl->hook.inode_init_security(inode, dir, qstr, new_xattrs,
+> -						  &xattr_count);
+> +		ret = scall->hl->hook.inode_init_security(inode, dir, qstr,
+> +							  &xattrs);
+>  		if (ret && ret != -EOPNOTSUPP)
+>  			goto out;
+>  		/*
+> @@ -1364,18 +1365,101 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  	}
+>  
+>  	/* If initxattrs() is NULL, xattr_count is zero, skip the call. */
+> -	if (!xattr_count)
+> +	if (!xattrs.xattr_count)
+>  		goto out;
+>  
+> -	ret = initxattrs(inode, new_xattrs, fs_data);
+> +	ret = initxattrs(inode, xattrs.xattrs, fs_data);
+>  out:
+> -	for (; xattr_count > 0; xattr_count--)
+> -		kfree(new_xattrs[xattr_count - 1].value);
+> -	kfree(new_xattrs);
+> +	for (; xattrs.xattr_count > 0; xattrs.xattr_count--)
+> +		kfree(xattrs.xattrs[xattrs.xattr_count - 1].value);
+> +	kfree(xattrs.xattrs);
+>  	return (ret == -EOPNOTSUPP) ? 0 : ret;
+>  }
+>  EXPORT_SYMBOL(security_inode_init_security);
+>  
+> +#ifdef CONFIG_BPF_LSM
+> +static unsigned int lsm_xattrs_used(const struct lsm_xattrs *xattrs,
+> +				    const char *prefix)
+> +{
+> +	size_t prefix_len = strlen(prefix);
+> +	unsigned int i, n = 0;
+> +
+> +	for (i = 0; i < xattrs->xattr_count; i++) {
+> +		const char *name = xattrs->xattrs[i].name;
+> +
+> +		if (name && !strncmp(name, prefix, prefix_len))
+> +			n++;
+> +	}
+> +	return n;
+> +}
+> +#endif /* CONFIG_BPF_LSM */
 
+More on this below, but this function isn't strictly BPF LSM related so
+let's drop the CONFIG_BPF_LSM macro bracketing.
+
+> +/**
+> + * security_lsmxattr_add() - Add an xattr during inode_init_security
+> + * @xattrs: xattr state shared by inode_init_security hooks
+> + * @lsm_id: LSM_ID_* value identifying the calling LSM
+> + * @name: xattr name suffix
+
+For BPF you currently pass "bpf.foo" for the name and other LSMs would
+pass their own xattr name, likely without a LSM specific sub-namespace
+(for example, SELinux would be just "selinux").  In both cases the
+'name' parameter always starts with a well known suffix as defined by
+the 'lsm_id" parameter.
+
+Since we are already passing the lsm_id parameter, let's do away with
+the standard LSM suffixes, e.g. XATTR_BPF_LSM_SUFFIX, and just pass in
+any additional name components.  For example, instead of passing
+"bpf.foo" in the BPF LSM case, you would just pass "foo"; LSMs without
+their own sub-namespace, e.g. SELinux, would pass NULL for the name
+parameter as XATTR_SELINUX_SUFFIX is all that is needed.  While doing
+this I would also suggest changing the name of the 'name' parameter to
+'name_extra', 'namespace_extra', or something similar to indicate that
+it isn't the full name, but rather an additional suffix beyond the
+standard suffix associated with the given LSM.
+
+> + * @value: xattr value
+> + * @value_len: length of @value
+> + *
+> + * Claim an xattr slot in @xattrs on behalf of the LSM identified by
+> + * @lsm_id and fill it with a copy of @name and @value. Callers can invoke
+> + * this function from non-sleepable context.
+> + *
+> + * Return: Returns 0 on success, -ENOSPC if the calling LSM's slot budget
+> + *         is exhausted, negative values on other errors.
+> + */
+> +int security_lsmxattr_add(struct lsm_xattrs *xattrs, u64 lsm_id,
+> +			  const char *name, const void *value,
+> +			  size_t value_len)
+> +{
+> +	struct xattr *xattr;
+> +	void *xattr_value;
+> +	size_t name_len;
+> +
+> +	if (!xattrs || !xattrs->xattrs || !name || !value)
+> +		return -EINVAL;
+
+Sashiko raised a good point about xattrs->xattrs being NULL not
+necessarily being a good reason for -EINVAL.  If xattrs is NULL, yes,
+something has gone wrong and -EINVAL seems reasonable, but the
+xattr->xattrs NULL case does seem like it should simply return early
+with a value of 0 (see SELinux's handling of this case as an example).
+
+> +	name_len = strlen(name);
+> +	if (name_len == 0 || name_len > XATTR_NAME_MAX)
+> +		return -EINVAL;
+> +	if (value_len == 0 || value_len > XATTR_SIZE_MAX)
+> +		return -EINVAL;
+> +
+> +	switch (lsm_id) {
+> +#ifdef CONFIG_BPF_LSM
+> +	case LSM_ID_BPF:
+> +		if (lsm_xattrs_used(xattrs, XATTR_BPF_LSM_SUFFIX) >=
+> +		    BPF_LSM_INODE_INIT_XATTRS)
+> +			return -ENOSPC;
+> +		break;
+> +#endif /* CONFIG_BPF_LSM */
+
+I like to avoid macro conditional code inside functions whenever
+possible, and I think this is a case where we could avoid the conditional
+block with a little work.
+
+The LSM_ID_BPF macro is already defined as part of the UAPI so that will
+always be available.  While BPF_LSM_INODE_INIT_XATTRS is dependent on
+CONFIG_BPF_LSM in this revision, that should be easy enough to move
+outside the CONFIG_BPF_LSM conditional in bpf_lsm.h.  Eventually we
+should probably expand the lsm_id struct to carry this info, likely just
+a permanent/local copy of the LSM's lsm_blob_sizes passed during
+registration, but I can take care of that later; just make the
+BPF_LSM_INODE_INIT_XATTRS macro always accessible now.
+
+We should also probably record the xattr suffix/length when the LSM is
+registered, but that can also be done later with the other lsm_id
+additions.
+
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Combine xattr value + name into one allocation. */
+> +	xattr_value = kmalloc(value_len + name_len + 1, GFP_NOWAIT);
+> +	if (!xattr_value)
+> +		return -ENOMEM;
+> +
+> +	memcpy(xattr_value, value, value_len);
+> +	memcpy(xattr_value + value_len, name, name_len);
+> +	((char *)xattr_value)[value_len + name_len] = '\0';
+
+You'll need to add an additional memcpy() here, likely in a switch
+statement to handle the different LSMs, to copy over the LSM specific
+prefix.  It's a little ugly, but when we have things captured in the
+lsm_id struct it will get a lot cleaner.
+
+> +	xattr = lsm_get_xattr_slot(xattrs);
+> +	if (!xattr) {
+> +		kfree(xattr_value);
+> +		return -ENOSPC;
+> +	}
+> +
+> +	xattr->value = xattr_value;
+> +	xattr->name = (const char *)xattr_value + value_len;
+> +	xattr->value_len = value_len;
+> +
+> +	return 0;
+> +}
+
+--
+paul-moore.com
