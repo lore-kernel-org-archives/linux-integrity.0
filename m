@@ -1,136 +1,90 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740163AA1BF;
-	Thu, 16 Jul 2026 07:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D50930F95F;
+	Thu, 16 Jul 2026 12:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784186989; cv=none; b=B95fdjB0y8FcFS3D3XyjLS3kxeVJahCd8hT0SVWqhjLs9XhiqtFb85AD3m80TZRr76aGKDiGVOScEgjaMVr7PDl66TvvUX1D4BwqSgVNBSF/m7hWsxUfTHXZPuSqK5osMaERk8DdUSgPDJBncm3LcxsWFpSTI/EiQM+JBAaFWkQ=
+	t=1784204784; cv=none; b=JsR2T6UGOH3eFgAN46W6Xkzdk1ZczjKADF28hUC5j5KL5aVIsWPxSCJp8L7SnkGkbz2lVnHHQV85Hd5OcJn/ueEVw+s021G9uu2LAXLkhAWqMYbK/VUNsFXxr/0fTSQIQl31/VoLyISnKZIqcyGXsuonMAYv7wNt+UhMljl4dQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784186989; c=relaxed/simple;
-	bh=jOspFsn9RWqd4RO+5Lg48YoXIYnKBFJeZ7juQ3BdMvk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qGw6H7NpUB+UCVqwVp+q5YsPwfWS8mjQjWyCG6Wgase7Lhr7OYbsZ7r3vzBbEBih+89WsLAsP61ftQ0bq2EcGovzBdZI8jSuSZha0OnCCpuKye/cFguwIBb+5QEe7bZgjfoa2Akj1kaFQvl7aKdlshyTRA2siS8tDiFvoaotknY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4h14K33gwjzpTKt;
-	Thu, 16 Jul 2026 15:23:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id AE46640577;
-	Thu, 16 Jul 2026 15:29:41 +0800 (CST)
-Received: from [10.45.154.222] (unknown [10.45.154.222])
-	by APP2 (Coremail) with UTF8SMTPA id GxC2BwAXKAZciFhqGmi+AA--.8840S2;
-	Thu, 16 Jul 2026 08:29:41 +0100 (CET)
-Message-ID: <f6ecaaf1-e226-42a5-91f9-37ecce66a5d4@huaweicloud.com>
-Date: Thu, 16 Jul 2026 09:29:30 +0200
+	s=arc-20240116; t=1784204784; c=relaxed/simple;
+	bh=uqgKHSkFGfVyF0FMXmCLo9bd3pZRlbamYH4/BWr0QYs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hOcntlIpnKsWe3bVqU5o91x85TFcqO5xk3tu2hXFzHTzDJWnSCFNrWIdyuZZ7dUoovTwdI0FKm/NyuKHF7cTLKV3pdAIT4AtFH60jrMpFZt08C1ZrKZBlcFPExoGB9NcVGVfjKfkD2cizxbc0dfIHE1Lk3ZrSN8YWCeoubyUanM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=tjmHJiUi; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tjmHJiUi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1784204781;
+	bh=uqgKHSkFGfVyF0FMXmCLo9bd3pZRlbamYH4/BWr0QYs=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=tjmHJiUiUgW7cLfALS/C2GPKnDyxkdEMuOsEDZOwYujIZmK316/gPyLDEx4B4eN3S
+	 ZjXX/E01mTWr2x1AUsRcHhPa1/Jse0nx/jpjzCw66y67yTLKpRwJX6J8KVXieT3u/r
+	 kxSaOnBdenEtF3mm8CklJp9gv9PbBabKkBZCGbSI=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:d341::8c71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 311311C028D;
+	Thu, 16 Jul 2026 08:26:21 -0400 (EDT)
+Message-ID: <43b1aaf7cf0c036543aa371ccc5e77db26a386ff.camel@HansenPartnership.com>
+Subject: Re: [PATCH] tpm: use kfree_sensitive() for context and session
+ buffers
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Ivy Lopez <skunkolee@gmail.com>, peterhuewe@gmx.de, jarkko@kernel.org
+Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 16 Jul 2026 08:26:20 -0400
+In-Reply-To: <20260716000355.13825-1-skunkolee@gmail.com>
+References: <20260716000355.13825-1-skunkolee@gmail.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNE
+ lecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn
+ 1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHU
+ RfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8
+ X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvd
+ HRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGw
+ MGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAml2ZBI
+ FCS3GUMIACgkQgUrkfCFIVNZKjQf/deRzlXZClKxTC/Ee2yEPqqS7mm/INUA49KdQQ5oIhSxkUBy0
+ 9J4qjMIo5F8ZFkFTqikBqeL35LKu7O7rn8WETfX8Bxvos3HUsl3jHo34DES4MUFIpoQPgtiLRGwLb
+ K0cVCAArR2u2qj4ABmTRrs1I1kvdjEw6gatOuXtEe/j5O2fvfzTq9GBr0Q3n2IAsFXi4hLlx6VPE8
+ tyWUZ8BWJKtih3JAeUiXFvASL3McV0rV9RnU0VbjEQEhSE7PMYhWpnDC9AyBb0lXJllQRvC3NSkUB
+ 8KVQgNNxRPss0WE/nBoZ4dFA42jTyzTz8lNylxZoAWV7WJb3QxVg4oCodRVrxxrQhSmFtZXMgQm90
+ dG9tbGV5IDxqZWpiQGtlcm5lbC5vcmc+iQFVBBMBCAA/AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeA
+ QIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mYBQkbNYS9AAoJEIFK5HwhSFTWBpwIAL5Bk3
+ 5FB34U6iHmDzzgdCbxLTs43T/YQyJpcGIvopBvnI/fDY8oSG6Df64/O6B+1R+A8TDp6ZG5ysUWnCC
+ 6GuIaEHemBYkitMPglR6+sGCMQY7O0mlsPvdssvKK1KI9Bno4VU6ogaF2qVzefSqg1Djmf/DcsxWP
+ rI/jdJ8FB5AYR2rjIdDFc+zRdAJuavo1/anyY2wgpFh/3R8IOYAEfWV9nGgYkf9+tA4EIn1sxE0I3
+ L5oW2N3mbyRrkzuBwO8ztMCwqEPk7moWzhokcZqMXiAIahaZdkashJC+s2X2RZSGCy+g+pvY5NN4B
+ BVG5XwLgVBqbHMTcxE0fbmPqz+q6O0LEphbWVzIEJvdHRvbWxleSA8amVqYkBoYW5zZW5wYXJ0bmV
+ yc2hpcC5jb20+iQFXBBMBCABBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmODZ5ACGwMFCRs1hL0F
+ CwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQgUrkfCFIVNZu0Af/TzvL2/NdgAcw9uN3x60H8
+ jc4QUq14VpxcFEFEMpcj1morkX/G93V+56HBBaXZj+yK8PhxIA/SIz+sU7C/0YvKuvzakP8ZX/7WJ
+ e32SOUtjfr/VTaqjIBzNj6OxLvZpmNbBw7s6DwhhNpHOWqJ/1ml+PtDRDV71IB58yVqQjp1xlNKVl
+ ZppcJ5908EJzsFnRIVjiQiDSKoppqB2BCibBbrWcln7CiWMyOC/cco6SIn6twH+f7+aivJ3xGcOE2
+ a9gBKF5rNi9TBoX9oyPmshv/TDmnohsVrH7AYXlGYfZTk15SWEiROh1QX8/uD9wl/gcIv5EDUpT/F
+ L2jzOsA5663bw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next,v2] ima: add cond_resched() in
- ima_calc_file_hash_tfm loop
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Gaosheng Cui <cuigaosheng1@huawei.com>, lujialin4@huawei.com,
- zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20260714091708.2802272-1-cuigaosheng1@huawei.com>
- <e6270a062ebfdbc6d9e50ffe80ee5e77b4f0678c.camel@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <e6270a062ebfdbc6d9e50ffe80ee5e77b4f0678c.camel@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwAXKAZciFhqGmi+AA--.8840S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF15Jw13AFyDWF15uw13CFg_yoW8Krykpa
-	9agayvkrWqyryUuFsrKas3tF18C3yxJFy3WrZ5tryUJF90vr1vvry7Ar4YgryfCr1Fyw1r
-	tayqgryDA3Wqy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBGpYT0YRDwABsx
 
-On 7/14/2026 11:26 AM, Roberto Sassu wrote:
-> On Tue, 2026-07-14 at 17:17 +0800, Gaosheng Cui wrote:
->> When hashing large files, the while loop in ima_calc_file_hash_tfm
->> processes PAGE_SIZE chunks without any scheduling point, which can
->> cause soft lockup warnings:
->> watchdog: BUG: soft lockup - CPU#0 stuck for 50s!
->> Call Trace:
->>    _sha256_update+0x12d/0x1a0
->>    ima_calc_file_hash_tfm+0xfb/0x150
->>    ima_calc_file_hash+0x6e/0x160
->>    ima_collect_measurement+0x202/0x340
->>    process_measurement+0x3a9/0xb30
->>    ima_file_check+0x56/0xa0
->>    do_open+0x11b/0x250
->>    path_openat+0x10b/0x1d0
->>    do_filp_open+0xa9/0x150
->>    do_sys_openat2+0x223/0x2a0
->>    __x64_sys_openat+0x54/0xa0
->>    do_syscall_64+0x59/0x110
->>    entry_SYSCALL_64_after_hwframe+0x78/0xe2
->>
->> Call cond_resched() every 4MB to yield the CPU when needed, rather
->> than at every loop iteration, to reduce overhead.
->>
->> Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
->> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
-> 
-> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, 2026-07-15 at 18:03 -0600, Ivy Lopez wrote:
+> The context_buf and session_buf fields in struct tpm_space contain
+> TPM context blobs which may include sensitive cryptographic material.
 
-Actually, as Sashiko pointed out, alignment does not work well, since 
-__kernel_read() can return fewer than PAGE_SIZE bytes, causing the 
-offset to be always misaligned. Instead, we can keep a variable with the 
-number of bytes read since last cond_resched(), which we reset when we 
-hit 4 MB.
+That's not true ... at least not in a way that could be exfiltrated.=20
+All cryptographically sensitive areas of the context are already
+encrypted by the TPM with an internal key so they contain nothing
+useful to an attacker.
 
-Sashiko also noted that the same mechanism could apply for 
-calc_buffer_shash_tfm(), but we can add it later if we have a warning 
-(note that in this case we already have the buffer, we are not doing
-I/O).
+Regards,
 
-Thanks
-
-Roberto
-
-> Thanks
-> 
-> Roberto
-> 
->> ---
->> v2: call cond_resched() every 4MB to yield the CPU when needed
->>   security/integrity/ima/ima_crypto.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
->> index 0d72b48249ee..aab2349c0c33 100644
->> --- a/security/integrity/ima/ima_crypto.c
->> +++ b/security/integrity/ima/ima_crypto.c
->> @@ -233,6 +233,9 @@ static int ima_calc_file_hash_tfm(struct file *file,
->>   		rc = crypto_shash_update(shash, rbuf, rbuf_len);
->>   		if (rc)
->>   			break;
->> +
->> +		if (IS_ALIGNED(offset, SZ_4M))
->> +			cond_resched();
->>   	}
->>   	kfree(rbuf);
->>   out:
-> 
-
+James
