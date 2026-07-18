@@ -1,41 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E782727E2;
-	Sat, 18 Jul 2026 18:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889732F12A1;
+	Sat, 18 Jul 2026 18:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784398412; cv=none; b=txkRROdTGcWgvu4tokkQHe5sy96CaYiYly0oIIFrOEAfLvOaGQbxSI91V4DfkfbRtA9YkStXVblY0vhoWjGfUqpWuM7AZDS3bLKTrNPAuQKzoAXvComh9V0Rsif+FrCu7dP1NYT0z8TjbKF2nCCTesfSnxayaQ/gP4IjCz8whDY=
+	t=1784398658; cv=none; b=qpi7q59s5aiGPwWJ89Fth1nGF9t2KxGHiGhnW0bMgKT4nbWSXOb2LePCJ2a1ftu8YoHUKmsT3ezO9NUoaKkpzK4JKwotnQvRJEx7VeDx6XoODlPUTbuxHLLvpVylJjoptlwOyv8KhTgZaZveBeiQ1n2TurRYi0Niw5Rsyks2JRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784398412; c=relaxed/simple;
-	bh=r3HVk1Os7nt/G91PDDOnPJIFdKrU6sc8k9e9irNSQkc=;
+	s=arc-20240116; t=1784398658; c=relaxed/simple;
+	bh=eZ54TkyOII1ds4Cksqg/0osnXGFMWEFqLtVZwcOGoD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aUrIdpjK/eDwMq3zpy2OY9WPt3Xlxl9+W6q+r3EA/FwTtcEp5yPC6e9OllrC9WKDCG1KaiQGU5lliFrQuWjSEHS+xU1IjcbLAJFK3BsZ91DnxSIxWxQ9fynPjwimgtnr1l2MPE5le1sS6gYPADvxkPtoJpXG9dvIaCs7zkRCClE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+wlFviv; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lm2vEw8jVuxGpydqXOj1JNCgjPbayctYSOkw7CsY0ZShIi9h5RyaY7vxalx0sAquorPTZEwn+icMNm5FmjLLxmBoENbvelm7u4aTLON1/dpe9QeDiShelv2EbRzplgG9lbI9w6h/nB79jRGEORzizbHjRxn84Vpmk5BklV1MUNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7cMT6Fe; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+wlFviv"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 06CDB1F000E9;
-	Sat, 18 Jul 2026 18:13:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7cMT6Fe"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B22EF1F000E9;
+	Sat, 18 Jul 2026 18:17:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784398410;
-	bh=SCv7D3j6usEg6VvgiOHOz89pnycYkQa0+NUH7DKCPQY=;
+	s=k20260515; t=1784398657;
+	bh=PQU3Kn+cVuAalL2oPliVVXkMMgbX9Y61tB8owBWMPSs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=T+wlFviv8yDAxEyyQxrdltaabf20f0mX6klSoC++K1N7Q26kzSryiNurmt8Bnc+DZ
-	 jRmV9v+4d/PYHdfGTC+TjlKTDvpMUhBTw1dZb0EcMBggqZ4FmV7/OEetgercCIqNwO
-	 KRRtBacy5s86k5gV8lyjlEb9un2bG+SVb7fMh14Ma27gHMLdm9TWW5knY+v60qE+qW
-	 APhpNv6yneq+v7jQnblxDYfh1epwM19fu13gJ3rUPwDajZSZxNqoleSe8ww3V6fFAG
-	 duPJVcEulyhp08USaT+/hiiyYqpjcNMcWSUcd5uIoCxPtPuwRvE0AKDz8gmgi2VbAP
-	 edWc+20sFCX7A==
-Date: Sat, 18 Jul 2026 21:13:26 +0300
+	b=G7cMT6Fe7ffFYq8ccOgbMDHcJkZJVhgFy+9sFFU87GAHkNNh33TzXI66VYe/VyH35
+	 nvze/UBlPyiwo8iIWAUGTN9aUmndHJ3XJs52rR26nBtH67RcwuNQAjYD1osJYzP+gK
+	 YkNH+JQE1VYswWHwz2D7GbUXwv9ntEiLfWqphEtrQbaEXX1qh5brsvbJhHilyzk8YA
+	 Eyn3Hqa2RatR+7rl9ZrOPSTmgBn/Jqg/aDa9HXIEq9T2NnJSJM7MNSKc8Oe2lYN8dF
+	 sk3sG5Ich5gAXoz5hlHAFmbxfn1IoQnMrliWIpeK5dESgVzJwJNlDbamZ4J/Z8WYfM
+	 V2lX5k9qYwHdQ==
+Date: Sat, 18 Jul 2026 21:17:33 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jaewon Yang <yong010301@gmail.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	security@kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v2] tpm: Make the TPM character devices non-seekable
-Message-ID: <alvCRtFvf15hG7tJ@kernel.org>
-References: <CAHk-=wi8aXM9=Y8othMb1oxTv-PDw4isj-FPbXu0MXsm_EPE1g@mail.gmail.com>
- <20260712171147.323213-1-yong010301@gmail.com>
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: Jaewon Yang <yong010301@gmail.com>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, security@kernel.org
+Subject: Re: [PATCH] tpm: Reject reads outside the response buffer
+Message-ID: <alvDPToN5hXa3vXd@kernel.org>
+References: <20260710090217.191289-1-yong010301@gmail.com>
+ <alJ4cg_lWo1mdLl8@kernel.org>
+ <CAHk-=wi8aXM9=Y8othMb1oxTv-PDw4isj-FPbXu0MXsm_EPE1g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -44,100 +45,155 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260712171147.323213-1-yong010301@gmail.com>
+In-Reply-To: <CAHk-=wi8aXM9=Y8othMb1oxTv-PDw4isj-FPbXu0MXsm_EPE1g@mail.gmail.com>
 
-On Mon, Jul 13, 2026 at 02:11:47AM +0900, Jaewon Yang wrote:
-> The TPM character devices expose a sequential command/response
-> interface, but their open handlers leave FMODE_PREAD and FMODE_PWRITE
-> enabled.
+On Sat, Jul 11, 2026 at 11:58:14AM -0700, Linus Torvalds wrote:
+> On Sat, 11 Jul 2026 at 10:09, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > Please don't delegate the work for me that  you should doing i.e.
+> > looking at your reproducer and describing the scenario/sequence
+> > that would lead to infeasible consequence.
 > 
-> After a command leaves a response pending, pread(fd, buf, 16, 0x1400)
-> passes 0x1400 as *off to tpm_common_read(). The transfer length is
-> bounded by response_length, but the offset is used unchecked when
-> forming data_buffer + *off. A sufficiently large offset therefore
-> causes an out-of-bounds heap read through copy_to_user() and, if the
-> copy succeeds, an out-of-bounds zero-write through the following
-> memset().
+> I don't understand this reply.
 > 
-> Positional I/O does not provide coherent semantics for this interface.
-> An arbitrary pread offset cannot represent how much of a response has
-> been consumed sequentially. The write callback always stores a command
-> at the start of data_buffer, while pwrite() does not update file->f_pos
-> and can leave the sequential read cursor stale.
+> The original email had all the relevant information: how to trigger
+> the condition, what the bug is, and what's going on.
 > 
-> Call nonseekable_open() from both open handlers. This removes
-> FMODE_PREAD and FMODE_PWRITE, causing positional reads and writes to
-> fail with -ESPIPE before reaching the TPM callbacks, and explicitly
-> marks the files non-seekable. Normal read() and write() continue to use
-> the existing sequential f_pos cursor, leaving the response state
-> machine unchanged.
+> The bug seems straightforward: the tpm code appears to blindly use a
+> user-supplied 'loff_t' that is simply not checked. The email you
+> responded to seems very clear on the issue:
 > 
-> Tested on Linux 6.12 with KASAN and a swtpm TPM2 device:
+>   Sequential read() keeps *off in range, but the fops use the legacy .read
+>   callback and neither tpm_open() nor tpmrm_open() calls nonseekable_open(),
+>   so FMODE_PREAD stays set and pread(2) passes an arbitrary offset straight
+>   into *off.
 > 
-> - sequential partial reads returned the complete response;
-> - pread() and preadv() with offset 0x1400 returned -ESPIPE;
-> - pwrite() and pwritev() with offset zero returned -ESPIPE;
-> - the pending response remained intact after the rejected operations;
-> - a subsequent normal command/response cycle completed normally; and
-> - no KASAN report was produced.
+> So what's the problem here?
 > 
-> Fixes: 9488585b21be ("tpm: add support for partial reads")
-> Link: https://lore.kernel.org/all/20260710090217.191289-1-yong010301@gmail.com/
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jaewon Yang <yong010301@gmail.com>
-> ---
-> Changes in v2:
-> - replace the response-buffer bounds check with nonseekable_open();
-> - reject positional read and write at open time;
-> - preserve the existing sequential read/write state machine.
+> Now, honestly, I think this tpm code is badly written to begin with,
+> and the patch doesn't fix that fundamental issue.
 > 
-> The alternative response_length rework proposed during review was tested
-> and not taken: a read-until-EOF loop hangs because cleanup resets *off
-> without clearing response_length. It also treats an arbitrary positional
-> offset as the consumption cursor; for example,
+> The code simply shouldn't change response_length by how much have been
+> read, it should just use the fixed size of the buffer and compare it
+> to the offset.
 > 
->     pread(fd, &c, 1, 99)
+> And once the buffer has been fully used, we clean it up.
 > 
-> on a 100-byte response can discard bytes 0 through 98 without returning
-> them.
+> Something ENTIRELY UNTESTED like the attached patch. But I do want to
+> point out that this patch is
 > 
->  drivers/char/tpm/tpm-dev.c   | 2 +-
->  drivers/char/tpm/tpmrm-dev.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  (a) UNTESTED
 > 
-> diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-> index 2779a8738..74488f0a7 100644
-> --- a/drivers/char/tpm/tpm-dev.c
-> +++ b/drivers/char/tpm/tpm-dev.c
-> @@ -36,7 +36,7 @@ static int tpm_open(struct inode *inode, struct file *file)
->  
->  	tpm_common_open(file, chip, priv, NULL);
->  
-> -	return 0;
-> +	return nonseekable_open(inode, file);
->  
->   out:
->  	clear_bit(0, &chip->is_open);
-> diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
-> index f48d4d9e1..19e8f2779 100644
-> --- a/drivers/char/tpm/tpmrm-dev.c
-> +++ b/drivers/char/tpm/tpmrm-dev.c
-> @@ -29,7 +29,7 @@ static int tpmrm_open(struct inode *inode, struct file *file)
->  
->  	tpm_common_open(file, chip, &priv->priv, &priv->space);
->  
-> -	return 0;
-> +	return nonseekable_open(inode, file);
+>  (b) bigger and more invasive than the simple "just check the offset"
+> 
+> That said, I really don't like how the original patch by Jaewon
+> depends on TPM_BUFSIZE when the real limit is that "response_length",
+> but that's a direct result of the tpm code being disgustign and
+> changing response_length as a response to partial reads.
+> 
+> So the attached patch tries to fix that fundamental mistake, and in
+> the process I think it makes the code more readable, but whatever. I
+> probably think that primarily because I wrote the patch.
+> 
+> Comments? But this "dismiss a patch based on bogus reasons" seems like
+> a huge mistake.
+> 
+> Again. The attached patch is UNTESTED.
+> 
+>                   Linus
+
+I hear you. I was probably too quick draw with this one.
+
+>  drivers/char/tpm/tpm-dev-common.c | 67 ++++++++++++++++++++++-----------------
+>  1 file changed, 38 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> index f942c0c8e402..f1c17fdea74d 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -127,44 +127,53 @@ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+>  	file->private_data = priv;
 >  }
 >  
->  static int tpmrm_release(struct inode *inode, struct file *file)
-> -- 
-> 2.43.0
-> 
+> +static inline ssize_t tpm_common_read_cleanup(struct file_priv *priv, loff_t *off, ssize_t ret)
+> +{
+> +	*off = 0;
+> +	timer_delete_sync(&priv->user_read_timer);
+> +	flush_work(&priv->timeout_work);
+> +	return ret;
+> +}
+> +
+>  ssize_t tpm_common_read(struct file *file, char __user *buf,
+>  			size_t size, loff_t *off)
+>  {
+>  	struct file_priv *priv = file->private_data;
+> -	ssize_t ret_size = 0;
+> -	int rc;
+> +	ssize_t response_length;
+> +	u64 offset;
+>  
+> -	mutex_lock(&priv->buffer_mutex);
+> +	if (!size)
+> +		return 0;
+>  
+> -	if (priv->response_length) {
+> -		priv->response_read = true;
+> +	guard(mutex)(&priv->buffer_mutex);
+> +	response_length = priv->response_length;
+>  
+> -		ret_size = min_t(ssize_t, size, priv->response_length);
+> -		if (ret_size <= 0) {
+> -			priv->response_length = 0;
+> -			goto out;
+> -		}
+> +	// Error or nothing to read?
+> +	if (response_length <= 0)
+> +		return tpm_common_read_cleanup(priv, off, response_length);
+>  
+> -		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
+> -		if (rc) {
+> -			memset(priv->data_buffer, 0, TPM_BUFSIZE);
+> -			priv->response_length = 0;
+> -			ret_size = -EFAULT;
+> -		} else {
+> -			memset(priv->data_buffer + *off, 0, ret_size);
+> -			priv->response_length -= ret_size;
+> -			*off += ret_size;
+> -		}
+> -	}
+> +	offset = *off;
+>  
+> -out:
+> -	if (!priv->response_length) {
+> -		*off = 0;
+> -		timer_delete_sync(&priv->user_read_timer);
+> -		flush_work(&priv->timeout_work);
+> -	}
+> -	mutex_unlock(&priv->buffer_mutex);
+> -	return ret_size;
+> +	// Have we already read everything? Return EOF
+> +	if (offset >= response_length)
+> +		return tpm_common_read_cleanup(priv, off, 0);
+> +
+> +	// Do the potentially partial read
+> +	size = min_t(size_t, size, response_length - offset);
+> +	size -= copy_to_user(buf, priv->data_buffer + offset, size);
+> +	if (!size)
+> +		return -EFAULT;
+> +	offset += size;
+> +
+> +	// Are we all done with the response?
+> +	if (offset >= response_length)
+> +		return tpm_common_read_cleanup(priv, off, size);
+> +
+> +	// We still have some data left, update the offset
+> +	// and be ready to read the rest later - don't do
+> +	// the cleanup.
+> +	*off = offset;
+> +	return size;
+>  }
+>  
+>  ssize_t tpm_common_write(struct file *file, const char __user *buf,
 
-LGTM
-
-
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
