@@ -1,191 +1,192 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C283B994F
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Jul 2026 18:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC47739902B
+	for <linux-integrity@vger.kernel.org>; Mon, 20 Jul 2026 10:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784484252; cv=none; b=p7OWcIcw8717vG9VLe+4p25oPcFSlG9OFLDXXDI2oFQmKgwvHhgfHX2dYvtP8b1rPbmPZExnk3PIY4yNliGqpB5+FyyOo2/C+lHYBoh6jaTCLCPLlgQ3bIXvyBVOi14yl1IgL2+We6MlEvkH0Boy7kjO1qOSpMe5C34W+s0xcog=
+	t=1784543710; cv=none; b=jhF6aa54R+aYsVyyGGNzDqmnEGLk3OJ2ryS2rRfYIVXQWb0vVprEl4ZMptFZqNL12MwB8WJbKRxrknYOLm/pXG297uMF3tydqMqCHF6VSaoXy+Vc30nAUOTnleFhiSANSTBRZuI8rrZtOy9p2rTQjGBQiwVWDTDv7VffJbrPyWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784484252; c=relaxed/simple;
-	bh=V0Tae/rKozWhabyRfdu4QuNkEaB8DkFkgOcQe8o5wq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OW2lWwuuV0qH4xdxH7GG746C+XRVsUJ4PODHG5BUuRMp9dJD44FP6q31G0YXf1PUA7fGaomYcvZJnk+1cMDkIIyKYFpgbM7e/DdvFIbhXpG343EhGbBvGYwxI73IwZpohcrx19+AffLXzLwmqroaCk/4qOJ+ZGgURMcs2t14spE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfG43JtS; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784543710; c=relaxed/simple;
+	bh=NtYCSfnijOuf43LYdvfcJWtyNX4MSCBqCUIVCWr1hfA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Cc:Date:
+	 Message-Id:References:To; b=Lxun4mRvyHkHrBqyTBfEYUdh37NhaR9viWqSakCAVnt2JkcbLqGD4traJ9e2GE62u7979m8ycqzw3qsMCZ3PVKF8i4GOnxBIzP/r0S7NiAvyZnXr6k4D/FOHo5jp4U1N6ANQyCC4ktDgJGLAR6R+cUsQZ/0eSejsN3CzOlyHPZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=sZ93UBYX; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfG43JtS"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-ca766c1c9ccso5457409a12.0
-        for <linux-integrity@vger.kernel.org>; Sun, 19 Jul 2026 11:04:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="sZ93UBYX"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4953de5be0aso29838615e9.0
+        for <linux-integrity@vger.kernel.org>; Mon, 20 Jul 2026 03:35:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784484246; x=1785089046; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=uWQkBHme3djyDjtoGqM4G+GNxyywodyr8gsYJac/hfw=;
-        b=FfG43JtSl6k2dkdJv1ue1j48FkxIOoBrilaiKruWxYFM28947LGwWga39sjiHmMDIJ
-         TgWB5f/dZ/YajU65sC5pzoJMBx/NjJsBsQ7QhEwLeT99YAPnm4FgfBcgXMMTwp76pBuk
-         A19zIh+9Fxg05n1+gVcE9ygTvcwo57pK/ul5J/Ll+Xqk+bhLzG4czKkx3fTsCPH+Hbwg
-         tLwsoFBEx6MOv4OVTM8uqVvKAjtIp0ZOuNeYLfXBwvPFGaZHCLXiHWlGObp2EmJj92gI
-         FXUwej9BaUvPlm371En4fqgIjkZjUcnbWYof5ME9Ppkq1pSjL6G/pqWjaDKT/tTl8GVZ
-         svgw==
+        d=sigma-star.at; s=google; t=1784543706; x=1785148506; darn=vger.kernel.org;
+        h=to:references:message-id:date:cc:in-reply-to:from:subject
+         :mime-version:content-transfer-encoding:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=T/UHcnK0u2PtiV111f+vwISiyqebdZ1bRHYB6k/SjEc=;
+        b=sZ93UBYX+HK2wIdKizFcZE7ea/tjsP+aArs+VDnPJNdtg0xItvGODHKsrV6V8G/wXd
+         eQLhc9g972w5WyLqMkq9Vn4REKFIngtXbpt83hjqUkrChSL4p0ekjMrGBYoCm8oQ77zu
+         u5DAMuDL/hFPEsIbcGrUbIO2UgwHdnIosD9WXY3Dw7CJx8PoKl78h83RBfuGWJy1Yesb
+         jlH18pSgYX0ovOw7NDr5jbtDKCPxBOxR7rO/OknSdYBPshUpO2W8u1bUvgEko3/zbsLL
+         DHbMIg0a8QaCg1SqJoBMM/buRlKz4s3oy6Hn4DHqUgUwZTh0r3lzvPLWfN5/mnZMHOAF
+         1TlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784484246; x=1785089046;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=uWQkBHme3djyDjtoGqM4G+GNxyywodyr8gsYJac/hfw=;
-        b=oYjXBJSfIXSdS0dnmC+Td6mIQsVPx+MpT3QJvRV07DCorN6OIvysegJr24ruYJRvBX
-         5ZxK1onLXny6aeYKquKIJaJBVNflrLylCP4YtBe0eO697oLKbC3HIDr82PwtkAH9bZvn
-         aJ4RslkLYUcCBvMSCoEqxn8Asj/t06OOfhZEkG30oUVo90kIvfRDp6Q9cn6Oyt+FzPhK
-         bFqg+6yUH7mH83XsFbUEPiG6KZ4I5P4F8hL4itX3MslOAN6dCO+h2+X5k0TI7qwAl1du
-         pSyynUBVIdsnGy7sLTegH5msX6ogYyh+xY8MdRNNGH7V6nEVmnjAz7Dha+Oh0TzwKm45
-         WibA==
-X-Forwarded-Encrypted: i=1; AHgh+RpaN336wQ3+AvpLJ8fjlANfxDYzHBFbupGFb0SCpBb4oTzxoVj+1qsTYZrmx3KzAW045ukmyWwZr+DIFFepaDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxTvrKEK3w1d5watMQTLI3wqeq3x1RRhBU+V+9OT2tjKqcyHRB
-	jyFVRK9nOtdKpv+BDLSkIZR6FoUiwBdgMp8fkW9/+O8/oQI3dwqbzwY=
-X-Gm-Gg: AfdE7cm3Wd+Jc6ajoFrujyBA8F28a2/qYkVK6rTtSq3ABUT97Y+BxXmjEk4Q/vILdss
-	lv2GSgvM2x+LoCZlDe17K5Ga7tAZhqVPseOe+tO6hXL2qFOWmumoFC5ZK8RVsFICYrm8Mk3B6+P
-	TgK7yWcf0aO7xsBW8HE0VN8O6haGr+8ym6AnUOQQXSntXHBCZGrxJVyXKVGZSJ9erACtDM3Kmye
-	UR/0pclOfhBDd+fK6QAkL5vgPpkQIrWMznVANrkmDVIDEcetQl2fQq8h2CflFccD7cNTWp/SLAe
-	qijqWevmGNZl0vsKPNcNeA7Srq33i3H4Xo/nDR8vauasDMFUQCmYfNTHbSp4L/tBdpzdAWQ/Ybb
-	heYOvMDVRv8BGoooK5kiOIeFO05acicXsNKBiY2hKuHzgKLwWy3WKzNIIJhO/rsY8HboYJE4iEs
-	ugoWJWbtdrULITUWQC/LzIf+B5qJ0aOcA4pQXiA6/v
-X-Received: by 2002:a05:6a20:1713:b0:3c3:8651:b302 with SMTP id adf61e73a8af0-3c3ad7ac447mr8585778637.28.1784484246013;
-        Sun, 19 Jul 2026 11:04:06 -0700 (PDT)
-Received: from at-Standard-PC-Q35-ICH9-2009.. ([106.194.66.250])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a02b7f2sm27967645eec.13.2026.07.19.11.03.56
+        d=1e100.net; s=20251104; t=1784543706; x=1785148506;
+        h=to:references:message-id:date:cc:in-reply-to:from:subject
+         :mime-version:content-transfer-encoding:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=T/UHcnK0u2PtiV111f+vwISiyqebdZ1bRHYB6k/SjEc=;
+        b=cHxMZ5LK6e2xR4YLa2Z5snLK6itEVXBp2gTfQyeeM09Ji8B8/5s2V594mP8bOflC89
+         Cqb11Iw1qwKMBP35/q6tmdE8zTWnJRPPZWDHNdys4dGf3BQb22XVCsB5DrLhbkcSlN+p
+         jJX7Wh7UOxuUle71FKqqGfPZ/AeQ7almcwD3kYfxdaqFBNmbdprR1sDbbqfaMUOzSQM0
+         amFGi89YIrlnk81Z3sRa2nPmR7oPfe0JtXdmMTLIOswg7gPFLQibSJ3Z2QTzhRvj+/TQ
+         zmnKQbcMDbAKaPaCEa7tFJgvr5LNMJB49+zPzUXuefhb9FzyeESToVzRxsQEIO2pm19H
+         DB2Q==
+X-Forwarded-Encrypted: i=1; AHgh+RpBJ8/OO0wt4Z3iGOWinT6hRqPcrRZmZCm0oZhUS20KLd9t5hhedZq+/+rtEJD/zOFWst2Sh6/0MljtoKOiZw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybSMEP1zQ5xGroRS/exg9dHdXJaDavij9P3Kn8V5fu/vQaD1wR
+	Ee+OKdpoAvs+0Y8n/nygIOzWNa319dNin3C9YGMgqQTXWr2/lg56tuID+LI7o8XqHcc=
+X-Gm-Gg: AfdE7cnMRqsHmJvBuFppqw7eu1bRqJuxzm1pCy721piie21bj+Ii38CLu/YnD/sCGM8
+	1OAvOr9bvcA+f/qaGNiIzKYrVWF5TSTF1fOKiXhqNFJoA4rmo1GyNmh5mvEYEWyDd7uZadD2sl5
+	mDGZ5Lqh8jP/jvM0E7pRoXT9pxnTaZO/uwYhNMP0mHQAqtALEQPRP37DM1I3a6dKqQpsN7Ue4UJ
+	hGJIZJ53DKJhfaastqpBdikgNtPysawmg6du2djY86oVg5l41FX9RBr2ywp/I4Z4lL0hgxD50dE
+	MfVOil/+RUYBTui4wuseMYI0/JAkCMRBsXGbZrvEF1Sd0P68eIX9VDY78518pVzTLL/XbTbGv4D
+	v0olt0hrx0OwBX1XdyG8hAhwEi8geAJrsrkNTQKAXWvXT/NTLHdjwxMp8KRo9eO/q3sypdLfyel
+	NLn0D9pLZO7TZOyEy7vzjHM8ixhev0kNNRbTd5EaO17BJM65Oq+ayJar5B
+X-Received: by 2002:a05:600c:4504:b0:495:495b:9248 with SMTP id 5b1f17b1804b1-4954a3d0cf9mr143689505e9.4.1784543705762;
+        Mon, 20 Jul 2026 03:35:05 -0700 (PDT)
+Received: from smtpclient.apple (213-225-8-251.nat.highway.a1.net. [213.225.8.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-495516c68fasm193931675e9.1.2026.07.20.03.35.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jul 2026 11:04:05 -0700 (PDT)
-From: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-To: 
-Cc: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>,
-	Andre Eikmeyer <andre@negmaster.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH 2/2] thunderbolt: Add device links for Apple T2 NHI
-Date: Sun, 19 Jul 2026 14:03:04 -0400
-Message-ID: <20260719180308.1398-3-atharvatiwarilinuxdev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260719180308.1398-1-atharvatiwarilinuxdev@gmail.com>
-References: <20260719180308.1398-1-atharvatiwarilinuxdev@gmail.com>
+        Mon, 20 Jul 2026 03:35:05 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2] KEYS: trusted: dcp: fix key_len validation and calc_blob_len() return type
+From: David Gstir <david@sigma-star.at>
+In-Reply-To: <20260719163939.3624767-1-fabrice.derepas@canonical.com>
+Cc: keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+ Fabrice Derepas <fabrice.derepas@canonical.com>,
+ upstream+dcp@sigma-star.at, jarkko@kernel.org, zohar@linux.ibm.com,
+ dhowells@redhat.com
+Date: Mon, 20 Jul 2026 12:34:54 +0200
+Message-Id: <1EDDC226-1CDE-4A17-968D-EBA26E81B596@sigma-star.at>
+References: <20260719163939.3624767-1-fabrice.derepas@canonical.com>
+To: Fabrice Derepas <fabrice.derepas@canonical.com>
+X-Mailer: iPhone Mail (23F84)
 
-From: Andre Eikmeyer <andre@negmaster.com>
+Hi Fabrice,
 
-Thunderbolt NHI on T2 Macs (2018-2020). The NHI and its
-associated PCIe root ports all sit directly on the root complex
-with no upstream port. Apple's ACPI tables name Thunderbolt root
-ports as TRP0, TRP1, etc. Find them and create device links back
-to the NHI so that PCIe tunnels can be re-established after sleep.
+> On 19.07.2026, at 18:41, Fabrice Derepas <fabrice.derepas@canonical.com> w=
+rote:
+> =EF=BB=BFTwo correctness and type-hygiene issues exist in the DCP trusted k=
+eys
+> implementation.
+>=20
+> First, trusted_dcp_unseal() reads p->key_len from a user-supplied blob
+> without checking if it exceeds MAX_KEY_SIZE.  If a crafted blob provides
+> a payload_len larger than 128, the subsequent do_aead_crypto() call
+> writes past the end of the p->key array into the adjacent p->blob
+> buffer within the same struct trusted_key_payload -- the caller's own
+> input, not unrelated kernel memory.  While not exploitable, this
+> violates strict array bounds and triggers static analyzers.  Fix this by a=
+dding a validation check against
+> MIN_KEY_SIZE and MAX_KEY_SIZE immediately after reading the length,
+> matching the checks already done in trusted_core.c.
+>=20
+> Second, calc_blob_len() calculates a sum in size_t that truncates to
+> unsigned int on 64-bit platforms.  Because the DCP hardware is only
+> present on 32-bit i.MX SoC platforms, size_t and unsigned int are
+> functionally equivalent in production, making this truncation harmless in
+> practice.  Nevertheless, updating the return type to size_t (and
+> subsequently updating 'blen' in the seal/unseal paths) resolves
+> type-narrowing warnings and improves overall code hygiene.
+>=20
+> Fixes: 2e8a0f40a39c ("KEYS: trusted: Introduce NXP DCP-backed trusted keys=
+")
+> Signed-off-by: Fabrice Derepas <fabrice.derepas@canonical.com>
+> ---
+> Changes in v2:
+>  - Reframed commit message as correctness/hardening fix (Richard, Jarkko)
+>  - Changed bare return -EINVAL to goto out for consistency
+>  - Added Fixes tag
+>=20
+> Compile-tested with arm-linux-gnueabihf-gcc on imx_v6_v7_defconfig
+> with CONFIG_TRUSTED_KEYS_DCP=3Dy (W=3D1, zero warnings). No DCP hardware
+> available for runtime testing.
+>=20
+> security/keys/trusted-keys/trusted_dcp.c | 15 +++++++++++----
+> 1 file changed, 11 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trus=
+ted-keys/trusted_dcp.c
+> index 7b6eb655d..c078adebe 100644
+> --- a/security/keys/trusted-keys/trusted_dcp.c
+> +++ b/security/keys/trusted-keys/trusted_dcp.c
+> @@ -69,7 +69,7 @@ static bool skip_zk_test;
+> module_param_named(dcp_skip_zk_test, skip_zk_test, bool, 0);
+> MODULE_PARM_DESC(dcp_skip_zk_test, "Don't test whether device keys are zer=
+o'ed");
+>=20
+> -static unsigned int calc_blob_len(unsigned int payload_len)
+> +static size_t calc_blob_len(unsigned int payload_len)
+> {
+>    return sizeof(struct dcp_blob_fmt) + payload_len + DCP_BLOB_AUTHLEN;
+> }
+> @@ -200,7 +200,8 @@ static int encrypt_blob_key(u8 *plain_key, u8 *encrypt=
+ed_key)
+> static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)=
 
-Co-developed-by: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-Signed-off-by: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+> {
+>    struct dcp_blob_fmt *b =3D (struct dcp_blob_fmt *)p->blob;
+> -    int blen, ret;
+> +    size_t blen;
+> +    int ret;
+>    u8 *plain_blob_key;
+>=20
+>    blen =3D calc_blob_len(p->key_len);
+> @@ -242,7 +243,8 @@ static int trusted_dcp_seal(struct trusted_key_payload=
+ *p, char *datablob)
+> static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablo=
+b)
+> {
+>    struct dcp_blob_fmt *b =3D (struct dcp_blob_fmt *)p->blob;
+> -    int blen, ret;
+> +    size_t blen;
+> +    int ret;
+>    u8 *plain_blob_key =3D NULL;
+>=20
+>    if (b->fmt_version !=3D DCP_BLOB_VERSION) {
+> @@ -253,9 +255,14 @@ static int trusted_dcp_unseal(struct trusted_key_payl=
+oad *p, char *datablob)
+>    }
+>=20
+>    p->key_len =3D le32_to_cpu(b->payload_len);
+> +    if (p->key_len < MIN_KEY_SIZE || p->key_len > MAX_KEY_SIZE) {
+> +        ret =3D -EINVAL;
+> +        goto out;
+> +    }
+> +
+>    blen =3D calc_blob_len(p->key_len);
+>    if (blen !=3D p->blob_len) {
+> -        pr_err("DCP blob has bad length: %i !=3D %i\n", blen,
+> +        pr_err("DCP blob has bad length: %zu !=3D %u\n", blen,
+>               p->blob_len);
+>        ret =3D -EINVAL;
+>        goto out;
+>=20
+> base-commit: 6d41c11ef3044788902a05e292cd7f0a9c7a8157
+> --
+> 2.53.0
+>=20
 
-Signed-off-by: Andre Eikmeyer <andre@negmaster.com>
----
- drivers/thunderbolt/tb.c | 49 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+LGTM and thanks for the fix!
 
-diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-index c69c323e6952..26529141573a 100644
---- a/drivers/thunderbolt/tb.c
-+++ b/drivers/thunderbolt/tb.c
-@@ -6,6 +6,7 @@
-  * Copyright (C) 2019, Intel Corporation
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/slab.h>
- #include <linux/errno.h>
- #include <linux/delay.h>
-@@ -3310,6 +3311,54 @@ static bool tb_apple_add_links(struct tb_nhi *nhi)
- 	if (!x86_apple_machine)
- 		return false;
- 
-+	/* On T2 Macs. the root ports are stored in ACPI as TRP0,
-+	 * TRP1, etc. Find them and create device links
-+	 * so that PCIe tunnels can be re-established after
-+	 * sleep.
-+	 */
-+	if (has_t2_chip) {
-+		struct acpi_device *adev;
-+		unsigned int slot, func;
-+		const struct device_link *link;
-+		const char *bid;
-+
-+		for (slot = 0; slot < 32; slot++) {
-+			for (func = 0; func < 8; func++) {
-+				pdev = pci_get_slot(nhi->pdev->bus, PCI_DEVFN(slot, func));
-+				if (!pdev)
-+					continue;
-+
-+				if (!pci_is_pcie(pdev) || pci_pcie_type(pdev) !=
-+						PCI_EXP_TYPE_ROOT_PORT)
-+					goto put_pdev;
-+
-+				adev = ACPI_COMPANION(&pdev->dev);
-+				if (!adev)
-+					goto put_pdev;
-+
-+				bid = acpi_device_bid(adev);
-+				if (!bid || strncmp(bid, "TRP", 3) != 0)
-+					goto put_pdev;
-+
-+				link = device_link_add(&pdev->dev, &nhi->pdev->dev,
-+						DL_FLAG_AUTOREMOVE_SUPPLIER |
-+						DL_FLAG_PM_RUNTIME);
-+				if (link) {
-+					dev_dbg(&nhi->pdev->dev, "created link from %s\n",
-+						dev_name(&pdev->dev));
-+					ret = true;
-+				} else
-+					dev_warn(&nhi->pdev->dev,
-+						"device link creation from %s failed\n",
-+						dev_name(&pdev->dev));
-+
-+put_pdev:
-+	pci_dev_put(pdev);
-+			}
-+		}
-+		return ret;
-+	}
-+
- 	switch (nhi->pdev->device) {
- 	case PCI_DEVICE_ID_INTEL_LIGHT_RIDGE:
- 	case PCI_DEVICE_ID_INTEL_CACTUS_RIDGE_4C:
--- 
-2.43.0
+Reviewed-by: David Gstir <david@sigma-star.at>
 
+- David=
