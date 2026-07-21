@@ -1,68 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD86371CE3;
-	Tue, 21 Jul 2026 10:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC4C367B60;
+	Tue, 21 Jul 2026 15:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784631434; cv=none; b=c+zt8qGIArnNKxZf/ESx0t0FKcUXVmNMI0PdcMqK+cqdHiXfZI3NW3NSut8x1rK+fxyL7sdiS+wWYCeQgd5cBNt05c/0Zjs2vFFqdfyph+d3J/B3vPeHJP75LsZzG4N59n9S+DJ+CHEqQ0aRJ0k/2Yiq+09wU+Sn0AwLclB57dk=
+	t=1784647769; cv=none; b=F0vmhPAAGOtDe+WLtcinpNv/JOkt/R77B0pvulpHRu4zAh6v96Zy3Wzbzi+0Luh4Ct/2kLDRvlmkZTgpShm6LIBSObQO72SSh+WtAfsxB9XPQrB5kloQw4weT434IUdiFc7k0h/5yYSFHrG5Otw8swB6o/aKcWZV/grVT+IwBVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784631434; c=relaxed/simple;
-	bh=FrPiBeNYBrkEVNu7Obl5HagOybFy3R7DOwC8GCslr60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rE+LJprHK+Dm71iCekkbKHC6zuaCv0LicPbIsDWtI5wQl+uCoJi5nAeNiwiGPqwBsNZa+9SAq98kcUjTviuU66qgly6gOPEvxGDkYvC0UymYSHnBGm+Wmi0n6+YfudeUprvSc+14SFmnjIZ2KgtLzjeBavmFxUaDJmTp35Se/As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIu0Kok7; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784647769; c=relaxed/simple;
+	bh=6YNNZIFpa1OsYiAePENW2CYKRSiDbIY4qh/xUvVrYXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gzXhe0Wq7LxTmPVipYCxRbTNzTwEtxkygUwGEZHXft0UIBbBr7NhTiG5TQu1ONqihSjJmu5wXtmr86FzMXkZGt1Obt2R04ILVvxXJG91R3gOMegCwDTAhoZ5NOivn+a3M094t7zc3qLXOiH6XbTsy4UQAkz1xcES5s1JfQQmOeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5GtKRfC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIu0Kok7"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id AE0961F00A3A;
-	Tue, 21 Jul 2026 10:57:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5GtKRfC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642351F00A3A;
+	Tue, 21 Jul 2026 15:29:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784631431;
-	bh=BpON3fOLh10v0vA+o9g1WN6Hs4y84zPqKDZ0G0n+GhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cIu0Kok7j/8vi433JBME1hP3gaHPa/UcbZAdMEwPlafyiLduVpebVjFktRfo3EWc2
-	 lHDpLLYU+qMH1LH6jmYm6+j0KULxg5j7yejOAtY3iGk85+dsdbYWoz9akjKDqxGYnC
-	 iGjNqFk/DS27tJTbeWYaZJBKFoEqupKM9UOlW/vAMEomzn3qV+VWsAEdfPSdrC1YAN
-	 kzCFw4Xey9hK66RzBzzsPMbapfMSfGm/380oXH7KksBIK8xnX8hA/XY+2DjdciMYFt
-	 PWK2egWvLMYIRI/ThXWyd5cqPfuWJOar5GrpVhEOO2+iVr0S2O4gppojQaMLc4/xHt
-	 xjR0QpbEjnl+w==
-Date: Tue, 21 Jul 2026 13:57:07 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] treewide: Add a flag to detect the Apple T2 chip
-Message-ID: <al9Qg-0o0XNlo_Z6@kernel.org>
-References: <20260721063412.11588-1-atharvatiwarilinuxdev@gmail.com>
- <20260721063412.11588-2-atharvatiwarilinuxdev@gmail.com>
+	s=k20260515; t=1784647768;
+	bh=vKR0zlu4bK2eye4JJSxzjC3UQbyoedFDIfb+cFpF7yI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=P5GtKRfCBc3xqCC+TlINJzdnXVxCjDemORr98LEM7iXwLwu4yz4RT8DrZSjAtEFoU
+	 3kA0E7mWKVBNs/9BurxF5ZwULBFcnTvqN6jR75eYS9VlJPFA8316RTtLVSvXT+Fcsc
+	 3QvzzKNYPzS/VCtbrXkbtrg0gmMfttl2OM4JhsNEWMdlkOAl6px66BrylVDE4esJlT
+	 qV46lU8gq9rhUGeWqnKL3yEQhPs5rkqnG85TzZKgTE2mpcT5zcR5UaUYISXXuhMv07
+	 WoNj0TAYsg6k2OMZnI5Qf8ZwIMqx6M+PUQjKKGD76fxuxgG/5rEiDZhTT98iHEPPfa
+	 lZs01SJgzeajQ==
+Message-ID: <e74d963c-8cf0-42ee-8b83-86e8c65dd0c7@kernel.org>
+Date: Tue, 21 Jul 2026 17:29:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] treewide: Add a flag to detect the Apple T2 chip
+To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andreas Noever <andreas.noever@gmail.com>,
+ Mika Westerberg <westeri@kernel.org>, Yehezkel Bernat
+ <YehezkelShB@gmail.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+References: <20260721063412.11588-1-atharvatiwarilinuxdev@gmail.com>
+ <20260721063412.11588-2-atharvatiwarilinuxdev@gmail.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
 In-Reply-To: <20260721063412.11588-2-atharvatiwarilinuxdev@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 21, 2026 at 02:34:06AM -0400, Atharva Tiwari wrote:
+Hi,
+
+On 21-Jul-26 08:34, Atharva Tiwari wrote:
 > Add a flag to detect Apple T2 chips on Intel Macs.
 > Cache the result to avoid repeated checks. That will
 > be used in upcoming patches.
@@ -186,12 +186,42 @@ On Tue, Jul 21, 2026 at 02:34:06AM -0400, Atharva Tiwari wrote:
 > +	{ }
 > +};
 > +
+
+This takes quite a bit of storage, struct dmi_system_id is not
+very efficient.
+
+How about making this a NULL terminated array of strings:
+
+const char *apple_t2_devices[] __initconst = {
+	"MacBookPro15,1",
+	...
+	"iMacPro1,1",
+	NULL
+};
+
 >  void __init early_platform_quirks(void)
 >  {
 >  	x86_apple_machine = dmi_match(DMI_SYS_VENDOR, "Apple Inc.") ||
 >  			    dmi_match(DMI_SYS_VENDOR, "Apple Computer, Inc.");
 > +
 > +	has_apple_t2_chip = dmi_check_system(apple_t2_devices);
+
+and then here:
+
+	for (int i = 0; x86_apple_machine && apple_t2_devices[i]; i++)
+		if (dmi_match(DMI_PRODUCT_NAME, apple_t2_devices[i])) {
+			has_apple_t2_chip = true;
+			break;
+		}
+
+This should save some space and IMHO just having a compact list of
+product-names is more readable too.
+
+Regards,
+
+Hans
+
+
 >  }
 > diff --git a/include/linux/platform_data/x86/apple.h b/include/linux/platform_data/x86/apple.h
 > index 079e816c3c21..47b27dceab18 100644
@@ -293,11 +323,4 @@ On Tue, Jul 21, 2026 at 02:34:06AM -0400, Atharva Tiwari wrote:
 >  		pr_err("Reading UEFI Secure Boot Certs is not supported on T2 Macs.\n");
 >  		return false;
 >  	}
-> -- 
-> 2.43.0
-> 
 
-
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-BR, Jarkko
