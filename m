@@ -1,127 +1,217 @@
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9EE3B634E;
-	Tue, 28 Jul 2026 12:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B30343F0A0
+	for <linux-integrity@vger.kernel.org>; Tue, 28 Jul 2026 13:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785242189; cv=none; b=e5IbYpn9WsLav0X/9hehIhyZ0ByOZgCVqQQn4uvBekndT7CisX6lk1ELHOzOHEOt0VretwG0ak98Tu3HI4/fWSxvOD9WXi2A600iefY1OmSb73CvwPWgSC+VvEfYUBc1fL+nQKFwrU4OgOQHlqcdFtnF6k48oTcPt/O9Fx3xPW4=
+	t=1785245781; cv=none; b=Sib6yW636Vbl2Ouk4BJMklygJCn5ufC2GqM/p9DWLOV9cT5jhKnSM2r5kKkI//IVAEH18GbOxR2SUUt6d/uvKk+4CDVRtb1V/g8uMdljrP7eG8apECm2zDzWy14okRKsT93KvFWldilOwZ+GZB153XtBArvKegNjTh5qgrSjQkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785242189; c=relaxed/simple;
-	bh=kOG3AVBkZxk3B75iRQwRDvUYo1TF5H078U6MxMvzwac=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F5qgi6X75p4x2A0UPvdBZBtdJNmJSUfyAvvN0tQTqLHTlLie7Utl8SrjEtoGcomNaRTFVk9t29Umbv57pGh7m7hYVlIm+iCbR4Cwrd2htnCwpT6WuP7f0Jar4PNAuaW9yenc4RpAqdF8pcW2HgWBJrSF2g/w2N/05XkoBaYdxUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=oZSUqz+U; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1785245781; c=relaxed/simple;
+	bh=jFb4NEgm+qGAeWQCHHZdv0QEx4x5XRSd5vEwmjfSPAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNIN03OSQJsxTUvOhV3cgGw1Fo4ZWiTYo/pOC5imzp5BRFwRCiXuOBYvss09jhC8tMgCOB/0GosfK8RHdi3OC1x+f3rMxinjbHwe5l7pB/XFEzoItd/uZQlvJiKR4M6voGhyYLfzJ1+yLcdXKsR5axIQcT0hLB0b6T6JCmLt564=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TSz/Ksf4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bsR0PWIp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MG3HkDac; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ScDslEyu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="oZSUqz+U"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=R3k+m4FDV5iHvOr6sHonDGuihmRyKD4FT+xt3E6oGEI=;
-	b=oZSUqz+U7TDeFC0Z0dweDpZJUWnWhlxQXHgkRj0fyIci6DfdAVb+feibjjUAj4fcTZtfqIbm4
-	AjIPQhdSzJvhlKmkcuUgT4MxtJAaA2z649UtLnwyWtwFeMw+6PvxamjrMZeIAUhe2kiWQZrTT7A
-	Fg6oAijSWJE7tvuUJk2k4gw=
-Received: from mail.maildlp.com (unknown [172.19.163.104])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4h8ZTS0Xynz1T4Fq;
-	Tue, 28 Jul 2026 20:26:52 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5CF614057F;
-	Tue, 28 Jul 2026 20:36:21 +0800 (CST)
-Received: from kwepemq500013.china.huawei.com (7.202.195.103) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 28 Jul 2026 20:36:21 +0800
-Received: from dggphis33418.huawei.com (10.244.148.83) by
- kwepemq500013.china.huawei.com (7.202.195.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 28 Jul 2026 20:36:20 +0800
-From: Gaosheng Cui <cuigaosheng1@huawei.com>
-To: <cuigaosheng1@huawei.com>, <lujialin4@huawei.com>, <zohar@linux.ibm.com>,
-	<roberto.sassu@huawei.com>, <dmitry.kasatkin@gmail.com>,
-	<eric.snowberg@oracle.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<serge@hallyn.com>
-CC: <linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: [PATCH -next,v3] ima: add cond_resched() in ima_calc_file_hash_tfm loop
-Date: Tue, 28 Jul 2026 20:33:50 +0800
-Message-ID: <20260728123350.2751590-1-cuigaosheng1@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TSz/Ksf4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bsR0PWIp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MG3HkDac";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ScDslEyu"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C803F7C3BB;
+	Tue, 28 Jul 2026 13:36:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1785245767;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=txwnUYha9Sxl5FyRqjyaQvZAcHk+Y32HHqjnfCKkrrQ=;
+	b=TSz/Ksf4KZQpwcdUbvQN1lo2kizsjyxpaT13xgVD1ttwVCsy27S2NiYdCiIyuy9la8IcUc
+	dr1sPAZuRdMK4iubDGkLrbt6RprrRpLHiT4akmSVEkI0/vwhtpRNK4vBz4JGybwg0oyKt1
+	PQlJPtHHKm37dL7iMcPKys1D6kYfdjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1785245767;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=txwnUYha9Sxl5FyRqjyaQvZAcHk+Y32HHqjnfCKkrrQ=;
+	b=bsR0PWIp0TdYaG2Oc6trK8PXaRPXK/czOwxXgF1eMUP/xB8ctH5Pa5sIWUBsT1JyfoD2/A
+	3BcNDIcO21OlgsDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1785245762;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=txwnUYha9Sxl5FyRqjyaQvZAcHk+Y32HHqjnfCKkrrQ=;
+	b=MG3HkDaccFpxwpNjWzXCNxfZNF7C/ZUu/nlr+pgdnzCu9sdXxBS4NKkvKR+NU6N6/rvWuR
+	rgqdYt/isKZZxgOh4SQqi5vKXwh043uLdkYWN7e1857U89x2xunF2eMAHUFKUlZct4UvdK
+	G5Z1eWy8eZPLFS/pB7chrMzJRAOK0kg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1785245762;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=txwnUYha9Sxl5FyRqjyaQvZAcHk+Y32HHqjnfCKkrrQ=;
+	b=ScDslEyuzPTWw6dFeoTWWnMJHUPLpfSBstedDjVYlkyatrnAnWNzIcb0oMZJ2WXMtADKs8
+	WDQ7mYVywuiXJ1AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 14704779B3;
+	Tue, 28 Jul 2026 13:36:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xcHlOUGwaGr3YAAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Tue, 28 Jul 2026 13:36:01 +0000
+Date: Tue, 28 Jul 2026 15:35:56 +0200
+From: Petr Vorel <pvorel@suse.cz>
+To: linuxtestproject.agent@gmail.com
+Cc: ltp@lists.linux.it, Mimi Zohar <zohar@linux.ibm.com>,
+	linux-integrity@vger.kernel.org
+Subject: Re: ima_setup.sh: Fix check_policy_writable() for kernel < 4.5
+Message-ID: <20260728133556.GA1128467@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20260728114224.1055009-1-pvorel@suse.cz>
+ <20260728125815.4069-1-linuxtestproject.agent@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemq500013.china.huawei.com (7.202.195.103)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260728125815.4069-1-linuxtestproject.agent@gmail.com>
+X-Spam-Score: -2.00
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_EQ_FROM(0.00)[]
 
-When hashing large files, the while loop in ima_calc_file_hash_tfm
-processes PAGE_SIZE chunks without any scheduling point, which can
-cause soft lockup warnings:
-watchdog: BUG: soft lockup - CPU#0 stuck for 50s!
-Call Trace:
-  _sha256_update+0x12d/0x1a0
-  ima_calc_file_hash_tfm+0xfb/0x150
-  ima_calc_file_hash+0x6e/0x160
-  ima_collect_measurement+0x202/0x340
-  process_measurement+0x3a9/0xb30
-  ima_file_check+0x56/0xa0
-  do_open+0x11b/0x250
-  path_openat+0x10b/0x1d0
-  do_filp_open+0xa9/0x150
-  do_sys_openat2+0x223/0x2a0
-  __x64_sys_openat+0x54/0xa0
-  do_syscall_64+0x59/0x110
-  entry_SYSCALL_64_after_hwframe+0x78/0xe2
+Hi Mimi,
 
-Call cond_resched() every 4MB to yield the CPU when needed, rather
-than at every loop iteration, to reduce overhead.
+once you have time, I'd appreciate your comments. Thanks!
 
-Using IS_ALIGNED(offset, SZ_4M) to trigger cond_resched() is fragile
-because integrity_kernel_read() -> __kernel_read() can return fewer
-bytes than requested (short read). Short reads can occur across
-various filesystems — while common on remote (NFS, CIFS) and FUSE
-filesystems, they are also possible in edge cases on local
-filesystems (e.g., reading near EOF). Once a short read occurs,
-the offset becomes permanently misaligned and cond_resched() may
-never be called again for the remainder of the file. Replace the
-alignment check with a cumulative byte counter that tracks the
-actual data hashed since the last reschedule point, which is robust
-regardless of short read behavior.
+> Hi Petr,
 
-Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
----
- security/integrity/ima/ima_crypto.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> On Tue, Jul 28, 2026 at 01:42:24PM +0200, Petr Vorel wrote:
+> > ima_setup.sh: Fix check_policy_writable() for kernel < 4.5
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 0d72b48249ee..55f9a5642ebc 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -195,6 +195,7 @@ static int ima_calc_file_hash_tfm(struct file *file,
- 				  struct crypto_shash *tfm)
- {
- 	loff_t i_size, offset = 0;
-+	unsigned int bytes_hashed = 0;
- 	char *rbuf;
- 	int rc;
- 	SHASH_DESC_ON_STACK(shash, tfm);
-@@ -233,6 +234,12 @@ static int ima_calc_file_hash_tfm(struct file *file,
- 		rc = crypto_shash_update(shash, rbuf, rbuf_len);
- 		if (rc)
- 			break;
-+
-+		bytes_hashed += rbuf_len;
-+		if (bytes_hashed >= SZ_4M) {
-+			cond_resched();
-+			bytes_hashed = 0;
-+		}
- 	}
- 	kfree(rbuf);
- out:
--- 
-2.43.0
+> > -	# workaround for kernels < v4.18 without fix
+> > +
+> > +	# Workaround for kernels < v4.18 without fix
+> >  	# ffb122de9a60b ("ima: Reflect correct permissions for policy")
+> > -	echo "" 2> log > $IMA_POLICY
+> > -	grep -q "Device or resource busy" log && return 1
+> > +	# Require >= 4.5 to write multiple times via CONFIG_IMA_WRITE_POLICY
+> > +	# 38d859f991f3 ("IMA: policy can now be updated multiple times")
 
+> Is CONFIG_IMA_WRITE_POLICY really the reason for the 4.5 boundary here?
+
+> On >= 4.5 ima_release_policy() runs ima_check_policy(), which returns
+> -EINVAL when ima_temp_rules is empty. The empty write therefore sets
+> valid_policy = 0, ima_delete_rules() is called and IMA_FS_BUSY is
+> cleared, so the probe stays non-destructive even when
+> CONFIG_IMA_WRITE_POLICY=n.
+
+Well, CONFIG_IMA_WRITE_POLICY did not exist in kernel < 4.5 (not sure if that's
+obvious from the comment I added).
+
+> What makes < 4.5 different is the absence of ima_check_policy(): there
+Yes, that's true that ima_check_policy() was added in v4.5.
+
+> the empty write is committed and securityfs_remove() drops the policy
+> file. Would it be clearer to state that, and to keep the v4.18
+> permission workaround in a separate paragraph, since the two comments
+> describe unrelated things?
+
+> > +	if tst_kvcmp -ge 4.5; then
+> > +		echo "" 2> log > $IMA_POLICY
+> > +		grep -q "Device or resource busy" log && return 1
+> > +	fi
+> >  	return 0
+
+> With this, require_policy_writable() no longer TCONFs on < 4.5, so
+> ima_policy.sh test2 ("verify that policy file is not opened concurrently
+> and able to loaded multiple times") now runs there.
+
+Hm, maybe test2() does not really makes sense to run on < v4.5. But test1()
+certainly does. And echo "" > $IMA_POLICY really disables policy in v4.4,
+likely due one of these from v4.5-rc1:
+* 38d859f991f3 ("IMA: policy can now be updated multiple times")
+* 0112721df4ed ("IMA: policy can be updated zero times")
+@Mimi WDYT?
+
+> On those kernels one loader gets -EBUSY at open, the other succeeds and
+> the policy file is then removed on release. That hits
+
+> 	elif [ $rc1 -eq 0 ] || [ $rc2 -eq 0 ]; then
+> 		tst_res TPASS "policy was loaded just by one process and able to loaded multiple times"
+
+> so the test reports that the policy can be loaded multiple times while
+> only the concurrency half of the assertion was exercised, and loading
+> twice is not possible before 4.5.
+That sounds correct and should be fixed.
+
+> Should test2 report TCONF (or split the two assertions) when
+> CONFIG_IMA_WRITE_POLICY is not available?
+With requiring test2 to be run on kernel >= v4.5 (I'll add it to v2) everything
+should work even with this patch (unmodified behavior on >= v4.5, avoid write
+policy on < 4.5 when doing the check for ima_policy.sh test1 and for other IMA
+tests).
+
+> Verdict - Needs revision
+
+> Pre-existing issues, not introduced by this patch:
+
+> - "log" is created in the test working directory by
+>   check_policy_writable() and load_ima_policy() and is never removed.
+False positive - file is removed during cleanup of the temporary directory
+because all tests use TST_NEEDS_TMPDIR=1.
+
+> - $IMA_POLICY is expanded unquoted throughout ima_setup.sh.
+False positive - /sys/kernel/security/ima/policy does not need to be quoted.
+
+Kind regards,
+Petr
+
+> ---
+> Note:
+
+> The agent can sometimes produce false positives although often its
+> findings are genuine. If you find issues with the review, please
+> comment this email or ignore the suggestions.
+
+> Regards,
+> LTP AI Reviewer
