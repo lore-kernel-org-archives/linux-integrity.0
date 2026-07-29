@@ -1,99 +1,217 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8213806BD
-	for <linux-integrity@vger.kernel.org>; Wed, 29 Jul 2026 06:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B521397923
+	for <linux-integrity@vger.kernel.org>; Wed, 29 Jul 2026 17:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785308063; cv=none; b=gVN563sAJoI5OKeg2Hzz4moZpgfmHQ7y5W/Sizfi1Zgnv0Hn9s1c375oDvemdXhbph0FgaAW7U/npmpApQI4hAD4cEiiM0HMzr3xnIyaxuaBLdN0FzEI9eQSuXqRjMfBdcZJSsEN75zzqeioXokzXV0atTNZ+TjQ0boUm4+2iI0=
+	t=1785347760; cv=none; b=ByUf/QpZxa0Pb48oEksR6sHq6Tc6SZiiJVUiF+zyowCAbgtVtQeAIf+sJ2FsRD+Rj0+DiwMTeGAH3BwCX7C13Opq8l3UyahBIRSIPigTSoM+fK2oyGESX3HJE0ifodKdgzaP7dXKW6spuNIZ1chKbijKmXRjiRCMTOwEIfTM/hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785308063; c=relaxed/simple;
-	bh=ANKyctcOgwa2WBltXNXle8ZCvqV2C1821WIGH9X8vj8=;
-	h=Message-ID:From:To:Cc:In-Reply-To:Subject:Content-Type:Date; b=IDY3XPxW5o7JLsAQg5ooepvilQnX3jRfoiBhpy0Wvi4+it+Ecw4Rf7YuvFvS+IvZBWHMXmLhns2adCQ9En/Q34+3PJ5BqGp19HZIJCWtVmVndG1zxrIVzztFzDaYjYgQhmF2wpYHe7c0qG2yJFbrY73tO+w8VC3wFo83fTqP5Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Oxn+umYy; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1785347760; c=relaxed/simple;
+	bh=3u0iXIOpRuro/S6ivbIogWND2AXNvpVGKGDKGirxDBk=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=lL01xkhVO8l/HmxxcLSni9m8bsQgCsxg5oqHQKRkDKvKgWPM9pSEvE2jPIQ4JVGHswGRcT15DLo+P0AAe4nOPd2meZAAGrYX+o+6iCFp6HGWUPETd0E5545/ehov8t1aGsXjvn4ufYrVIoBbAPIhNNfLZ96TphqcdMXyB8pPpVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Idaann5r; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Oxn+umYy"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-496bb7cdf51so5814335e9.2
-        for <linux-integrity@vger.kernel.org>; Tue, 28 Jul 2026 23:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1785308060; x=1785912860; darn=vger.kernel.org;
-        h=date:content-transfer-encoding:content-type:subject:in-reply-to:cc
-         :to:from:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4vOVaTFLPgv6tfcUdgXRDjI2ELjjUlEnRiyMnzNz27o=;
-        b=Oxn+umYyg0PSjR0RZ++4FqAQveNCj2Z8K6l2LCmkv6NeSrBWBgyn8SoE/evbAiHc6l
-         GOdleADEvrVk7+ihPOl892CYk71lKCgqbclMV5wD1oYBbfVlK+FE1kPhhSWrNLGLLHu5
-         JCnSYlG9xGeJvQqhL6bIFKPL1ya6fr2haIVjMe7nI98bEdrrn3yFKy9EX1lonQEQWyfd
-         ONlkS1PIzqE730axPh9++YJb2NBXWq2rnfs9I37wWfMov+2bpkSOstJOGPANTVV4d9Fm
-         ZACCtMVpYkDXZ4eBVI0BUsTMjuOY0helhTknskpctLghqKgOcrm2lZxHaUEmF4AVq82O
-         AC3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785308060; x=1785912860;
-        h=date:content-transfer-encoding:content-type:subject:in-reply-to:cc
-         :to:from:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=4vOVaTFLPgv6tfcUdgXRDjI2ELjjUlEnRiyMnzNz27o=;
-        b=IgQ3Anhm7JxPL0JOg19zLz+mq/moWQ6wCTC8uVwkC+fatRWHb1xc9Ms0yHTIu22L0O
-         2edRK5g2LfNSK0a1VOdoaslAbQ7zYGCDF5W9uO2EgWkvXaHiEwgO6cZAq2UtFgV0T/WG
-         qPIdWiglBaPspiFyc7QpTgXrRL/DH9WWRrP7NugqtxKykEsivrI9AnHO8er+KI76KjU6
-         tik+lCPV7xUJ0KP1mkKiiPe99egQit1CJEfDyzfOFtTDFT830iv5qdRhJM4RPnjhLAfJ
-         EZAWRQRYQ3tYifeTY37YA5qY0OgVi8ubvkSRB12/tspE/Op7aQ2G1KF+t1HGUcaUs2l1
-         MM7w==
-X-Forwarded-Encrypted: i=1; AHgh+RqM7kvz4ibA9fQJ8VxUzeOZmzFji7TtwkIPvXDVdnJHf+zglQ9sGA7MFDRbo0Md/l98uFeKNDNGRvtq0Dtd7Bc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJHy8EBNyXF4Z6vxiWhaQW5mY6+zm46YDZde/uDcW5RBtt1b5z
-	YroMt6Oea62atHsn0lLTN1m2iScOJyqkcBzJQBjSDiWiiTN68KhkAoqSUJycvu7sA2I=
-X-Gm-Gg: AR+sD138wN9wy8CMy9j72BRFg9GlC5GWHBBADqvyUkOCmTbF84fwTHAB2xZ5MPrHRCS
-	tgwKgBFpupTWuc+jM2LNt7Zm7+isFA05pIgaL6hod9yNS23rZH+W/jqsdLptCs26omdTH/lM7k3
-	CO8syvwJy//im7Xq8+xqprYrrmsvPJWOWxeHhzh+xvfkCLO3giaUCciXrvkwXqK+nLjpzGXa56a
-	nJn+wb1leCSGlLzJdfvoPZs4x1zJPVwZonSNqTc9PCHgCKZia4SNtSx6IFGfbXCZzzd4DaS/x9o
-	u/qAiA2v9iHaTGIUOoC6TnKhZVkgIahVs35Pw4im2sUKKUJ6+FVnbtj7n6hs9/sPbLbMVCFxJfx
-	hJ15SnbNT6eBx8VFvFY8EAXhB3eykLeiFcntxzeiHzS1BsOYsEsUXfeWSP9qbtCz+BmycfId5D+
-	7YvMaIi931gVwlzKCDLxWQdP95Vzw+Z+mPnTHAu7DX35Ci7A4LLYt9Fdw+K2h4EesV6vTFRglyU
-	jFG6mLYcW3m/oqRsoMRBWZiwzHqntx61md6d9b3LiPNC7YPQv8v
-X-Received: by 2002:a05:600c:154b:b0:495:5eca:f9b3 with SMTP id 5b1f17b1804b1-496c6574846mr58541475e9.26.1785308060217;
-        Tue, 28 Jul 2026 23:54:20 -0700 (PDT)
-Received: from localhost.localdomain (ip-109-40-50-253.web.vodafone.de. [109.40.50.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fb647a8d4sm5339974f8f.0.2026.07.28.23.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jul 2026 23:54:19 -0700 (PDT)
-Message-ID: <6a69a39b.a148a86f.57214.897a@mx.google.com>
-From: "Andrea Cervesato" <andrea.cervesato@suse.com>
-To: "Petr Vorel" <pvorel@suse.cz>
-Cc: linuxtestproject.agent@gmail.com, linux-integrity@vger.kernel.org, ltp@lists.linux.it
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Idaann5r"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66TFIBav284430;
+	Wed, 29 Jul 2026 17:55:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=kIgaKQ
+	XWcfZ1D1aZocHiBrx509/dikRRbzOYAOfrhbE=; b=Idaann5ri4NaO6/wNv0QcE
+	osJtrSz0lNcItot81oQs0RWyA1dY2zFv4tM+wnOrwUnvzE8LDHGIN+5Kw3JOmrWo
+	CW6iZOj5BdNeSkvEdzo5yKunSgQY+1OOvjes7D1gjX+KlRipCPjUrTpsO8aYV+js
+	KpfjIQee44CWftE0zBQpSZvNMdBHvIfprxrkHp4FU4cjhcVsCC3fUF8fFjAaGwsd
+	zXqy3dVLCPmJLELiOlgwNxzO+RV+BJHB/mMxuAJD40+wqZJXXGLXz8pSqAOLEXGC
+	b4aymbVVChjUqgmf7nrL/HBOqhEPvo8S8WsEGrgcG/icsViFeqPJtfHT2N9jD9Hg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fmv0nu5yu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Jul 2026 17:55:42 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 66THfGIL018395;
+	Wed, 29 Jul 2026 17:55:42 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4fn8fk7thw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Jul 2026 17:55:42 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 66THtfxK28181246
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 29 Jul 2026 17:55:41 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AB9955805C;
+	Wed, 29 Jul 2026 17:55:41 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 41E765805A;
+	Wed, 29 Jul 2026 17:55:41 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.108.66])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 29 Jul 2026 17:55:41 +0000 (GMT)
+Message-ID: <7279643f66b2ea6d6888716f7923363c2f59b6eb.camel@linux.ibm.com>
+Subject: Re: ima_setup.sh: Fix check_policy_writable() for kernel < 4.5
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>, linuxtestproject.agent@gmail.com
+Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org
 In-Reply-To: <20260728133556.GA1128467@pevik>
-Subject: Re: [LTP] ima_setup.sh: Fix check_policy_writable() for kernel <
- 4.5
-Content-Type: text/plain; charset=utf-8
+References: <20260728114224.1055009-1-pvorel@suse.cz>
+	 <20260728125815.4069-1-linuxtestproject.agent@gmail.com>
+	 <20260728133556.GA1128467@pevik>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 29 Jul 2026 06:54:17 +0000
+Date: Wed, 29 Jul 2026 13:55:40 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI5MDEzNyBTYWx0ZWRfX1JWC+f1yRS/K
+ e/RraXScbo/8eqY3cHd/+9LPk6NYGNVC6dvcT7D/6i9XvCn0nqyYWKa4lE8PEK/JqqNN7BFgm4Z
+ nGHSurv4nQa2D59z5Nw0XihoQgtDj6w=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI5MDEzNyBTYWx0ZWRfXwnYpvRmynRFo
+ VMvpazXguNLpRkU1Zur+17Rifg71xHDowK2c+smDvj1UeayNL+xuZnZSDrU00R1tVBoI7KzcMgk
+ w56ZqkxKUyUGto3VXik6wLrnbIJx39IJmu1uUq7AolyTpvW4RXmM5xEZTFdsYbMVUzn596Zy+J9
+ KkUzaEmyjDNvUqfjDMosFo6MKCB33tL7yJ7GQyRZSA0Frv8ZlaIlWQ3WfStbSVwPMsDdHEn09wh
+ U+UFvsDof3lBundbsbltaBTTNzRq1vQdr5e8tKi9q7i4GkRnSoPtoC0fLaC6vboPY9wL4HwSHOE
+ jhXqcV8h57q4c9jqOCrkIPbQwAnMhmRGg8lBF/t4KsgCKos519ezjBkXvZeYseaszBlRGUxNRoa
+ JLE898CeTXf9y3zBpImWbgK4pbdQFMV3enKNiKfmgD41Q2oR2UZ504ImfiQWUXBBzt8+MWHcX9W
+ jtKQ+U5QKAxWWHBjhJg==
+X-Authority-Analysis: v=2.4 cv=b5WCJNGx c=1 sm=1 tr=0 ts=6a6a3e9e cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=kLBT1emeShgpeJOJY6cA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: ZdORQgrXuODFcVdXcn7RObsXSYd0nsIL
+X-Proofpoint-ORIG-GUID: hnKvgR72_XESAT5vhuFJavPE0cXgvmfF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-29_06,2026-07-29_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 adultscore=0 malwarescore=0 impostorscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607290137
 
-Hi Petr,
-
-> > - "log" is created in the test working directory by
-> >   check_policy_writable() and load_ima_policy() and is never removed.
-> False positive - file is removed during cleanup of the temporary directory
-> because all tests use TST_NEEDS_TMPDIR=3D1.
+On Tue, 2026-07-28 at 15:35 +0200, Petr Vorel wrote:
+> Hi Mimi,
 >=20
-> > - $IMA_POLICY is expanded unquoted throughout ima_setup.sh.
-> False positive - /sys/kernel/security/ima/policy does not need to be quot=
-ed.
+> once you have time, I'd appreciate your comments. Thanks!
+>=20
+> > Hi Petr,
+>=20
+> > On Tue, Jul 28, 2026 at 01:42:24PM +0200, Petr Vorel wrote:
+> > > ima_setup.sh: Fix check_policy_writable() for kernel < 4.5
+>=20
+> > > -	# workaround for kernels < v4.18 without fix
+> > > +
+> > > +	# Workaround for kernels < v4.18 without fix
+> > >  	# ffb122de9a60b ("ima: Reflect correct permissions for policy")
+> > > -	echo "" 2> log > $IMA_POLICY
+> > > -	grep -q "Device or resource busy" log && return 1
+> > > +	# Require >=3D 4.5 to write multiple times via CONFIG_IMA_WRITE_POL=
+ICY
+> > > +	# 38d859f991f3 ("IMA: policy can now be updated multiple times")
+>=20
+> > Is CONFIG_IMA_WRITE_POLICY really the reason for the 4.5 boundary here?
 
-this is kinda normal (unfortunately). As you can see the amount of rules
-for shell tests is really basic and it doesn't cover many cases:
+Yes
 
-https://github.com/linux-test-project/ltp-agent/blob/master/rules/shell-tes=
-ts.md
+>=20
+> > On >=3D 4.5 ima_release_policy() runs ima_check_policy(), which returns
+> > -EINVAL when ima_temp_rules is empty. The empty write therefore sets
+> > valid_policy =3D 0, ima_delete_rules() is called and IMA_FS_BUSY is
+> > cleared, so the probe stays non-destructive even when
+> > CONFIG_IMA_WRITE_POLICY=3Dn.
+>=20
+> Well, CONFIG_IMA_WRITE_POLICY did not exist in kernel < 4.5 (not sure if =
+that's
+> obvious from the comment I added).
 
-Feel free to create a PR to avoid these false positive.
+Perhaps prefix the commit message with something like:
 
---
-Andrea Cervesato
-SUSE QE Automation Engineer Linux
-andrea.cervesato@suse.com
+IMA allows the builtin policy to be replaced with a custom policy just once=
+.=20
+Support for appending additional policy rules to the custom policy
+(CONFIG_IMA_WRITE_POLICY) was subsequently added in linux 4.5. Refer to com=
+mit=20
+38d859f991f3 ("IMA: policy can now be updated multiple times").
+
+>=20
+> > What makes < 4.5 different is the absence of ima_check_policy(): there
+> Yes, that's true that ima_check_policy() was added in v4.5.
+
+Agreed.
+
+> > the empty write is committed and securityfs_remove() drops the policy
+> > file. Would it be clearer to state that, and to keep the v4.18
+> > permission workaround in a separate paragraph, since the two comments
+> > describe unrelated things?
+>=20
+> > > +	if tst_kvcmp -ge 4.5; then
+> > > +		echo "" 2> log > $IMA_POLICY
+> > > +		grep -q "Device or resource busy" log && return 1
+> > > +	fi
+> > >  	return 0
+>=20
+> > With this, require_policy_writable() no longer TCONFs on < 4.5, so
+> > ima_policy.sh test2 ("verify that policy file is not opened concurrentl=
+y
+> > and able to loaded multiple times") now runs there.
+>=20
+> Hm, maybe test2() does not really makes sense to run on < v4.5. But test1=
+()
+> certainly does. And echo "" > $IMA_POLICY really disables policy in v4.4,
+> likely due one of these from v4.5-rc1:
+> * 38d859f991f3 ("IMA: policy can now be updated multiple times")
+> * 0112721df4ed ("IMA: policy can be updated zero times")
+> @Mimi WDYT?
+
+Writing an invalid policy resulted in never being able to transition from a
+builtin policy to a custom policy, similar to writing an empty policy. Comm=
+it
+0112721df4ed ("IMA: policy can be updated zero times") addressed the invali=
+d
+policy case.
+
+>=20
+> > On those kernels one loader gets -EBUSY at open, the other succeeds and
+> > the policy file is then removed on release. That hits
+>=20
+> > 	elif [ $rc1 -eq 0 ] || [ $rc2 -eq 0 ]; then
+> > 		tst_res TPASS "policy was loaded just by one process and able to load=
+ed multiple times"
+>=20
+> > so the test reports that the policy can be loaded multiple times while
+> > only the concurrency half of the assertion was exercised, and loading
+> > twice is not possible before 4.5.
+> That sounds correct and should be fixed.
+
+Correct, IMA originally permitted transitioning from a builtin policy to a
+custom policy.  Support for extending the custom IMA policy was added in 4.=
+5.
+
+Mimi
+
+>=20
+> > Should test2 report TCONF (or split the two assertions) when
+> > CONFIG_IMA_WRITE_POLICY is not available?
+> With requiring test2 to be run on kernel >=3D v4.5 (I'll add it to v2) ev=
+erything
+> should work even with this patch (unmodified behavior on >=3D v4.5, avoid=
+ write
+> policy on < 4.5 when doing the check for ima_policy.sh test1 and for othe=
+r IMA
+> tests).
+>=20
+> > Verdict - Needs revision
+>=20
+>=20
