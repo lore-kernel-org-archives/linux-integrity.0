@@ -1,101 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B18F39EB5B;
-	Tue, 28 Jul 2026 17:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8213806BD
+	for <linux-integrity@vger.kernel.org>; Wed, 29 Jul 2026 06:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785258858; cv=none; b=NMA33wSsfBIOD+LE2YlAzcdBzDWunZ4GuIO2ehw8jiHUo/If43rvdLg2n0OT8DMVNwdotWAbho4fJvtxjlnzc2yPUO9dzzV7ikdHC1Wy09Rgiw3zEndkM0h6fZl/Toy8NBPTkVHbc3kKyzPYSaalcOVdoNPpWRAUPwTQ+mmuupA=
+	t=1785308063; cv=none; b=gVN563sAJoI5OKeg2Hzz4moZpgfmHQ7y5W/Sizfi1Zgnv0Hn9s1c375oDvemdXhbph0FgaAW7U/npmpApQI4hAD4cEiiM0HMzr3xnIyaxuaBLdN0FzEI9eQSuXqRjMfBdcZJSsEN75zzqeioXokzXV0atTNZ+TjQ0boUm4+2iI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785258858; c=relaxed/simple;
-	bh=WK1vl6rEnpzszq7fUqq3RtyjJ7InvEb1ZSDa/tCBM+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YDs3x+ZSNDcYwFYYrCBFAkFGsPV2y200fxoRvn2Mb9FsXHCgvDdnOtRHeAz3D5mJEQatp2iSmM9vVCOLVEAu3lJz2H3uF9O7zVapyOKeszXuWoMIGqfxnmzLhdgKSXj/cqiZ+cvNDkO8uTfCybGUXa1Lssgz4aY/leeONElkp4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giL+94dp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785308063; c=relaxed/simple;
+	bh=ANKyctcOgwa2WBltXNXle8ZCvqV2C1821WIGH9X8vj8=;
+	h=Message-ID:From:To:Cc:In-Reply-To:Subject:Content-Type:Date; b=IDY3XPxW5o7JLsAQg5ooepvilQnX3jRfoiBhpy0Wvi4+it+Ecw4Rf7YuvFvS+IvZBWHMXmLhns2adCQ9En/Q34+3PJ5BqGp19HZIJCWtVmVndG1zxrIVzztFzDaYjYgQhmF2wpYHe7c0qG2yJFbrY73tO+w8VC3wFo83fTqP5Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Oxn+umYy; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giL+94dp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C30B21F000E9;
-	Tue, 28 Jul 2026 17:14:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785258856;
-	bh=3FAw8Qsfeb2JdyMijz9P+Iw7lcvz+cg3BtpqyZzooHA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=giL+94dpanfDij6Zw8/FphiJBAozmcjQXW4uwJD4X7wkE8/BqT1+mY8uqSQUIf0Y8
-	 bOqaYQ8E8lmqa0VwSiNHh9u7GFxbq31n5udnyzi1T2daW+RWXgAbjFIKGBsU0S48g9
-	 oE4lanG19xabyt4PcraZyi8EnuKmcDP/X+aGEvl9T3xq+RsqFgRrkHygnizfeFqtul
-	 0E+2o5nnmTx4/PZC+csTl1j13crPMLPXT4lIhA9QEb7fMYU+xhpMxvtzItYEBOnqKm
-	 tAIFqxgoHCQNmpLXDpVci9fTs1lQFvRE/ceNaWRp1fA/YwfgMK7qw/kpvnr56v3hJE
-	 2dlm9TvxSPjmg==
-Date: Tue, 28 Jul 2026 17:14:14 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Gaosheng Cui <cuigaosheng1@huawei.com>
-Cc: lujialin4@huawei.com, zohar@linux.ibm.com, roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH -next,v3] ima: add cond_resched() in
- ima_calc_file_hash_tfm loop
-Message-ID: <20260728171414.GA3355536@google.com>
-References: <20260728123350.2751590-1-cuigaosheng1@huawei.com>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Oxn+umYy"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-496bb7cdf51so5814335e9.2
+        for <linux-integrity@vger.kernel.org>; Tue, 28 Jul 2026 23:54:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1785308060; x=1785912860; darn=vger.kernel.org;
+        h=date:content-transfer-encoding:content-type:subject:in-reply-to:cc
+         :to:from:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=4vOVaTFLPgv6tfcUdgXRDjI2ELjjUlEnRiyMnzNz27o=;
+        b=Oxn+umYyg0PSjR0RZ++4FqAQveNCj2Z8K6l2LCmkv6NeSrBWBgyn8SoE/evbAiHc6l
+         GOdleADEvrVk7+ihPOl892CYk71lKCgqbclMV5wD1oYBbfVlK+FE1kPhhSWrNLGLLHu5
+         JCnSYlG9xGeJvQqhL6bIFKPL1ya6fr2haIVjMe7nI98bEdrrn3yFKy9EX1lonQEQWyfd
+         ONlkS1PIzqE730axPh9++YJb2NBXWq2rnfs9I37wWfMov+2bpkSOstJOGPANTVV4d9Fm
+         ZACCtMVpYkDXZ4eBVI0BUsTMjuOY0helhTknskpctLghqKgOcrm2lZxHaUEmF4AVq82O
+         AC3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785308060; x=1785912860;
+        h=date:content-transfer-encoding:content-type:subject:in-reply-to:cc
+         :to:from:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=4vOVaTFLPgv6tfcUdgXRDjI2ELjjUlEnRiyMnzNz27o=;
+        b=IgQ3Anhm7JxPL0JOg19zLz+mq/moWQ6wCTC8uVwkC+fatRWHb1xc9Ms0yHTIu22L0O
+         2edRK5g2LfNSK0a1VOdoaslAbQ7zYGCDF5W9uO2EgWkvXaHiEwgO6cZAq2UtFgV0T/WG
+         qPIdWiglBaPspiFyc7QpTgXrRL/DH9WWRrP7NugqtxKykEsivrI9AnHO8er+KI76KjU6
+         tik+lCPV7xUJ0KP1mkKiiPe99egQit1CJEfDyzfOFtTDFT830iv5qdRhJM4RPnjhLAfJ
+         EZAWRQRYQ3tYifeTY37YA5qY0OgVi8ubvkSRB12/tspE/Op7aQ2G1KF+t1HGUcaUs2l1
+         MM7w==
+X-Forwarded-Encrypted: i=1; AHgh+RqM7kvz4ibA9fQJ8VxUzeOZmzFji7TtwkIPvXDVdnJHf+zglQ9sGA7MFDRbo0Md/l98uFeKNDNGRvtq0Dtd7Bc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJHy8EBNyXF4Z6vxiWhaQW5mY6+zm46YDZde/uDcW5RBtt1b5z
+	YroMt6Oea62atHsn0lLTN1m2iScOJyqkcBzJQBjSDiWiiTN68KhkAoqSUJycvu7sA2I=
+X-Gm-Gg: AR+sD138wN9wy8CMy9j72BRFg9GlC5GWHBBADqvyUkOCmTbF84fwTHAB2xZ5MPrHRCS
+	tgwKgBFpupTWuc+jM2LNt7Zm7+isFA05pIgaL6hod9yNS23rZH+W/jqsdLptCs26omdTH/lM7k3
+	CO8syvwJy//im7Xq8+xqprYrrmsvPJWOWxeHhzh+xvfkCLO3giaUCciXrvkwXqK+nLjpzGXa56a
+	nJn+wb1leCSGlLzJdfvoPZs4x1zJPVwZonSNqTc9PCHgCKZia4SNtSx6IFGfbXCZzzd4DaS/x9o
+	u/qAiA2v9iHaTGIUOoC6TnKhZVkgIahVs35Pw4im2sUKKUJ6+FVnbtj7n6hs9/sPbLbMVCFxJfx
+	hJ15SnbNT6eBx8VFvFY8EAXhB3eykLeiFcntxzeiHzS1BsOYsEsUXfeWSP9qbtCz+BmycfId5D+
+	7YvMaIi931gVwlzKCDLxWQdP95Vzw+Z+mPnTHAu7DX35Ci7A4LLYt9Fdw+K2h4EesV6vTFRglyU
+	jFG6mLYcW3m/oqRsoMRBWZiwzHqntx61md6d9b3LiPNC7YPQv8v
+X-Received: by 2002:a05:600c:154b:b0:495:5eca:f9b3 with SMTP id 5b1f17b1804b1-496c6574846mr58541475e9.26.1785308060217;
+        Tue, 28 Jul 2026 23:54:20 -0700 (PDT)
+Received: from localhost.localdomain (ip-109-40-50-253.web.vodafone.de. [109.40.50.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fb647a8d4sm5339974f8f.0.2026.07.28.23.54.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jul 2026 23:54:19 -0700 (PDT)
+Message-ID: <6a69a39b.a148a86f.57214.897a@mx.google.com>
+From: "Andrea Cervesato" <andrea.cervesato@suse.com>
+To: "Petr Vorel" <pvorel@suse.cz>
+Cc: linuxtestproject.agent@gmail.com, linux-integrity@vger.kernel.org, ltp@lists.linux.it
+In-Reply-To: <20260728133556.GA1128467@pevik>
+Subject: Re: [LTP] ima_setup.sh: Fix check_policy_writable() for kernel <
+ 4.5
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 29 Jul 2026 06:54:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260728123350.2751590-1-cuigaosheng1@huawei.com>
 
-On Tue, Jul 28, 2026 at 08:33:50PM +0800, Gaosheng Cui wrote:
-> When hashing large files, the while loop in ima_calc_file_hash_tfm
-> processes PAGE_SIZE chunks without any scheduling point, which can
-> cause soft lockup warnings:
-> watchdog: BUG: soft lockup - CPU#0 stuck for 50s!
-> Call Trace:
->   _sha256_update+0x12d/0x1a0
->   ima_calc_file_hash_tfm+0xfb/0x150
->   ima_calc_file_hash+0x6e/0x160
->   ima_collect_measurement+0x202/0x340
->   process_measurement+0x3a9/0xb30
->   ima_file_check+0x56/0xa0
->   do_open+0x11b/0x250
->   path_openat+0x10b/0x1d0
->   do_filp_open+0xa9/0x150
->   do_sys_openat2+0x223/0x2a0
->   __x64_sys_openat+0x54/0xa0
->   do_syscall_64+0x59/0x110
->   entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> 
-> Call cond_resched() every 4MB to yield the CPU when needed, rather
-> than at every loop iteration, to reduce overhead.
-> 
-> Using IS_ALIGNED(offset, SZ_4M) to trigger cond_resched() is fragile
-> because integrity_kernel_read() -> __kernel_read() can return fewer
-> bytes than requested (short read). Short reads can occur across
-> various filesystems — while common on remote (NFS, CIFS) and FUSE
-> filesystems, they are also possible in edge cases on local
-> filesystems (e.g., reading near EOF). Once a short read occurs,
-> the offset becomes permanently misaligned and cond_resched() may
-> never be called again for the remainder of the file. Replace the
-> alignment check with a cumulative byte counter that tracks the
-> actual data hashed since the last reschedule point, which is robust
-> regardless of short read behavior.
-> 
-> Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+Hi Petr,
 
-Which architecture are you seeing this issue on, and which kernel
-version?  In current mainline, most architectures (x86, arm64,
-loongarch, riscv, s390) offer only lazy preemption and full preemption.
-In all these cases, cond_resched() is obsolete and unnecessary.
+> > - "log" is created in the test working directory by
+> >   check_policy_writable() and load_ima_policy() and is never removed.
+> False positive - file is removed during cleanup of the temporary directory
+> because all tests use TST_NEEDS_TMPDIR=3D1.
+>=20
+> > - $IMA_POLICY is expanded unquoted throughout ima_setup.sh.
+> False positive - /sys/kernel/security/ima/policy does not need to be quot=
+ed.
 
-I understand the concept of cond_resched() as a whole is on its way out.
-It is an approach that has never worked well.
+this is kinda normal (unfortunately). As you can see the amount of rules
+for shell tests is really basic and it doesn't cover many cases:
 
-Is it possible that you're seeing this issue only on an older kernel
-version and not mainline?
+https://github.com/linux-test-project/ltp-agent/blob/master/rules/shell-tes=
+ts.md
 
-- Eric
+Feel free to create a PR to avoid these false positive.
+
+--
+Andrea Cervesato
+SUSE QE Automation Engineer Linux
+andrea.cervesato@suse.com
