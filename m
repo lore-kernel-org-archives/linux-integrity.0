@@ -1,66 +1,66 @@
-Received: from mail-wr2-f1.google.com (mail-wr2-f1.google.com [74.125.225.65])
+Received: from mail-wm2-f4.google.com (mail-wm2-f4.google.com [74.125.225.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4ACE45C71F
-	for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 23:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29676468C36
+	for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 23:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785540866; cv=none; b=Oz1DByHtyDQfJSVD3cqESuPtS4muRMZeUnEgp4k3wtQSeQXR44icl891cMo9Sxs6bL7dla8cD5ameg6buetSPck8mPNWIpVW0n80gr5B0rRVpptf/g9WkEaHpucgnxSP8vqta7nzyewyoG/3Cq9zljaDRiGfsBgk/5Voi9IGHtY=
+	t=1785540940; cv=none; b=ZORYyei47pq3lDvd+Bkp8ofisKglhqpxJsNvlWCFROewIQFsCiySuRmZRcUW7Zje81SguXMSR9586SXnuJzw6asn/FX5Nl6v2Bczt3mVKiSnr1737Fdq5zh4D5N4j5quYylQpuNZD31CREE432r7AZk9TJ8BCRvxxtugPjY8FIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785540866; c=relaxed/simple;
-	bh=fG4lpzFhUhSHtM3MOTFT/bKd1/wg+jyQpf2vtD+aZVg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=YaHHrrI1RHyzHe8/vV7mPobozzPJJMHXb6RZcQU0VLmd5md0epA8pkobdIbZiLkQ+x9seNe0YBlx0HbWh+gIc73MXGbp9cr6dFPLGYEAjhi15F5l/6NsNw57wW9me52FAFeoeUa2LeFbp6cALrmQ5VB5AdmA9Nybh+F2D9XscEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMJt/8df; arc=none smtp.client-ip=74.125.225.65
+	s=arc-20240116; t=1785540940; c=relaxed/simple;
+	bh=E7AD1CY3Sv52g2oANantVmZ5L4EPUbRo2OwSiRw2zRo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=qvjZeBGx25RQrUH24HGFCK3R6exCaW8wHbO/dG7VKiwXpH9b7wBfCVkytXnrmv3hZz36Wq7DUVjh7fl/8Q47xu1qU0V69sTk/kyR5cTTGJwrfkmhw2+pVwyf/MpO6dpxuwkm47uaocZZbkm85uw8B51JybIwFDS2j36/V/WhyjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hRMc5/Hk; arc=none smtp.client-ip=74.125.225.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMJt/8df"
-Received: by mail-wr2-f1.google.com with SMTP id ffacd0b85a97d-47fd1b2021fso464608f8f.1
-        for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 16:34:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hRMc5/Hk"
+Received: by mail-wm2-f4.google.com with SMTP id 5b1f17b1804b1-4955f00e593so867815e9.0
+        for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 16:35:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785540863; x=1786145663; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
+        d=gmail.com; s=20251104; t=1785540936; x=1786145736; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
          :content-type:content-transfer-encoding:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=njEvB3ltRqMoxiCGEyBQLfrAODVw3BfigWN/Yf5Q8dw=;
-        b=ZMJt/8df7hEntOCFa8HW69DC123PnyI1x1XgRZ/SxNIfSq1EuqEE4MUEMttlQSoC01
-         Jt8pfCWuXO9IEmz744KCrinHOSNi3ky9B2v7YebbVIrXbkiCREty3AVW6LC68MBDGUwE
-         dxUtrFehkcVS0SqHeO1lY+UCKyYeK66jb3O+3wZE+LingdgavMeoqaD3Surer8fVmdY+
-         Tr+d3QiXN2LXF9vZ9FXek/V0q1ALIDkfo2r8p+N1wuhlZlzzKpkSn0mo45joBJ2dmAPF
-         74qqsh/J7ItPV1IIXe+ftUJLIT7frOgl4i7V+VWPLo2X4BVZZGTdyoAXGG7PD97ahaOh
-         QVfw==
+        bh=NAH7LZBWSLN1vfCOZsndZVsDBYzJNfOag1t/z/WjVS0=;
+        b=hRMc5/HkH7EAo3d6JMqtf1CusAWagPmDZh1+2bIF4ntX3h9LCW+ETsiJ1lTyPABKoE
+         FCXSkciHGOZ0F0WUP1p8DSuAI4xTYQ7AwIqATxrEhnKMX4gwUwJEzhoRrSqDKGNYDnBO
+         PeBn/yXq0sXOmzbZ7tAQo1qGbC98+acngNaysJSaa/22qoz7xMKiIfQtvAYUdbMS3gK3
+         XPD4U0KrXX2sr/uucqyMh1J0uaJDVEcaRGXhKBIOXBi0TLMMP1ETP09G+IA74ifDLJ+a
+         LQVnXKmc6qDNeWa3TjMDTHWOUSWmz+THeOpAHC2C3mjuK9ZRIH058RGDTH+qwMa0Y5sI
+         LqSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785540863; x=1786145663;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
+        d=1e100.net; s=20251104; t=1785540936; x=1786145736;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
          :content-type:content-transfer-encoding:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=njEvB3ltRqMoxiCGEyBQLfrAODVw3BfigWN/Yf5Q8dw=;
-        b=D4sgaG/8mkLofzf7jfkZYiilpLWjHSZElcq6/2Ncq1nKKjb9V6SztPuOyEupR9k0AA
-         41vC6ZJiS2ae/dsxzHm10JIUYM2E98WIdUwAaQNmPHc1dpMVksXuIr771oA9TcyeUyaj
-         0Qlnx6V0zk6Nzr5rAg2N1pjab+qO9EodBB203z42MLfu2IuvPTcRfx2BSJtReUxZZmy4
-         L/nSVqpSM/xHL+JKvJTz9NByalhj1PgpcvnG/QJZFKOSlVmIgmF9+1WN67htWqLVsdfR
-         XDz/U1+ydUFej0hViYt03W43xBrNrXxpvwu8+E1fOkSJqQ+jE0sX2zwEXjGO+LfMumDM
-         wdtA==
-X-Forwarded-Encrypted: i=1; AHgh+Rp/2qfXw/Fy5KIQYwot6EijLvJbDyZ6j5fJLCIXDgN1YOQsyspMZZXCB8uO1JBa3ePp3WgPGHph9wqTvAuZhsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCohhcl9FkwBy+CC91ACh6c2+LzqAVavr8Yffi8VkqQ4CRauAv
-	cj7vvRUCMQs7UfcAUzRAsSTCHemrsZMr4W68kLoyayw+Z4Ag7BpRgzzC
-X-Gm-Gg: AR+sD10uNaaVu6DcQU6SRiehooFUODEsQSwJzMpfQPJ5y7krum2aDi/83WwoczWid5b
-	7SoS1sFTXQvN4UYpfy+wGt8TlKiLLV+52u1T94n5BOrudiSC8gsPNMWaFj6k714OnPI7zbMwrqJ
-	GVLmtcHQfzLlgxAHOSLWVrsBQ0PANz+v+VHbb86rhKbaDLmqmJUnNFQ75sqH8Lf5iOTYuZuBArS
-	8IcWupPQcjHyDMV89M9cm7NobStyQ/paukCLGLokbzOt2NeuMnEjnQVVkx6t88HHbtutDNPykA8
-	Y8uF2tDAsDY2sSc1ZpPjoFeUyhJjV7Dd1KtSTEkdRfnv7/Vqk0yalRnKIzw0DntxiGxTQaLAFJH
-	VybZpCRCX19rFxLSa0YklOmyGETEt/aknSSTnlJ5EFZzZoKrpmDwaJzz0CApNCG1+VyigaoaUP1
-	iOaPlKriQBaGDHTqXbyZMagg8TbHJYxm/p4fHrWn8+B/xv92il+rfDhH3H30/1q9Sae5wa60yrj
-	5AWLJ9S1Zc5mXlm9nN6AvC3BThDQMdCAOYAMRYyQkszfmNVYTB473Ehx59yw6zG34oLZs8hADnp
-	/Wzb31Bzzu3pNTvDr2qFF9bTfFA=
-X-Received: by 2002:a05:6000:44cc:b0:47f:6f92:84aa with SMTP id ffacd0b85a97d-47fd7312eedmr2037414f8f.53.1785540862997;
-        Fri, 31 Jul 2026 16:34:22 -0700 (PDT)
+        bh=NAH7LZBWSLN1vfCOZsndZVsDBYzJNfOag1t/z/WjVS0=;
+        b=FOKNsD6Mfv6BW1neeqQAD8ANBPl5bS0tlJr66uIL02oIz+96B9qiyTHvy4isSf36hp
+         KVvHTY5Llh2D9gNLuYGfdsQkFBoNK1XtTzbZkQu+jfuZ7EM9/RsWD6HT0368dwblzNnW
+         2u7pn++xQhD3QfW3eBJE79CzOGDvOQo60fbso3MLnRkeW4zToGokxElwOvaG2tCEBlh4
+         Uqh+0WByJ81R+0QIjFDYTYsnNbtg440VmGhFkAUVL2S+CipoNt9wMOgwiakWv2IGxc/w
+         AyD1cwKYs7xu/QGkvyG3H6HCwW4HVFxSAtR9RJrwV1g4hA4iuIkjM0OlxXj64Yd4b2SE
+         4yxg==
+X-Forwarded-Encrypted: i=1; AHgh+Rr7/OA3PBSVC6+8SOuJQGBrkmA6FRqibjvYWHdP/eufDwShFEEff6mJX7U6oL1kU0XYGXlfBG0E47VKjtBWmTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxENkScwih3CzPLqV3QjlLNq619cC/H4+lqgBCMmdf5zeL0wj/h
+	ULJT7vg6OEG/shNfcnFuQeqaaDF3bCnNaGw2ubUevOKLGG3wEAbPmmRk
+X-Gm-Gg: AR+sD138YsBR0/9+2uesRSmrYDkIBMicT6tjQquUzP8HNFU5JaYJXkC2YWVxzebd1Yp
+	qt9h0eQ81hBqpIexfICJEPWMGygLu3DFARrBapsho6+a3f2xi29inzbmn9HvOa1Kow/qgFsyu08
+	LNulMXbo1Zeo1LYpIShBgnKIAYawEHXMDnmuPgWRUowvlNiZkaOpDzchij/osduPMZXaxpqh0/S
+	ofD2HglAWLxrwcN+gXzAQ19nHi59SVE7uhgZPZ8G2NvgKxIiv2Ge83ZvzO0uTccYmwpgK/4SOXy
+	Nr5v9EDEFBL1jIGIRDvvuFLwfFjBkCSUlyEu5KITbr4O5e4baC3GK/ckgtK/uDNNy0MDl3Fd3cM
+	TM7eiAzamNomQeuFWkhGHvkfdIFT9Hr/t2cS5tqNS4AolcrszygOnIcyxeWcVL5Vms3J6uN+W6v
+	O/zweUEaD+Nl2xU92rTzYpqFcirMK9SbiPPN6/L5LyuaSUx7FyXpR/rCvxtB3LxB3GSbcnKknbB
+	XeTwkIVge1eF65TMjMrou1otWXQLHD84jnqz6yFBYRxdu6Ee4Fi8aa2pljZC2AAXtApLnTbfygu
+	u2viRuec3YLTtFA+ZfiaZHef+hrwa38p6QGn0Q==
+X-Received: by 2002:a05:600c:4292:b0:495:406f:dff6 with SMTP id 5b1f17b1804b1-4980c68e114mr998445e9.33.1785540936415;
+        Fri, 31 Jul 2026 16:35:36 -0700 (PDT)
 Received: from localhost (nat-icclus-192-26-29-3.epfl.ch. [192.26.29.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd456262bsm10337130f8f.17.2026.07.31.16.34.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd41d1756sm10260172f8f.4.2026.07.31.16.35.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 16:34:22 -0700 (PDT)
+        Fri, 31 Jul 2026 16:35:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -69,10 +69,8 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 01 Aug 2026 01:34:22 +0200
-Message-Id: <DKD5ES7LKD1F.YKD4OU6GTUXR@gmail.com>
-Subject: Re: [PATCH v6 bpf-next 3/4] bpf: add bpf_init_inode_xattr kfunc for
- atomic inode labeling
+Date: Sat, 01 Aug 2026 01:35:35 +0200
+Message-Id: <DKD5FPZ03IMC.294CDPH0KRZGP@gmail.com>
 From: "Kumar Kartikeya Dwivedi" <memxor@gmail.com>
 To: "David Windsor" <dwindsor@gmail.com>, "Paul Moore" <paul@paul-moore.com>
 Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
@@ -93,6 +91,8 @@ Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
  <linux-fsdevel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
  <selinux@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 bpf-next 3/4] bpf: add bpf_init_inode_xattr kfunc for
+ atomic inode labeling
 X-Mailer: aerc 0.21.0
 References: <20260730234533.1912709-1-dwindsor@gmail.com>
  <20260730234533.1912709-4-dwindsor@gmail.com>
@@ -117,92 +117,99 @@ References: <20260730234533.1912709-1-dwindsor@gmail.com>
  <DKD3I17NPS96.3G49BTZ4ZVUVV@gmail.com>
  <CAHC9VhQmb=v3-T5HZUzfr_me6S7bo6sX0Vs4nDFQZnMe+SQOMQ@mail.gmail.com>
  <CAEXv5_huGfd7u0tKW5Eq5bSH+rzkB=ThKOTLnfnxepqTmgcUPA@mail.gmail.com>
-In-Reply-To: <CAEXv5_huGfd7u0tKW5Eq5bSH+rzkB=ThKOTLnfnxepqTmgcUPA@mail.gmail.com>
+ <DKD5ES7LKD1F.YKD4OU6GTUXR@gmail.com>
+In-Reply-To: <DKD5ES7LKD1F.YKD4OU6GTUXR@gmail.com>
 
-On Sat Aug 1, 2026 at 1:11 AM CEST, David Windsor wrote:
-> On Fri, Jul 31, 2026 at 6:23=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
+On Sat Aug 1, 2026 at 1:34 AM CEST, Kumar Kartikeya Dwivedi wrote:
+> On Sat Aug 1, 2026 at 1:11 AM CEST, David Windsor wrote:
+>> On Fri, Jul 31, 2026 at 6:23=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+>>>
+>>> On Fri, Jul 31, 2026 at 6:04=E2=80=AFPM Kumar Kartikeya Dwivedi
+>>> <memxor@gmail.com> wrote:
+>>> > On Fri Jul 31, 2026 at 11:49 PM CEST, Paul Moore wrote:
+>>> > > On Fri, Jul 31, 2026 at 5:29=E2=80=AFPM Kumar Kartikeya Dwivedi
+>>> > > <memxor@gmail.com> wrote:
+>>> > >> On Fri Jul 31, 2026 at 10:48 PM CEST, Paul Moore wrote:
+>>> > >> > On Fri, Jul 31, 2026 at 4:16=E2=80=AFPM Kumar Kartikeya Dwivedi
+>>> > >> > <memxor@gmail.com> wrote:
+>>> > >> >> On Fri Jul 31, 2026 at 10:01 PM CEST, Paul Moore wrote:
+>>> > >> >> > On Fri, Jul 31, 2026 at 3:20=E2=80=AFPM Kumar Kartikeya Dwive=
+di
+>>> > >> >> > <memxor@gmail.com> wrote:
+>>> > >> >> >> On Fri Jul 31, 2026 at 9:05 PM CEST, Paul Moore wrote:
+>>> > >> >> >> > On Fri, Jul 31, 2026 at 2:50=E2=80=AFPM Kumar Kartikeya Dw=
+ivedi
+>>> > >> >> >> > <memxor@gmail.com> wrote:
+>>> > >> >> >> >> On Fri Jul 31, 2026 at 8:42 PM CEST, Paul Moore wrote:
+>>> > >> >> >> >> > On Fri, Jul 31, 2026 at 2:18=E2=80=AFPM Kumar Kartikeya=
+ Dwivedi
+>>> > >> >> >> >> > <memxor@gmail.com> wrote:
+>>> > >> >> >> >> >> On Fri Jul 31, 2026 at 6:59 PM CEST, Paul Moore wrote:
+>>> > >> >> >> >> >> > On Fri, Jul 31, 2026 at 12:32=E2=80=AFPM Kumar Karti=
+keya Dwivedi
+>>> > >> >> >> >> >> > <memxor@gmail.com> wrote:
+>>> > >> >> >> >> >> >> On Fri Jul 31, 2026 at 6:02 PM CEST, Paul Moore wro=
+te:
+>>> > >> >> >> >> >> >> > On Fri, Jul 31, 2026 at 11:44=E2=80=AFAM Kumar Ka=
+rtikeya Dwivedi
+>>> > >> >> >> >> >> >> > <memxor@gmail.com> wrote:
+>>> > >> >> >> >> >> >> >> On Fri Jul 31, 2026 at 5:30 PM CEST, David Winds=
+or wrote:
+>>> > >> >> >> >> >> >> >> > On Fri, Jul 31, 2026 at 11:17=E2=80=AFAM Paul =
+Moore <paul@paul-moore.com> wrote:
+>>>
+>>> ...
+>>>
+>>> > As a consequence, everyone suffers because they first need to satisfy=
+ your whims
+>>> > on how all code and kfuncs written thus far are wrong, and need to be=
+ moved
+>>> > around ASAP, including the one being proposed.
+>>>
+>>> That's not a reasonble or truthful summary of things, I've only
+>>> requested that David locate his proposed kfunc in
+>>> security/bpf_lsm_kfuncs.c, I never suggested he move any others.
+>>>
 >>
->> On Fri, Jul 31, 2026 at 6:04=E2=80=AFPM Kumar Kartikeya Dwivedi
->> <memxor@gmail.com> wrote:
->> > On Fri Jul 31, 2026 at 11:49 PM CEST, Paul Moore wrote:
->> > > On Fri, Jul 31, 2026 at 5:29=E2=80=AFPM Kumar Kartikeya Dwivedi
->> > > <memxor@gmail.com> wrote:
->> > >> On Fri Jul 31, 2026 at 10:48 PM CEST, Paul Moore wrote:
->> > >> > On Fri, Jul 31, 2026 at 4:16=E2=80=AFPM Kumar Kartikeya Dwivedi
->> > >> > <memxor@gmail.com> wrote:
->> > >> >> On Fri Jul 31, 2026 at 10:01 PM CEST, Paul Moore wrote:
->> > >> >> > On Fri, Jul 31, 2026 at 3:20=E2=80=AFPM Kumar Kartikeya Dwived=
-i
->> > >> >> > <memxor@gmail.com> wrote:
->> > >> >> >> On Fri Jul 31, 2026 at 9:05 PM CEST, Paul Moore wrote:
->> > >> >> >> > On Fri, Jul 31, 2026 at 2:50=E2=80=AFPM Kumar Kartikeya Dwi=
-vedi
->> > >> >> >> > <memxor@gmail.com> wrote:
->> > >> >> >> >> On Fri Jul 31, 2026 at 8:42 PM CEST, Paul Moore wrote:
->> > >> >> >> >> > On Fri, Jul 31, 2026 at 2:18=E2=80=AFPM Kumar Kartikeya =
-Dwivedi
->> > >> >> >> >> > <memxor@gmail.com> wrote:
->> > >> >> >> >> >> On Fri Jul 31, 2026 at 6:59 PM CEST, Paul Moore wrote:
->> > >> >> >> >> >> > On Fri, Jul 31, 2026 at 12:32=E2=80=AFPM Kumar Kartik=
-eya Dwivedi
->> > >> >> >> >> >> > <memxor@gmail.com> wrote:
->> > >> >> >> >> >> >> On Fri Jul 31, 2026 at 6:02 PM CEST, Paul Moore wrot=
-e:
->> > >> >> >> >> >> >> > On Fri, Jul 31, 2026 at 11:44=E2=80=AFAM Kumar Kar=
-tikeya Dwivedi
->> > >> >> >> >> >> >> > <memxor@gmail.com> wrote:
->> > >> >> >> >> >> >> >> On Fri Jul 31, 2026 at 5:30 PM CEST, David Windso=
-r wrote:
->> > >> >> >> >> >> >> >> > On Fri, Jul 31, 2026 at 11:17=E2=80=AFAM Paul M=
-oore <paul@paul-moore.com> wrote:
+>> Looking at what's left of the kfunc itself, it's basically nothing.
+>> Everything meaningful has been moved into security/ already.
 >>
->> ...
+>> Aside from bpf dynptr ops, what's left is:
 >>
->> > As a consequence, everyone suffers because they first need to satisfy =
-your whims
->> > on how all code and kfuncs written thus far are wrong, and need to be =
-moved
->> > around ASAP, including the one being proposed.
->>
->> That's not a reasonble or truthful summary of things, I've only
->> requested that David locate his proposed kfunc in
->> security/bpf_lsm_kfuncs.c, I never suggested he move any others.
+>> if (!name__str)
+>>     return -EINVAL;
 >>
 >
-> Looking at what's left of the kfunc itself, it's basically nothing.
-> Everything meaningful has been moved into security/ already.
->
-> Aside from bpf dynptr ops, what's left is:
->
-> if (!name__str)
->     return -EINVAL;
->
+> You can actually lose this one, the verifier should prevent passing NULL =
+for
+> name__str. Other functions don't check it either. Feel free to check it, =
+or add
 
-You can actually lose this one, the verifier should prevent passing NULL fo=
-r
-name__str. Other functions don't check it either. Feel free to check it, or=
- add
-a negative test in case you're worried about it.
+.. and I meant, feel free to double check that passing NULL indeed fails ju=
+st in
+case.
 
-> if (strncmp(name__str, XATTR_BPF_LSM_SUFFIX, sizeof(XATTR_BPF_LSM_SUFFIX)=
- - 1))
->     return -EPERM;
+> a negative test in case you're worried about it.
 >
-> if (!xattrs->xattrs)
->     return -EOPNOTSUPP;
+>> if (strncmp(name__str, XATTR_BPF_LSM_SUFFIX, sizeof(XATTR_BPF_LSM_SUFFIX=
+) - 1))
+>>     return -EPERM;
+>>
+>> if (!xattrs->xattrs)
+>>     return -EOPNOTSUPP;
+>>
+>> ... then a call to security_lsmxattr_add. Why not move this chunk into
+>> security_lsmxattr_add, and leave the remaining bits, which are pure
+>> bpf, in fs/ for now, and litigate the total placement of all of them
+>> once v7 lands?
+>>
 >
-> ... then a call to security_lsmxattr_add. Why not move this chunk into
-> security_lsmxattr_add, and leave the remaining bits, which are pure
-> bpf, in fs/ for now, and litigate the total placement of all of them
-> once v7 lands?
+> I wouldn't bother, everything LSM specific is already where it belongs.  =
+That
+> said, your question is a good demonstration of the absurdity of the ask h=
+ere.
 >
-
-I wouldn't bother, everything LSM specific is already where it belongs.  Th=
-at
-said, your question is a good demonstration of the absurdity of the ask her=
-e.
-
->> --
->> paul-moore.com
+>>> --
+>>> paul-moore.com
 
