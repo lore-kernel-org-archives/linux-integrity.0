@@ -1,152 +1,157 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C853542BC5E
-	for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 14:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785506979; cv=none; b=S/h4h3vpqjQ5ZzNcEp888OgIZvNOBDQsGFTAWljr/6ztWW/6W8SubodW1g+kc65kjsVrgPTPdBm6pOX8QRCyyTE29PZI74q5XsFWpIVz9AIz9a1D2dw4uctGtPV5I14fmuIpm+TqhZ1ny2HHGr+7vCNudnq75usCz+xMknWPIcU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785506979; c=relaxed/simple;
-	bh=3EOf2/jCD8AncItiAAHs6oeZqNAYPx5oM9R4lgo8xmE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q4T+7NQks9aYjgmseNdk6NmzAAQ+5HNUPy6Bmy4fquSS/ij2tv3vsWFwzMRokpoeIVGKDYPqcYnHVAAV6r8/Qtv2eB6AAGmicQXrSfAaONdZHU2F1aCfYaSAFLX4dtF8F6EQZSDPEQcOhhD33oxvspBr9enHlT8+0cZ76n3/Uj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhkWKX5P; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E37A3264D9
+	for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 15:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785511039; cv=pass; b=Sq6zfLj2IPq41kqs8+PMG8egfQmJWWEOrUTwTXIY6aYckjey8UmojLa+1bACaadLsAieHmXxpqB+VrJ2xtsRRo+4+6HbWkce1kQdWPSZ3rmL+GPgDb6z0eF34UthrCTnhTVXxZwn5HxVzH0eCKsWGUyvvfYdSL0aCZ9ouPKMdwk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785511039; c=relaxed/simple;
+	bh=MaagnOxntbuxGRXITbLMVGEEGsWlGpeYqyeDM+L3JQ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l8E+0ChGwmlDWjKvFwCGkFmSS/PSB/kYsKZ2KolZ/vEERALCySAVCjSSDlwbu0UMNIPXt4xualpJKCLpOMvw7fQOHYzLUdY75b9nKzpKdlzhksqviBlZtqN8O+F+5IbMxeBV4amuJV4bajsp7KPwNPa8v21VY9+aYfs42dgrpaw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=C5URBVxJ; arc=pass smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhkWKX5P"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2cf110997efso1597195ad.2
-        for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 07:09:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="C5URBVxJ"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2cacf197759so15113235ad.2
+        for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 08:17:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785511036; cv=none;
+        d=google.com; s=arc-20260327;
+        b=lIrEC4+tB4v2A55IWB0EpdgphdZ8G1zWNxELOWcq7s/rzn/0yA37UXHkmcuZSYJ8EL
+         Bmmd9oOk3hfzHat8Xnkq6Jdq3qigjvwin1q9ki3Dg3kO6MIk9N2o1o0FgitVSuAq++O2
+         7NroFGWd4vWH4EEMna9dJGp+So6EVYcd7a90byhnhxHhdzjhyer26nBfIQCD3u96t6Mv
+         aubGwoZd0tG1S5Xj8MUUxtedHQd/ZY0i2h6cyx6YpFrxYjtlSgVu1iZQvdqzNZNZe0MZ
+         jIUHxQcXbE2qurKc6pj2pa4irVP2u2k0LqgE9K/YObxwsn4ZwMeWnm8tk8+IcQRSwQIg
+         nFPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=MaagnOxntbuxGRXITbLMVGEEGsWlGpeYqyeDM+L3JQ0=;
+        fh=Qj91wsCpxfuvTRZbgYBHNTzh28V2TwG0ISdAL9L5tes=;
+        b=KVFcgMXXmUlxMxX7iPC5gOoqnk/de8tM8IbcKlcbbnBC+vFvvQ0V4cwAR4VeO/IShZ
+         XT05+N3QMUfNFFd7BWX45DCcVD5oKDeLrqx0yVGsbaniBMyNB4KuN9FILL/aVJcycAmR
+         h2fhFqNgQMLxkxxePeloi79wdIK0ud5KkKm0hYI62SApNarIZGCcu+Jk3IzMfqcvuKpq
+         KRdvQDG8fNL/XMwcLp+1EFbL8LbNsRljQc8yCVizCUh+GwDHkrKru+V/XQk1j7qYT8+r
+         FO2zX1C/WVvwtSH0Ka5jineKykjogqcMR56y1C6dkpP3v8JHOXRzvq8K7a9DKmUSmN8P
+         HUJw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785506977; x=1786111777; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=qfTZLKX5MXlI+65GiAcv4sDb6zyKTd9ns9ffnwjJXko=;
-        b=mhkWKX5PDoWgAmcXfVNp0XUlYz1PPHyqI7gvQ1vZLKrPHmfMAJDHQnoosd+NaU4JR4
-         R1G0fOpNuDGm5Kxx7EOXloQvCxIaBMUVNm18xEocs1JoP/ZgW9yTUybsD1zgb/+6jhd8
-         u30EcU0j1yJ+FJokT7DsaflSDIdy5wKqxPS6YEdADFFmPvrBKNmqxpVphiQ9baOqxdqI
-         7qIiRrP7I5ytwBKZYLJMk9QKpYq7DhVVqJ83xsIbK/3hIq3RAGlOZvqwcgFepYpYP7ax
-         vSt+8eywrUF955DmnPLFeEvwtWd4PQie1pVjKz3GWeudAAgFrDkwARs88dZ7YGprg8vi
-         Otxg==
+        d=paul-moore.com; s=google; t=1785511036; x=1786115836; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=MaagnOxntbuxGRXITbLMVGEEGsWlGpeYqyeDM+L3JQ0=;
+        b=C5URBVxJ5tERBLgnpI1F6Uk1I8wczA1DgsZx6wU5E29TDJD9OlexQVboj2ikm7m4Vo
+         G+DVy29rCfY3z8DteBOBZrGBt0A6NzbErXM1yBfFloMA1eBgxFG47mHi78CJI7hh5MTS
+         Kajg4htZS9wNxXJmoOulS7kZUqkRiOhQe3zOkrQpebhQd9lt9YZIF1/aHmfGmxtjhxGa
+         rD/2gv7lce/d0vipnWSBIgY6IZW6n4Z1DEk+Iv3wdUrZyhATZdXzysAX6p/yE0ZA9PHy
+         G4lifiyT6/Kvh4p2Q7Ogfwx4NUJ17PuYzIPlojAjBifCDzNPoMo0FU5DWkCLgTqj15n3
+         ZXew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785506977; x=1786111777;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=qfTZLKX5MXlI+65GiAcv4sDb6zyKTd9ns9ffnwjJXko=;
-        b=mJaMaeB1tw58T1N38j7eWafmrCetLP+hMAJc8ethtJwm183v5+XADIb99i/QDyylrE
-         pQIQhAURwCkUFUl+5SHhM1u2dr8HaRndgyW9vp3WDr5IGpAvBFY784LpmMSPyZlMrNTZ
-         PFYTCkAiuXy7uyUER26DhxBmmDE8d55UbcUmW3x5wKNxDNN4aR82M/o58DRWJ18azHoE
-         rtDAL12PLk/eIJjWQCqgpjheJhPu9LHNjP80/xVzUtK4wGSIwGcQdA1nSVoWQR9+Yctb
-         biFdnQ07wAjHBLHwvPTyKw91+85YdKC1A8RluyBwtEFKD8TnMD7e0Q/3W5zLDLEkPJ/z
-         LWBA==
-X-Gm-Message-State: AOJu0YyX+B7KCq/CBtT08Cby8EpJHkrqF2ShXGp0TAdOj4eafMyfqNAs
-	fnLVE1J1QYLhNAl6gt/1Vsf9OfYDFrbVNHNZxCkkGjgpgddO8IJOlkUJRRfpebcB
-X-Gm-Gg: AR+sD115Seh/qUlNSnQuAR/YhaM+jRZGQ+b8PA/ybq+BIXtQ3BqxMF4VwzahyQQ3jZa
-	m5RmSA5ZWRKYkML/AI2tii281RiC2jUxUfaBRPM0a32W1sjXkalyNsC2o/V6Ob5WiuEuqxArSJy
-	6TGZR3vNWYELt6uyJTso9IyunghXAkRy9B/Apl/GMSuKQA0IKdlCx/Ai6zmxazEJDH2aHVjoj7C
-	43R3GTRXdmuZQDVAcqshdQEGAIFtmrJoztUykUNEFP32fLluLGFbaP9BYBOLIFzNr01t5Glbw9v
-	yDF+5lMoeU3v2316qMNXP28n3xSTyZkgr2OaCNN+4x5PrQr4H2uzH+2V4Zj5v+lqeSzUuE/V/3z
-	fXLvwu9b+PYG2RD1pm8eULtKx/Ok2k9C3GDZdKSnzq4lQL5jmeLROnG1qcTw8YtS8zTb4BePBVb
-	mUeG7pnI57CG8kgwpg4BALKBiScT5o8EvZ8ucHgF9Bb+ji8qlpiBbVsFkGk11A9m5RDVZhm7ON3
-	SmxXCJlUNtvEQIJqZZZkXmjGAM0ntqdLod2gF7CjHBStpWtfqnZTh4=
-X-Received: by 2002:a17:902:f546:b0:2c9:b96a:2855 with SMTP id d9443c01a7336-2d051f078e3mr3246845ad.0.1785506976879;
-        Fri, 31 Jul 2026 07:09:36 -0700 (PDT)
-Received: from localhost.localdomain (45.78.65.84.16clouds.com. [45.78.65.84])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3153ddd7a33sm6268159eec.12.2026.07.31.07.09.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 07:09:36 -0700 (PDT)
-From: Chengfeng Ye <nicoyip.dev@gmail.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chengfeng Ye <nicoyip.dev@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] KEYS: trusted: Fix TPM teardown ordering
-Date: Fri, 31 Jul 2026 22:09:24 +0800
-Message-ID: <20260731140925.2973492-1-nicoyip.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20251104; t=1785511036; x=1786115836;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=MaagnOxntbuxGRXITbLMVGEEGsWlGpeYqyeDM+L3JQ0=;
+        b=mUef8o3RFR76ksAtxU5Y9tn3ksfZq/MYFwnROgTbIzXrqzRAgYqSAEt+YjltEWw2Fs
+         ncU8o38/KnfxduHTKffZ3GyM2ySvzrGS/DXLGmh+9TW8HFHIJ1Nn/rQu3I66j1ThW/IK
+         2msVQeUNCEm2ccMp+B/IKkd5JlaWgVSzxDd5mc6VLN+U8+jRQg7kJwqRXUuzlIvVY2kU
+         gvrZESXNDHZWJPJQ5RCuqzPFyp9kzAFoFrlRu2PhilBIlIuFAwtU4zbFRlCH/VYJykIB
+         VS/8JT7G/9UYavarj2r7U6WFJH+hbOiCdWvtnwc5rD1PAwMuvO/Bgxe6pmwC06W5n8xe
+         GRFQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rry0mbf4lGYl1R08+LfHdKl0zSiJrKibcszYm2ZyLbumAcW6idXRkpj/QaeDlLs7qFaujEa9xhtPkg6Qq1II2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvPIAEBOZykXSZs/fCizJw/4eRSakUpIrGq47/jA7trRz7Ci+M
+	VzS2j5M3wXyXIo2ig3sKuIhpHu+oKVj15GQPYZp1O64WX52Tx5LoGg9YJ1E5gKJxkYZGm5zC8op
+	xE6zhGGwfNsn+R9B/Idq8WqYajJKDESu/HQmji65c
+X-Gm-Gg: AR+sD115GxlDdV1IUAUw573XwzJb4QKXGh8EaZJLnC/885lLHaPfoJKA2leR71KLwJj
+	xPXsoHgxbPfWQGBRZmhxLxj6r8Byty7Ek1ezMJobOouTaj49tMPkPHfP2dIq/yeD9FVYY2+EYZ0
+	WVaMFoRq+vUij6Y55xmz57UnqWSP1vJqz/4aNhDDW0meBPib4QqSHjB90v7AjFwgGNOM9E2Zfri
+	0cbTiR99AfwioJLBSP9ghuUD2kO9AFOcd3NwP7ylmX9lj/vUWC7BLS+y0HPGwr2Es//r57ylk1T
+	U7hXPM+cmKqooN4v4rnq7V7TPoP7+qnoNXTEBt3Hb62b
+X-Received: by 2002:a17:902:ecd1:b0:2ca:b89:7bcf with SMTP id
+ d9443c01a7336-2d0523b96d8mr3879785ad.22.1785511036384; Fri, 31 Jul 2026
+ 08:17:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260730234533.1912709-1-dwindsor@gmail.com> <20260730234533.1912709-4-dwindsor@gmail.com>
+ <CAHC9VhT=m-GtOZx2AHym7uN1CNx94arKBiXeVC7LTEJ-b=1EVQ@mail.gmail.com> <CAEXv5_iiNspub=qE1YW-01sV_bxxFUrrcAR4KV4Ec5i_mePtHw@mail.gmail.com>
+In-Reply-To: <CAEXv5_iiNspub=qE1YW-01sV_bxxFUrrcAR4KV4Ec5i_mePtHw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 31 Jul 2026 11:17:04 -0400
+X-Gm-Features: AUfX_my_07XA5O156m3d-t8I3fv7r1HuUVA6nIPOKrM8LOdCX7kqs7sLBvl0mUM
+Message-ID: <CAHC9VhTS7rSnBqg00ZxNkcZyh_=EeJmn_4z3CTCCxreEEDtTtg@mail.gmail.com>
+Subject: Re: [PATCH v6 bpf-next 3/4] bpf: add bpf_init_inode_xattr kfunc for
+ atomic inode labeling
+To: David Windsor <dwindsor@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Emil Tsalapatis <emil@etsalapatis.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-trusted_tpm_exit() drops the TPM chip reference and frees the digest
-array before unregistering the trusted key type. key_type_lookup()
-holds key_types_sem for reading until the key operation finishes, while
-unregister_key_type() takes it for writing. It therefore provides the
-synchronization point that must precede backend teardown.
+On Thu, Jul 30, 2026 at 8:01=E2=80=AFPM David Windsor <dwindsor@gmail.com> =
+wrote:
+> On Thu, Jul 30, 2026 at 7:53=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > Based on our discussion in the v5 patchset, I was expecting to see
+> > this under security/; did something happen, or was there some
+> > confusion?
+> >
+>
+> Nothing happened, perhaps some confusion. I was basing the placement
+> off of Kumar's comment in v5:
+>
+> > I don't think we should do that in v6 though. What you're describing af=
+fects all
+> other xattr kfuncs. That's a broader discussion we should have separately=
+ when
+> folks are back from vacation, and more importantly involve FS folks where=
+ the
+> code currently lives. As you say yourself, the lines are blurry, xattrs a=
+re as
+> much a filesystem concept.
+>
+> My take on this was, leave it in fs/ for now and then litigate the
+> placement of all of the fs-related kfuncs after bpf_init_inode_xattr
+> lands.
+>
+> Happy to place this in security/ in v7, if that's preferred. Apologies
+> if I misread the thread.
 
-The current order permits this interleaving:
+Okay, it looks like there was some confusion/misunderstanding.
 
-  CPU 0                              CPU 1
-  trusted_tpm_exit()                 key_type_lookup("trusted")
-    put_device(&chip->dev)             trusted_tpm_seal()
-    kfree(digests)                       pcrlock()
-    unregister_key_type()                  tpm_pcr_extend(..., digests)
+My understanding of Kumar's comments was that he was referring to the
+exisiting LSM related kfuncs that are located in fs/bpf_fs_kfuncs.c,
+not necessarily the new kfunc you are proposing in this patchset.
+Kumar is welcome to correct either one or both of us, if we read that
+wrong :)
 
-CPU 1 can consequently dereference the freed digest array. The chip can
-also be released before callbacks stop using it.
+However, regardless of Kumar's intent, speaking as the LSM maintainer,
+my stance on this is that the kfunc you are proposing must live in
+security/bpf_lsm_kfuncs.c to be acceptable.
 
-KASAN reported:
-
-  BUG: KASAN: slab-use-after-free in tpm_pcr_extend+0x1f0/0x200
-  Read of size 2 at addr ffff88810872d000 by task poc/89
-  Call Trace:
-    tpm_pcr_extend+0x1f0/0x200
-    pcrlock+0x42/0x70 [trusted]
-    trusted_tpm_seal+0x1b6/0x570 [trusted]
-    trusted_instantiate+0x293/0x340 [trusted]
-    __key_instantiate_and_link+0xb2/0x2b0
-    __key_create_or_update+0x61e/0xb50
-    __do_sys_add_key+0x1b8/0x310
-  Allocated by task 88:
-    __kmalloc_noprof+0x1a7/0x490
-    do_one_initcall+0xa1/0x390
-    do_init_module+0x2df/0x840
-  Freed by task 90:
-    kfree+0x131/0x3c0
-    trusted_tpm_exit+0x59/0xa0 [trusted]
-    __do_sys_delete_module+0x346/0x510
-
-Move unregister_key_type() before releasing either resource. This stops
-new lookups and waits for in-flight key operations to finish before the
-backend state is destroyed.
-
-Fixes: 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Chengfeng Ye <nicoyip.dev@gmail.com>
----
- security/keys/trusted-keys/trusted_tpm1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index 13513819991e..8f57c6111e7e 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -987,9 +987,9 @@ static int __init trusted_tpm_init(void)
- static void trusted_tpm_exit(void)
- {
- 	if (chip) {
-+		unregister_key_type(&key_type_trusted);
- 		put_device(&chip->dev);
- 		kfree(digests);
--		unregister_key_type(&key_type_trusted);
- 	}
- }
- 
--- 
-2.43.0
-
+--=20
+paul-moore.com
