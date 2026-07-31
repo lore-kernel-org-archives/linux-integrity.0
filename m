@@ -1,171 +1,115 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB3F446069
-	for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 16:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.180
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785513795; cv=pass; b=CSbaILsKzwQWU8dsrhNMR5okzMHPr98efXRsUd3wK5fiu6Sva+VqGaf2lSBEUzhNRnMFtMUo9qH1fw+I3ZZBTdyE5/PdXD4Nhmekg3l1mW4XxLRkgbLQ53Whkf5d34z+cclG9BT97X9Wr17fcR4MuePGndGphV1yAj9TrvU4vJ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785513795; c=relaxed/simple;
-	bh=n+9aQXVCyI5+nq4dxhlKhYIzN+km1UKy1fzyENReD5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bobTIHXbBtDaADKQEpYcSUuk5Ut+Mb4npIExUEY/ilbuzoCmxVGIEQSuOD7Llb4tuNyPPri46FQipnTn4rlR+S/aMGagrtBGaZZeD2Iv0ArBkSA5xTT93da5wgRjyfF+HqaxhjvpQhvTC1jxf17C5TxnPb6xvZCds9sLL9HROUM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=a0OcVIF1; arc=pass smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D866E469829;
+	Fri, 31 Jul 2026 16:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785515274; cv=none; b=MsjVKLp8k1VjPyOa+R6hZB7qfKzUjDwBcNxAfGrn7Hu7fOFW3ZWKAYsjQCjF/9yJYe/bLXu+RlS6N0SNIl+2qIoLqYElPzGEcBYR6tQqLrYrLtBglaZlfds6qMGfzKJu+rLCtJTpXfEmCDjAUU61YwMNvuKarz0K4UZKbYpK08A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785515274; c=relaxed/simple;
+	bh=oQakT4tZTZ26yYuWUyxmknYxLRV5Ax8XxkRik07misk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aU7ogxYRAQZfibPOwBwQw69+5zz4TaEGJIXhIsVF6WWCPg8LHCaXBBRW+PvT18CMTHivhlBFr8c2z0VQPiNupm12EfsrGptrz/4VdwfRTbFqHJzU2zmUHpGi98ZBok6TX4yjhVNJ6P8pAScUyeSK0E8D5H8ApnPXdPYAGxGXHtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de; spf=pass smtp.mailfrom=jaseg.de; dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b=b5nCQHhm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aQa0aJKS; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaseg.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="a0OcVIF1"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-8484f229529so1056707b3a.2
-        for <linux-integrity@vger.kernel.org>; Fri, 31 Jul 2026 09:03:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785513793; cv=none;
-        d=google.com; s=arc-20260327;
-        b=N8BvAMVb/k8vv8Uyfvl3KnWGzYvE6yu74ktxXd1UFBtUE9/ZwOQWDJN6h4N5eYsseL
-         t/67ctpLKKqZ0/RzfbGRetLvii0B6G0VNxwKMdLjLcp/0EMWVf8bJ4dTA0Th6NoCwJWK
-         H9CZoIUk97+Pw/jTK9auePjFnA9/XVnbTLMyqr4WbvqN1c74Y8kr1CHltECgjYD7+76Q
-         yJsIu5ayZkw9JsiI4FXr9FHGB0PypWVl6kTIOwU0LP9gWhEaIaAkPIYWo+XYvHWPRm8Z
-         G4an3tVzqszk9EnSzYpo5zyCvsOtXQQ+45gi8kcQzLzJq+rsd6qfRmxHWeL65zDKkK8h
-         pVUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=CFI/kEWUQrMOVwbdW9xBPQDb5xYR+l3PWasJ1nDKXvg=;
-        fh=kkTvbfcjuXPGygxahcLjPHuhnCfA3zGzWJD7LElZ5NY=;
-        b=FqmmvvC5zQ0q+/84uKYUN/zTdVt/X7uP0y22MDbdTJDFaP4K4Ir7sbuDFFnykuEctU
-         Fmla0T1uQMS+a3+x7GnTdQHqugHTQzcRWSPpVCesHkLlN+qF4S76Iumij1Wyy6wQMKIj
-         W5OPcRHrYMR6HCXtrqbtVAIeZiyQmvDyrQBe2ZH04owftYC99G8EgUuyFnFaw6EVIzKS
-         6so6ooA0n47BtB2IRLpI4lNMGx53rwao/eDbpRLbtrMcocPat8qoWRKjkwPM9r/E6lGl
-         XeXFdRd4srLZue3NGWXBJnpAMvQ5RIra7PmP6og5pY8cMH4c2djM9XBZkcVfARuZzYo2
-         btYg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1785513793; x=1786118593; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=CFI/kEWUQrMOVwbdW9xBPQDb5xYR+l3PWasJ1nDKXvg=;
-        b=a0OcVIF12lLVGVOtIfSx1+TKTqNpVgrze1/CLf/w6WuIFAMe8TWbyywpKFz+IZwAGT
-         GrA01XVdi6CufaR3E0uq/uXmW+n1tSatdNMF/vxIUisQIQ5W9UmNNseOEq0FvYN0u4GN
-         85UibeJSYrH/nIP+P/U5JaIssnF7hOGj7/TDIv3+RyTtovCjHe+vrY50MEBB/c1BRmKo
-         U9dt/BvOvjv50PJTJEunlFw0dQvoszF3GjUco86M7dpGhBQsOQ6n2X+j3346ZEB6/Jz3
-         shBQ/2418NTPr2DgGAmPzEvTOlUPQZtNU6hktOdQgM1MMra+4+UZJylVnTYHxiQCU14R
-         QzFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785513793; x=1786118593;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=CFI/kEWUQrMOVwbdW9xBPQDb5xYR+l3PWasJ1nDKXvg=;
-        b=qC7QYV9143leN0/6S/Q9dPMIetBGC7DO/di88uTpSvcF+EVbrIcdHCTpYOcPFyi9XS
-         BK1uh4jHVOg2evmJx098bsJwZ1voE8otlh29X54cfmN1sW6dWnfNwG23Ew4OgshXlpVs
-         fa2h5KaZraS/hRXN6WYczBXnVTEmPfocufg6axAoGzYhaKIsroqcG/Bbr1MD289Zg10V
-         NUM9Q7EsvwqpHVT9k92Tt1WUUOFVw2DSmd+cRGRXWVXVI0Ep4DuDXHFf/vx2FEkkCfiy
-         PE9+572dK0gEHQa6qXkWzImBw+VgIX60KuzOmDEYLsc4+qsAovKM6rg28nI8JcYvJy8V
-         rmUA==
-X-Forwarded-Encrypted: i=1; AHgh+RrmQyocTgmaUqSKpR1RKBew/sE+oukVVOhC3ayiF8PbTXNgsfz7TwqEyXk+KmtcUljKBTjwh9ZcW5a7JAdtQ98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRRLbSrm98DymoR1fC05gD6m/a2cGpcpZPvVCt1JSN5hoZwRGZ
-	7qbhlR12pRTYtscxLUTbzdGxmVSmZ9E8c2wJ9Nmm1879dmoNG/t9IOuyF6CppfKDR5LQvefYihy
-	ao6euZAiNE4CuUrQEVyf9Yjbe6rib/N8G/YA7lKSz
-X-Gm-Gg: AR+sD11n4iLRWCw4g5fHmGhvSMGugPy/wZjriR0OXjjgFJfMN5/vA+8WfMWYiTBD6Be
-	DC4HQ7yhXpKfSSi875fwzRlHv7qxMrs13half82luNZwAHJX7cUg6J1fxERpM0xiZg9gVsmHBWC
-	iDaDXapXcfZmICTH1hEsTVMNRronK5vA+06WiOIXNhlQaLaCgNyZ54PsSQ4jhlpmbCnJWUTAsuM
-	e7/GqnP2EdQzS4zYvRMZKEKWnvVLTo76/H+zVYvAHZF+UwE3/TQd9N3WUMpW670YrlT/dtIPhr9
-	oqv/MkO8gEPCUaEPGr3GaozYQnOCmknKAp6G+LHMEVxA
-X-Received: by 2002:a05:6a00:1956:b0:84e:223b:98c2 with SMTP id
- d2e1a72fcca58-84ee494dff0mr165281b3a.77.1785513791519; Fri, 31 Jul 2026
- 09:03:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b="b5nCQHhm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aQa0aJKS"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 4D71A7A00C2;
+	Fri, 31 Jul 2026 12:27:49 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Fri, 31 Jul 2026 12:27:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaseg.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1785515269;
+	 x=1785601669; bh=J5nIrNoSMiFUIl5DH8xWdANuglVgj8cbxwTsb9rwYoA=; b=
+	b5nCQHhm0J+Bh4qWMlYQ+VsiYMqE3pkfp60xUmMoRloMX0iNUYrevWKmbbyiOWGv
+	C8A4jONRfkjwdqa4UDoPf2/VFB+0CJDYxlfdIuwSFIxZ1y5yisj6t0jPZSM4VxsH
+	pqOYwrh8rjbx+0D9GGSdTnnVK18qbw6BQAVphQpwLDfz4mV8GxmENU1812Qmh5Mh
+	Ai8uEnYo6JS6yVNNqsya7j+iQ9tZbapAF0QAWYlNV4Tj9LskF3Mp8dVvKMe/e6jt
+	bPcW0IZ8vzdsMlpLkaVB7E1912BAhzHsum9haIOY48eNaYCmPLEPkjirpl8oGvVO
+	BCNwOK0df5Nv7Fh7gsl1uQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1785515269; x=
+	1785601669; bh=J5nIrNoSMiFUIl5DH8xWdANuglVgj8cbxwTsb9rwYoA=; b=a
+	Qa0aJKSLM9u3cdJFxgBm0tbxdbLzGB4URrat1wcWTbAgoDVihHaOx1FvOk5GIiQR
+	/9p0LgUh2oyils3n7tYpJKvL79ebLZhQB0aghE1ZC1j4GhFSfbj859ouesVQHpTR
+	21iCK7tU/bndrfcMO96y43oh9nCedWbYQwwgEDW3Ng2xKkth4bK/CclGpjKqfrNr
+	6g3aqGKku+hEg9VOusp0tbXKRRX9+w2lHNgEwF9ea2ZOoWk1yP9DpQEtpDwF+IsT
+	OVW5dLG/FN5Eg5QFY7GFd4Cg0P0hlhUvEJGbgcnZD7AL/LonmXWVSSdE+vPlk7K8
+	GD2+mOHKnOpxl9PcfPyJA==
+X-ME-Sender: <xms:Bc1sakFa6ckKoqrFLAzPC3TUrv5WJxH6ldYcow49AmwJFyn0bT91aw>
+    <xme:Bc1satyJ_0I47EPzXiqmmi1_m9TXVwaQcCgTvfFud_seRcZqPon_9myIfXvEIVnvh
+    xtv3nMfz-y1XKLyXPeBF10jKdZoRdIgT3vmq_Ar_VFPFuD_TdrOvvI>
+X-ME-Received: <xmr:Bc1sau1WgMT4nRpp1Fsg_3S3JEfCzTecw1KWURrEtAPSWNnCnA_fvP2WfJtWoMcWgnExcfRUem-PM7qFwQ>
+X-ME-Proxy-Cause: dmFkZTGGTelZmm0/EhQAYArVTdDhZzjnmAPb6bZI2uOfRhcPRz2TI2oV8V45PSh9LdLr+9
+    dOlgXoBfEoyyFAhrcqXPD5Q9hVEjtJXoIhF2MoKd1yKDTw2ea5Nuq/+/AmFYSUo339o9zZ
+    H/at4LG3KrzxwoyaKUbXnTAmsLw8u8bstL0n0Hm+zeS6dtuk4WBOYvxR1KeM91qs9pbTHn
+    V5Yj6ph4RyA95kbMawVJDFVjaiGwugJQQV6H1QnRSnyH1rCnmQnAGiB4dMHKZak/Asn8tO
+    F/0oy0n4YeNO9MT0ImsCVvnJvFB1zR3ciQwN/2JEWm+YOztTqwzq31OHYrU6wne+Cpi3K5
+    TTD8qnOBAfOaIb/KCcnmwKr8TGm24y8rMJ8KNnshmEvBNvcrVA3lZ/fsqnabQ+bcEZvCxK
+    jVF6kNhPnROpmUpXsT9cQQ9WQAmvp3ChKXD/51Kcb96H3pMPJzDNcq1KfaKpkTZ8t4KfO5
+    AZsrHKXNbdf8Go9a0FfJSzKbdlEWCCQe6tUIEj8/1faJjDnVbgdenfwqKItxhfUu5xB2KJ
+    wGozjEql6w4pzgqozJiilyeInEsR6qujBgBrWFTgx+kdN6tGchhD24yAmJ/Q5c67/RvrEs
+    wT/Jm4IWcIvL3Yzv1SN3Sy2S1UiUxCs+GGRjhmkWjnngDVFojYXuBC16Bqmg
+X-ME-Proxy: <xmx:Bc1satrXBRkLfy7bBimN3F5eqR7idEanWT0Vno0Sk7EwpK5or2MGVw>
+    <xmx:Bc1sarX8CGRGgs6ptGjh4hnHVpC5Hyl-vlRHZqdDlvC7PuwwdIO5XA>
+    <xmx:Bc1samo4L8h--wHiXNuzz4IIByBgWUAUm6bNzU9kzfDiV70sIy9muA>
+    <xmx:Bc1saiAZoPLmVSYE-iqXwOXEVnDxMd99-Vrj7I2Y-e1HY64J7oPTWw>
+    <xmx:Bc1sahVxvqUHa0FML2utnkaBiC0hBDSUqJQDNS2wNexZYmN7JiE2vwDI>
+Feedback-ID: i60a14417:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 31 Jul 2026 12:27:47 -0400 (EDT)
+From: =?UTF-8?q?Jan=20Sebastian=20G=C3=B6tte?= <linux@jaseg.de>
+To: =?UTF-8?q?Jan=20Sebastian=20G=C3=B6tte?= <linux@jaseg.de>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kexec@lists.infradead.org,
+	keyrings@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Subject: [PATCH 1/4] of/kexec: fix typo in comment (usable-memory-range)
+Date: Fri, 31 Jul 2026 18:27:36 +0200
+Message-ID: <20260731162739.158320-2-linux@jaseg.de>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260731162739.158320-1-linux@jaseg.de>
+References: <20260731162739.158320-1-linux@jaseg.de>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260730234533.1912709-1-dwindsor@gmail.com> <20260730234533.1912709-4-dwindsor@gmail.com>
- <CAHC9VhT=m-GtOZx2AHym7uN1CNx94arKBiXeVC7LTEJ-b=1EVQ@mail.gmail.com>
- <CAEXv5_iiNspub=qE1YW-01sV_bxxFUrrcAR4KV4Ec5i_mePtHw@mail.gmail.com>
- <CAHC9VhTS7rSnBqg00ZxNkcZyh_=EeJmn_4z3CTCCxreEEDtTtg@mail.gmail.com>
- <CAEXv5_iHLmzPT3Jj+qZsdt1Nk_5OD4Up3GGV0S9G7KyQshFhDA@mail.gmail.com> <DKCVF3KRQSOJ.1WKITMP369I0R@gmail.com>
-In-Reply-To: <DKCVF3KRQSOJ.1WKITMP369I0R@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 31 Jul 2026 12:02:59 -0400
-X-Gm-Features: AUfX_mxjC65mK_RgbRznYtgcxw-6qcPS9DZ0388yJaipWl41dn8qJKId3QYgWYo
-Message-ID: <CAHC9VhR5yfw+sMfrYpy8Qm2uNoxqsTweh=KhDRZsU1CioHRDDQ@mail.gmail.com>
-Subject: Re: [PATCH v6 bpf-next 3/4] bpf: add bpf_init_inode_xattr kfunc for
- atomic inode labeling
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: David Windsor <dwindsor@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Emil Tsalapatis <emil@etsalapatis.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Shuah Khan <shuah@kernel.org>, 
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 31, 2026 at 11:44=E2=80=AFAM Kumar Kartikeya Dwivedi
-<memxor@gmail.com> wrote:
-> On Fri Jul 31, 2026 at 5:30 PM CEST, David Windsor wrote:
-> > On Fri, Jul 31, 2026 at 11:17=E2=80=AFAM Paul Moore <paul@paul-moore.co=
-m> wrote:
-> >>
-> >>
-> >> Okay, it looks like there was some confusion/misunderstanding.
-> >>
-> >> My understanding of Kumar's comments was that he was referring to the
-> >> exisiting LSM related kfuncs that are located in fs/bpf_fs_kfuncs.c,
-> >> not necessarily the new kfunc you are proposing in this patchset.
-> >> Kumar is welcome to correct either one or both of us, if we read that
-> >> wrong :)
-> >>
-> >
-> > Yes, after another reading, that does appear to be the case =3D).
-> >
-> > We'll need v7 anyway to fix the ocfs-related UAF the bot found.
-> >
->
-> Since there is confusion, let me clear it up.
->
-> I meant it for all of them. I don't think it makes sense to keep this one=
- in
-> security/ when others are in fs/bpf_fs_kfuncs.c. That confusing limbo sta=
-te is
-> worse than just placing it where others already are.
->
-> As I already said, the discussion around whether all of them they should =
-go in
-> security/ is orthogonal and should be done separately; it isn't productiv=
-e to
-> repeatedly bring it up in the context of this patch set.
->
-> I honestly don't get the urgency; it will be a mechanical change if we ne=
-ed to
-> make such changes. The worst outcome would be stalling David's work over =
-it.
->
-> As for landing this stuff, we can let Paul take the patches touching secu=
-rity/
-> and route the rest (3-4) through bpf-next after the merge window. We need=
- them
-> to go through BPF CI anyway to ensure nothing breaks.
+Signed-off-by: Jan Sebastian Götte <linux@jaseg.de>
+---
+ drivers/of/kexec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Some existing LSM kfuncs are located in the wrong files.  I'm not
-suggesting that David needs to fix the existing problems, but there is
-no reason to keep making the same mistakes.  The new LSM kfunc must go
-in security/bpf_lsm_kfuncs.c; if that isn't acceptable to the BPF
-developers then David will need to find a new way that doesn't involve
-kfuncs.
+diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
+index 029903b986cb..36635f6cb900 100644
+--- a/drivers/of/kexec.c
++++ b/drivers/of/kexec.c
+@@ -24,7 +24,7 @@
+ 
+ /*
+  * Additional space needed for the FDT buffer so that we can add initrd,
+- * bootargs, kaslr-seed, rng-seed, useable-memory-range and elfcorehdr.
++ * bootargs, kaslr-seed, rng-seed, usable-memory-range and elfcorehdr.
+  */
+ #define FDT_EXTRA_SPACE 0x1000
+ 
+-- 
+2.53.0
 
---=20
-paul-moore.com
