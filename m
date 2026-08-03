@@ -1,112 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FD5313531;
-	Mon,  3 Aug 2026 12:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D91831619B
+	for <linux-integrity@vger.kernel.org>; Mon,  3 Aug 2026 12:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785758444; cv=none; b=pLkr064Tnoej3+9DWQ0srpuJl++eo3DodkcVopB730WK+Pz7WrbOWIx21eIFN1Oc6ClrNXuzt/7SHplGBNGEnWBLwRAZUOciqZCsDfCtBjUBAmHBkHCaL1MPjWA4i6nayLM9XpX3ckso+pwIJYFXCwKalOt5asebcPGRqgXbYS4=
+	t=1785758545; cv=none; b=Fy34VCZlQHLdAgb3OEASuyO7nsVe1jHv3Qj+ZuL1VG+w4hs3nj8vo7PfpBDe7bRbuwAmxoNweBewrxeNjMDqQVTjpmP8QR+aOg2jc8YjjLqIDi+QQAlc1XPalB862dv7lmNwsm7NmVSYmK/PqdB6d2RcJHcVVFfCsxr6tCDLtFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785758444; c=relaxed/simple;
-	bh=BT9GWJtVVrS2BBBQG8aJNa680svm6JNKn0amoUDiWwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bON85f8x3F9guL3aiXCUm2q8fkaDTSNIbXcrTEs08J4Ygw3q99u3hc7Kpp/SW2piqkPS3s1WmghZR5E+R4LyElPLHUfKNpi7bR/3wfN27baFf2ZP4bzgi3mCL2kUQTZVDEgiFCrQpD5msWz6dji1DyM3/NKxAnA6ynxbeWXhLgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eP2cnZ0f; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785758545; c=relaxed/simple;
+	bh=uPSvFy7P+QFSiwZBSzTMTlUAthCnrZKn7ag0MqcBlBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XKvVZ/lvGYFCiUv08uKesYy9Ed3i4gOv+74WfXbzWbL4nB8Sofa8rEjXqZ4XAyoQnY2aCtjXmco3wz8xfzElh8auzcWMK/fYjTzxkFcI/2sRL/onflGBtWtTj5fuw67uc5mpJXqhB4QqgIVTd3+T0uxFT/cjUR9GK/gE9e88Y9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EnouUtAw; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eP2cnZ0f"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 65ECC1F000E9;
-	Mon,  3 Aug 2026 12:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785758442;
-	bh=71sbyhVDBh38HisjpXYvaRZFmS35eIgPTmNGZGCuzTo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=eP2cnZ0f2ho0ODyMxjnwlrLBqMixv/8aBq/FHTp/qJd0NvYOW8G/c5AaGCBsCr5R2
-	 zTbGtoIl9qQfIHr+tTxwflhdiRH/kyu+u0E4g8w2m1zE+uLLl+800eCy5wMsKmfSsO
-	 N5nCW4Zy+sogYGPYHAXdHlcQ0XDlXfmRiZ6xG36GVqVCpMFdie/weXAlWfwrFw/YQr
-	 bColrShWuQNVQlkE+Ms+jDipFhi5HkZnbndJNBwAW7xxx/z7RKZTOmEth86IYAVR2S
-	 Obg5tVvE/axKD0yCUb7S9nAAeBW+LLLujm8pw1kz6v4GnpN1YgKVL5tKkxEuDEAy3w
-	 dBlIwVtgZZ1lA==
-Date: Mon, 3 Aug 2026 15:00:39 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thomas Fourier <fourier.thomas@gmail.com>
-Cc: stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jerry Snitselaar <jsnitsel@redhat.com>,
-	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Fix barriers to prevent hwrng from activating
- during resume
-Message-ID: <anCC57TeFgluohBt@kernel.org>
-References: <20260803092240.18348-2-fourier.thomas@gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EnouUtAw"
+Message-ID: <d5513f7a-6a69-44ad-ab3a-095cba0d1cb8@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1785758532;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=52EZk8YPwTy+jG8rvfx/kfwJ0amdCbdlhZF4BPxa9n0=;
+	b=EnouUtAwmdUyiYMkNZYeTEKz+AWGqvGLFPzrRg2VSPbHDC6HVF7FROS4eLHrg3gT8tooRk
+	rig62DQPA5EaSsWXf6iA3G0v/XDaJ6BmV1oe49+5hzRGn2f3z2n2yirXt1Il6HlfYyxdck
+	yb7BufJLbG3lqJtL+aY1dN0OwdZGnlw=
+Date: Mon, 3 Aug 2026 20:00:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260803092240.18348-2-fourier.thomas@gmail.com>
+Subject: Re: [PATCH 0/4] CRASH_ZEROIZE: Wipe secrets before kdump
+To: David Howells <dhowells@redhat.com>
+Cc: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>,
+ Baoquan He <baoquan.he@linux.dev>, Andrew Morton
+ <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Pratyush Yadav <pratyush@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ James Bottomley <James.Bottomley@hansenpartnership.com>,
+ Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
+ Coiby Xu <coxu@redhat.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+ keyrings@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+ Tao Liu <ltao@redhat.com>
+References: <79610b53-5201-4af3-913a-0c4dcbb6f9d6@linux.dev>
+ <20260731154608.153258-1-linux@jaseg.de> <am38qk60mpVFuJRi@MiWiFi-R3L-srv>
+ <74625f78-15ea-439f-b9f0-939d2976fa7f@jaseg.de>
+ <2490025.1785751199@warthog.procyon.org.uk>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Dave Young <ruirui.yang@linux.dev>
+In-Reply-To: <2490025.1785751199@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 03, 2026 at 11:13:24AM +0200, Thomas Fourier wrote:
-> The memory barrier is placed after clearing the suspened flag so
-> memory reordering between the wake up and clearing the flag is allowed.
-> The reader of the flag is missing the corresponding barrier.
+On 8/3/26 5:59 PM, David Howells wrote:
+> Dave Young <ruirui.yang@linux.dev> wrote:
 > 
-> Clear the flag after the memory barrier and add a memory barrier in
-> the reader.
+>> Cleaning up secret data can be done with makedumpfile + eppic scripts (see
+>> the manual of makedumpfile), or it is even possible to do so in kdump kernel
+>> with Tao Liu's improvments for makedumpfile previously (I don't know the
+>> status, probably dropped for the time being, but it is possible, cced him).
 > 
-> Fixes: 99d464506255 ("tpm: Prevent hwrng from activating during resume")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> Does this represent a leak of the secrets?  Also do governmental
+> standardisation bodies have opinions on what constitutes a leak?
 
-Thanks I investigate this properly before answering. It's my first day
-after holiday so might take until Tue/Wed.
+It depends, for the crash case I'm not against to clear sensitive data, the
+concern is to avoid extra complexity of logic pre-kdump.   Which
+government?  Sorry I can not answer here.  
 
-PS. And if someone noticed, sorry for copy-pasting the same response to
-two bug reports. I just cherry-picked critical looking stuff from my
-inbox :-)
-
-BR, Jarkko
-
-> ---
->  drivers/char/tpm/tpm-chip.c      | 3 +++
->  drivers/char/tpm/tpm-interface.c | 3 +--
->  2 files changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 12b7394b34bd..7f500797b7a7 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -173,6 +173,9 @@ int tpm_try_get_ops(struct tpm_chip *chip)
->  	if (chip->flags & TPM_CHIP_FLAG_SUSPENDED)
->  		goto out_lock;
->  
-> +	/* Ensure that device is fully resumed */
-> +	rmb();
-> +
->  	rc = tpm_chip_start(chip);
->  	if (rc)
->  		goto out_lock;
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index f745a098908b..2de12b02f62b 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -474,13 +474,12 @@ int tpm_pm_resume(struct device *dev)
->  	if (chip == NULL)
->  		return -ENODEV;
->  
-> -	chip->flags &= ~TPM_CHIP_FLAG_SUSPENDED;
-> -
->  	/*
->  	 * Guarantee that SUSPENDED is written last, so that hwrng does not
->  	 * activate before the chip has been fully resumed.
->  	 */
->  	wmb();
-> +	chip->flags &= ~TPM_CHIP_FLAG_SUSPENDED;
->  
->  	return 0;
->  }
-> -- 
-> 2.43.0
+> David
 > 
