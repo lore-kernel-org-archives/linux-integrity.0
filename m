@@ -1,129 +1,172 @@
-Received: from mail-wr2-f0.google.com (mail-wr2-f0.google.com [74.125.225.64])
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478263C456B
-	for <linux-integrity@vger.kernel.org>; Wed,  5 Aug 2026 16:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785948636; cv=none; b=cVxshuIMEQ/PxUzlx1IcpoWekmj882txbL/fWRS58IOABCF4nHqAgpNpPc+tluvjy5/99kMdTtqnYC1SijhqnZcp54NCCdRKqbK+OzBnjJNVO5hDp4tAJcuutW5P+9xR8X/11xXPQy3b3WtncC7ZWu6fFSvFGYWFD4iSDmEvBHE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785948636; c=relaxed/simple;
-	bh=BszZ6KBeKZ6Qg3CtgvJEAnRrVNmYR4/7gcB+znjO7EI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZpXd/NU1Rq5sAAcjhfdCQ3G9LDjl1ukEbZdw2+/fEQ1X8PRVjdWwaZAThNIMLp03AYdT/VHT25v8XQS2d50YnJsv3MLH7Hvk/zhEmWcchv+pN87mre7FJcMLdO3NEq2JEr7B+fYZqV4nLusnsuvlvGKaAC6OzWb3Z+2oA+v/qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZHVUv/NU; arc=none smtp.client-ip=74.125.225.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B42436361
+	for <linux-integrity@vger.kernel.org>; Thu,  6 Aug 2026 09:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786010108; cv=pass; b=LnhMgOaBIhObBHIhecHG3dutwEU4Mw34zCl6hDtm1sXCdirixSzS4Y1SGfjbonZxwNYAqQUUya8jMVwys7j8RZzSXT9qe+fSG7It1gzx97bWllycnNMNba1V1JdyTlIIxNaArByN0gsl5Wdc7u91xWkgq+f6R+4ofu9y2s7Jm6E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786010108; c=relaxed/simple;
+	bh=KTqd0lpP09EibOiKqFQAK/d7YclsTCvhaaQ0Bd3pIog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=my3uE9bziN3Kk48i44Z9szL++MXlecP3vnIHFOnjh5y7yDQnpfLOdV+rsom1UktA6IDGtQyESQIJlAXwPF+bp8DmuZXmQNfXalgL+ur8KMoSjo1uiv7sONicEVQCJ3Cyfn9b3v4muu4iS2c5WsWbfJt9UErD1mtyVVRGa3raSwU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PwqO0iw6; arc=pass smtp.client-ip=74.125.224.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZHVUv/NU"
-Received: by mail-wr2-f0.google.com with SMTP id ffacd0b85a97d-47f4c92d1b3so255167f8f.0
-        for <linux-integrity@vger.kernel.org>; Wed, 05 Aug 2026 09:50:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwqO0iw6"
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-6682259cb3dso1400374d50.1
+        for <linux-integrity@vger.kernel.org>; Thu, 06 Aug 2026 02:55:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786010106; cv=none;
+        d=google.com; s=arc-20260327;
+        b=VAFVtsnKZve3HNwzlh5OPCDTbE5pZ29Mt0QJaslH2g1AQyVawzNJla2mbtsQPEtw4O
+         XiyxPPnCydkZux9WOxxTYTO2RdzgMFPzLB9CGxuUdTM9Kcs7Vg9FU3oo36TXdmE5qaue
+         GTlGGd28AL+vW3Qm3F6+jw0svwF1CQDdyzZhWh+YVmmPFS4DANtgs+xtnQvXhdYe3DiG
+         yuUNS9Fytq5H5c1Kaf67IsJYqV0eqzZGq2tQWWzfMzprDPXdhyWYq/zxOqTd65rLGPG4
+         NTOpUr2dMiLHG8Gta9S4CwMs9ZyquRy8xZnXdL7CvHkLzZbRyCMbF6jXi+QSMnG1cAcg
+         yt4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=KTqd0lpP09EibOiKqFQAK/d7YclsTCvhaaQ0Bd3pIog=;
+        fh=XYx0/+koA5Kl8Q/0xr9hUJbhwzmrrcNFtudf4YQewow=;
+        b=MQgjSdzlFYxPsKe5fSIuh72+/+9+xHhM9Fgowfu4YAu3xrA9kQXJqCAj6/c/0dfa/K
+         iNYB0xkyfEYDqgCgb5xbMk2X86PRnspHYJekcRtofZff5vd9FqxXi42Ebrhomw9reqTq
+         Ea+1xpbwaWxKGocfohE5jv23GUp97BbKxplconYgkvNOKyJk7R2NrlZgd+6vhNz3i8mZ
+         VNodHGSaWGTkdhiu+RgowS41mgo9xFScCD9jP7Mc/9d8AkW8NNR1pSkHGIH4W6+qtYYE
+         dxhvzzxjlGiBMLf29rSDNz92QlxLTojfPoY2wVMG/Kib9SXS5dXUcRiOB8/BGPMl1XOB
+         B+Hg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1785948632; x=1786553432; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1786010106; x=1786614906; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=d+VuNurPstAmXmltuo2GrH5As/aKoCfWEX/g2T2jGFE=;
-        b=ZHVUv/NUYJ33hELhK5Hk0kFOaOTBBPuQSkD29UmYqwP/PK8SDly698gOYsvBZlbWDU
-         fYisgUfxVg4bXXYMHKHtVpSHTYwtAXEV/TZ7WPAmiH1CpCGhVDfCxx+eDGpdW65MhH0s
-         z9tjGEQwkOtnIW1f0GyVIJwDn8xfdeGu6gIvnw/QZuvw6KX5Q/ZEGWm2qecMri4yomyd
-         hENIKhRIT0tQMFohErC2B8eqqDy62QIUrtytuy5sjCME+gShmummldnvQsGYX6JnRhSY
-         KrRFZLdlTyP8bCOi3SFMszApBpE8oZxLH4l+ZLC16t/eXVznNlrQ7VwKQg7i++7lWDaI
-         T0zw==
+        bh=KTqd0lpP09EibOiKqFQAK/d7YclsTCvhaaQ0Bd3pIog=;
+        b=PwqO0iw6b6mUSTq5Ob4Oag4vKZjUltAV+05UqIPYGIoayxRy3bBZTX092lRhOTZeU5
+         g3UuEUuQCt5svZOqwDzijyiX1uBax+xyVWNcH9MiVEavm++DMOalhuzO6lDtnmTFoZJ8
+         3rHHmG9NBR+JKXe65CpuRnr2HSC7y/hCsQ7aXAWmARvv5Q+p6wGqiODqBfnaLMYsJWlB
+         dfyx9cawQSukH7r0B02+J3gm0bhB56NN+swW3NdpNZ+15qyJVutLboQ8wsd29EyH1Cfq
+         RJBUql8CeIU7D/+APZRRbNHRUTf7y59WO+JQIkMpFxD1hjX2SB6Xxa6sf9Lpt0Gi7WNm
+         L5yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785948632; x=1786553432;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1786010106; x=1786614906;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=d+VuNurPstAmXmltuo2GrH5As/aKoCfWEX/g2T2jGFE=;
-        b=dBzk+aPxybsiTKJLV/n3ByhRCK42Qx8dkAEaj7gdx3uDgvkpL+beH1YXxerMruhi2x
-         nTP7GjWubqHFkj2LW7AUWJtsxZTKiKvYU6PyamsBSlx92GAGSNLenTo/2Lh/gqVwrAzj
-         8jnm6XvqfrGNJoZC+IPdjb9jf2gGeF1jNd/dXMkD5bEu50AxWV0M9R+Du1RYWUzzTrqL
-         hdDqzUapS4qwmon5w9fj5ykp67ejUy6OJxttn/UreLIB4t1OBK25tYJ/I8ojOGA1D6ih
-         cc5MtQXeNthJb/Od3omGZHMS+5TSnBVGE9yNuVergTLxwmGwu6bsJ4YCO+s2ic3Ee1Ek
-         rGFA==
-X-Forwarded-Encrypted: i=1; AHgh+RrxtKw0MuVia2nJP8K8Hu2xsx4usZFy70Jzzcy9L11//+4htI4fg1czahhxunAhi+l4w4OsXoRQ6CruOis2D18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN/jRUnCG0FdqKqoscEpGzZKrOCFJfBkERvfRAnVJ5U5khf/wD
-	a6JCvgqy3stho5JBHL9MMMkl3H+le9xugqFKMQ0Rxd7HEaJcciJ/0rXHc/fTLyQP9fY=
-X-Gm-Gg: AR+sD13rpZn8jXXKAdZypmrEUM5QO800YJpAuWuxoNWInW0ewr2e7xv/JY2vjJG3D6g
-	6ZG3y9GPwblWINkbH640HDMo4bjfTZoH7FZb/Evm0xS2S+gGBR+nZsylr2KkfGKDQ7uhNu2AKUz
-	2m0zvy+YNOS3IfS5NuSfMZvMVsl+RJvgPcd1TqXVNkBoCAs6W/YJ7VnsNkCCil4GiWifhnZpC0O
-	G2CtsDSo35isTIJW9tjnFPyn3lIUWovTPsYpx7iAtWRaj0+gdP1+iAXz1HB5gsD50fcPlBYTeyD
-	2JZYp0acciYxEiUVivaJOSKMktaKyA18B+Ik/q33BFij8xZ8zmeS38JghUcCtqKf+ONTv7jIOju
-	u4i1BzTjNdlk9waPUGyWbGzs7fkbAGFjBYKhMpv22wL4E5afcrS8xWlMA3pfNxR6eHHTsh2Wvrg
-	0OE66T8DYJ7lToUjPm4vw8CaANvpu1QrnIGBLsgRxJFmfceKle9w/fg0vuSrwi7Z8r
-X-Received: by 2002:a05:6000:d4f:b0:47f:9d0e:f8f with SMTP id ffacd0b85a97d-47fec627a65mr12452020f8f.26.1785948632621;
-        Wed, 05 Aug 2026 09:50:32 -0700 (PDT)
-Received: from localhost.localdomain ([2001:af0:8000:1409:193:86:92:181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47febf7e5bdsm9821153f8f.0.2026.08.05.09.50.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Aug 2026 09:50:31 -0700 (PDT)
-Date: Wed, 5 Aug 2026 18:50:30 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: cgroups@vger.kernel.org, containers@lists.linux.dev, 
-	criu@lists.linux.dev
-Cc: Kamalesh Babulal <kamalesh.babulal@gmail.com>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	lxc-devel@lists.linuxcontainers.org, fuse-devel@lists.linux.dev, 
-	=?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@stgraber.org>, Mike Rapoport <mike.rapoport@gmail.com>, 
-	Christian Brauner <christian@brauner.io>, Adrian Reber <adrian@lisas.de>, 
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>
-Subject: Re: [ANNOUNCE/CFP] Linux Plumbers 2026 Containers and
- Checkpoint/Restore Microconference
-Message-ID: <anNn1INJrRef2ViZ@localhost.localdomain>
-References: <7959ba0b-c39d-4cb3-8269-482d1d593257@gmail.com>
+        bh=KTqd0lpP09EibOiKqFQAK/d7YclsTCvhaaQ0Bd3pIog=;
+        b=qUca8qtgy0RnC3REHu0T7EQYlmMmo7WZHuCdPnqecWA3p61yidNHMXoiQuQSaCmVCt
+         Y7JQFtVM8iIJyKcwkwVKcb7+HTqxrc2e8/IS1aldr610yIkp6gK+8PUZVB/huSl1mD9/
+         DBK6qGO1suGmZAf9E+hAubtXuMAoWKq2rY9d20K1IHT16eAVyx9XwqtwtAkjvx7dOpY1
+         Am8PlEf9CJGvULlZyWFlb3gAopfEhVlNHqFZQqoTv9WZvQ1z/wdxAy+eCrT0G/HKFPkh
+         G8Rb80hTPMXaEkRD+q/bKHYhBmqLfeEawZ83AqjltWVbW5lSlArOJ6ghjBzZHlVtbH2y
+         /zzw==
+X-Forwarded-Encrypted: i=1; AHgh+RpIHA2iAKLbo+p0OoVihuOYt1KiovCU8L00gz4biJ8j3LKKOYtlVfEfQa7sjjhWLKi+vt6MOFrr8hV+PSK91Qw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/IKnedmfCX4wqL0SDFQI79hPXCeLlmqgieGQuuI3pfKEJsO2V
+	SXizJ4oG+kYs/KVyUi8eg07vq+hyw/NO6YX5+++1OO8PTNC0W1v3VZLEdKuhMZpM0gxfwUJA/cv
+	qBtsvQE8Zbowu48gEen0jHOcIQxpbG7s=
+X-Gm-Gg: AR+sD12hi75uwiSIOGBFIaoU8/eAOgDhFu8wBdPOn6ScwLgYhq4e9JFnOhOIRQT3tkA
+	BhyatQPSpnaEJPplDa1W80rnSJyv8LF7YIsZDKfcbXFktu24r2944O4coZGvTqmaSuw20yWPC7w
+	04OPODxCea1MaYHk8w4ZcPIbhPeMvtHle4hEh4m17U/q0V8uYolJzB+Oyz15juXV/V0DOL5ZYjp
+	qGVOHPEFDLBWnlZHonpQ9baxEFsz8CPZJiMRZa16jtGmLP4FnAXKiqVhc4lQ7TOCZSdGeQroEZQ
+	FriOUs/6XctszfzN1krQiuKJIJy0x7G7GimUvt5CTs+Vwhl48Gu8J8Lve8f3WFkJHzHuikFrzbi
+	hvBUlL0pWpW8=
+X-Received: by 2002:a05:690e:b8d:b0:667:c8ae:f683 with SMTP id
+ 956f58d0204a3-66abad23602mr1541113d50.4.1786010105998; Thu, 06 Aug 2026
+ 02:55:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7ozpukrxhw32oga7"
-Content-Disposition: inline
-In-Reply-To: <7959ba0b-c39d-4cb3-8269-482d1d593257@gmail.com>
-
-
---7ozpukrxhw32oga7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <CAJOGg3z6LJPDsdPNBxajgy8_wQxfhYBRxe4EiurZf3kPU5A5Bw@mail.gmail.com>
+ <f42cc94c-ff60-4999-b473-c2fc5b1b4199@intel.com> <CAJZ5v0j1Tucb0yzS8=3U_X1E4ziztjgOsiYrc_QfUUKZfScCPA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0j1Tucb0yzS8=3U_X1E4ziztjgOsiYrc_QfUUKZfScCPA@mail.gmail.com>
+From: Julien <julien82453@gmail.com>
+Date: Thu, 6 Aug 2026 11:54:54 +0200
+X-Gm-Features: AUfX_mxsuSxYb4bRTLw_auynOoK9idt7FQzZIelPKJrVZG-Vnf3CPDnTHMYa3ew
+Message-ID: <CAJOGg3zhEFner5pze-eX+6jh5D8nJppyWkNN5bWtg7MZ7cW9_Q@mail.gmail.com>
+Subject: Re: [REGRESSION] no TPM device after "tpm_crb: Convert ACPI driver to
+ a platform one"
+To: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Cc: "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, regressions@lists.linux.dev, 
+	jarkko@kernel.org, linux-integrity@vger.kernel.org, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [ANNOUNCE/CFP] Linux Plumbers 2026 Containers and
- Checkpoint/Restore Microconference
-MIME-Version: 1.0
 
-Hello.
+> Please try the attached patch and let me know how it goes.
+>
+> It applies on top of the current mainline, but it may be adjusted to
+> older kernels, so please let me know if you need that.
 
-On Thu, Jun 25, 2026 at 09:25:58AM +0530, Kamalesh Babulal <kamalesh.babula=
-l@gmail.com> wrote:
-> We are pleased to announce the Call for Proposals for the Containers and
-> Checkpoint/Restore Microconference[0] at Linux Plumbers Conference 2026,
-> taking place in Prague, Czechia, from October 5 to 7, 2026.
-=2E..
-> Please submit proposals through the LPC 2026 abstracts page by August 7:
->=20
->         https://lpc.events/event/20/abstracts/
+Thanks. The patch seems to be working. /dev/tpm0 and /dev/tpmrm0 are
+back and a command like tpm2_get_random 16 succeeds.
 
-Just a quick reminder that the CfP for the MC [1] topics is just around
-the corner. There is a chance to bring up topics of _your_ liking.
+> I think that these messages have been present in the kernel logs for
+> quite some time, but previously they were not connected to any
+> functional issues.
 
-Regards,
-Michal
+You are right that the messages were already present before. I see
+them in the commit before "tpm_crb: Convert ACPI driver to a platform
+one".
 
+Here is what the logs say now:
+acpi MSFT0101:00: Adjusting resource [mem 0xfed4000-0xfed40fff] to
+[mem 0xfed40040-0xfed4103f]
+tpm_crb_acpi MSFT0101:00: [Firmware Bug]: Bad ACPI memory layout
 
-[1] https://lpc.events/event/20/sessions/267/
+The second message was already there before too.
 
---7ozpukrxhw32oga7
-Content-Type: application/pgp-signature; name="signature.asc"
+I'm sorry for sending multiple times the same email. I'm still learning.
 
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCanNp0RsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMiwyLDIACgkQfj0C55Tb+Ajh6gEA+JVKvBO47pbrAwGAdZKn
-odfo4fAHSl0NLd8LTjOZA9ABAPg+Z9QFz4yhF4juz/IqW3AL7DcP/4GylW4G2PcG
-K90I
-=KTnA
------END PGP SIGNATURE-----
-
---7ozpukrxhw32oga7--
+On Wed, Aug 5, 2026 at 6:01=E2=80=AFPM Rafael J. Wysocki (Intel)
+<rafael@kernel.org> wrote:
+>
+> On Tue, Aug 4, 2026 at 9:08=E2=80=AFPM Wysocki, Rafael J
+> <rafael.j.wysocki@intel.com> wrote:
+> >
+> > Hi,
+> >
+> > On 8/2/2026 2:54 PM, Julien wrote:
+> > > Hello,
+> > >
+> > > Please keep in mind this is my first time reporting a Linux kernel
+> > > regression.
+> > >
+> > > Since commit 48fe2cddc85c ("tpm_crb: Convert ACPI driver to a platfor=
+m
+> > > one"), my TPM device is no longer available. Both /dev/tpm0 and
+> > > /dev/tpmrm0 are missing.
+> > >
+> > > Log messages:
+> > > platform MSFT0101:00: failed to claim resource 1: [mem
+> > > 0xfed40000-0xfed40fff]
+> > > acpi MSFT0101:00: platform device creation failed: -16
+> > >
+> > So there's no platform device for the driver to bind to.
+> >
+> > I think that these messages have been present in the kernel logs for
+> > quite some time, but previously they were not connected to any
+> > functional issues.
+> >
+> >
+> > > I added some debug logging:
+> > > ACPI resourcet[0] =3D [mem 0xfed40040-0xfed4103f flags 0x200]
+> > > ACPI resourcet[1] =3D [mem 0xfed40000-0xfed40fff flags 0x200]
+> > >
+> > > I think the failure happens in kernel/resource.c: __insert_resource()
+> > > because of the two memory regions overlapping.
+> > >
+> > This is quite plausible, but if that's the case, it should be fixable.
+> >
+> > Let me figure out something.
+>
+> Please try the attached patch and let me know how it goes.
+>
+> It applies on top of the current mainline, but it may be adjusted to
+> older kernels, so please let me know if you need that.
