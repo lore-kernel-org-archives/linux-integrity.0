@@ -1,250 +1,119 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF8F25B09E
-	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 12:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786104173; cv=none; b=DvfdN4GS0OY9AgXM6gGX5BzfoAak+JjktRX2Fn8p342kaNe/CEVXF4V6qQmytw+tHPOSPZefDr+gyAI07VDkizzlEC9EUFamP+LQr4ChCdzdJLktyz/3GyQDdyx2uFPQi/lAt/IaxrOK/UFGXum9wiSHixrghJUsAVkPbJl4vN8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786104173; c=relaxed/simple;
-	bh=yYGRwNpzeT/SeEaZH/6WMzRdwpj3rJDKMzyYGueU5is=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=orP7fpOKiesPvsM/ADMr65AraDfZhvHTn8xJVbpyvUhT36FWLqVjQXDSui2VPtAENN50+Mm/ZwVHyvoGLjK/d9aIr+VadVRUKRDO8TXFLdc7kOG7axh493QwYoSOKMj75dhGS9ZYnNFK8u7dTgmWXbvhipzwwMaejY43rYanAK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4hGht15vN4z1HBtF
-	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 19:35:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id B4B9340560
-	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 19:42:33 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP2 (Coremail) with UTF8SMTPA id GxC2BwC3C1GjxHVq083CAA--.7818S2;
-	Fri, 07 Aug 2026 12:42:33 +0100 (CET)
-Message-ID: <897aa15c24fd14a30392890ffeb5aac96409f31a.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: check return values of crypto_shash functions
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Daniel Hodges <git@danielhodges.dev>
-Cc: linux-integrity@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Fri, 07 Aug 2026 13:42:24 +0200
-In-Reply-To: <20260804200734.2415524-1-zohar@linux.ibm.com>
-References: <20260804200734.2415524-1-zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B5F3AD525
+	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 12:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786105610; cv=pass; b=muvHVAKdPMdkKfR3GUfO3W/Yw34jLTgEq9VJCGix20CLZ0tt86RkEgs8ApIhI66UbY4jJZubwaa94LyTYmnaBMBUElVEdGVm5QfXHaJm20cPimQvKbM3bSUQ4ri1KSzqjij0S+/6VQDuvUNrgg2OxwiL0Plag29UePzj1GzYhY4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786105610; c=relaxed/simple;
+	bh=6234D8LBfUC42DK7gXm/LmHnQDFcKbOyodSX133frx4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DnB4xXQXMusMTxDac8Mvl4l4cTGy6yuKOs6zNB8vsVgbpzXmEy93+VZKec0he/PQopIWaN9p9MNyUBToJKbXmSt/O3LF5X8WzSCqiuHw+2pKWVuPzFt7IMjwvV/Hazv2StjWUMBhCnnjEkaybXNUAlXKvghwNZjWS2J9ZpqM/XQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8SWpZd7; arc=pass smtp.client-ip=74.125.224.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8SWpZd7"
+Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-667bae10ba3so3863098d50.2
+        for <linux-integrity@vger.kernel.org>; Fri, 07 Aug 2026 05:26:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786105592; cv=none;
+        d=google.com; s=arc-20260327;
+        b=A60RPsOsoqjoLW8RaqxbvYiPWaYLps1aVCRjnKTeU9jlEoKgUWCfZO4G7MXYILj9CQ
+         GZ8rROJEtDArycdfEYBKRsLj+gX71Y7UIrJxfWqrGNy2R7MIa3pdu6fJncnkvG9RoVCc
+         /BmTHYWxGyMPDBwE6Zo646aSemOQ81HogdDqlOg3oX12z95U/wT04kHp9Z69heTeWE+o
+         NGSXSB1FbPUApDbX2wYPa5KZfm8xAPCl/wvR0/Pkcc4FsStB5B5zs6BOJO3KBZT1TPNd
+         TpDmdHOnu+DzXDPtZu7VEi4sNMneUEZk92hUk28kAB34bzE3ky4l0B3h/S5ClvEGyD1H
+         6x1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=6234D8LBfUC42DK7gXm/LmHnQDFcKbOyodSX133frx4=;
+        fh=bnb66rLuR9xgJZwGVvtayClxiqDL1E06teQ36K7Cv9A=;
+        b=PGZGgD3juIFTeHXjjTvW0IilsGMPh4oo4JaryFujXHEWQCb0Z2CpIAx4qQtBqsnM4b
+         wWAd7C7cWAL1LQIed3WcZ+7i8WzxP4R9S5JzAkMyFdrzcQQDG5YYOip/wghYt2dlWLjK
+         SR4e/5TWZH/xpFQgpJ0RhIpERxyic68nVYe6ar5GeLi+3A8b2+UXfwzHAMyabdtUtcys
+         n9+TSUS4+q7uoEobNixMp2IJxgqwhh5rdGS2PFyIIaoJGFNDjtvH3aLqNNAF0Jfigf89
+         0SrnjHZIC5wmp65ZFP6y1u0UGn/w2tphC5O//xia65ikLFnsiNmQWtSfd3nB2jnX30gm
+         404w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786105592; x=1786710392; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=6234D8LBfUC42DK7gXm/LmHnQDFcKbOyodSX133frx4=;
+        b=m8SWpZd7nhaIISJO3+HGxTjY61jsrv4O/x4AWRcsdOvIjXixCEMCDE2wOY/RX0Fs4w
+         SJrAoeIpieFFspyLBBK+mOl/ldTnmqinaQRjoR6f7RS7MAPv8X49ezxb12DsyskJEBB/
+         23b3T7nb8DffrMWmOYthFOerCmXKmmTIpLqPRpW+37B+NFvKMBdkpueo8424Q4/+L3Fw
+         0ud7b9YJbQoWL6E8Un9UFwsooXH+vDDqORIp9bszbXBH+WBTK/1gvHkuvcnODUsUCj7M
+         7SM30KNq3K46rp3VXdntQ02WpjeusDeb9SNzylxflie5a/BD5ZzoC7uOaIkAYqopq79s
+         YX/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786105592; x=1786710392;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6234D8LBfUC42DK7gXm/LmHnQDFcKbOyodSX133frx4=;
+        b=De11ksk4udiG2YZH0lsNDSCMxIqjU/TZjwfkyLRtzhHJy4x0zrgUnjnXcJ4S1vpmbk
+         4d1qFfEycc0QfXy1rR5DdhGLI0B6lFEp2hL2d+L73rBhc74jgCFMP6IwGvm5Z8Na7dPV
+         We/x4FXj9Z9SNdTfV7ubPSW9njsv8KhZdJMmktX5QaoLZvyKZRT3f4V6whxf7AVz52/O
+         GcC+rfdB6izc9LbHcS91HTX7D7LXdIxLUXyl9gbJsgE2BuQ/4o263VVs5j1FgtkrqXRy
+         3xJosXl/pjFPyBiwMSHsaLmwTYkoWctGNb+wvCMvP5GM+LI84XvmiKFDlNtpdjIX3VNe
+         JAxQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpmqHKPsgifhgACCCSOivDIc8bwb1r1GylOzjzvgA5KfbdtRejI4GEM45CvYLSBXeXTiAcSQvgaOqrznwaJQ2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc81Unf1dDYBUuoQBiXfovY2lgSG0y0JaGnq2LmM0YhMhYfB9Z
+	XrZbR68YrBHOqv93vubrv4c6OgSpO1WHI60CKhxmKlI7j6sbrTe0vPR2Et5fvvi2AOYwnishC/2
+	r9z+dN18quZCCYe9XVu5c1jkg8jNdi64=
+X-Gm-Gg: AR+sD12eDplYCUeDmA33/Ri8JY2HZNxKP/0qpRIZbxwaLLk6gRZtr45Q+7dLU8NWVSQ
+	dovTy0CVTswDOVVa3lbbigTrdDGxUqBNwrJTmABTz+dIIcYovcwQsSSNEfwUjbH8dem/3cKmcbf
+	B/4EdJkpef5+obUdc4cyoU3wLpwMUAgHwUFFvESuT/kUJE/2/CDVjdpmajUe4aHpUddqQbCXKv5
+	rVRgPtzzHflqJNxt+YFnSncqFvgxMiTul3aKZRlxoH5NQ8cOzTc0u8Glt9L7dMipLhWlqeWJ/rC
+	m1TM9bdYErILqO2NO38eLIg88JUh8wmliKbHD+zCML+Wj6x8jjJuIvOlRShy0Mgp9JeSf20LK4s
+	c5Lte1TkQjjU=
+X-Received: by 2002:a05:690e:480d:b0:668:90cd:8aef with SMTP id
+ 956f58d0204a3-66acd2f1bf7mr1336478d50.25.1786105591669; Fri, 07 Aug 2026
+ 05:26:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwC3C1GjxHVq083CAA--.7818S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKr15CFyDCrWfCw4rXr1rXrb_yoWxGrWDpF
-	W5WayDGrWDJa1UGF9aya18Z34F9ay0yF42yryUW34SyFn7Xr1IqF4Ikw18uFy5Gr1DJw4Y
-	qa1S9w1Duw4av3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUgSb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Jr0_Gr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
-	kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
-	6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
-	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kfnx
-	nUUI43ZEXa7IU1CPfJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGp1hG0TrQACsd
+References: <CAJOGg3z6LJPDsdPNBxajgy8_wQxfhYBRxe4EiurZf3kPU5A5Bw@mail.gmail.com>
+ <f42cc94c-ff60-4999-b473-c2fc5b1b4199@intel.com> <CAJZ5v0j1Tucb0yzS8=3U_X1E4ziztjgOsiYrc_QfUUKZfScCPA@mail.gmail.com>
+ <CAJOGg3zhEFner5pze-eX+6jh5D8nJppyWkNN5bWtg7MZ7cW9_Q@mail.gmail.com>
+ <CAJZ5v0ib2YxyX-6j34=w+FEOH+fsGF_ShH9Q0YCEDkZvRP88EA@mail.gmail.com>
+ <CAJZ5v0gySOkYRphXHbXcStFGiuMtni_OWXW2rTDoa_V2PRPnJw@mail.gmail.com> <CAJZ5v0i_AS1JzyM10yPfM5QsNVsQmQ3=haHCcTiM72FZm+G+Qg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0i_AS1JzyM10yPfM5QsNVsQmQ3=haHCcTiM72FZm+G+Qg@mail.gmail.com>
+From: Julien <julien82453@gmail.com>
+Date: Fri, 7 Aug 2026 14:26:20 +0200
+X-Gm-Features: AUfX_mx9S7wOi18myqNhYzBSITOrslEjXCrKmoDPgcg1jNxB3zXGDhsWm_H5WQo
+Message-ID: <CAJOGg3wZvftfk-hZ_wXBYnXca9gf5ziSo0Uh1BouYvzoEyEVrg@mail.gmail.com>
+Subject: Re: [REGRESSION] no TPM device after "tpm_crb: Convert ACPI driver to
+ a platform one"
+To: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Cc: regressions@lists.linux.dev, jarkko@kernel.org, 
+	linux-integrity@vger.kernel.org, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2026-08-04 at 16:07 -0400, Mimi Zohar wrote:
-> From: Daniel Hodges <git@danielhodges.dev>
->=20
-> The crypto_shash_update() and crypto_shash_final() functions can fail
-> and return error codes, but their return values were not being checked
-> in several places in security/integrity/evm/evm_crypto.c:
->=20
-> - hmac_add_misc() ignored returns from crypto_shash_update() and
->   crypto_shash_final()
-> - evm_calc_hmac_or_hash() ignored returns from crypto_shash_update()
-> - evm_init_hmac() ignored returns from crypto_shash_update()
->=20
-> If these hash operations fail silently, the resulting HMAC could be
-> invalid or incomplete, which could weaken the integrity verification
-> security that EVM provides.
->=20
-> This patch converts hmac_add_misc() from void to int return type and
-> adds proper error checking and propagation for all crypto_shash_*
-> function calls. All callers are updated to handle the new return values.
-> Additionally, error messages are logged when cryptographic operations
-> fail to provide visibility into the failure rather than silently
-> returning error codes.
->=20
-> Fixes: 66dbc325afce ("evm: re-release")
-> Signed-off-by: Daniel Hodges <git@danielhodges.dev>
-> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+On Fri, Aug 7, 2026 at 12:45=E2=80=AFPM Rafael J. Wysocki (Intel)
+<rafael@kernel.org> wrote:
+> And there is a v3 already:
+>
+> https://lore.kernel.org/linux-acpi/12955541.O9o76ZdvQC@rafael.j.wysocki/
+>
+> so please test this one if possible.
+>
+> Thanks!
 
-Looks good to me. I confirm the Reviewed-by.
+Yes it still works.
 
-Thanks
-
-Roberto
-
-> Link: https://github.com/linux-integrity/linux/issues/17
-> [zohar@linux.ibm.com: fixed commit 0496fc9cdc38 merge conflict,
-> checkpatch.pl warnings]
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
-> Daniel, Roberto, please review this version of the patch.
->=20
->  security/integrity/evm/evm_crypto.c | 67 ++++++++++++++++++++++-------
->  1 file changed, 51 insertions(+), 16 deletions(-)
->=20
-> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm=
-/evm_crypto.c
-> index 1c41af2f91a6..aef0f8f3d9d6 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -140,8 +140,8 @@ static struct shash_desc *init_desc(char type, uint8_=
-t hash_algo)
->   * (Additional directory/file metadata needs to be added for more comple=
-te
->   * protection.)
->   */
-> -static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
-> -			  char type, char *digest)
-> +static int hmac_add_misc(struct shash_desc *desc, struct inode *inode,
-> +			 char type, char *digest)
->  {
->  	struct h_misc {
->  		/*
-> @@ -156,6 +156,7 @@ static void hmac_add_misc(struct shash_desc *desc, st=
-ruct inode *inode,
->  		gid_t gid;
->  		umode_t mode;
->  	} hmac_misc;
-> +	int error;
->=20
->  	memset(&hmac_misc, 0, sizeof(hmac_misc));
->  	/* Don't include the inode or generation number in portable
-> @@ -176,14 +177,30 @@ static void hmac_add_misc(struct shash_desc *desc, =
-struct inode *inode,
->  	hmac_misc.uid =3D from_kuid(&init_user_ns, inode->i_uid);
->  	hmac_misc.gid =3D from_kgid(&init_user_ns, inode->i_gid);
->  	hmac_misc.mode =3D inode->i_mode;
-> -	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
-> +	error =3D crypto_shash_update(desc, (const u8 *)&hmac_misc,
-> +				    sizeof(hmac_misc));
-> +	if (error) {
-> +		pr_err("crypto_shash_update() failed: %d\n", error);
-> +		return error;
-> +	}
->  	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
-> -	    type !=3D EVM_XATTR_PORTABLE_DIGSIG)
-> -		crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZE);
-> -	crypto_shash_final(desc, digest);
-> +	    type !=3D EVM_XATTR_PORTABLE_DIGSIG) {
-> +		error =3D crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid,
-> +					    UUID_SIZE);
-> +		if (error) {
-> +			pr_err("crypto_shash_update() failed: %d\n", error);
-> +			return error;
-> +		}
-> +	}
-> +	error =3D crypto_shash_final(desc, digest);
-> +	if (error) {
-> +		pr_err("crypto_shash_final() failed: %d\n", error);
-> +		return error;
-> +	}
->=20
->  	pr_debug("hmac_misc: (%zu) [%*phN]\n", sizeof(struct h_misc),
->  		 (int)sizeof(struct h_misc), &hmac_misc);
-> +	return 0;
->  }
->=20
->  /*
-> @@ -267,9 +284,14 @@ static int evm_calc_hmac_or_hash(struct dentry *dent=
-ry,
->=20
->  		if ((req_xattr_name && req_xattr_value)
->  		    && !strcmp(xattr->name, req_xattr_name)) {
-> -			error =3D 0;
-> -			crypto_shash_update(desc, (const u8 *)req_xattr_value,
-> -					     req_xattr_value_len);
-> +			error =3D crypto_shash_update(desc,
-> +						    (const u8 *)req_xattr_value,
-> +						    req_xattr_value_len);
-> +			if (error) {
-> +				pr_err("crypto_shash_update() failed: %d\n",
-> +				       error);
-> +				goto out;
-> +			}
->  			if (is_ima)
->  				ima_present =3D true;
->=20
-> @@ -293,15 +315,21 @@ static int evm_calc_hmac_or_hash(struct dentry *den=
-try,
->  			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
->  				 dentry->d_name.name, xattr->name, size,
->  				 user_space_size);
-> -		error =3D 0;
->  		xattr_size =3D size;
-> -		crypto_shash_update(desc, (const u8 *)xattr_value, xattr_size);
-> +		error =3D crypto_shash_update(desc, (const u8 *)xattr_value,
-> +					    xattr_size);
-> +		if (error) {
-> +			pr_err("crypto_shash_update() failed: %d\n", error);
-> +			goto out;
-> +		}
->  		if (is_ima)
->  			ima_present =3D true;
->=20
->  		dump_security_xattr(xattr->name, xattr_value, xattr_size);
->  	}
-> -	hmac_add_misc(desc, inode, type, data->digest);
-> +	error =3D hmac_add_misc(desc, inode, type, data->digest);
-> +	if (error)
-> +		goto out;
->=20
->  	if (inode !=3D d_backing_inode(dentry) && iint) {
->  		if (IS_I_VERSION(inode))
-> @@ -409,6 +437,7 @@ int evm_init_hmac(struct inode *inode, const struct x=
-attr *xattrs,
->  	struct shash_desc *desc;
->  	const struct xattr *xattr;
->  	struct xattr_list *xattr_entry;
-> +	int error;
->=20
->  	desc =3D init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
->  	if (IS_ERR(desc)) {
-> @@ -423,14 +452,20 @@ int evm_init_hmac(struct inode *inode, const struct=
- xattr *xattrs,
->  				   XATTR_SECURITY_PREFIX_LEN, xattr->name) !=3D 0)
->  				continue;
->=20
-> -			crypto_shash_update(desc, xattr->value,
-> -					    xattr->value_len);
-> +			error =3D crypto_shash_update(desc, xattr->value,
-> +						    xattr->value_len);
-> +			if (error) {
-> +				pr_err("crypto_shash_update() failed: %d\n",
-> +				       error);
-> +				goto out;
-> +			}
->  		}
->  	}
->=20
-> -	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
-> +	error =3D hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
-> +out:
->  	kfree(desc);
-> -	return 0;
-> +	return error;
->  }
->=20
->  /*
-> --
-> 2.55.0
->=20
-
+The logs:
+MSFT0101:00: [mem 0xfed40000-0xfed4103f] expanded to avoid overlap
+tpm_crb_acpi MSFT0101:00: [Firmware Bug]: Bad ACPI memory layout
