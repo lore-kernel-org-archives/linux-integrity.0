@@ -1,211 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E9C3A2E36
-	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 13:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6015D37CD52
+	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 18:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786109486; cv=none; b=t6y48P/Yz3I6tuTe8km1o0fEV7QTQlqN/ZPaFUPYz1O6cf/oJC7KyHGWqjgn84fqstMRR+3kpazdUe1ano3mII+89yawsNpjNnW56guxlAOYdMMytkL7yb2yELsmqeLj9kAhXrTVNyRydLjfREKi4bODbK7u6tFhpli+dGF2FuI=
+	t=1786128565; cv=none; b=rdZhvS+Lyime1eAeqDrqf58/WyBzGlwxGaYQxXQPQw2+hp/4Sw5zwKTAkm8Ihq/CuHTgeWX+W7Q1nsVN/JxqX1xyJGPoVjStAAS6AWGTWWphnlTnz2MtgEGezjP+UNdJZHvWMMCI4uMAAsIE6zTdUU3FEDbIo1vVE1EYNXmedxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786109486; c=relaxed/simple;
-	bh=8eHFgMRs/ojHMFsHb9GihM4x8eJHiOPzVolhkdcd3tM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TlVV/uvdYDrSReFCjP63QHO6MDDJcBB7vfQ/9H/mgjKSugWJmCtfV3AQura3fFJ/NNg1HSmMQ1bmGzHvdjhcYKPxpP2uZpF+ChA9Fyh0zpCe0J7FOS/n5COXhg5/uJItGYYqfHXx9P9lEDaJsohyzniV1ofEAQ+I2idiLxL4xFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWYWeE5U; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786128565; c=relaxed/simple;
+	bh=PQmR0v+qmjcds5G/Bofupy9k42RL7Ec+vyB1enU0ufM=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=qwXDiuglFvkzM3dcVUQBy+4eXgKTV0KmYV1Id/LydHwunQ7Fd/CAl0rVbpo1IeDVZ4uV1bBFUFrIp/lwyAtg+igW0abMCxQxvLY0frNQo+DTXVMA2jQI0UAe8DBo46DBHexlwwpackfCaH/ziUlx0VY6Oz6NdyW9vjRQnLvXA4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ooonFvIx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWYWeE5U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F8C31F00A3F
-	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 13:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786109476;
-	bh=cr3uXUWw48oClM6s029WaH/arJdaHlup4jHlPrjw/Ho=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=WWYWeE5Urqipj9WvxNsF/cwMXasK60WieBhduENLM9Xp98M+aVe6iL56kD4lpZ2om
-	 2TmkcGk5GDFYheXzraRLdenoXaNLhiLAI74MJZ3F3hkaAKzpFuISLkXcnrC5CrLNdE
-	 +3WuTkwpReZ/P/XhJt3SmbbTsaHpC7+FQ1LX5QiSraxEbLZ5omOu5xLO64eVofTxE0
-	 hRFe/uK/qea3KC8otxEaVoYk1Z0M3yhjtCBKDeeTHi7VY4V1h/OrJWS25Qly5MuSPK
-	 M6l1n3ko23AaIHgrn3prPz+mzZti6PXj0s1xND17xtEJ2TB00LP4qBoAeNyq6lEpck
-	 bvP+Qt33vrB0g==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5b28c91fba5so2581398e87.1
-        for <linux-integrity@vger.kernel.org>; Fri, 07 Aug 2026 06:31:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpD9mZbSIgn3dkIp/DwF20chKD7gOPnNM8u6VTvF5FqrDOr6qOSX6D6buUPYcjr3/klE/R7oA2PgaImv4p1ZeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH86BhWaJCMqT7DzD/OVd1g6ZY8CGzp6BjQ5qOBjHTQwDkjeBC
-	8uElys+QhRJLWIIBNHgkf4hiloWBKK8D7H0wORzusAOpr/4n2TNGBLxObn9BiGfpu3GIBFvG/fh
-	RxSzBYKAa4Z0khqFWiQx4iOpK7r5Peas=
-X-Received: by 2002:a05:6512:6186:b0:5b0:1108:c58b with SMTP id
- 2adb3069b0e04-5b3023cfe15mr2082055e87.15.1786109474938; Fri, 07 Aug 2026
- 06:31:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ooonFvIx"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 677Imon92187755;
+	Fri, 7 Aug 2026 18:49:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=uL9Sbq
+	o344dX4Hx33UITUq52ZG7x9ZSWpCr08dldau4=; b=ooonFvIxX/49Eg7NFWw8lo
+	WVf2y9f6T6ljFgFInynq9wDHZK9p2qLXLjwUsNTAQ7O3Ur/imZmP+QR0e3aPiHyE
+	oIL3Ul+6hwsClqkpZz/dqujxYYl7HfwV3BA4YjKSwTLNLpneX73vojOr1KJ81Ry+
+	OTzIBZ1G9XYiylPdLP6Dn8D1Kk508dXSw+7JsjPDrGbPGChKP4iPDJyYLnPgWL2u
+	7+xbG2CdeQSN66Q9nNH9XEPkWtPcziDTVOst1czhUKRGZDfCN7fXLyF+ALiaZenY
+	bA5VAr0Ovx367UiZ8WcL+1uwpuLh2fxhzX90LnIQRAqADpJRJRFKmqqHGWZxFqXQ
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fvy02d87s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Aug 2026 18:49:11 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 677IfHWX001236;
+	Fri, 7 Aug 2026 18:49:10 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4fsugwh1wx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Aug 2026 18:49:10 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 677In9xI17629844
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Aug 2026 18:49:10 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CE4635805D;
+	Fri,  7 Aug 2026 18:49:09 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7E9A658055;
+	Fri,  7 Aug 2026 18:49:09 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.26.181])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Aug 2026 18:49:09 +0000 (GMT)
+Message-ID: <1ffedf290548a2fbfb1670ad53ec5d57e0f27178.camel@linux.ibm.com>
+Subject: Re: ima_setup.sh: Fix check_policy_writable() for kernel < 4.5
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: linuxtestproject.agent@gmail.com, ltp@lists.linux.it,
+        linux-integrity@vger.kernel.org
+In-Reply-To: <20260803131942.GB246496@pevik>
+References: <20260728114224.1055009-1-pvorel@suse.cz>
+	 <20260728125815.4069-1-linuxtestproject.agent@gmail.com>
+	 <20260728133556.GA1128467@pevik>
+	 <7279643f66b2ea6d6888716f7923363c2f59b6eb.camel@linux.ibm.com>
+	 <20260803131942.GB246496@pevik>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 07 Aug 2026 14:49:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12955541.O9o76ZdvQC@rafael.j.wysocki> <c159e25b-379a-4e0d-b284-f68bcbb09c7d@molgen.mpg.de>
-In-Reply-To: <c159e25b-379a-4e0d-b284-f68bcbb09c7d@molgen.mpg.de>
-From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Fri, 7 Aug 2026 15:31:01 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gvsnEn-ZgavT6YrWUO1GOWAri7fnT5i1KpEtdEVWSTBw@mail.gmail.com>
-X-Gm-Features: AUfX_myAC2MiU57iWZ5wRgf4FuA0nrTMdzC-Pn5OmaWyEgAtqXEucqFd6Qb6_W0
-Message-ID: <CAJZ5v0gvsnEn-ZgavT6YrWUO1GOWAri7fnT5i1KpEtdEVWSTBw@mail.gmail.com>
-Subject: Re: [PATCH v3] ACPI: scan: Avoid registering platform devices with
- resource overlaps
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-acpi@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, julien82453@gmail.com, jarkko@kernel.org, 
-	linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=G6ws1dk5 c=1 sm=1 tr=0 ts=6a7628a7 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=aCwNQFKuUpxus5D-iSYA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA3MDE0NyBTYWx0ZWRfX7FoRUk2mstIh
+ Iw5m/oQNxd0XPRyHELIe+31cQq9ciQPOYvUCbLc9fkg+P+9D2PDlvfnyx8u28r/sj5UrMaN0RHi
+ cgRiAQcvZgkgt/a0MFnSm/ep0uLQK3fJd178NYDICbBWmp2TbeMCVziEpc7ZVTKnQiZIPYT8e0I
+ kbXD5DP3KyXI44kljXnh/IyMp1pmkV0UXdm4qPlzbJFN7vOROVGyHScB0UKPx0poKAuaQlh+rVO
+ VB5SZ17pBTvq8Nd7mf9PKpiC+LLL9d2lwR+PUxD4Jc3dsXqhFSrIFxVPLqb5MYBL/eGUjlEuRD5
+ TI0Ohxnk1p6cKyuYpGkBp9Idma/p3zp13S86gKJd0+M1pZmSjPJFKGoIDa2qvXHGFnZ3XuN+23C
+ 3J2pKJ9+M1EL+6CMD7A4FD6UkNVYItCF2cNX//zR7GQxgtPQtKRp0Hm/FAHFvNUvto/zaEfz+L7
+ ij4zQZTO7MZ9sNAgk5w==
+X-Proofpoint-ORIG-GUID: 7DXgU4h-pFHlQ9xKPbPjVJCvP4pn9xcY
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODA3MDE0NyBTYWx0ZWRfX96WnsJ7iP6uS
+ XwJFUBqpQ93WYW+chmTqAS9AY3uqbn4amTMPeWa0DFPr/zrztWOuyhbmJy1qCWdBAYDfDJ4U6Ch
+ akFJGeCzgnjblXq1O8o4rqgt6kDNw2I=
+X-Proofpoint-GUID: 38RT8zg4nJohzV9gIKgG-073rTgYngCd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-07_04,2026-08-07_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 priorityscore=1501 adultscore=0 bulkscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608070147
 
-On Fri, Aug 7, 2026 at 2:57=E2=80=AFPM Paul Menzel <pmenzel@molgen.mpg.de> =
-wrote:
->
-> Dear Rafael,
->
->
-> Thank you for the patch.
->
-> Am 07.08.26 um 12:22 schrieb Rafael J. Wysocki:
-> > From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> >
-> > If acpi_dev_get_resources() returns overlapping I/O or memory resources=
-,
-> > the subsequent registration of a platform device will fail with -EBUSY
-> > due to a resource conflict.  This is reported to happen on Acer Aspire
-> > ES1-572 [1].
->
-> Reading the diff, it might be useful to paste the log warning already her=
-e:
->
->      tpm_crb_acpi MSFT0101:00: [Firmware Bug]: Bad ACPI memory layout
+Hi Petr,=20
 
-It's there in the message pointed to by the Closes: tag though.
+On Mon, 2026-08-03 at 15:19 +0200, Petr Vorel wrote:
 
-> > Avoid that by adjusting resources returned by acpi_dev_get_resources()
-> > to eliminate partial overlaps between them.
-> >
-> > This has not been regarded as necessary before because putting
-> > overlapping resources into the _CRS of one device is really pointless,
-> > but now that the issue has been reported to actually happen in the
-> > field, it needs to be done.
-> >
-> > Fixes: ab06eb920401 ("ACPI: scan: Register platform devices for fixed e=
-vent buttons")
-> > Reported-by: Julien <julien82453@gmail.com>
-> > Closes: https://lore.kernel.org/linux-integrity/CAJOGg3z6LJPDsdPNBxajgy=
-8_wQxfhYBRxe4EiurZf3kPU5A5Bw@mail.gmail.com/ [1]
-> > Cc: All applicable <stable@vger.kernel.org>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > v2 -> v3:
-> >     * Use resource_union() and adjust code and comment (Andy)
-> >     * Include ioport.h directly
-> >
-> > v1 -> v2:
-> >     * Add the expanded resource instead of and not in addition to the o=
-ther
-> >       overlapping one (Sashiko)
-> >
-> > ---
-> >   drivers/acpi/acpi_platform.c |   39 +++++++++++++++++++++++++++++++++=
-++++--
-> >   1 file changed, 37 insertions(+), 2 deletions(-)
-> >
-> > --- a/drivers/acpi/acpi_platform.c
-> > +++ b/drivers/acpi/acpi_platform.c
-> > @@ -12,6 +12,7 @@
-> >   #include <linux/bits.h>
-> >   #include <linux/device.h>
-> >   #include <linux/err.h>
-> > +#include <linux/ioport.h>
-> >   #include <linux/kernel.h>
-> >   #include <linux/module.h>
-> >   #include <linux/dma-mapping.h>
-> > @@ -71,6 +72,36 @@ static struct notifier_block acpi_platfo
-> >       .notifier_call =3D acpi_platform_device_remove_notify,
-> >   };
-> >
-> > +static unsigned int acpi_platform_adjust_resources(struct acpi_device =
-*adev,
-> > +                                                struct resource *new_r=
-es,
-> > +                                                struct resource *resou=
-rces,
-> > +                                                unsigned int count)
-> > +{
-> > +     unsigned int i;
-> > +
-> > +     if (!(new_res->flags & (IORESOURCE_IO | IORESOURCE_MEM)))
-> > +             return count;
-> > +
-> > +     for (i =3D 0; i < count; ) {
-> > +             struct resource *res =3D &resources[i];
-> > +
-> > +             if (resource_type(new_res) !=3D resource_type(res) ||
-> > +                 !resource_union(new_res, res, new_res)) {
-> > +                     i++;
-> > +                     continue;
-> > +             }
-> > +
-> > +             dev_info(&adev->dev, "%pR expanded to avoid overlap\n", n=
-ew_res);
->
-> Maybe more normal user understandable:
->
->      %pR expanded to fit all resources to avoid overlap
+[...]=20
 
-What about "expanded due to overlap"?  I'd prefer it to be shorter
-because the resource printout takes up some message space already.
+> Do you agree that test2 in ima_policy.sh should be skipped on kernel < 4.=
+5? If
+> you consider useful running the test also on these old kernels I could ju=
+st
+> correct the commit message for older kernel or simply ignore that fact (j=
+ust add
+> a comment to the test that it's irrelevant for < 4.5. (I know 4.4 is not
+> supported any more, in fact it's just for SLES and possibly other LTS dis=
+tros
+> still supporting this old kernel, but I still appreciate your opinion.
 
-> For the record, Julian reported that now the lines below are logged:
->
->      MSFT0101:00: [mem 0xfed40000-0xfed4103f] expanded to avoid overlap
->      tpm_crb_acpi MSFT0101:00: [Firmware Bug]: Bad ACPI memory layout
+Test 2 says, ""verify that policy file is not opened concurrently and able =
+to
+loaded multiple times". Prior to 4.5, a policy cannot be loaded multiple ti=
+mes.
+I agree ima_policy.sh: test2 should be skipped on kernels prior to 4.5.
 
-Right, and the second one comes from the driver binding to the device.
+>=20
+>=20
+> > > > Should test2 report TCONF (or split the two assertions) when
+> > > > CONFIG_IMA_WRITE_POLICY is not available?
+>=20
+> FYI we could sooner or later start using kernel config (e.g. look into
+> CONFIG_IMA_WRITE_POLICY and CONFIG_IMA_READ_POLICY as many LTP tests and =
+now
+> even LTP library require kernel config (we resisted long time add kernel =
+config
+> as a hard dependency, but finally Cyril added support in 2018).
 
-> > +             /*
-> > +              * Eliminate the previously processed resource that overl=
-apped
-> > +              * with the new one because it is not necessary any more.
-> > +              */
-> > +             memmove(res, res + 1, (--count - i) * sizeof(*res));
-> > +     }
-> > +
-> > +     return count;
-> > +}
-> > +
-> >   static void acpi_platform_fill_resource(struct acpi_device *adev,
-> >       const struct resource *src, struct resource *dest)
-> >   {
-> > @@ -151,10 +182,14 @@ struct platform_device *acpi_create_plat
-> >                               return ERR_PTR(-ENOMEM);
-> >                       }
-> >                       count =3D 0;
-> > -                     list_for_each_entry(rentry, &resource_list, node)
-> > +                     list_for_each_entry(rentry, &resource_list, node)=
- {
-> > +                             count =3D acpi_platform_adjust_resources(=
-adev,
-> > +                                                                    re=
-ntry->res,
-> > +                                                                    re=
-sources,
-> > +                                                                    co=
-unt);
-> >                               acpi_platform_fill_resource(adev, rentry-=
->res,
-> >                                                           &resources[co=
-unt++]);
-> > -
-> > +                     }
-> >                       acpi_dev_free_resource_list(&resource_list);
-> >               }
-> >       }
->
-> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Nice!
 
-Thank you!
+>=20
+> But more important for me would be to migrate LTP IMA tests to shell load=
+er [1]
+> or even rewrite to C API. We have deprecated tst_test.sh API some time ag=
+o.
+
+Oh!  Sure, sounds good.
+
+thanks,
+
+Mimi
+
