@@ -1,114 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F7B41D4EA;
-	Fri,  7 Aug 2026 11:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1BF3D3499
+	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 11:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786101979; cv=none; b=J2378HYmJYKxlJtgtlhA7ctHtaEtQCRH7c5EUaPU3Gea2z303QMfjyAy5OZ8TsTKeDTtv9C7PvhzMON+TQaVP2F6iaeEYlc/FJQPT6oY4oBB4yAPsR0xunRDGJIwWAx2gSOTCxCx0wR1Q/6FidgegZYnkcVC+WjCc0wqypcmiro=
+	t=1786102831; cv=none; b=D0MHd6voBTufd5lasN6sbxzrQlW20+/uxXpXRLLziItbRtED4kbl3euw2e8CYOKaaUl+Stn26LuOPchZ8wg7k53c2FUxxkFs7qjsGTpk9QJRJ23zpSwkmkqWCPLMbqsujDvibEBqKHQdPc4qBk1p5K1/OY/bn/Se4RnFZ6LO29Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786101979; c=relaxed/simple;
-	bh=s5yPAJHJCjoTyZze9sB8p14TVGQ8qTHTjfVTzn1EEYw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nTleUw6JiPURKb7D4FrLbBtfw28RAXBUmTPJhkuvVzOH8lC1qFbCQzzQq0eAJ1OpiX+7hW5Cysj5uzS7t3qlOBY3XeEtLLTqYay0r+O6m7ngbc7z+A+28C8kuqWx31y/NC6gCq9PBBsD1m0KTJmhp5/5nfuPNi4R6XdGzUQcUBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dojbjUTF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1786102831; c=relaxed/simple;
+	bh=N9knYDZBFNPryH7Rgx/98qENXC5GJq8BV/99VAlyTBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFeyiJm5FEe58KrC19pkEAKGP+GDPK22XRNP4awtXws2GW0v2PRT4VB+ehtsrkchJue1JINK0BLw58KkHcCvObrNFPvjHtT1IWTrPM7tjOnCgCRlzk+nyBK7rpKbkdtQIY6EnpTvsmi/7sxK7SE4wumO8U2+EMYc3+XeygFOj3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minyard.net; spf=pass smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard.net header.i=@minyard.net header.b=ho+AG7QT; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=minyard.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dojbjUTF"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F0B0EC2BCFA;
-	Fri,  7 Aug 2026 11:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1786101979;
-	bh=s5yPAJHJCjoTyZze9sB8p14TVGQ8qTHTjfVTzn1EEYw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=dojbjUTFEKuj/cQEkk918sx+Hby/sIcm8cpT/MhoERvERk2O5AhKM3LztiUhYxVKN
-	 xep33D7QbUFVcRDdtXvVaxUtRHtnqieueMGhDtQD03C327rDrANsCjL6viRVfkK7q/
-	 go3ea5lQZKVpvxDpY5TZ8cvJgUv1L0SjXQ7BKuFUubrfnv8nm8KkhH3SexHLiN1xZ3
-	 T2iCkYe5RrkQVxIoLN9E7C3SxZLIxNjdtU35IPw5US9LqeFX6bx72zie7ztsy64644
-	 D+/Ok5saUUw77g3dtxlR1D8iiTr8e2Pw/wGhJPBhHfVuQ17flOYBWSyQ50yS1gFnYv
-	 BShjBNTbyFsLg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FDEC5AC80;
-	Fri,  7 Aug 2026 11:26:18 +0000 (UTC)
-From: Pawel Zalewski via B4 Relay <devnull+pzalewski.thegoodpenguin.co.uk@kernel.org>
-Date: Fri, 07 Aug 2026 12:26:09 +0100
-Subject: [PATCH 2/4] char: hw_random: use named initializers for
- acpi_device_id
+	dkim=pass (2048-bit key) header.d=minyard.net header.i=@minyard.net header.b="ho+AG7QT"
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-4a416619cb2so2044551b6e.3
+        for <linux-integrity@vger.kernel.org>; Fri, 07 Aug 2026 04:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=minyard.net; s=google; t=1786102825; x=1786707625; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:reply-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=EMmFXrjSrpeG4wnNrWhFFN4HfKJ+fxYW0scJBNmq2ko=;
+        b=ho+AG7QTq0tBcJO5iMiHZPcbuvMjiKbaKScbh/9yZZWegr6dvgITG69snkYO2dIFoQ
+         /d4iNi7CkQphEXYa3chPWwg4PyrIyGHpjqwXAdNxKU3GS5IJuxMtF6NpwDtfcgGazUst
+         XyXT9hXsZfusPVoCMHdZy4j1bKU93GQ9zG6q+q0+gGw/PXJGWDzztmwIcgMSheCuKCwi
+         nt0Ox8JXCQk6hpZ2i54sJylhFJZCGEJDI9T7OpmMYR7R96J+ec74H1CewTXECCyE0b4V
+         EsF6bUkUw2rLEs1Lkc54X1h41RSYJBZyYFkA6p6w++g6IMHcnV41mojOOnslIQ1sTEf3
+         /NFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786102825; x=1786707625;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=EMmFXrjSrpeG4wnNrWhFFN4HfKJ+fxYW0scJBNmq2ko=;
+        b=AeIk1+TXzNtx9EkV3Iq39Jos4Vaux+9kKLpox1IUt66tjAuEFFOMVyPtA2qS6nZT0L
+         NCXQH9G7a1iPT0qYG69lz96v1Vwdx51Na3yeurAGtXVatyoRXJMn4dzmgV989BJkR10A
+         1tLXHAPp4s+bMLcf9zuFrh+xiYEvECI8IRSEFYOf7LT5xlTBfeNDBH0wVDZ4hfdwpuGT
+         ZhODiIQUPNvNNA0ZbGhXEnnxzQKUWTpvS1L9/3JtQ3SMxPNkgrMbv302WfdM329CNXwa
+         GR0fG0uucYkJt/J3gL4UD5F4u5afOwxYRWMvXS6gC1HW0ya3GXJ8c818UyZRvRMebBqP
+         5Gdw==
+X-Forwarded-Encrypted: i=1; AHgh+RptugtpkZ30WY9AQY3+5na0VLd/e+A4YdyD1cuY+l/Huc4eM0d85ftO6fXfT2kumrSWZkegyiolYh7s+3Aqo7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6UYEVkEfbVyH8LgbgN8K+DUqqQNhy31N6X4VuvqMk1IGBxPJb
+	76rA9DxUCIAjrFlQryodsh3Q/doPnvlmfESQO0uOHHDgywP0nX8eUgpMmf0P6TvQv3k=
+X-Gm-Gg: AR+sD13N1tMYhsSmfFPAL12bbN/a+l+HxuXH1raNk0nHBtmgbujJxrVQmQv10miGPRZ
+	iWE4Imc4uUXQDzrOOuuk2Ed8NnVcXaawC46NhMIlOULo9w+d52LNu+QuotjMKD9LKw/XzyvPHRQ
+	3N6mArkUQriaVpiSjEASiXxa7vI6zczfx9PcJF+A+/yvvoP4qB3USjL+xy+Cibv4mgUgTnsqHMI
+	plqYZR8GB2luLzgZo4wdyMrvDLdriey3VH4YuQnilcOzaa1pdPYe+bEBiPYl5twxqdvnPem++Fh
+	qaipZOHB1vC56HKGTIDtWLm/euKdbxhQYA3JCvM5dRZnNo1Z+i3R7oM4FyV3I8nnjIyfMI+REeo
+	p9ENZr9rV1Z/GFd4P22dC8igprvyAy5bG7yen+8zele/HEseQ2rUqnVlapdxc1qnCX+g2B8ZbYD
+	3ksPApAc75HOA69MhPbAmLyytxUkt49/7ez7XypksKmovVjzZ58q83EJq5RCgXQwjIaiKoQ81ZF
+	oJ6ysZu+rE2P2IHi8HJqGMioKTd4yAZhEYDANCgx3g55niBBFq7NsQLt6P0IcCRpqzzmTROf13s
+	PYsrqPsaxA==
+X-Received: by 2002:a05:6808:13cc:b0:497:deab:2bfe with SMTP id 5614622812f47-4afadecaaadmr11898057b6e.1.1786102825384;
+        Fri, 07 Aug 2026 04:40:25 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:f431:c4b8:c018:caf2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4afae1777d2sm7036162b6e.0.2026.08.07.04.40.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Aug 2026 04:40:24 -0700 (PDT)
+Date: Fri, 7 Aug 2026 06:40:20 -0500
+From: Corey Minyard <corey@minyard.net>
+To: pzalewski@thegoodpenguin.co.uk
+Cc: Clemens Ladisch <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mattia Dongili <malattia@linux.it>,
+	Weili Qian <qianweili@huawei.com>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 3/4] char: ipmi: use named initializers for acpi_device_id
+Message-ID: <anXEJOF27FiNOqWx@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <20260807-acpi-char-v1-0-742c450254dd@thegoodpenguin.co.uk>
+ <20260807-acpi-char-v1-3-742c450254dd@thegoodpenguin.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260807-acpi-char-v1-2-742c450254dd@thegoodpenguin.co.uk>
-References: <20260807-acpi-char-v1-0-742c450254dd@thegoodpenguin.co.uk>
-In-Reply-To: <20260807-acpi-char-v1-0-742c450254dd@thegoodpenguin.co.uk>
-To: Clemens Ladisch <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Mattia Dongili <malattia@linux.it>, Weili Qian <qianweili@huawei.com>, 
- Olivia Mackall <olivia@selenic.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, Corey Minyard <corey@minyard.net>, 
- Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-crypto@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
- linux-integrity@vger.kernel.org, 
- "Pawel Zalewski (The Capable Hub)" <pzalewski@thegoodpenguin.co.uk>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786101977; l=1444;
- i=pzalewski@thegoodpenguin.co.uk; s=20260803; h=from:subject:message-id;
- bh=+xP/DyVMe1G4+tAB3K0pNQD1hmkjHQX41ImGXQMTrqo=;
- b=0HUTmx5EbpEP+CnAz7BzmRJIaxcloUiHZXMfz0ArQH/ota00MUtfLnrJJ+ZIOOqQOvhZmYEbW
- 0f34qLnp+dkBj5v+DUifGCk+mk1l3vixpU0WqVISP8BfnsFy3ocKq5F
-X-Developer-Key: i=pzalewski@thegoodpenguin.co.uk; a=ed25519;
- pk=W3zk1cb/wRnj6pNGbl3/2Zf3GmPA6IBpNHpDPyJ05k8=
-X-Endpoint-Received: by B4 Relay for
- pzalewski@thegoodpenguin.co.uk/20260803 with auth_id=913
-X-Original-From: "Pawel Zalewski (The Capable Hub)" <pzalewski@thegoodpenguin.co.uk>
-Reply-To: pzalewski@thegoodpenguin.co.uk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260807-acpi-char-v1-3-742c450254dd@thegoodpenguin.co.uk>
 
-From: "Pawel Zalewski (The Capable Hub)" <pzalewski@thegoodpenguin.co.uk>
+On Fri, Aug 07, 2026 at 12:26:10PM +0100, Pawel Zalewski via B4 Relay wrote:
+> From: "Pawel Zalewski (The Capable Hub)" <pzalewski@thegoodpenguin.co.uk>
+> 
+> Use a named initializer for the acpi_device_id fields which
+> makes the code more readable and consistent with how lists
+> are initialized in the rest of the kernel code base. Also
+> drop explicitly setting fields to 0 where it is redundant.
+> 
+> While we are at it - unify the list terminator to have
+> a single space between the brackets and no trailing
+> comma.
 
-Use a named initializer for the acpi_device_id fields which
-makes the code more readable and consistent with how lists
-are initialized in the rest of the kernel code base. Also
-drop explicitly setting fields to 0 where it is redundant.
+This is fine, it's in my next tree for next release.
 
-Signed-off-by: Pawel Zalewski (The Capable Hub) <pzalewski@thegoodpenguin.co.uk>
----
- drivers/char/hw_random/hisi-trng-v2.c | 2 +-
- drivers/char/hw_random/xgene-rng.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Thank you,
 
-diff --git a/drivers/char/hw_random/hisi-trng-v2.c b/drivers/char/hw_random/hisi-trng-v2.c
-index 6584ed051e09..9e0ecea56ad6 100644
---- a/drivers/char/hw_random/hisi-trng-v2.c
-+++ b/drivers/char/hw_random/hisi-trng-v2.c
-@@ -77,7 +77,7 @@ static int hisi_trng_probe(struct platform_device *pdev)
- }
- 
- static const struct acpi_device_id hisi_trng_acpi_match[] = {
--	{ "HISI02B3", 0 },
-+	{ .id = "HISI02B3" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, hisi_trng_acpi_match);
-diff --git a/drivers/char/hw_random/xgene-rng.c b/drivers/char/hw_random/xgene-rng.c
-index 1f4b95341c2e..222db3fb275b 100644
---- a/drivers/char/hw_random/xgene-rng.c
-+++ b/drivers/char/hw_random/xgene-rng.c
-@@ -296,7 +296,7 @@ static int xgene_rng_init(struct hwrng *rng)
- 
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id xgene_rng_acpi_match[] = {
--	{ "APMC0D18", },
-+	{ .id = "APMC0D18" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, xgene_rng_acpi_match);
+-corey
 
--- 
-2.55.0
-
-
+> 
+> Signed-off-by: Pawel Zalewski (The Capable Hub) <pzalewski@thegoodpenguin.co.uk>
+> ---
+>  drivers/char/ipmi/ipmb_dev_int.c     | 4 ++--
+>  drivers/char/ipmi/ipmi_si_platform.c | 4 ++--
+>  drivers/char/ipmi/ipmi_ssif.c        | 4 ++--
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
+> index 680ff15c30ab..d576a77df927 100644
+> --- a/drivers/char/ipmi/ipmb_dev_int.c
+> +++ b/drivers/char/ipmi/ipmb_dev_int.c
+> @@ -360,8 +360,8 @@ MODULE_DEVICE_TABLE(i2c, ipmb_id);
+>  
+>  #ifdef CONFIG_ACPI
+>  static const struct acpi_device_id acpi_ipmb_id[] = {
+> -	{ "IPMB0001", 0 },
+> -	{},
+> +	{ .id = "IPMB0001" },
+> +	{ }
+>  };
+>  MODULE_DEVICE_TABLE(acpi, acpi_ipmb_id);
+>  #endif
+> diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
+> index bdc481ce1302..fa221cbb4b3b 100644
+> --- a/drivers/char/ipmi/ipmi_si_platform.c
+> +++ b/drivers/char/ipmi/ipmi_si_platform.c
+> @@ -387,8 +387,8 @@ static int acpi_ipmi_probe(struct platform_device *pdev)
+>  }
+>  
+>  static const struct acpi_device_id acpi_ipmi_match[] = {
+> -	{ "IPI0001", 0 },
+> -	{ },
+> +	{ .id = "IPI0001" },
+> +	{ }
+>  };
+>  MODULE_DEVICE_TABLE(acpi, acpi_ipmi_match);
+>  #else
+> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+> index 07f1d2327bb7..2361103c5edc 100644
+> --- a/drivers/char/ipmi/ipmi_ssif.c
+> +++ b/drivers/char/ipmi/ipmi_ssif.c
+> @@ -2057,8 +2057,8 @@ static unsigned short *ssif_address_list(void)
+>  
+>  #ifdef CONFIG_ACPI
+>  static const struct acpi_device_id ssif_acpi_match[] = {
+> -	{ "IPI0001", 0 },
+> -	{ },
+> +	{ .id = "IPI0001" },
+> +	{ }
+>  };
+>  MODULE_DEVICE_TABLE(acpi, ssif_acpi_match);
+>  #endif
+> 
+> -- 
+> 2.55.0
+> 
+> 
