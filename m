@@ -1,93 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDAD432311
-	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 10:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392024302E7;
+	Fri,  7 Aug 2026 11:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786099548; cv=none; b=ERy+4IsB4XGeBERVkS5VEa7klmYb/ckgicSmseJuM6T4Tc/kn7cZYl91SlTT0TQ19gg6+/TZ7DK4oVn9D6/JK2fEFbF8kD3jXYCQ3pTZgOEfObNMIIUkREoroGckc142fm1iSpxHg43yRrwFNUoeVFixe1YmPEmjY2CJXrpInwE=
+	t=1786101979; cv=none; b=rgTtl+zoroioHMNHH/Oqx2E63sB6L+cbbxZ3RmlCkfNRbnB937q3hypZDJxKhe7iVENyB4N4kI+qAI+E4bPpUzAUYLl0Le+YrohJb9XxqhEz1g77XpDUQCODGoWebDhqGFMZet93+3XhvEG509h23SFeOoKztPI6UZVk/gaamN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786099548; c=relaxed/simple;
-	bh=VBZac2SC1u2vRO+E4zkHrmlHYdaSFvvpY2HBEq5hh4Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HjB4Vd4ziOiert7Qm+dEBwix4ihgxaFmL+OaSd+574uiF30332Mq8qXGODbl6/Zxghz5j2hspRZa647e2yxbbzFBqyhpLvRYyYxnq2jUNw6XPPntiE3XHftwAMe+n9uDUjDZtYuptk0NRiN8uSlc7ya3wQftNpoRuJyqsLaZHI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SA6ojUPf; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786101979; c=relaxed/simple;
+	bh=5YH4OupiPVo5NYgT2GzQ1B//oZTWncXO4yg7L+WC4DY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WovLSkx+pdP/clGl0eGeid9xKVBRGjW40qtY03A5fJLYYHP7VDteeYlCdJ8iPVTtR2rTwrefiWwFCaXCrPpPYEonVzJugwkmv0AwbVwmRYRh/5oLyKafFFeGlOnP6kLuMMPJbsOHO4ZxbJ58ZOYc4hqer4sU0dR/9UetBoPphXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ES4FOK5L; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SA6ojUPf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B911F00A3A
-	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 10:45:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786099546;
-	bh=VBZac2SC1u2vRO+E4zkHrmlHYdaSFvvpY2HBEq5hh4Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=SA6ojUPfl526HnBNiwWWY2UJ0nVH9WzGAtCH7H9M+fJlnMNFsZFZjWQ/7cBx1vlE5
-	 Jfayf3gxTblXz+eJ52VVja02PEDTQVMKbS1heNERSPpcOS+pA8QPnvTSCEQtTl9Cg6
-	 AW31KiB0AYh5n+LLThoof5rDQWuKv6iRJeRYbw5WowILf8m4bvnK1dSv+qLBGs51Ge
-	 PRzec0ruHCX7iEiwv9xPbtEJkkED5hhPz9JmqTHD/FuB9BBECiZhzAjwu2v1px7Dz5
-	 QHovEK/6Kon0DP+VZq/bwm/YiU9kuvzSe4qawI9pt6DNM5GJvwYu/1iAqZayBKZ+xy
-	 dzEgiIbqetDCA==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-39c9452244aso28070371fa.3
-        for <linux-integrity@vger.kernel.org>; Fri, 07 Aug 2026 03:45:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rr8MujfRWgIHZy8KSS366wKGaQoxSuc4SJQ/tys9yFDLlUcXNIsPy97S5PX8neLklO0tGb2QIEWihH+tIEJYLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbcnGfvGZuuO/YtPuvpp9GQPkApMOidk3v2Ue2h907Exm7KEny
-	/1p9HWwU4zFEG//Mw8Oqu6MpV0KMj+stEsZ6Lp9KsXQsyUNQRCShhrdxzHU58EEmgPxAK62wHlU
-	kYSeAXhd4Rk7lwXaka68lE78j6aywupI=
-X-Received: by 2002:a2e:a901:0:b0:39c:828a:ec34 with SMTP id
- 38308e7fff4ca-39fbb2571bemr24971391fa.17.1786099544551; Fri, 07 Aug 2026
- 03:45:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ES4FOK5L"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D201DC19425;
+	Fri,  7 Aug 2026 11:26:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1786101978;
+	bh=5YH4OupiPVo5NYgT2GzQ1B//oZTWncXO4yg7L+WC4DY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ES4FOK5LmW3T1WfIV53jjdA0kIDZRbMqU8I1hY4H1zi18YMss+7jUPmBKrdCzAoL2
+	 AlS9HDu4PLHHkrEpJHgcCDu+WLZmCL4AFcLNwA20i2mjF/kjV6Ys2iBicRxfyebWtd
+	 tO01xjvajAXYDKfp+FYR2L8iip0yGI0mKSfGWMNW0mCmm62sor13+fpcl26zCpD1j7
+	 XG21cu8wys+7f2WekdBYPVENXQOM6qmujbXVmuvd+GJYWgofjL/nH8bV5jvJM8VYVl
+	 Ywu9YA7cqY7VPhTMIs0k+XJtWcqZ90ZVaseBaSvYlxqmzEzKBahS1/IDuv69/tNkVn
+	 Fwo026wizYm7g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD357C2A09B;
+	Fri,  7 Aug 2026 11:26:18 +0000 (UTC)
+From: Pawel Zalewski via B4 Relay <devnull+pzalewski.thegoodpenguin.co.uk@kernel.org>
+Subject: [PATCH 0/4] char: use named initializers for acpi_device_id
+Date: Fri, 07 Aug 2026 12:26:07 +0100
+Message-Id: <20260807-acpi-char-v1-0-742c450254dd@thegoodpenguin.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJOGg3z6LJPDsdPNBxajgy8_wQxfhYBRxe4EiurZf3kPU5A5Bw@mail.gmail.com>
- <f42cc94c-ff60-4999-b473-c2fc5b1b4199@intel.com> <CAJZ5v0j1Tucb0yzS8=3U_X1E4ziztjgOsiYrc_QfUUKZfScCPA@mail.gmail.com>
- <CAJOGg3zhEFner5pze-eX+6jh5D8nJppyWkNN5bWtg7MZ7cW9_Q@mail.gmail.com>
- <CAJZ5v0ib2YxyX-6j34=w+FEOH+fsGF_ShH9Q0YCEDkZvRP88EA@mail.gmail.com> <CAJZ5v0gySOkYRphXHbXcStFGiuMtni_OWXW2rTDoa_V2PRPnJw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gySOkYRphXHbXcStFGiuMtni_OWXW2rTDoa_V2PRPnJw@mail.gmail.com>
-From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Fri, 7 Aug 2026 12:45:32 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i_AS1JzyM10yPfM5QsNVsQmQ3=haHCcTiM72FZm+G+Qg@mail.gmail.com>
-X-Gm-Features: AUfX_mwGobwH_Vd0GVJdlishRE0XEvO0Hm_QGJoSWSEjHKzMgcqYHjj1gCQdv4A
-Message-ID: <CAJZ5v0i_AS1JzyM10yPfM5QsNVsQmQ3=haHCcTiM72FZm+G+Qg@mail.gmail.com>
-Subject: Re: [REGRESSION] no TPM device after "tpm_crb: Convert ACPI driver to
- a platform one"
-To: Julien <julien82453@gmail.com>
-Cc: regressions@lists.linux.dev, jarkko@kernel.org, 
-	linux-integrity@vger.kernel.org, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqAIBCF4avIrBNMS6KrRAu1qaZFiVYE0t2zW
+ n68x58gYiCM0LIEAU+KtK0ZZcHAzWadkNOQDVJILRpRceM88TwFXmtVamOlHYSC/PcBR7q+Vtf
+ /jodd0O1vAO77ATA9ONZtAAAA
+X-Change-ID: 20260804-acpi-char-56316ab2bd03
+To: Clemens Ladisch <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Mattia Dongili <malattia@linux.it>, Weili Qian <qianweili@huawei.com>, 
+ Olivia Mackall <olivia@selenic.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, Corey Minyard <corey@minyard.net>, 
+ Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+ Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-crypto@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
+ linux-integrity@vger.kernel.org, 
+ "Pawel Zalewski (The Capable Hub)" <pzalewski@thegoodpenguin.co.uk>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786101977; l=2628;
+ i=pzalewski@thegoodpenguin.co.uk; s=20260803; h=from:subject:message-id;
+ bh=5YH4OupiPVo5NYgT2GzQ1B//oZTWncXO4yg7L+WC4DY=;
+ b=NA9cF3yI3G/BlKzZxVpLLEfNwbAVtxJvSfEditTvaz3eLv9d9F76mjHh+vdh51KaaXZBAOBBk
+ pz0pPkhM/RMCL1CtormNODpEEEv98rEcOhrjklgX0piQSVvDX/KXx4q
+X-Developer-Key: i=pzalewski@thegoodpenguin.co.uk; a=ed25519;
+ pk=W3zk1cb/wRnj6pNGbl3/2Zf3GmPA6IBpNHpDPyJ05k8=
+X-Endpoint-Received: by B4 Relay for
+ pzalewski@thegoodpenguin.co.uk/20260803 with auth_id=913
+X-Original-From: "Pawel Zalewski (The Capable Hub)" <pzalewski@thegoodpenguin.co.uk>
+Reply-To: pzalewski@thegoodpenguin.co.uk
 
-On Thu, Aug 6, 2026 at 9:58=E2=80=AFPM Rafael J. Wysocki (Intel)
-<rafael@kernel.org> wrote:
->
-> On Thu, Aug 6, 2026 at 12:45=E2=80=AFPM Rafael J. Wysocki (Intel)
-> <rafael@kernel.org> wrote:
-> >
-> > On Thu, Aug 6, 2026 at 11:55=E2=80=AFAM Julien <julien82453@gmail.com> =
-wrote:
-> > >
-> > > > Please try the attached patch and let me know how it goes.
-> > > >
-> > > > It applies on top of the current mainline, but it may be adjusted t=
-o
-> > > > older kernels, so please let me know if you need that.
-> > >
-> > > Thanks. The patch seems to be working. /dev/tpm0 and /dev/tpmrm0 are
-> > > back and a command like tpm2_get_random 16 succeeds.
->
-> Please test the v2 of the patch at:
->
-> https://lore.kernel.org/linux-acpi/12954206.O9o76ZdvQC@rafael.j.wysocki/
->
-> The v1 had an issue pointed out by Sashiko.
+This series is converting lists that contain the acpi_device_id
+struct, which is defined in the include/linux/device-id/acpi.h
+to makes use of named initializers (which they do not use currently).
+This work is part of the on going effort in the kernel associated
+with device-ids [1]
 
-And there is a v3 already:
+The plan is to convert acpi_device_id::driver_data to have an anonymous
+union, similarly to what was introduced for PCI and I2C device ID tables.
+The goal is to increase type-safety (as most of the existing casts are gone),
+to improve readability and to make use intent a bit more clear:
 
-https://lore.kernel.org/linux-acpi/12955541.O9o76ZdvQC@rafael.j.wysocki/
+```
+union {
+	kernel_ulong_t driver_data;
+	const void *driver_data_ptr;
+}
+```
 
-so please test this one if possible.
+But for that to work all lists containing the structs need to use named
+initializers first. I already have patches that implement this and touching
+a lot of kernel subsystmes that use the acpi_device_id struct and that list
+keeps on growing. Therefore, I have decided to split the series per every
+subsystem into:
+- pre-clean-ups that convert the lists to use named initializers (this series)
+- actual implementations that make some of the modules use the new driver_data_ptr
 
-Thanks!
+That way the task can be fragmented into manageable and independent
+chunks of work and makes this effort easier to review.
+
+Tested builds on a64 in Yocto using 7.2-rc6
+
+Signed-off-by: Pawel Zalewski (The Capable Hub) <pzalewski@thegoodpenguin.co.uk>
+---
+Pawel Zalewski (The Capable Hub) (4):
+      char: use named initializers for acpi_device_id
+      char: hw_random: use named initializers for acpi_device_id
+      char: ipmi: use named initializers for acpi_device_id
+      char: tpm: use named initializers for acpi_device_id
+
+ drivers/char/hpet.c                   | 4 ++--
+ drivers/char/hw_random/hisi-trng-v2.c | 2 +-
+ drivers/char/hw_random/xgene-rng.c    | 2 +-
+ drivers/char/ipmi/ipmb_dev_int.c      | 4 ++--
+ drivers/char/ipmi/ipmi_si_platform.c  | 4 ++--
+ drivers/char/ipmi/ipmi_ssif.c         | 4 ++--
+ drivers/char/sonypi.c                 | 4 ++--
+ drivers/char/tpm/st33zp24/i2c.c       | 4 ++--
+ drivers/char/tpm/st33zp24/spi.c       | 4 ++--
+ drivers/char/tpm/tpm_crb.c            | 4 ++--
+ drivers/char/tpm/tpm_tis.c            | 4 ++--
+ drivers/char/tpm/tpm_tis_i2c_cr50.c   | 4 ++--
+ drivers/char/tpm/tpm_tis_spi_main.c   | 4 ++--
+ drivers/char/tpm/tpm_tis_synquacer.c  | 4 ++--
+ 14 files changed, 26 insertions(+), 26 deletions(-)
+---
+base-commit: 848acc8ffe1b7cd5f1bf427b93069becfebc2c9d
+change-id: 20260804-acpi-char-56316ab2bd03
+
+Best regards,
+--  
+Pawel Zalewski (The Capable Hub) <pzalewski@thegoodpenguin.co.uk>
+
+
