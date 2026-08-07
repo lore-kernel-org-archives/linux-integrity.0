@@ -1,117 +1,133 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4D235DA43;
-	Fri,  7 Aug 2026 01:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936D03F6C5F
+	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 09:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786066296; cv=none; b=cltP5nrHZTbSROSnpMzFdWb5fLxWRsyUfgVS7NqBAtZi8jpCvnFxNGVFavO6fWgrlIbw4BtfkYuzZ2R7h98iHxcrldI77KLGulqwzqJg1Acdnhb+IGcsvFwKoDS+pGf7I51LxQGgC6F401odCMDnpv+IasLNH08JrNyXcVMx1no=
+	t=1786096524; cv=none; b=db6IjSwwc5HeGbCu7UG+3qnoKPA9BVMitN4ofFbW0PQF5zgbnjBOsJfSbUFXvr3ILJOi6RDX+lGelKf2QqMPHR9RcUPLI10I/5ll+gwv/FuUObcIVfoEccvskVMhGte3k6rD12twY8jPh8f/z5lC+m64/YOlPTTak9t+4IP53O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786066296; c=relaxed/simple;
-	bh=taqgwb4RpaHuorOFuY8dCdXDfQToTYDhk32UGL3iqAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lpNpB7h52MfySpv8u6iwRPiZKMsTAj2N2x8Pu6R7jZMtwNzTshR7xHxOhWxKhUzwYtW7wQh47ZZdbz8eg+bkmVDn7FWo4ebG60lMmEn8xsxMg2SMqQhDdgLWRuGuSgJ/sJn06HilQV7OrHvZNMQfAs35VRGOdmDGfWsAgBBHHis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DFjNTcxv; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1786096524; c=relaxed/simple;
+	bh=pAMShBbeL/LXeK6LYx/7OUn4ao0TfEwcnJJteDvjFw8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O66qKj7NrOcxKmcvNN7FatppyiZ+L+h2QjJrVMTZmrxV7i7WxUp/hLgjcdtMY3jOlvVWVwlEh5tra8BJH/UE3aMteRjv4kOKPk31+zQnB3aJMf7U5JRYrG9qZxmeCSv5WIXHleEKs2H3WT723uj+L1JzKI/vBqxQ1qx8h74zcfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtTvZoIR; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DFjNTcxv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786066292; x=1817602292;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=taqgwb4RpaHuorOFuY8dCdXDfQToTYDhk32UGL3iqAI=;
-  b=DFjNTcxvVjomFmTEnJk01otpy0+GeVuQrj4iuXXNDVww7tpiXGIFT+pZ
-   CgUq9ECfOGGpqX34b0bWzefQzwQ3O5vVmLoisYyNvMf5vT2xkrlpqxKHV
-   MYW4eJZsfpmdPINATYpy2BNRsjSBiNl+81fmswPwCNMuWw6xfp0xjSTfj
-   vZ9ZGlMIaZ0ujvxKBmb956ezfPi23oWgPG69Lvu7WZoNu96owSE0rAnWO
-   K7DFQOqga0DKgOB78gaIaUyrLbq2V0NT6yw5LKDNoSKZdvhLy+8z/5tC4
-   XyQ0qxayyWynEvTlMc4rofxd470G/nOcqT5FGX3fgGu+oEPUuzVn0YRUP
-   Q==;
-X-CSE-ConnectionGUID: 6Kr/CIJQQ1OMAbcsWgzUNA==
-X-CSE-MsgGUID: NaVxHELORmSgDtKyUTB5cg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="97266865"
-X-IronPort-AV: E=Sophos;i="6.25,209,1779174000"; 
-   d="scan'208";a="97266865"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2026 18:31:22 -0700
-X-CSE-ConnectionGUID: rtF2mFYSRteG0Dd919mAZg==
-X-CSE-MsgGUID: w52SIaqWTLy2EEAJZkJeeQ==
-X-ExtLoop1: 1
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.50])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2026 18:31:15 -0700
-Date: Fri, 7 Aug 2026 04:31:13 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Darren Hart <dvhart@infradead.org>, Lukas Wunner <lukas@wunner.de>,
-	Westerberg <mika.westerberg@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] treewide: Add a flag to detect the Apple T2 chip
-Message-ID: <anU1YX6EAHxrNiLP@ashevche-desk.local>
-References: <20260727211807.1223-1-atharvatiwarilinuxdev@gmail.com>
- <20260727211807.1223-2-atharvatiwarilinuxdev@gmail.com>
- <20260728005847.GBamf-x27vgqj7WG7e@fat_crate.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtTvZoIR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A8401F00A3E
+	for <linux-integrity@vger.kernel.org>; Fri,  7 Aug 2026 09:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786096519;
+	bh=ajbcmwetteag6axiqXY+j1rrylv2rbkrWGVfqCPIim0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=NtTvZoIRm0Mvya1w4mVnhPHV2WQsDl+vV8wFmgFDSSE2fNTPtSWbeiWP3Q18dl+n6
+	 vsvtImnmTojewGmH187qiEMI/kqA5V3GwlFY8kz+zrCDLJYbGl3/0WHJEZQCnj2Yec
+	 xzEvVCUajtIcmG6yRg12KCo4cnExzzBwRxPtQxBBTydyDF8ui1Upzvnof6pf+DelLB
+	 JYYAKSpFpy+d3nSswBl7HYEgi/iwwWzyIATFvznacpBlmY3PxfixVXmWavUGIKMCJB
+	 64RSJRsuHtHfAw1Zktldly0nXR7cel5nx2n6gD/hrScqf6QOR/LMlysjwKuiF/Feyi
+	 1rs3nTRKp9t3Q==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-39f1ac13687so21285551fa.0
+        for <linux-integrity@vger.kernel.org>; Fri, 07 Aug 2026 02:55:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoGMPAetjOJJATHYxWpiDBY1mWXOByocw8UX6wLyEfxx/dZrf/OwpN9JcAWAhRzly28zsLCgHvaKto7f8rgzZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9lVCJZqNqugtYMvEik4rhAqXAs/GLjDnz+s/aHJxbIPCflIhH
+	+oso22C1qzBxzM7fSuN/VPjV2mpNgHX3gPHiOk4LyAflknUgvAx4hCeGDurJQ7ZDWMeqMxLQn1J
+	6hJ5ZosDmNX8OmhfO8VJCbe5JzfZCWCQ=
+X-Received: by 2002:a2e:be94:0:b0:39d:ba1e:aaf4 with SMTP id
+ 38308e7fff4ca-39fd687d311mr8492761fa.24.1786096517738; Fri, 07 Aug 2026
+ 02:55:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260728005847.GBamf-x27vgqj7WG7e@fat_crate.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <12954206.O9o76ZdvQC@rafael.j.wysocki> <anT7YdW6b-uYwgK0@ashevche-desk.local>
+In-Reply-To: <anT7YdW6b-uYwgK0@ashevche-desk.local>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Fri, 7 Aug 2026 11:55:03 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g8nosruRFaW0=3a9dn5CgN0jAnWVxo5G8mUO07-ySbEQ@mail.gmail.com>
+X-Gm-Features: AUfX_mzK6Z3ez91JktrWRbYQHB8bAxrRih24jOI-J5c8nTSfIS6eODpaeg1qk9M
+Message-ID: <CAJZ5v0g8nosruRFaW0=3a9dn5CgN0jAnWVxo5G8mUO07-ySbEQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: scan: Avoid registering platform devices with
+ resource overlaps
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Julien <julien82453@gmail.com>, 
+	jarkko@kernel.org, linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 27, 2026 at 05:58:47PM -0700, Borislav Petkov wrote:
-> On Mon, Jul 27, 2026 at 05:18:02PM -0400, Atharva Tiwari wrote:
-> > Add a flag to detect Apple T2 chips on Intel Macs.
-> > Cache the result to avoid repeated checks. That will
-> > be used in upcoming patches.
+On Thu, Aug 6, 2026 at 11:23=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Aug 06, 2026 at 09:28:03PM +0200, Rafael J. Wysocki wrote:
+>
+> > If acpi_dev_get_resources() returns overlapping I/O or memory resources=
+,
+> > the subsequent registration of a platform device will fail with -EBUSY
+> > due to a resource conflict.  This is reported to happen on Acer Aspire
+> > ES1-572 [1].
+> >
+> > Avoid that by adjusting resources returned by acpi_dev_get_resources()
+> > to eliminate partial overlaps between them.
+> >
+> > This has not been regarded as necessary before because putting
+> > overlapping resources into the _CRS of one device is really pointless,
+> > but now that the issue has been reported to actually happen in the
+> > field, it needs to be done.
+>
+> ...
+>
+> > +static unsigned int acpi_platform_adjust_resources(struct acpi_device =
+*adev,
+> > +                                                struct resource *new_r=
+es,
+> > +                                                struct resource *resou=
+rces,
+> > +                                                unsigned int count)
+> > +{
+> > +     unsigned int i;
+> > +
+> > +     if (!(new_res->flags & (IORESOURCE_IO | IORESOURCE_MEM)))
+> > +             return count;
+> > +
+> > +     for (i =3D 0; i < count; ) {
+> > +             struct resource *res =3D &resources[i];
+> > +
+> > +             if (resource_type(new_res) !=3D resource_type(res) ||
+> > +                 !resource_overlaps(new_res, res)) {
+> > +                     i++;
+> > +                     continue;
+> > +             }
+> > +
+> > +             dev_info(&adev->dev, "Adjusting %pR for %pR\n", new_res, =
+res);
+> > +             /*
+> > +              * Extend the new resource to include the one that has be=
+en processed
+> > +              * already.
+> > +              */
+> > +             if (res->start < new_res->start)
+> > +                     new_res->start =3D res->start;
+> > +
+> > +             if (res->end > new_res->end)
+> > +                     new_res->end =3D res->end;
+>
+> Can we use resource_union() instead?
 
-Why don't you use match_string()?
+Not really.
 
-...
-
-> >  bool x86_apple_machine;
-> >  EXPORT_SYMBOL(x86_apple_machine);
-> >  
-> > +bool has_apple_t2_chip;
-> > +EXPORT_SYMBOL(has_apple_t2_chip);
-> 
-> I'm guessing this is parrotting the non-GPL export of x86_apple_machine from
-> 
->   630b3aff8a51 ("treewide: Consolidate Apple DMI checks")
-> 
-> Lemme add those folks and ask why aren't those exports GPL only?
-
-I don't remember the details, but brief grepping shows no impediments (from my
-p.o.v.) to make them GPL. Maybe Lukas knows more?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> > +             /*
+> > +              * Eliminate the previously processed resource that has
+> > +              * triggered the adjustment because it is not necessary a=
+ny
+> > +              * more.
+> > +              */
+> > +             memmove(res, res + 1, (--count - i) * sizeof(*res));
+> > +     }
+> > +
+> > +     return count;
+> > +}
+>
+> --
