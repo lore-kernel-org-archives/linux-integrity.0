@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3902442A7BE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4070943031B;
 	Fri,  7 Aug 2026 11:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786101979; cv=none; b=cFMtxvbP0+oztasZ6WuNrV6YdfWTHv/3aYLuHZaacIWIkwnTLtZh1QO+B/LGwToYEbPdhkhUPIJ0onpPH6ZEZaEySW0Pvn0KsWtBatK9Mn5mLVGhb0KJjBmtQxIH2i5wW8KR3cNd7tGQmcPbrUjvSodCrHftkoKiCX4j0HG2dTs=
+	t=1786101979; cv=none; b=WO3XbxLKbn+b9U1TUb11/OLphlsckKEjEpMdmSZsfDrbDCQgy4ZKAGNhS3eS0OP+dX9UMkPFc05xkfoxC0KNL94yiug41XB95zeJUdgGX8QOfI3qW6OoSFhWqfF3XPFgL/Z8IbARNHG1Z1IFBxTmQIHN44TgyG9XT+upgJP9o6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1786101979; c=relaxed/simple;
-	bh=+O15LbmbYBLcfLKwgIYm2pNu9e7mrtaoQhULpVhOfYA=;
+	bh=9gOzZNj+wbU5TkDdlRUSr50ZwJarBEuetrIJeXRxmBI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E4H3l3jf1yWFlhsDsYv6F3JIviLnaEjmXiqpd0pMTTxQssw2FlXRvRrtHczynsqFJKQEI0miRNoUKPjyIv5kp88dgvnAbVBCU6a+6oPntHz9clhH7NQfB1ZwKYtq74IsOaC/393a6kcPxl57pGs01uC/wUOvpmNiroCalBydSjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4eFx3Vn; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=KSByxadkaNJzCPoJuQdQWXFYvaGRbmuzlCUtJY4RZT5Ci09yaI2zKcpmqj8qpFkfP+4XCXuQzGNEUTroeIzLRV3ddWrtnLb9QNW9qoA4qoFRRufJma/V5kMU+/FW4/LcT+GWp8xH1QuU4GlmJlXQHe70Wt8dFiR79zJU4smKf4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IkWnZhi3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4eFx3Vn"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E23A8C2BCB8;
-	Fri,  7 Aug 2026 11:26:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkWnZhi3"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 18591C2BCFB;
+	Fri,  7 Aug 2026 11:26:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1786101978;
-	bh=+O15LbmbYBLcfLKwgIYm2pNu9e7mrtaoQhULpVhOfYA=;
+	s=k20201202; t=1786101979;
+	bh=9gOzZNj+wbU5TkDdlRUSr50ZwJarBEuetrIJeXRxmBI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=g4eFx3VnA0GThOh+2hOLjuHzgb2Rv/IEZvTy19h/kg6o5qvwm0T9+ARbNaZ5kb3QD
-	 ISA4hdostVJqwZh7rA7SCpQRZ1D3eZgD06igFmagMdT+QWyO4Snz12swLFIxJxZOoq
-	 FX334/wI+VwD4tYRJlRMThD9wka4e4gcKYYLvlkwvQteqGjiDG3dnWcTDZNKS6lGEB
-	 cKbDc+9MnD6SBbftlc1ETh3RdEJ6BvyeJfLS/qGdpl/prMlTpp59OfyQYaH00bLUxg
-	 Ph/MNAONuGF3UxrvbyQ0uNz02pfiVzYuDbB2wZnDKcgOpJtlTBOlmuMKSVkvux9kIn
-	 UFexwO8T7q2Hw==
+	b=IkWnZhi3fthn0Dnw1wfUfv6vAEQLD1zwU1emsGkhtIKSeqMCgC2nrggKhKNgY6I33
+	 Gtw5SDvVVFJeWE+pYoVOC02EbJ8LV67DnCEL3RiGV+XuLe+xeA5hTLwJAMNRALg31Y
+	 UwDF7HCFRZ2VJb6Ck13bM0TjVwQmV8qLllmWeXL0Zl4YD3E8Cfn1sBlyvLwCiSeZoi
+	 8M9GFNk5+0lb+8lR5d7wUUq6J4365WE4en1Lr8mqZqdemXpfUu6UynYkn+Z5/gstxt
+	 bGnBegEUG6AVrDZzMFl6RPCTu57NnL0gcWV8mUTJ2egoIvA3+rVKoSuqher/LTjk4X
+	 n63hkZlXALCSA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C26FEC5AC7C;
-	Fri,  7 Aug 2026 11:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01760C5AC9F;
+	Fri,  7 Aug 2026 11:26:19 +0000 (UTC)
 From: Pawel Zalewski via B4 Relay <devnull+pzalewski.thegoodpenguin.co.uk@kernel.org>
-Date: Fri, 07 Aug 2026 12:26:08 +0100
-Subject: [PATCH 1/4] char: use named initializers for acpi_device_id
+Date: Fri, 07 Aug 2026 12:26:11 +0100
+Subject: [PATCH 4/4] char: tpm: use named initializers for acpi_device_id
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260807-acpi-char-v1-1-742c450254dd@thegoodpenguin.co.uk>
+Message-Id: <20260807-acpi-char-v1-4-742c450254dd@thegoodpenguin.co.uk>
 References: <20260807-acpi-char-v1-0-742c450254dd@thegoodpenguin.co.uk>
 In-Reply-To: <20260807-acpi-char-v1-0-742c450254dd@thegoodpenguin.co.uk>
 To: Clemens Ladisch <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>, 
@@ -55,11 +55,11 @@ Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
  linux-integrity@vger.kernel.org, 
  "Pawel Zalewski (The Capable Hub)" <pzalewski@thegoodpenguin.co.uk>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786101977; l=1438;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786101977; l=4406;
  i=pzalewski@thegoodpenguin.co.uk; s=20260803; h=from:subject:message-id;
- bh=pvB6ZcDxtCyp+EzKE8EtX3iLA867vIHnUjBmQtM3fso=;
- b=YTbY0Byzh9twQPYPaHqXd78e8yC5EkKfcmlK50U7O+CtoiLA+mqwdKP+rCxcm/KFXqjUONHwc
- 5ttc+Vh3y7DDUljM+RW9A8CCTSGLrzvi/Eb1j0ysFpNwPIJOOL35IUN
+ bh=/3HqANNdgwc+v+bCM8pvoBxFH0K5Gv93E5IVVo98Axg=;
+ b=tf+58qMPqBQXxvk2WPfC/OQEoHIfmkXD63JrsmKQeLQrAB7+MHX/CG+u3PeHojtQrguurPS92
+ ZI4sHrI8wo+AOM+l+bNQmPulehYsu90b6a0bz8vi4w9YyUXFRQ6bsUD
 X-Developer-Key: i=pzalewski@thegoodpenguin.co.uk; a=ed25519;
  pk=W3zk1cb/wRnj6pNGbl3/2Zf3GmPA6IBpNHpDPyJ05k8=
 X-Endpoint-Received: by B4 Relay for
@@ -80,40 +80,120 @@ comma.
 
 Signed-off-by: Pawel Zalewski (The Capable Hub) <pzalewski@thegoodpenguin.co.uk>
 ---
- drivers/char/hpet.c   | 4 ++--
- drivers/char/sonypi.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/char/tpm/st33zp24/i2c.c      | 4 ++--
+ drivers/char/tpm/st33zp24/spi.c      | 4 ++--
+ drivers/char/tpm/tpm_crb.c           | 4 ++--
+ drivers/char/tpm/tpm_tis.c           | 4 ++--
+ drivers/char/tpm/tpm_tis_i2c_cr50.c  | 4 ++--
+ drivers/char/tpm/tpm_tis_spi_main.c  | 4 ++--
+ drivers/char/tpm/tpm_tis_synquacer.c | 4 ++--
+ 7 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
-index 285c6037417a..88d0d4750a6b 100644
---- a/drivers/char/hpet.c
-+++ b/drivers/char/hpet.c
-@@ -1004,8 +1004,8 @@ static int hpet_acpi_probe(struct platform_device *pdev)
- }
+diff --git a/drivers/char/tpm/st33zp24/i2c.c b/drivers/char/tpm/st33zp24/i2c.c
+index 81348487c125..d2bf9996760d 100644
+--- a/drivers/char/tpm/st33zp24/i2c.c
++++ b/drivers/char/tpm/st33zp24/i2c.c
+@@ -145,8 +145,8 @@ static const struct of_device_id of_st33zp24_i2c_match[] __maybe_unused = {
+ MODULE_DEVICE_TABLE(of, of_st33zp24_i2c_match);
  
- static const struct acpi_device_id hpet_device_ids[] = {
--	{"PNP0103", 0},
--	{"", 0},
-+	{ .id = "PNP0103" },
+ static const struct acpi_device_id st33zp24_i2c_acpi_match[] __maybe_unused = {
+-	{"SMO3324"},
+-	{}
++	{ .id = "SMO3324" },
 +	{ }
  };
+ MODULE_DEVICE_TABLE(acpi, st33zp24_i2c_acpi_match);
  
- static struct platform_driver hpet_acpi_driver = {
-diff --git a/drivers/char/sonypi.c b/drivers/char/sonypi.c
-index 9309cfb935be..fb6357ba69dc 100644
---- a/drivers/char/sonypi.c
-+++ b/drivers/char/sonypi.c
-@@ -1136,8 +1136,8 @@ static void sonypi_acpi_remove(struct platform_device *pdev)
- }
+diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
+index 5149231f3de2..6671977c44aa 100644
+--- a/drivers/char/tpm/st33zp24/spi.c
++++ b/drivers/char/tpm/st33zp24/spi.c
+@@ -262,8 +262,8 @@ static const struct of_device_id of_st33zp24_spi_match[] __maybe_unused = {
+ MODULE_DEVICE_TABLE(of, of_st33zp24_spi_match);
  
- static const struct acpi_device_id sonypi_device_ids[] = {
--	{"SNY6001", 0},
--	{"", 0},
-+	{ .id = "SNY6001" },
+ static const struct acpi_device_id st33zp24_spi_acpi_match[] __maybe_unused = {
+-	{"SMO3324"},
+-	{}
++	{ .id = "SMO3324" },
 +	{ }
  };
+ MODULE_DEVICE_TABLE(acpi, st33zp24_spi_acpi_match);
  
- static struct platform_driver sonypi_acpi_driver = {
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index ceb4100ba400..671ba480a675 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -917,8 +917,8 @@ static const struct dev_pm_ops crb_pm = {
+ };
+ 
+ static const struct acpi_device_id crb_device_ids[] = {
+-	{"MSFT0101", 0},
+-	{"", 0},
++	{ .id = "MSFT0101" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, crb_device_ids);
+ 
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 9aa230a63616..4bb18fb1df87 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -130,8 +130,8 @@ static inline int is_itpm(struct acpi_device *dev)
+ #define DEVICE_IS_TPM2 1
+ 
+ static const struct acpi_device_id tpm_acpi_tbl[] = {
+-	{"MSFT0101", DEVICE_IS_TPM2},
+-	{},
++	{ .id = "MSFT0101", .driver_data = DEVICE_IS_TPM2 },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, tpm_acpi_tbl);
+ 
+diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+index b48cacacc066..dc8a5ec5799b 100644
+--- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
++++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+@@ -669,8 +669,8 @@ static const struct tpm_class_ops cr50_i2c = {
+ 
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id cr50_i2c_acpi_id[] = {
+-	{ "GOOG0005", 0 },
+-	{}
++	{ .id = "GOOG0005" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, cr50_i2c_acpi_id);
+ #endif
+diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
+index 61b42c83ced8..d2e37e667dd7 100644
+--- a/drivers/char/tpm/tpm_tis_spi_main.c
++++ b/drivers/char/tpm/tpm_tis_spi_main.c
+@@ -339,8 +339,8 @@ static const struct of_device_id of_tis_spi_match[] __maybe_unused = {
+ MODULE_DEVICE_TABLE(of, of_tis_spi_match);
+ 
+ static const struct acpi_device_id acpi_tis_spi_match[] __maybe_unused = {
+-	{"SMO0768", 0},
+-	{}
++	{ .id = "SMO0768" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, acpi_tis_spi_match);
+ 
+diff --git a/drivers/char/tpm/tpm_tis_synquacer.c b/drivers/char/tpm/tpm_tis_synquacer.c
+index 4927714d277a..c2d09315aa17 100644
+--- a/drivers/char/tpm/tpm_tis_synquacer.c
++++ b/drivers/char/tpm/tpm_tis_synquacer.c
+@@ -144,8 +144,8 @@ MODULE_DEVICE_TABLE(of, tis_synquacer_of_platform_match);
+ 
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id tpm_synquacer_acpi_tbl[] = {
+-	{ "SCX0009" },
+-	{},
++	{ .id = "SCX0009" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, tpm_synquacer_acpi_tbl);
+ #endif
 
 -- 
 2.55.0
