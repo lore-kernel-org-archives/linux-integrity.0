@@ -1,90 +1,94 @@
-Received: from devnull.danielhodges.dev (vps-2f6e086e.vps.ovh.us [135.148.138.8])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0075747125E
-	for <linux-integrity@vger.kernel.org>; Wed, 12 Aug 2026 15:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.148.138.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F012443FD09
+	for <linux-integrity@vger.kernel.org>; Wed, 12 Aug 2026 16:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786550355; cv=none; b=tyhsd72jj6/nm9JRXktN3YlYLrFRxpTdxZHCBZr5UY5mYM6pkZ1svAvD47DxT8Andi0HtoF4NnTtwzj1JgBL0knZ+xi6RBVyvdJhpt724p0kqrt/oKAQN2+wknEYfg68NhuWG/V6NsupblESv0AAmkfEhBoA92khqz9kQ+hOwXQ=
+	t=1786552442; cv=none; b=XSzMVWTUxLvGEg4mzPl2HcLJjsay4vgWJ/GQBj6MwRvGeF/Nw7pwEekalbpuBJ9I4/Z6h0oHtSam/wTHe6DeZW5oFt6bcNL2VO4Zl2qUQrl8ww3b0CDnkSCQCU4a9ftr3yzkTl9BE2bIJ6OfMbQsT99hov8oMMy74468QJ/B+4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786550355; c=relaxed/simple;
-	bh=+JN8ouV+clhA1CXQK7QDQff/PHPSkXBvFPaY9XfXbOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hEh+lcSMlwCXKAQzUMwCvPRdVXTwRqvBp5ZJWt9CdVl5sv0ysPHEx4hvs1hWBlCMQCgpu9zuhal80k2OOxm+VzMs7MNgAD2lpOJ/qcqo+BmC4KsougGueBzKfrCmWYo+w/qjsbh8nnOYMwSVD6LbyTbiEmo9oyP82OHkO8fZDIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=danielhodges.dev; spf=pass smtp.mailfrom=danielhodges.dev; dkim=pass (2048-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b=OtDE5YZc; dkim=permerror (0-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b=IsYwwoEP; arc=none smtp.client-ip=135.148.138.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=danielhodges.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=danielhodges.dev
+	s=arc-20240116; t=1786552442; c=relaxed/simple;
+	bh=NDp3Vd12rzkA/ZJykS/xD+g+JQZQBLffiGBXkCzfwnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n0PBJFW2vI+0beQ/wUKBqsU39sEfS6WeS9OsTKr/OZ8a3QyylR3l+7PTJnNaYydDEmczBBih85FKDVXBBE95gcr6FnP/qHPvuIzGNMUb22J9RdL2FPw3zuem76R8NLbmnzqcCKR/v4uhtY4MlxCcSHWIMXbErzRV3Aczg9iCiBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XgVcGHux; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b="OtDE5YZc";
-	dkim=permerror (0-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b="IsYwwoEP"
-DKIM-Signature: v=1; a=rsa-sha256; s=202510r; d=danielhodges.dev; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1786550138; bh=ZqWCQkJBeMKWGcx8/d0Uw/M
-	E16Dl/JqvTiPHieEBqtk=; b=OtDE5YZcDUT+3Cb0zABd/RYJ9ni0I4uEOj3dw6VoEpZDjowE60
-	4DHKN1jYExfZyVrGqOkYG97syeK53xdW7q7qYhtOYlqA77IOwMRXssbkh2RcG27nxW7Gt0FtuXK
-	3DxpVB8snDNXYaS+PsQG64FbK7yrvdkFwENdNQjV+mdlvz9cQBkc+OU8LH/1kBEWsRn152Bmj7C
-	o/RdX/d9X9awALXD6lI5TAdNiZw8uALs9QKforKCoKMs8D7DCbhkBBqm4zEPyrOnYyveM9QjIbB
-	M/fPOSLDYefANCwXzv3US8b4FBEC31eGKCON+PCyvughkf988HChmyhBjsFcjF6FzhQ==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202510e; d=danielhodges.dev; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1786550138; bh=ZqWCQkJBeMKWGcx8/d0Uw/M
-	E16Dl/JqvTiPHieEBqtk=; b=IsYwwoEPTiu67crFDiHrq4dlpZ6TPqJcQ2ExbZvAqbbNi2NPoT
-	bqWPMY2IoA2ehWltyk6dic47P6x/LrfiR+Bw==;
-Date: Wed, 12 Aug 2026 11:55:37 -0400
-From: Daniel Hodges <daniel@danielhodges.dev>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Daniel Hodges <git@danielhodges.dev>, 
-	linux-integrity@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH] evm: check return values of crypto_shash functions
-Message-ID: <srgnajphzr43h42zn5j7yjjoqm6lvxboc2sy5wwd5ixybhj6zu@moftt2zpqn4c>
-References: <20260804200734.2415524-1-zohar@linux.ibm.com>
- <897aa15c24fd14a30392890ffeb5aac96409f31a.camel@huaweicloud.com>
- <469ed5e1-55dd-4aab-b374-2ac00e3ce9ab@huaweicloud.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XgVcGHux"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1786552440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RkjfW0V6QK9jLNGp2NUwa62pkh9v96iM8ZiETmKV+W4=;
+	b=XgVcGHuxog8FS4Mf4+l2OOryLe11386M+I5NcHWUI6KMO+CtVxLMEsUId0WRRxol8w0hp3
+	r0IcXunNTROqH7jeQgw/muinVC2WW/abM4zGT+q95Xgu+IFpjnDjRLz7DR1y+C6cJgFUbH
+	hxI8RhmyOgBZI87DUxukLdRtVC4e/Dg=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-ky4p98H3NMujqn4BMh4hrA-1; Wed,
+ 12 Aug 2026 12:33:46 -0400
+X-MC-Unique: ky4p98H3NMujqn4BMh4hrA-1
+X-Mimecast-MFC-AGG-ID: ky4p98H3NMujqn4BMh4hrA_1786552424
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9F102180064B;
+	Wed, 12 Aug 2026 16:33:43 +0000 (UTC)
+Received: from thuth-p1g4.redhat.corp (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C93473001DAF;
+	Wed, 12 Aug 2026 16:33:37 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: Eric Biggers <ebiggers@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH 0/3] lib/crypto: Provide a function for zeroizing hmac_sha1_ctx
+Date: Wed, 12 Aug 2026 18:33:33 +0200
+Message-ID: <20260812163336.3103835-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <469ed5e1-55dd-4aab-b374-2ac00e3ce9ab@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Aug 11, 2026 at 09:40:36AM +0800, Roberto Sassu wrote:
-> On 8/7/2026 7:42 PM, Roberto Sassu wrote:
-> > On Tue, 2026-08-04 at 16:07 -0400, Mimi Zohar wrote:
-> > > From: Daniel Hodges <git@danielhodges.dev>
-> > > 
-> > > The crypto_shash_update() and crypto_shash_final() functions can fail
-> > > and return error codes, but their return values were not being checked
-> > > in several places in security/integrity/evm/evm_crypto.c:
-> > > 
-> > > - hmac_add_misc() ignored returns from crypto_shash_update() and
-> > >    crypto_shash_final()
-> > > - evm_calc_hmac_or_hash() ignored returns from crypto_shash_update()
-> > > - evm_init_hmac() ignored returns from crypto_shash_update()
-> > > 
-> > > If these hash operations fail silently, the resulting HMAC could be
-> > > invalid or incomplete, which could weaken the integrity verification
-> > > security that EVM provides.
-> > > 
-> > > This patch converts hmac_add_misc() from void to int return type and
-> > > adds proper error checking and propagation for all crypto_shash_*
-> > > function calls. All callers are updated to handle the new return values.
-> > > Additionally, error messages are logged when cryptographic operations
-> > > fail to provide visibility into the failure rather than silently
-> > > returning error codes.
-> > > 
-> > > Fixes: 66dbc325afce ("evm: re-release")
-> > > Signed-off-by: Daniel Hodges <git@danielhodges.dev>
-> > > Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Looks good to me. I confirm the Reviewed-by.
-> 
-> We got a report from Sashiko. As it pointed out, we should not override the
-> error when calling hmac_add_misc() if no xattr is present
-> (-ENODATA).
-> 
-> Roberto
+It's maybe not worth the effort for hmac_sha1_ctx right now (since there
+is only one spot that forgot to zeroize the structure in case of errors),
+but offering a function for zeroizing the data via __cleanup might help to
+get future code into the proper shape right from the start. Thus let's
+introduce a hmac_sha1_zeroize_ctx() function now and use it in the
+appropriate spots.
 
-Looks good to me, thanks for fix!
+Thomas Huth (3):
+  crypto: Provide a wrapper for zeroizing hmac_sha1_ctx
+  security: keys: trusted: always clear the hmac_sha1_ctx before
+    returning
+  lib/crypto: sha1: Use hmac_sha1_zeroize_ctx() instead of
+    memzero_explicit()
 
-Reviewed-by: Daniel Hodges <git@danielhodges.dev>
+ include/crypto/sha1.h                     | 17 +++++++++++++++++
+ lib/crypto/sha1.c                         |  2 +-
+ security/keys/trusted-keys/trusted_tpm1.c |  2 +-
+ 3 files changed, 19 insertions(+), 2 deletions(-)
+
+-- 
+2.55.0
+
