@@ -1,155 +1,201 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8E325B08A
-	for <linux-integrity@vger.kernel.org>; Wed, 12 Aug 2026 14:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590FE376A00
+	for <linux-integrity@vger.kernel.org>; Wed, 12 Aug 2026 14:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786544340; cv=none; b=XqHxYuXB71p4vJ2PylOeSXbJVPuzDJAzQZGzhI5w5d371fcx+o/Lz7Ko2WUOVNMeQ+FDmWm3OwQTuVA9XVXbwGG/zF313NMwluUSUrRZTO6HfS/0+7asYN0kOo1GiRFn7shZIfrVjggA801qi0fzoCxnTz30dODqbVjkf4AsI+o=
+	t=1786545867; cv=none; b=h/6HAUKz02u+Y8SUlI9mCOK/y2TOCUB3jARLEhEZliZ/HbrI1C7LSomhP2bGs0ojucjQVc7+nZ69uBa0itEBJnoGgBEDgkr8yDHqUu4oN2AqHIKoKbdr1b4HCCeNNVqaDU1A5s+A6oXKMRnhVIOk+5Q4IE3RNTrVCgfWhc1lJLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786544340; c=relaxed/simple;
-	bh=cO4Pj9HJvXCrtKDWlg8BCMRgxRtBdS4Ni/h9SSOUwWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=prqZ3P0T3wS+bFpTyn8GkPpAnfjhQ7jWDtQajfZhhQyac1N9f1iy1jd9nQZesrAhGxzo9A+9KMXKj7zOhSizqsKepw+eVi6t916XA8ko460ca6q4f8IfdzdCbvVBvR3Wx460vaH0+9hQM1MRBsODfNJlprHmSNHuMOGAfReEIg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=CSkouF3c; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1786545867; c=relaxed/simple;
+	bh=R7nF6lL8YpmhAUYn/5U1IQ0tXFqZoIviLIAtNp1psaQ=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=kBQvUaql8Ft65u7FXeWrqlk0azaBgEg1G85Wqa2ftodRRukt5I9+F99tKharx67iGb5ZtGFzD0Yc+k/9OX5/rbl7d5Q9ZC0grWxEvyVJQMg3xsIdIJ7dWp0zRFTCXfApVxUx1vGGolwDlRT/c/ytMt6E3XCGXk0T3dBB7Oj2nTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IBseWLAn; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="CSkouF3c"
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DE80F3F620
-	for <linux-integrity@vger.kernel.org>; Wed, 12 Aug 2026 14:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1786544334;
-	bh=ziTqEENmhcZwJoI7CW+xasRu/XWt1NvwONmfzBdAPeA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=CSkouF3cwL8xsterUNLCTdLVv69S3SY6bCVZ40y/hbDr8GTsqMinjtXkf5rrSxENs
-	 kKnEbFxgq4LCUaam2s5qvPO9Dx63n39wDHFB0LqBYk6xMTLBfgnx3hZV/ahDnXZc+b
-	 WY5jXtnsSKd//pJJpnqDeQGMFHDtQx4rMoT48pL3dmkXA16u7RJxBbdahhfwoeeeH9
-	 SEk5Yggq/7wtpW4t9gYJJaVr0vAAVg1ZRBWLUUyJh1YnqIoS9ijUfNG4xlgdWhvxPz
-	 CA//8n0ORpSL2C3k+ivuXruVKQ9yVCOKSCdQNQjU0HgRAqkoJVS0eAmvoBUKUSEAf/
-	 tZd7/wFX6afpo2mY4FpITDEHZI4+05BW9Z6l19r/Q6FiKHov7XYbwQpqWCahR8kRoA
-	 BFbwLDmlEcG5SzPpQjMddQaDV54l0v7jtuX6o/QxcXnVvrWRHFRhy+QVizyqpdNSbe
-	 hxvCfUElJlTk3UkzF4/ZyIg+E8739kp6BXUovyfEsrc4ey5QaYhRE/KmiLkQbdzS12
-	 R74Dx+6ke7hZhfaixIYqEVOwZJxWNljS7kRenknM+z5dybqf5exkINJSaUjzZTnyun
-	 hmdyHA0cJlpd8iIW5zBdmNvdjwTn99hBPSnLjhPPQ6FVuFMnmHW4V+YKXNGaDd3r+d
-	 lHcAf1lwZFnlh9qiF75mbFmA=
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4955843c6cdso9532995e9.1
-        for <linux-integrity@vger.kernel.org>; Wed, 12 Aug 2026 07:18:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786544334; x=1787149134;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ziTqEENmhcZwJoI7CW+xasRu/XWt1NvwONmfzBdAPeA=;
-        b=QU0AkHIwl2rslR7gYVdv1I7XjBMTJPrmXQpnlNCwmGvr5qncEHTOYuX+OqmiyAfp9j
-         wBwd/7x5M1NZbDFkM9gaysRi+oMokLcfXADFmjl52F08cx2djbGUqkxUB/qslcaXkpx9
-         QGHff0GO63JL1Oz2ZnNQMdOS5CPg6OkR4MYiYlLsrjD6DpFQtCh9laWsGmc6zSNrCa4b
-         Dkq0tB7x9qOeXGTGSC9AdFQnmiXBnQw4hKXOa53byMQszYW4SY8gdbrcV5tIlN3GS3eY
-         Fyd3L9YXE+9+7RFcKzIw64JAfjg9DVbjQSpSTNVt0S39X1wxyEVCjNLm8+oDxfELFJ+W
-         zVsg==
-X-Forwarded-Encrypted: i=1; AHgh+RqlowFgzJdW4UKpJpBj49TYO/bG6Iwz8fpwMuoqG27O6KDQsAB/KmZA0bJJDTUoBCsd3eq4aos7aIHZDuRCLsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwktRj6i6LJHTvtehEJhjsaLys/RpkIfwZ1S+diUXA2+fRFbLy
-	UKMCTcb+hfAIJC3OLdx+plV8JziqX4YaTxNOXDXTedkF96GBfMvVj1YgsOJZBSiI7OQ/2F/PB0e
-	dusRFAEYKaD/ivO+I5B1pyTuQmmzCyEjo9wzXahshWKeFQHX+m7W4ZG6aQtA/OGMN9210awHxmv
-	KtQSnbogKiXA==
-X-Gm-Gg: AR+sD13W4Et+f/Dhjnf7YiFLuzUEN6whEyqMMgTIkfMuYAJ7G3DETb8mBSUe1ZVIxjR
-	SgbTsktvo6koZI/61mrBmexYggxdWdnq/PvbB+In/To3Bfgz7S2wG0by3oSD3vC/Lmam7dHuKJ5
-	II/bPC7vNv6owJ6ehi6/+7T99gTd3Nt1Ui3jQjkdocixanhDUe9GgEvmeMk3SQRKkSastllup3l
-	Cizf3PJpVy2w35bDe2RequWBMa6S6F1hCFPR1XXxj9LvR8DbNtnCo5nthgzR749cx4ODu4shEmA
-	ltkTmPNrHYl/9A9rIZHTA55oIGEXgJov6F7dURaSD7TI870qdZwndO9WdrCFSoBwUPhD8ETzlDS
-	s1B+yOmoB/fSLxE6wVvokisIOGigGaPYT8ECX+EcPWMbB8gsGWe35p3tjw+6Aq0yxxVFTfkyvcH
-	HtKHApaHzywhFOzdXjPY9smM3n
-X-Received: by 2002:a05:600c:35c1:b0:499:811b:dfed with SMTP id 5b1f17b1804b1-499811be003mr10736345e9.5.1786544334094;
-        Wed, 12 Aug 2026 07:18:54 -0700 (PDT)
-X-Received: by 2002:a05:600c:35c1:b0:499:811b:dfed with SMTP id 5b1f17b1804b1-499811be003mr10735465e9.5.1786544333585;
-        Wed, 12 Aug 2026 07:18:53 -0700 (PDT)
-Received: from t-14 (2a01cb00088323003ba1cc9bdc9c322c.ipv6.abo.wanadoo.fr. [2a01:cb00:883:2300:3ba1:cc9b:dc9c:322c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997c8fa1c7sm71800405e9.0.2026.08.12.07.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Aug 2026 07:18:53 -0700 (PDT)
-From: Fabrice Derepas <fabrice.derepas@canonical.com>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Fabrice Derepas <fabrice.derepas@canonical.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ima: reject a kexec buffer whose declared size exceeds the buffer
-Date: Wed, 12 Aug 2026 16:18:40 +0200
-Message-ID: <20260812141842.2319635-1-fabrice.derepas@canonical.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IBseWLAn"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67CE1hqR3717373;
+	Wed, 12 Aug 2026 14:44:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=F9cYfb
+	NFgAuCgOA9L7FHuLTcU+UBkQ8woPtBxnEZJ1I=; b=IBseWLAn829H22PkpprVvg
+	cQD8yvYwJyY60edlINjppFMlAWitInnQn6KNGH7EPNl0ILmAW84r4N38jMTb3wQN
+	suzV345E3xAwLh18nzijPlLErx0BwCVobr9PbQhpTrUlKD0EjYldY85DAHWbnsrX
+	EH/xoYqivRoYWDadXbcLqjtuEcMdaVBaBXnNU+j6svQoWesBGjko4G0ZsOqsv1Om
+	aYlfgxhdTxp0QO8YeVrLJXTDlHOftz4jNrM/IYXbSY+JJ23CgUyOy1qaEXFi5+af
+	+kC+OarzRxikImeE8M/C7yyFwjhf3Z//gG6MnU+OSW6RmcceYhdIrfgxtIFwif2g
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fwvnwa5k7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Aug 2026 14:44:13 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67CEfKT5022193;
+	Wed, 12 Aug 2026 14:44:12 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4fxg9h6dgm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Aug 2026 14:44:12 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67CEhXG120185756
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Aug 2026 14:43:34 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D24995805A;
+	Wed, 12 Aug 2026 14:44:11 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8579658056;
+	Wed, 12 Aug 2026 14:44:11 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.3.228])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Aug 2026 14:44:11 +0000 (GMT)
+Message-ID: <3c2f063b14532bacc78eb6ea4b0c2d72804c1ec9.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 1/2] ima_setup.sh: Fix check_policy_writable() for
+ kernel < 4.5
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
+Cc: linux-integrity@vger.kernel.org
+In-Reply-To: <20260810143344.1029588-1-pvorel@suse.cz>
+References: <20260810143344.1029588-1-pvorel@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 12 Aug 2026 10:44:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=RsP16imK c=1 sm=1 tr=0 ts=6a7c86bd cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=VwQbUJbxAAAA:8
+ a=VnNF1IyMAAAA:8 a=2gWyPJ6rYJl2tcFwkygA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: RVB7Cd4c43Lr0s_X6lhDAgPNnwuRFYZx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODEyMDExOSBTYWx0ZWRfX9eZ1JoTprEl+
+ yggts4dFjvtUr0tRqHzK4Ou5TNcDhU+5lyWe1NPAzA6qgxhUkVQIUdc/QfidGCThxNh30+qEzyy
+ YVAA8PF6TOEDX2D0sXXmwyWidcK48CWPaZJSXeSDkfWlocVBy+3fdJBMEc1RUoydKayRUKOchfn
+ rIxCEM5xC+b8XOrxiEDFhIVJ5Oed7Bzk+X+JemparUZuKxQnRnutyzn/WXaJmX3tmZR6AsIa/bW
+ cvOELRx3plKN2316YFQyABiM2Uj+6edgl9Nshz6EZHYcsaccpOr+1rwSoquase5f5giE0vGvXf/
+ qo23PG5/oBUbT57560Z+vl5R3OqlFR1FknxcJqRqToUclmtyJ3iS6QoNfexfmpZ5VlGoB/AYsuI
+ OWFwnqP/lM97Dk4mMHithEDHPkZ0lDKgSUcVGCctGKebJ7TzhGo3yjtNVdcBEXwqG+WASMCFQY8
+ UzIBueZZ0vevdcJcTSQ==
+X-Proofpoint-ORIG-GUID: RVB7Cd4c43Lr0s_X6lhDAgPNnwuRFYZx
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODEyMDExOSBTYWx0ZWRfX8Fsg7Vzv1U96
+ Fy+iCDcATW+NzIvyjLAWRls24a/uNssruKENl4ym4dUq/bWADtNl0oxYXvrOQJJiroK1Ol5W+lY
+ H/KrCEpz4pxJkds3ibTyMC4SNtWn/CE=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-12_04,2026-08-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 suspectscore=0 clxscore=1015 malwarescore=0
+ phishscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608120119
 
-ima_restore_measurement_list() parses the measurement list persisted across
-kexec.  It computes the parse end directly from the blob:
+On Mon, 2026-08-10 at 16:33 +0200, Petr Vorel wrote:
+> Writing into policy via echo on kernel < 4.5 effectively makes policy
+> not writable (no point to check if the policy is writable). Therefore
+> skip this extra check in check_policy_writable() on these old kernels.
+>=20
+> This change improves IMA testing on kernel < 4.5:
+>=20
+> 1) Allows to run ima_policy.sh which was previously skipped:
+>=20
+>     ima_policy 1 TINFO: verify that invalid policy isn't loaded
+>     ima_policy 1 TCONF: IMA policy already loaded and kernel not configur=
+ed to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=3Dy)
+>=20
+> 2) Fixes failing ima_violations.sh, which was failing due policy was not
+>    writable:
+>=20
+>     ima_violations 1 TINFO: Tested kernel: Linux susetest 4.4.140
+>     ima_violations 1 TINFO: booted with IMA policy: tcb
+>     ima_violations 1 TINFO: using log /var/log/audit/audit.log
+>     ima_violations 1 TINFO: verify open writers violation
+>     ima_violations 1 TFAIL: open_writers violation not added
+>     ima_violations 2 TINFO: verify ToMToU violation
+>     ima_violations 2 TFAIL: ToMToU violation not added
+>     ima_violations 3 TINFO: verify open_writers using mmapped files
+>     tst_kconfig.c:90: TINFO: Parsing kernel config '/proc/config.gz'
+>     tst_kconfig.c:90: TINFO: Parsing kernel config '/proc/config.gz'
+>     tst_kconfig.c:755: TINFO: CONFIG_FAULT_INJECTION kernel option detect=
+ed which might slow the execution
+>     tst_kconfig.c:755: TINFO: CONFIG_FAULT_INJECTION kernel option detect=
+ed which might slow the execution
+>     tst_kconfig.c:90: TINFO: Parsing kernel config '/proc/config.gz'
+>     tst_kconfig.c:755: TINFO: CONFIG_FAULT_INJECTION kernel option detect=
+ed which might slow the execution
+>     ima_mmap.c:33: TPASS: test completed
+>     ima_violations 3 TFAIL: open_writers violation not added
+>=20
+> 3) Fixes failing ima_conditionals.sh -r uid and ima_conditionals.sh -r fo=
+wner
+>=20
+>     ima_conditionals 1 TINFO: request 'uid'
+>     tst_security.c:115: TINFO: SecureBoot sysfs file not available
+>     ima_conditionals 1 TINFO: verify measuring user files when requested =
+via uid
+>     tst_rod: Failed to open '/sys/kernel/security/ima/policy' for writing=
+: Permission denied
+>     ima_conditionals 1 TBROK: echo measure uid=3D65534 > /sys/kernel/secu=
+rity/ima/policy failed
+>=20
+>     ima_conditionals 1 TINFO: request 'fowner'
+>     tst_security.c:115: TINFO: SecureBoot sysfs file not available
+>     ima_conditionals 1 TINFO: verify measuring user files when requested =
+via fowner
+>     tst_rod: Failed to open '/sys/kernel/security/ima/policy' for writing=
+: Permission denied
+>     ima_conditionals 1 TBROK: echo measure fowner=3D65534 > /sys/kernel/s=
+ecurity/ima/policy failed
+>=20
+> Fixes: cd96265e65 ("ima/ima_policy.sh: Improve check of policy writabilit=
+y")
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> ---
+> The same in v1.
+>=20
+> @Mimi I appreciate your RBT or ABT.
+>=20
+> Link to v1:
+> https://lore.kernel.org/ltp/20260728114224.1055009-1-pvorel@suse.cz/T/#t
+>=20
+>  .../kernel/security/integrity/ima/tests/ima_setup.sh  | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b=
+/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> index b69d7c31d9..19f00532b1 100644
+> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> @@ -95,10 +95,15 @@ require_policy_readable()
+>  check_policy_writable()
+>  {
+>  	[ -f $IMA_POLICY ] || return 1
+> -	# workaround for kernels < v4.18 without fix
+> +
+> +	# Workaround for kernels < v4.18 without fix
+>  	# ffb122de9a60b ("ima: Reflect correct permissions for policy")
+> -	echo "" 2> log > $IMA_POLICY
+> -	grep -q "Device or resource busy" log && return 1
+> +	# Require >=3D 4.5 to write multiple times via CONFIG_IMA_WRITE_POLICY
+> +	# 38d859f991f3 ("IMA: policy can now be updated multiple times")
+> +	if tst_kvcmp -ge 4.5; then
+> +		echo "" 2> log > $IMA_POLICY
+> +		grep -q "Device or resource busy" log && return 1
+> +	fi
+>  	return 0
+>  }
+> =20
 
-	bufendp = buf + khdr->buffer_size;
+Thanks, Petr.
 
-khdr->buffer_size is a u64 read straight from the persisted buffer.  The
-only length checks in the function are size >= sizeof(*khdr), version == 1
-and count -- none relates buffer_size to size, the actual buffer size the
-caller (ima_load_kexec_buffer()) obtained from the ima-kexec-buffer region.
-ima_parse_buf() bounds every field read to bufendp, so a blob whose
-internal buffer_size exceeds the real size makes the parse loop read past
-the end of the buffer (CWE-125).
-
-The buffer's memory range is validated against addressable RAM by
-commit cbf9c4b9617b ("of: check previous kernel's ima-kexec-buffer
-against memory bounds") and commit c5489d04337b ("x86/kexec: add a
-sanity check on previous kernel's ima kexec buffer"), but the blob's
-own declared size is never clamped to it.  Reject a buffer_size larger
-than size before the loop.
-
-This is on the boot-time kexec-restore path (__init) and the buffer comes
-from the previous kernel, so triggering it requires control of the
-persisted buffer; it is an out-of-bounds read only.
-
-Fixes: 94c3aac567a9 ("ima: on soft reboot, restore the measurement list")
-Assisted-by: copilot-cli:claude-opus-4-6 frama-c
-Signed-off-by: Fabrice Derepas <fabrice.derepas@canonical.com>
----
-Tested under KASAN (CONFIG_KASAN_GENERIC, x86-64) with a KUnit case that calls
-ima_restore_measurement_list() on a 24-byte buffer whose header declares
-buffer_size = 0x1000.  On an unpatched kernel this takes a slab-out-of-bounds
-read of size 4 in ima_parse_buf() from ima_restore_measurement_list(); with
-this patch the buffer is rejected and the case passes with no KASAN report.
-The test is not included here (there is no upstream IMA KUnit suite yet); I'm
-happy to submit it separately if useful.
-
- security/integrity/ima/ima_template.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 7034573..2467cae 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -450,6 +450,11 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 		return -EINVAL;
- 	}
- 
-+	if (khdr->buffer_size > size) {
-+		pr_err("attempting to restore a corrupted measurement list");
-+		return -EINVAL;
-+	}
-+
- 	bitmap_zero(hdr_mask, HDR__LAST);
- 	bitmap_set(hdr_mask, HDR_PCR, 1);
- 	bitmap_set(hdr_mask, HDR_DIGEST, 1);
-base-commit: f5bbbfec59b4e2fb7520a91de3df8a6174325d6a
--- 
-2.53.0
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com
 
