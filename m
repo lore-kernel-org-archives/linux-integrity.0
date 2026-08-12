@@ -1,201 +1,90 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from devnull.danielhodges.dev (vps-2f6e086e.vps.ovh.us [135.148.138.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590FE376A00
-	for <linux-integrity@vger.kernel.org>; Wed, 12 Aug 2026 14:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0075747125E
+	for <linux-integrity@vger.kernel.org>; Wed, 12 Aug 2026 15:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.148.138.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786545867; cv=none; b=h/6HAUKz02u+Y8SUlI9mCOK/y2TOCUB3jARLEhEZliZ/HbrI1C7LSomhP2bGs0ojucjQVc7+nZ69uBa0itEBJnoGgBEDgkr8yDHqUu4oN2AqHIKoKbdr1b4HCCeNNVqaDU1A5s+A6oXKMRnhVIOk+5Q4IE3RNTrVCgfWhc1lJLg=
+	t=1786550355; cv=none; b=tyhsd72jj6/nm9JRXktN3YlYLrFRxpTdxZHCBZr5UY5mYM6pkZ1svAvD47DxT8Andi0HtoF4NnTtwzj1JgBL0knZ+xi6RBVyvdJhpt724p0kqrt/oKAQN2+wknEYfg68NhuWG/V6NsupblESv0AAmkfEhBoA92khqz9kQ+hOwXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786545867; c=relaxed/simple;
-	bh=R7nF6lL8YpmhAUYn/5U1IQ0tXFqZoIviLIAtNp1psaQ=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=kBQvUaql8Ft65u7FXeWrqlk0azaBgEg1G85Wqa2ftodRRukt5I9+F99tKharx67iGb5ZtGFzD0Yc+k/9OX5/rbl7d5Q9ZC0grWxEvyVJQMg3xsIdIJ7dWp0zRFTCXfApVxUx1vGGolwDlRT/c/ytMt6E3XCGXk0T3dBB7Oj2nTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IBseWLAn; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1786550355; c=relaxed/simple;
+	bh=+JN8ouV+clhA1CXQK7QDQff/PHPSkXBvFPaY9XfXbOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hEh+lcSMlwCXKAQzUMwCvPRdVXTwRqvBp5ZJWt9CdVl5sv0ysPHEx4hvs1hWBlCMQCgpu9zuhal80k2OOxm+VzMs7MNgAD2lpOJ/qcqo+BmC4KsougGueBzKfrCmWYo+w/qjsbh8nnOYMwSVD6LbyTbiEmo9oyP82OHkO8fZDIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=danielhodges.dev; spf=pass smtp.mailfrom=danielhodges.dev; dkim=pass (2048-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b=OtDE5YZc; dkim=permerror (0-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b=IsYwwoEP; arc=none smtp.client-ip=135.148.138.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=danielhodges.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=danielhodges.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IBseWLAn"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67CE1hqR3717373;
-	Wed, 12 Aug 2026 14:44:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=F9cYfb
-	NFgAuCgOA9L7FHuLTcU+UBkQ8woPtBxnEZJ1I=; b=IBseWLAn829H22PkpprVvg
-	cQD8yvYwJyY60edlINjppFMlAWitInnQn6KNGH7EPNl0ILmAW84r4N38jMTb3wQN
-	suzV345E3xAwLh18nzijPlLErx0BwCVobr9PbQhpTrUlKD0EjYldY85DAHWbnsrX
-	EH/xoYqivRoYWDadXbcLqjtuEcMdaVBaBXnNU+j6svQoWesBGjko4G0ZsOqsv1Om
-	aYlfgxhdTxp0QO8YeVrLJXTDlHOftz4jNrM/IYXbSY+JJ23CgUyOy1qaEXFi5+af
-	+kC+OarzRxikImeE8M/C7yyFwjhf3Z//gG6MnU+OSW6RmcceYhdIrfgxtIFwif2g
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fwvnwa5k7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Aug 2026 14:44:13 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67CEfKT5022193;
-	Wed, 12 Aug 2026 14:44:12 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4fxg9h6dgm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Aug 2026 14:44:12 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67CEhXG120185756
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Aug 2026 14:43:34 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D24995805A;
-	Wed, 12 Aug 2026 14:44:11 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8579658056;
-	Wed, 12 Aug 2026 14:44:11 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.3.228])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Aug 2026 14:44:11 +0000 (GMT)
-Message-ID: <3c2f063b14532bacc78eb6ea4b0c2d72804c1ec9.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 1/2] ima_setup.sh: Fix check_policy_writable() for
- kernel < 4.5
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
-Cc: linux-integrity@vger.kernel.org
-In-Reply-To: <20260810143344.1029588-1-pvorel@suse.cz>
-References: <20260810143344.1029588-1-pvorel@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 12 Aug 2026 10:44:11 -0400
+	dkim=pass (2048-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b="OtDE5YZc";
+	dkim=permerror (0-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b="IsYwwoEP"
+DKIM-Signature: v=1; a=rsa-sha256; s=202510r; d=danielhodges.dev; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1786550138; bh=ZqWCQkJBeMKWGcx8/d0Uw/M
+	E16Dl/JqvTiPHieEBqtk=; b=OtDE5YZcDUT+3Cb0zABd/RYJ9ni0I4uEOj3dw6VoEpZDjowE60
+	4DHKN1jYExfZyVrGqOkYG97syeK53xdW7q7qYhtOYlqA77IOwMRXssbkh2RcG27nxW7Gt0FtuXK
+	3DxpVB8snDNXYaS+PsQG64FbK7yrvdkFwENdNQjV+mdlvz9cQBkc+OU8LH/1kBEWsRn152Bmj7C
+	o/RdX/d9X9awALXD6lI5TAdNiZw8uALs9QKforKCoKMs8D7DCbhkBBqm4zEPyrOnYyveM9QjIbB
+	M/fPOSLDYefANCwXzv3US8b4FBEC31eGKCON+PCyvughkf988HChmyhBjsFcjF6FzhQ==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202510e; d=danielhodges.dev; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1786550138; bh=ZqWCQkJBeMKWGcx8/d0Uw/M
+	E16Dl/JqvTiPHieEBqtk=; b=IsYwwoEPTiu67crFDiHrq4dlpZ6TPqJcQ2ExbZvAqbbNi2NPoT
+	bqWPMY2IoA2ehWltyk6dic47P6x/LrfiR+Bw==;
+Date: Wed, 12 Aug 2026 11:55:37 -0400
+From: Daniel Hodges <daniel@danielhodges.dev>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Daniel Hodges <git@danielhodges.dev>, 
+	linux-integrity@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH] evm: check return values of crypto_shash functions
+Message-ID: <srgnajphzr43h42zn5j7yjjoqm6lvxboc2sy5wwd5ixybhj6zu@moftt2zpqn4c>
+References: <20260804200734.2415524-1-zohar@linux.ibm.com>
+ <897aa15c24fd14a30392890ffeb5aac96409f31a.camel@huaweicloud.com>
+ <469ed5e1-55dd-4aab-b374-2ac00e3ce9ab@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=RsP16imK c=1 sm=1 tr=0 ts=6a7c86bd cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=2gWyPJ6rYJl2tcFwkygA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: RVB7Cd4c43Lr0s_X6lhDAgPNnwuRFYZx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODEyMDExOSBTYWx0ZWRfX9eZ1JoTprEl+
- yggts4dFjvtUr0tRqHzK4Ou5TNcDhU+5lyWe1NPAzA6qgxhUkVQIUdc/QfidGCThxNh30+qEzyy
- YVAA8PF6TOEDX2D0sXXmwyWidcK48CWPaZJSXeSDkfWlocVBy+3fdJBMEc1RUoydKayRUKOchfn
- rIxCEM5xC+b8XOrxiEDFhIVJ5Oed7Bzk+X+JemparUZuKxQnRnutyzn/WXaJmX3tmZR6AsIa/bW
- cvOELRx3plKN2316YFQyABiM2Uj+6edgl9Nshz6EZHYcsaccpOr+1rwSoquase5f5giE0vGvXf/
- qo23PG5/oBUbT57560Z+vl5R3OqlFR1FknxcJqRqToUclmtyJ3iS6QoNfexfmpZ5VlGoB/AYsuI
- OWFwnqP/lM97Dk4mMHithEDHPkZ0lDKgSUcVGCctGKebJ7TzhGo3yjtNVdcBEXwqG+WASMCFQY8
- UzIBueZZ0vevdcJcTSQ==
-X-Proofpoint-ORIG-GUID: RVB7Cd4c43Lr0s_X6lhDAgPNnwuRFYZx
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODEyMDExOSBTYWx0ZWRfX8Fsg7Vzv1U96
- Fy+iCDcATW+NzIvyjLAWRls24a/uNssruKENl4ym4dUq/bWADtNl0oxYXvrOQJJiroK1Ol5W+lY
- H/KrCEpz4pxJkds3ibTyMC4SNtWn/CE=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-12_04,2026-08-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 suspectscore=0 clxscore=1015 malwarescore=0
- phishscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608120119
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <469ed5e1-55dd-4aab-b374-2ac00e3ce9ab@huaweicloud.com>
 
-On Mon, 2026-08-10 at 16:33 +0200, Petr Vorel wrote:
-> Writing into policy via echo on kernel < 4.5 effectively makes policy
-> not writable (no point to check if the policy is writable). Therefore
-> skip this extra check in check_policy_writable() on these old kernels.
->=20
-> This change improves IMA testing on kernel < 4.5:
->=20
-> 1) Allows to run ima_policy.sh which was previously skipped:
->=20
->     ima_policy 1 TINFO: verify that invalid policy isn't loaded
->     ima_policy 1 TCONF: IMA policy already loaded and kernel not configur=
-ed to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=3Dy)
->=20
-> 2) Fixes failing ima_violations.sh, which was failing due policy was not
->    writable:
->=20
->     ima_violations 1 TINFO: Tested kernel: Linux susetest 4.4.140
->     ima_violations 1 TINFO: booted with IMA policy: tcb
->     ima_violations 1 TINFO: using log /var/log/audit/audit.log
->     ima_violations 1 TINFO: verify open writers violation
->     ima_violations 1 TFAIL: open_writers violation not added
->     ima_violations 2 TINFO: verify ToMToU violation
->     ima_violations 2 TFAIL: ToMToU violation not added
->     ima_violations 3 TINFO: verify open_writers using mmapped files
->     tst_kconfig.c:90: TINFO: Parsing kernel config '/proc/config.gz'
->     tst_kconfig.c:90: TINFO: Parsing kernel config '/proc/config.gz'
->     tst_kconfig.c:755: TINFO: CONFIG_FAULT_INJECTION kernel option detect=
-ed which might slow the execution
->     tst_kconfig.c:755: TINFO: CONFIG_FAULT_INJECTION kernel option detect=
-ed which might slow the execution
->     tst_kconfig.c:90: TINFO: Parsing kernel config '/proc/config.gz'
->     tst_kconfig.c:755: TINFO: CONFIG_FAULT_INJECTION kernel option detect=
-ed which might slow the execution
->     ima_mmap.c:33: TPASS: test completed
->     ima_violations 3 TFAIL: open_writers violation not added
->=20
-> 3) Fixes failing ima_conditionals.sh -r uid and ima_conditionals.sh -r fo=
-wner
->=20
->     ima_conditionals 1 TINFO: request 'uid'
->     tst_security.c:115: TINFO: SecureBoot sysfs file not available
->     ima_conditionals 1 TINFO: verify measuring user files when requested =
-via uid
->     tst_rod: Failed to open '/sys/kernel/security/ima/policy' for writing=
-: Permission denied
->     ima_conditionals 1 TBROK: echo measure uid=3D65534 > /sys/kernel/secu=
-rity/ima/policy failed
->=20
->     ima_conditionals 1 TINFO: request 'fowner'
->     tst_security.c:115: TINFO: SecureBoot sysfs file not available
->     ima_conditionals 1 TINFO: verify measuring user files when requested =
-via fowner
->     tst_rod: Failed to open '/sys/kernel/security/ima/policy' for writing=
-: Permission denied
->     ima_conditionals 1 TBROK: echo measure fowner=3D65534 > /sys/kernel/s=
-ecurity/ima/policy failed
->=20
-> Fixes: cd96265e65 ("ima/ima_policy.sh: Improve check of policy writabilit=
-y")
-> Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> ---
-> The same in v1.
->=20
-> @Mimi I appreciate your RBT or ABT.
->=20
-> Link to v1:
-> https://lore.kernel.org/ltp/20260728114224.1055009-1-pvorel@suse.cz/T/#t
->=20
->  .../kernel/security/integrity/ima/tests/ima_setup.sh  | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->=20
-> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b=
-/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> index b69d7c31d9..19f00532b1 100644
-> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> @@ -95,10 +95,15 @@ require_policy_readable()
->  check_policy_writable()
->  {
->  	[ -f $IMA_POLICY ] || return 1
-> -	# workaround for kernels < v4.18 without fix
-> +
-> +	# Workaround for kernels < v4.18 without fix
->  	# ffb122de9a60b ("ima: Reflect correct permissions for policy")
-> -	echo "" 2> log > $IMA_POLICY
-> -	grep -q "Device or resource busy" log && return 1
-> +	# Require >=3D 4.5 to write multiple times via CONFIG_IMA_WRITE_POLICY
-> +	# 38d859f991f3 ("IMA: policy can now be updated multiple times")
-> +	if tst_kvcmp -ge 4.5; then
-> +		echo "" 2> log > $IMA_POLICY
-> +		grep -q "Device or resource busy" log && return 1
-> +	fi
->  	return 0
->  }
-> =20
+On Tue, Aug 11, 2026 at 09:40:36AM +0800, Roberto Sassu wrote:
+> On 8/7/2026 7:42 PM, Roberto Sassu wrote:
+> > On Tue, 2026-08-04 at 16:07 -0400, Mimi Zohar wrote:
+> > > From: Daniel Hodges <git@danielhodges.dev>
+> > > 
+> > > The crypto_shash_update() and crypto_shash_final() functions can fail
+> > > and return error codes, but their return values were not being checked
+> > > in several places in security/integrity/evm/evm_crypto.c:
+> > > 
+> > > - hmac_add_misc() ignored returns from crypto_shash_update() and
+> > >    crypto_shash_final()
+> > > - evm_calc_hmac_or_hash() ignored returns from crypto_shash_update()
+> > > - evm_init_hmac() ignored returns from crypto_shash_update()
+> > > 
+> > > If these hash operations fail silently, the resulting HMAC could be
+> > > invalid or incomplete, which could weaken the integrity verification
+> > > security that EVM provides.
+> > > 
+> > > This patch converts hmac_add_misc() from void to int return type and
+> > > adds proper error checking and propagation for all crypto_shash_*
+> > > function calls. All callers are updated to handle the new return values.
+> > > Additionally, error messages are logged when cryptographic operations
+> > > fail to provide visibility into the failure rather than silently
+> > > returning error codes.
+> > > 
+> > > Fixes: 66dbc325afce ("evm: re-release")
+> > > Signed-off-by: Daniel Hodges <git@danielhodges.dev>
+> > > Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > Looks good to me. I confirm the Reviewed-by.
+> 
+> We got a report from Sashiko. As it pointed out, we should not override the
+> error when calling hmac_add_misc() if no xattr is present
+> (-ENODATA).
+> 
+> Roberto
 
-Thanks, Petr.
+Looks good to me, thanks for fix!
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com
-
+Reviewed-by: Daniel Hodges <git@danielhodges.dev>
