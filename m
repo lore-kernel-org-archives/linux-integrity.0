@@ -1,141 +1,80 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8BF463B88
-	for <linux-integrity@vger.kernel.org>; Thu, 13 Aug 2026 11:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5512BE639
+	for <linux-integrity@vger.kernel.org>; Thu, 13 Aug 2026 11:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786620342; cv=none; b=A9F6osEEkeTFQ+AIzW4Qtbl23qa8S3WmU/Yx5U04pZ8eNc9FidDAMykZN7JBLzVy+Yhci31AudN2SUsO1lqEeyYAMTtSsaJHnT7ZxB9x+GWjo4J4JRUp02BX5mFztfVc4l+SVrysZAo4wAZINb7U8QQ4m+MGyoMyXTDF/OfzFxo=
+	t=1786622059; cv=none; b=TN/0nfKJaixWfjaNNrNyGww7zw6l8nowA3xt/XQAoM3Ee7DZLtPWntegqzkUJQcxrKCkAXtBXcc1Ipka46c/WBd4Ms+Cxs9HrJ2m035yxWb5GvX0QNymxXcksLbhpLD89qEZnDfhMrCOeOUeF4/E5k363ntuFfit4txnqR0kexg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786620342; c=relaxed/simple;
-	bh=1o4aQnRbQYeCc3QqTVTta3nccl7Kt9E9wH4I3i82vjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MxSBdAt7FBIFDkJAy/+jWvF5rVrgMTHzYvmSK+vV5LKK8tdHsdPxnrcDc8ElqNgdQfxKPostNAr9JJjIBnedr28UyPgfnNHwSkElCZLS5/zbUyURUde3Gjm/p3W+6FxVJRtHVLB5y3Jm+LumzZTZ/u9Wm5JSrTvpZUPOLYD7LkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sHR5VNoS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F9k7XgYA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d1FRXoXB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ExTYyRKV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1786622059; c=relaxed/simple;
+	bh=nIYZV4wIwN0c0BMAf0MMCsM9Xjm5KWqPcbqWD98uGZ0=;
+	h=Message-ID:From:To:Cc:In-Reply-To:Subject:Content-Type:Date; b=VxGZzFvBHAoKo2Qu274S4d9Cl31n0mwX0RXklDOXgH6SPaZM1ymb55vNauEn3u8sufuHYiu66+6AZfnEoo7LZh6mHgPANE47zPrwElFYkgrtXE4T7B5SqIy/o/DGjJB7ZZYzpKlUluxGZeLXeVmqu3A+k50rmLROHs2M/E+Cw9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SuhNrP93; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sHR5VNoS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F9k7XgYA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d1FRXoXB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ExTYyRKV"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9CD623E90;
-	Thu, 13 Aug 2026 11:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1786620332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=e4VPySsf928NBWmWSotHkyIfCU22pGRzk9lcLTmNQ10=;
-	b=sHR5VNoSQodNV9gVQmjG8diJdFZa4s1chSz0DPgVeUYBkxnNGdjsSQ/rZyqfY2cdkMyaJe
-	pnjnfBX4RxYxgcMEhfGaOsK7H6cm71KfqSfzBtE6c4t/2+XeLmb/kZwYDEZFe0g/HquQ4/
-	M2eGD9PslORGZeQifIQZb37khhtLqhQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1786620332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=e4VPySsf928NBWmWSotHkyIfCU22pGRzk9lcLTmNQ10=;
-	b=F9k7XgYAwRkyixamfGi/fIATRoRumGoOBqp/6VV9KRibFl5xDX4fzdiDOzhajNExyrZZv8
-	H1vZJ+ca4GYupADg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=d1FRXoXB;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ExTYyRKV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1786620328; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=e4VPySsf928NBWmWSotHkyIfCU22pGRzk9lcLTmNQ10=;
-	b=d1FRXoXBwMJRl41wqCTYGKPgWcx09XVkdPW2ysUaV09sALTSwCDz0wx7FzMdFHAyouW7Gh
-	bygffhevjvXUpP5WTFsXSiaspMc1uxSQDxRybnh/glloARnH2IkeD5KoC2e9pELBBsENjA
-	Kkeeq4yElJEIroiIO7gGyc15hrlef/k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1786620328;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=e4VPySsf928NBWmWSotHkyIfCU22pGRzk9lcLTmNQ10=;
-	b=ExTYyRKVbyhsIiqcYDxcvyTydH/6/lZ3nIKHFHQxNphA4AQ3m7QcZF1N6EdGjBlqidYVUj
-	GroLKBB3FCs9l6BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C33077DBF;
-	Thu, 13 Aug 2026 11:25:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lMRYHaipfWqEFQAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Thu, 13 Aug 2026 11:25:28 +0000
-From: Petr Vorel <pvorel@suse.cz>
-To: ltp@lists.linux.it
-Cc: Petr Vorel <pvorel@suse.cz>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH 1/1] ima_setup.sh: Use tst_umount()
-Date: Thu, 13 Aug 2026 13:25:24 +0200
-Message-ID: <20260813112524.1849695-1-pvorel@suse.cz>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SuhNrP93"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-490cf322ed0so5730435e9.1
+        for <linux-integrity@vger.kernel.org>; Thu, 13 Aug 2026 04:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1786622056; x=1787226856; darn=vger.kernel.org;
+        h=date:content-transfer-encoding:content-type:subject:in-reply-to:cc
+         :to:from:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=nIYZV4wIwN0c0BMAf0MMCsM9Xjm5KWqPcbqWD98uGZ0=;
+        b=SuhNrP93AekBoWo5M8umifdELwhfvzblw1hnii0mfT7ZMOP3aLcyrjzuRHJi//YHjx
+         CJhvApE3VDtehfigzBOJ5wqgofwAAFeAH/2uBDqGBD0KVbgR2B4DF7vAZu0FcPhDhIOZ
+         Xt6AUIFMNLwsgMbv++evcI3+K+h2VWQesAnpJXQID0pHEg00JqbhrG1p9uLLdppnoylR
+         JSKBYMfoF3Uwrh2Nf63nQeMS/seD3I/I5o5+JyabvzxObi34dXEtbuPaxTqzIUxg6q7V
+         IKSOiLIJ+wMA1lbKoOHgGRkUyoAFc8BOOc1wYAZCA6WJyRIJ9r+HptT3qs5hLSidCptl
+         QV9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786622056; x=1787226856;
+        h=date:content-transfer-encoding:content-type:subject:in-reply-to:cc
+         :to:from:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=nIYZV4wIwN0c0BMAf0MMCsM9Xjm5KWqPcbqWD98uGZ0=;
+        b=ak6DiQvrg9Od6I1Gpl+Gr4/tfCQieOCq+yphL93sHLo06SzLK2lKIWUXq6jIfGorzh
+         XQht3Mz1bWeh1UFmYs9/ROiLXvnZoYBO7LSUKSa0Y73t2+yNnD0g12Ouj+gsh7Kmtr6q
+         ubPQJfXjVAF9Ety5Mj/Rk33r0JiauZRwV8Ra9xVGT3TWLh9L1sf1ZQQZ/odrZ/iZM95A
+         7nVTqO7xvGYpkLxshCXz0hewrAkykc0Ay8GRP6nTsV5STZklk2RXd7d53ytcwfVDCunn
+         KpnTSPchp48+A7ZNLjp1wZIjHqwhfMozYYUiTbjL+1RsxPutn3ylhYNVogG4KHroGcnV
+         hXOA==
+X-Forwarded-Encrypted: i=1; AHgh+RpRcm3P22BkaHHShANJfZA0xMK5sONnqINweiwBCuEMLWjMat8IsCHZH0kQmrUqb482wzqQ+yGznBAgTs5Zxns=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl+a9/6jihuXdzZekcuC9LgIf8SUM7UsArlaBgN9T7TeKEKaUP
+	1bYGnLfqBjTpYYlPiBfMBUCaPBlGbbEZSapMGC+xLVUMPipamRG2RARe2JF67pkMv7g=
+X-Gm-Gg: AR+sD10tB1faN/8I/Y4/gvhbgDQejxjsiLQ3G8H61eMjYGTPLHz68hvz3XFmxpXYY37
+	HpQ+JDlcFTQHzBdPWrNxJkh+VDXIM8WHe5g9HSVuF5iqMzDVT7YjBunmCSbuFEAhbJS+lBwp/cP
+	/lZsnR+Wz+Iq4DjWpqcR/N8kvbYTRxLC9yKvRpsJxrNBkW1NVZd0w8My5gb2y9RY0m8Ba/br0Nw
+	3k+86V8+mNjC8skrT915f0CXdblrgs1Uy0uAyDMAZV1nB8teip3Pxnu4uMr+ctYTYLUhrIwfwtr
+	P5RnRDDQ5p+7iQIyZ73YCSiqF5zKNhzNCVZ73LqS6Ag5+Zu8/sTTMd9w+oNud/8spbPD0EWosZT
+	W0G5Hd842AszXAQ7UAI4gPIT3Zuqpf45lNgF0OUw/ZWVsR6Ypqo1zYYTeKRxOGkCKx2/BKwUUXq
+	C+kcbq+m2+51+fj67TuJb/hp2As5KIBtjPd3NbbSGfgIVTFpAq0PPW3Vj7XfZtiUUDxTdnIq0=
+X-Received: by 2002:a05:600c:35c1:b0:499:49f3:77b1 with SMTP id 5b1f17b1804b1-499821bd037mr67274325e9.3.1786622055871;
+        Thu, 13 Aug 2026 04:54:15 -0700 (PDT)
+Received: from 192.168.1.121 ([176.206.179.213])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49981b03cd0sm64515475e9.1.2026.08.13.04.54.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Aug 2026 04:54:15 -0700 (PDT)
+Message-ID: <6a7db067.6ab3636b.258558.972a@mx.google.com>
+From: "Andrea Cervesato" <andrea.cervesato@suse.com>
+To: "Petr Vorel" <pvorel@suse.cz>
+Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org
+In-Reply-To: <20260813112524.1849695-1-pvorel@suse.cz>
+Subject: Re: [LTP] [PATCH 1/1] ima_setup.sh: Use tst_umount()
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Date: Thu, 13 Aug 2026 11:54:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -3.01
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 9CD623E90
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:email,suse.cz:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
 
-Use standard test mechanism to detect problems during umount() caused by
-GNOME's gvfsd-trash daemon. Although it will not solve the problem it at
-least warn tester.
+Reviewed-by: Andrea Cervesato <andrea.cervesato@suse.com>
 
-Reported-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- testcases/kernel/security/integrity/ima/tests/ima_setup.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-index 19f00532b1..054ab28611 100644
---- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-@@ -313,7 +313,7 @@ ima_cleanup()
- 	[ -n "$TST_CLEANUP_CALLER" ] && $TST_CLEANUP_CALLER
- 
- 	for dir in $UMOUNT; do
--		umount $dir
-+		tst_umount $dir
- 	done
- 
- 	if [ "$IMA_POLICY_LOADED" = 1 ]; then
--- 
-2.55.0
-
+--
+Andrea Cervesato
+SUSE QE Automation Engineer Linux
+andrea.cervesato@suse.com
