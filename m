@@ -1,120 +1,158 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E35348A8B8
-	for <linux-integrity@vger.kernel.org>; Thu, 13 Aug 2026 15:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB692874E1
+	for <linux-integrity@vger.kernel.org>; Fri, 14 Aug 2026 01:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786635043; cv=none; b=WlKrIW9qyT9AucoEpkiaNXQJwJHJzcKECOYHtbjHPD/2EWc31roPaL6MyAnCGvLWt5SDM2n+A1AgKvWPUR9Pt8hbpUGgG0kBGWw9AIFuRqlZV9l5L0Wcn6Su1qJ86INi95wbfqaX2CbJjgXE/41dkoXK7p7fL/gSq8P57vagdAE=
+	t=1786670321; cv=none; b=oKqm2P/pecShkG5I0Cwaxv+xzIfoHMwoGNOAHFDSgYEiPQynA41sCOpUrBbCyZwXwyeDoRSPlEm8CIljporYiML3q/j0eAH8tDfZIMJgYmB0AsIGfOLvSggOWYWVNtNuCn9DEfol0grng7BlQno3Ad9E3JyFNikF+YAxMcPOUtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786635043; c=relaxed/simple;
-	bh=zS4yBiMhynVY+GeN45tgiN2toKrueGRWsHvxyPuW1X8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AzI2WadnHvJILczjBsBMRBRV3Vyv0cLt11eLxukuvVUV07Rzw5ECbIy4HqDmJnw1+neODzhHzyIIzTU/rzpI8Bqb/aDxWkHpmGu+KrLi6Fl2UdepUTFvbNyTIrd+6M6Q31D5RcXOzR65YnT8WZUBmmLRfUXFiDtZk4DksZeau3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWGhWNYT; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786670321; c=relaxed/simple;
+	bh=k91BtBHCObcC67Qvm9OEwlo2AeMppbmJU7lW9qQFp3Y=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=gA/sN6wZo+aaEy5oycmnQ1L8JKC8sJCexYSpU+E7gyL035PPdDmBezW3cKxhA2OJOS9U/8/xDgH7haNKTTk3snDX1GC7OnUYQV2j3PISaZMLuJHonx6FnU84LFxxm8rXzbzItNShRjZvzzb2Y5weH9VbXgkf1JGEeQ9Fl92W2jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tdTWnA93; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWGhWNYT"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-8487b7b3fc8so2547915b3a.3
-        for <linux-integrity@vger.kernel.org>; Thu, 13 Aug 2026 08:30:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786635042; x=1787239842; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=7PUKjGwrD+vFs6TW/81bEPyuY0N1UHpM7KlRzR6uxjE=;
-        b=MWGhWNYTdqIXWfWh+aE5zRxAf1V68K0f55K1Ihe5bCWUVx4IiLugx43tFmWCRZ7VQJ
-         /nP+sni1Dqg0ZJTsmEqUGPZrS1zCCsaqZet1r33BhKANm8ij/YLLFe+ugvB1+v8zvIjY
-         uAuaKipSiZgq3zYLRyzPerOuK8ssjtDcSC//qAt9/LWFB7W6DNX1TVx2GjD7ohSvmhZC
-         A27wVND+1rWItLWdjocXDPVLLv9EpWpuE9Ace2l28vVGTlzj0hyI6mElKC3e5GjgsEId
-         cl2FRJag+9L6xjNGZijKRJMxX8UE7iJBFGWmp0J7Szs/0fDEHMPAxklfGguJ1kHzEeZU
-         idWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786635042; x=1787239842;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=7PUKjGwrD+vFs6TW/81bEPyuY0N1UHpM7KlRzR6uxjE=;
-        b=K5zPYP4KnjyCq6agzsev6fmCvrDsDLRxfPVM5AV5WXdI5C+tr4IpCRR9WNtHjsiP0n
-         05qXMDrUMpzvlBjBX+9UCQuRAOdQ4cgXC+e8dMp0C86cDQ7K2QBm5zZ1rBiyzoHviyUi
-         obPHyMVmjMGFxIgBjT5pKg5patVkY+utJlyfhZTy2CSWNVigOLACS1COGHjv2ZT+0Omo
-         RMkCqTKRMT5OEwmMK+A3A2WhcCHm42/Xrx5huRQGfEJnuAKagHc4B5y9RE3ma4c63Dgx
-         DUtO/wKzecWndNcw/2Bo7L573j0GGAGlLbsWA9hNUjSCKP7vT1HizslrcsL5vly7zPeJ
-         1l+g==
-X-Gm-Message-State: AOJu0Yxx7aWkukVeKfgM5pN3cgnkpBUV+Itzmw/OKc7RHgi+EBzlOP7q
-	voWyfUdJHDOU019YRnd6nOqPbLl9PYF8oxjNDx2KSmBWyM1IgdCV6lyr4XHwmA==
-X-Gm-Gg: AR+sD10kXwXurUP0RYIojd57yVF6ZdQvuwHENabmLik3EnUf5QueXL4NrlBiTVUZApG
-	MGsPpwYyrEwKU0sm5h4aiLOGi6h642SxbAwEaaHGTGtsu8Xr6ZOX9b/kOgp247DP38KeaP3G5OI
-	ux6yRkIo/iGn6zu2Tkgiwu4Bus3q34TzIVOwvgZE3rXz3iHlFbUevl4MST1Bx3koV0oUw3GiiuY
-	RobZ9EQD5tQ35kY5/bAyOTY+/BeEQrUq+43hGCFC07hYtCwXh/Wl+8p5ih0jEbohtMnlTTwX/5U
-	yOR+viFgwcwykoJfKgXwkRbqJyYWltyex4aGO59HEivO+n3XA4je2cnUTFPesrVA3TRInO/Bui7
-	z5l3pFgAbb48iz9xUf/TE7aKz74OWz2IuqhMglcpZ+u9BK3LD0TlXQz3MxOrnxCW9laWmoM1DQm
-	q21la/5n1q50MWWSTy+9jG4N0Hkgqpkna+H8bDcT1qn3U20jxFmoYciPvcj4uN6ij0QbOyt0U2q
-	CnmdkM=
-X-Received: by 2002:a05:6a00:4501:b0:848:19f4:3b52 with SMTP id d2e1a72fcca58-84fc768405emr8166658b3a.38.1786635041601;
-        Thu, 13 Aug 2026 08:30:41 -0700 (PDT)
-Received: from haichao.tail057a43.ts.net ([2001:da8:e000:1206:3b7:6da1:c188:d14f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84fc477e53esm1134246b3a.14.2026.08.13.08.30.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2026 08:30:41 -0700 (PDT)
-From: Ruoyu Wang <ruoyuw560@gmail.com>
-To: linux-integrity@vger.kernel.org
-Cc: peterhuewe@gmx.de,
-	jarkko@kernel.org,
-	jgg@ziepe.ca,
-	linux-kernel@vger.kernel.org,
-	Ruoyu Wang <ruoyuw560@gmail.com>
-Subject: [PATCH 2/2] tpm: st33zp24: Validate locality read result
-Date: Thu, 13 Aug 2026 23:30:32 +0800
-Message-ID: <20260813153032.3951878-2-ruoyuw560@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260813153032.3951878-1-ruoyuw560@gmail.com>
-References: <20260813153032.3951878-1-ruoyuw560@gmail.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tdTWnA93"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67DLWNRq3513180;
+	Fri, 14 Aug 2026 01:18:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=msMSWS
+	80t5bCMGLe66VYVo9N5HxWyHOKHuj0uosWnxE=; b=tdTWnA93h2Hsd6EvDn5Umg
+	24es/WlZEpONzW7apMLJidE5bKUv5x0L0rbowCyrCK1RhnUsr9eL6m2dADsyQ8uu
+	cHc99kK2Jvw41S6oCrPMAEc//3MDkfcGR4B1rEEengM7yTtnHT2eyfxWHbp5Gila
+	M5sN7d1qh5mxsPUTr/A6NMmTlOs94wSeL1Oi99ZXNFVapvvRArmjIYJlDvaxEdin
+	9DPKwiuivDhQlenqC9camG2kOQPyxh8iRumrEZSn7WEHjWp7BB3OmiJAF2xCIyTz
+	GrZbZb9dz89UfsqpXYPV+3NyTPUxXsNUsV8DO7asHGPlSkLGTydr/jKg9HsUsSuQ
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fwvma2q19-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Aug 2026 01:18:26 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67E1Bp4i025717;
+	Fri, 14 Aug 2026 01:18:25 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4fxg9hd97r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Aug 2026 01:18:25 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67E1IO6g51839450
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Aug 2026 01:18:24 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AFBAD5803F;
+	Fri, 14 Aug 2026 01:18:24 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2E01A5804E;
+	Fri, 14 Aug 2026 01:18:24 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.7.32])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Aug 2026 01:18:24 +0000 (GMT)
+Message-ID: <b901f8d94a9d6e3faf26a5e359ad8ec7e306c931.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] ima_setup.sh: Use tst_umount()
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
+Cc: linux-integrity@vger.kernel.org
+In-Reply-To: <20260813112524.1849695-1-pvorel@suse.cz>
+References: <20260813112524.1849695-1-pvorel@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 13 Aug 2026 21:18:23 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE0MDAwNiBTYWx0ZWRfXzMNJEb6T9r4V
+ WoQKghGWxYMP1wPqsS/IDWjyWWgAAnlZ+LZ0XKreTpa3DyylvaMPYki2N5nLtqVfki9zqYp3E5Q
+ i2/sNZroE9J28kBynSUX2ISAbj/UXmbR0EF5emy7GgHsB2EjfTjN8Xl/bkKuwDraQYt6SV/KRhe
+ Jlx4fMjV+5tO3rebatdPp/Nddj5DXzitfYZT9ByLe72W7w9URHTjFU7DroW+IEZpryBr3e5dPK7
+ FCDM6a0pyReb9yltCaERgtj1BlD1SAJ56UVl32dG63tgmuekvUXbhOEN1RgPb8qkmMSWxYxuQsf
+ knttxGnuKiEXfhD/ye5IywVwC5J9mY/UiDLzwLdl70/dXBd1vMnxqG3LZVeCHbh6STA00MPFp4G
+ pNE2VeOJ1HQrazjqB46AD7EwJDirv+dXt+uif7XqzlDYg2Bcz6DPlUsonYF9DQ0/8A39vwCYlN1
+ NunXEIlI1YTcwVm5XGg==
+X-Proofpoint-ORIG-GUID: 62GcnGBGorW-Cfw8cFhyK8oR-WQJ3dLC
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODE0MDAwNiBTYWx0ZWRfX1bcvoPBmQER6
+ AbHiaAEA9V9g30/IWkf2BOJJy7OtDXThToix0x4Do6BtlXvp8RNgg+GedrRLYdLjPrvKQH3XdlC
+ GuCTBxkBSY+zLuyrgqaQt9s78049gC8=
+X-Authority-Analysis: v=2.4 cv=IfK3n2qa c=1 sm=1 tr=0 ts=6a7e6ce2 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=VnNF1IyMAAAA:8
+ a=yF6fm7Vi_KPl3uAzEtQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 62GcnGBGorW-Cfw8cFhyK8oR-WQJ3dLC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-13_07,2026-08-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 malwarescore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608140006
 
-check_locality() treats every nonzero transport return as success. SPI
-errors remain negative, while the I2C path can convert a negative write
-error through its byte-sized status variable. Either result is nonzero
-even though the TPM_ACCESS byte can remain unwritten, so indeterminate
-ACTIVE_LOCALITY and VALID bits can falsely report an active locality.
+Hi Petr,
 
-Require recv() to return exactly the requested byte before examining
-TPM_ACCESS. Transport errors and short reads now report an inactive
-locality, while successful reads retain the existing behavior.
+On Thu, 2026-08-13 at 13:25 +0200, Petr Vorel wrote:
+> Use standard test mechanism to detect problems during umount() caused by
+> GNOME's gvfsd-trash daemon. Although it will not solve the problem it at
+> least warn tester.
+>=20
+> Reported-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
 
-This issue was found by a static analysis checker and confirmed by manual
-source review.
+With this patch applied and after removing everything other than ima_violat=
+ions
+from /opt/ltp/runtest/ima, I'm still seeing:
 
-Fixes: 251a7b08213a ("TPM: STMicroelectronics ST33 I2C KERNEL 3.x")
-Signed-off-by: Ruoyu Wang <ruoyuw560@gmail.com>
----
- drivers/char/tpm/st33zp24/st33zp24.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ima_violations 1 TINFO: $TMPDIR is on tmpfs =3D> run on loop device
+ima_violations 1 TINFO: booted with IMA policy: tcb
+ima_violations 1 TINFO: using log /var/log/audit/audit.log
+ima_violations 1 TINFO: verify open writers violation
+ima_violations 1 TPASS: 1 open_writers violation(s) added
+ima_violations 2 TINFO: verify ToMToU violation
+ima_violations 2 TPASS: 1 ToMToU violation(s) added
+ima_violations 3 TINFO: verify open_writers using mmapped files
+tst_kconfig.c:90: TINFO: Parsing kernel config '/lib/modules/7.1.5-
+101.fc43.x86_64/build/.config'
+ima_violations 3 TBROK: tst_checkpoint wait 10000 0 failed
+umount: /tmp/LTP_ima_violations.1OEcI81NHB/mntpoint: target is busy.
+ima_violations 3 TINFO: umount(/tmp/LTP_ima_violations.1OEcI81NHB/mntpoint)
+failed, try 1 ...
+ima_violations 3 TINFO: Likely gvfsd-trash is probing newly mounted  fs, ki=
+ll it
+to speed up tests.
+umount: /tmp/LTP_ima_violations.1OEcI81NHB/mntpoint: target is busy.
+ima_violations 3 TINFO: umount(/tmp/LTP_ima_violations.1OEcI81NHB/mntpoint)
+failed, try 2 ...
 
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-index 898e8d01d26698..0e2deff94c3672 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -106,10 +106,10 @@ static bool check_locality(struct tpm_chip *chip)
- {
- 	struct st33zp24_dev *tpm_dev = dev_get_drvdata(&chip->dev);
- 	u8 data;
--	u8 status;
-+	int status;
- 
- 	status = tpm_dev->ops->recv(tpm_dev->phy_id, TPM_ACCESS, &data, 1);
--	if (status && (data &
-+	if (status == 1 && (data &
- 		(TPM_ACCESS_ACTIVE_LOCALITY | TPM_ACCESS_VALID)) ==
- 		(TPM_ACCESS_ACTIVE_LOCALITY | TPM_ACCESS_VALID))
- 		return true;
--- 
-2.51.0
+The message keeps repeating ...
 
+Mimi
+
+
+> ---
+>  testcases/kernel/security/integrity/ima/tests/ima_setup.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b=
+/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> index 19f00532b1..054ab28611 100644
+> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> @@ -313,7 +313,7 @@ ima_cleanup()
+>  	[ -n "$TST_CLEANUP_CALLER" ] && $TST_CLEANUP_CALLER
+> =20
+>  	for dir in $UMOUNT; do
+> -		umount $dir
+> +		tst_umount $dir
+>  	done
+> =20
+>  	if [ "$IMA_POLICY_LOADED" =3D 1 ]; then
