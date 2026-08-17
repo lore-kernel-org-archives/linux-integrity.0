@@ -1,264 +1,255 @@
-Received: from mail-oo2-f9.google.com (mail-oo2-f9.google.com [74.125.231.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683DE3B47C3
-	for <linux-integrity@vger.kernel.org>; Mon, 17 Aug 2026 20:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7974026ED4F
+	for <linux-integrity@vger.kernel.org>; Mon, 17 Aug 2026 22:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786999425; cv=none; b=L8M5dDxmagRy9gAzOOd1523OVyDjMeLYe+MLpeIgZaCgmZFzXR8wF9JsFJXfatCd7ZM78Nj0Mqi3o0HimAo0M78KVdvtUTQ67LRRO2glwBprVZF1Xpex/cLGtDDvulrTYElX+q7dyjpCRx3GdkpQzW0MoQrfa6iqwEUrfo+3vQk=
+	t=1787004821; cv=none; b=dBmOzc2Ty7z3XNFIIJHBfNIYQPbc5rbMgX4OsFu8OiPT0Yah3ThOXXsT6DF09QFOV+pJLYhQt+XkrdwEkhur8/fQYmn+IRqzGU5klO9gQ67fbO/f+RM7cjpB6AxUeRyKJj6Hwn6XxAxxZj0qv1+49g5geOcedt4s+/kQg6PSQ+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786999425; c=relaxed/simple;
-	bh=9aWsYjxU1yrw8viF0+Sf5scIs3DMWcLcR3xM0bHXtys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OyqG48biAyWmEeaAhE+8lteVVUbfn4Epyg0Gvtl2oFrMMNS6WAOadV1FxabgzTiMUCRIdDCqzvcMEHygBhxRsXBvMqiEEtnoTBF6e5zS5f3IyXf9PryTg590hqbMsDPSin0Sa7/uJF6OPKhRBcoQOwJ3qx9ZkrzQvAwOWehoRjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=MF7zWiyA; arc=none smtp.client-ip=74.125.231.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1787004821; c=relaxed/simple;
+	bh=Tqfl9Sj7ON8bYdhXkeDs5yDZ3txyiPJnY5B3fRgmgpc=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=OoAX/ooAOf35owWGZB2gpJXf1Gsc9Hjtf6nzSh8aBFb3cgIKOethS+LY1g5TWdavSfYMI1RAQEpEnvjlBziUVNR4gY3h7IVmpq7CzoaSJRZYjHtclxdI8fDJnVGWHkV3cAIqFs+CQAgPCMaa6oBs+f6dBbgur4INcpm/ozDzoCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YLtO7B2L; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="MF7zWiyA"
-Received: by mail-oo2-f9.google.com with SMTP id 006d021491bc7-6aaf6076546so1360712eaf.1
-        for <linux-integrity@vger.kernel.org>; Mon, 17 Aug 2026 13:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1786999422; x=1787604222; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8hQvq3XnTlInZZFipkXBqM/QS0vM+oWvL7vzyru0XOw=;
-        b=MF7zWiyALDAvigHeNFELoUu2pQ5DBnl6SkGtCRuXow8DyfAKKd0xBj22pEOvs1GFtD
-         78vJioJg2isUwh0glZ9ttCkNs1PDYZRWE4H8CeZSmwkNArsI9Nhi2XJdrrhehILix5oO
-         iHwDf1pCLq34a2bxKPaxGxYM+efqroBM3biA7nk/1AogTmmccasyet6jJo8ek6hTpZ/s
-         MscGx4FEddY6AFeyi7rolQGma0hJwPm+iVPDbZS8qkHmakwKyzY+5vlckRCHQ29shZVf
-         LrkogMio/k5WnqwGUwIkBdmHNrcF9CXxo9i/toG/azGhbqWCEApewyCHewW0R2jGQuEO
-         7jPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786999422; x=1787604222;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=8hQvq3XnTlInZZFipkXBqM/QS0vM+oWvL7vzyru0XOw=;
-        b=sFPFt2H3jCct6rA4tg7aRCoE1ss/SXNwdSoiWwfIuh/cEwfT0KjJF6aI3gSpqM2dfn
-         A0AeB3CxVMfpuz43rwpPY2Qp9vDB8/Yl/PlcZGT8Oe2+JBGeGVt584LtER/YP9FTrbdH
-         NpD6hyy0Fb+HbzZpzUzFT8YUr34lUoSDT3/sY0MJOguNTMcE+agbk4Ek/bP/0g8aGhND
-         MMoWEp/Jme4ztpLCdbxlDTxo/zrz02ryCCQrCfNB5CBJhImf/vYp++fb0ZQi39kwlESl
-         /wDfaVi53C2YwhZJ0ackhWQDmomGo4Pktio5fRv1J5tIoSXZKSxcUFziKhJicKB0amfX
-         azrA==
-X-Forwarded-Encrypted: i=1; AHgh+Rr3iHEaNxXYM9SB1nnX8L20pwZ7J8taNnWoJrZkdlzvXYujxy0BFktg3lfSTpWX3UCXdjUHLeOK0Vqs8IDT0rY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcgdn4M5OyaKtLhaWx17KgyjPJgnWDKV4g/LT/wdlm1JaaK5CP
-	C9bYuLlqupEmiYdFBbFg47gcyMjNqw4FO6u1YCsCCUYHrk4AAcdIN8hIZ1GgOQ5Rt0o=
-X-Gm-Gg: AR+sD10bA1oJKJC0ie7JSCJnOdLUumcNg2D5Dk7TnJv9t6MyMsHc5d2/4hRpzcdun88
-	tohZZSoCU5zVRTL31AdupfZ6SBR23C58D+5bZBKhrm3+bpumcFadM7ipUXmRSGrlxIojfXnFTXW
-	kt/8JHv4eqgNDiL7B5DZvta3NrGYMqb7iJJHOk+f3P/OFzWSDHgUllVTx4Euwv6szkvvh+vjp7A
-	BLfqmBa9pVJF9zNp3+vIZPAOLE0XzutONGblZLtDkmYAi//01sHC1FqGv5wHmUwNWF7fIsw7aZb
-	xZXpc3iCzHHnk7ynA9I8dEsI5ep4Mmhg3js9Qu6C1MPqLM3I5j5Md03h13tiOY3ZALtkTektUEN
-	enIxEc2upn89OPxtoWxCxrmjubDBOOaWPaUGed6GWa2t3+eLYOgvjimFQfupamYtIO3SRtTgfXL
-	2wFg2U0wyqzEM02U9wUO1ZC/BEWx8z+SdCykEYmu0=
-X-Received: by 2002:a05:6820:1795:b0:6a3:bdc5:591a with SMTP id 006d021491bc7-6b0d6919fd2mr25263755eaf.32.1786999422065;
-        Mon, 17 Aug 2026 13:43:42 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:62])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b1165cd62fsm2616325eaf.5.2026.08.17.13.43.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2026 13:43:41 -0700 (PDT)
-Date: Mon, 17 Aug 2026 15:43:38 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: syzbot <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>
-Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Subject: Re: [syzbot] [lsm?] [integrity?] possible deadlock in
- ima_file_truncate
-Message-ID: <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
-References: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YLtO7B2L"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67HM1c68758949;
+	Mon, 17 Aug 2026 22:13:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=q16JZO
+	9J4xeP9WkDPSNFS4FchR2vA+laWBYbrrIjXSQ=; b=YLtO7B2LYBnD10MS+Shl2f
+	KJSvUyjZOIYamXTrVS03KxJQ2eM2FTKWcPnCCZpAvBco8C6I9GDPgDPHPsBa8iML
+	3X1EPzKMkKfiN/6EjxoH5UThrbGw29UaMztj6UJal7AD9QqLPWSkhDukd6ro+1A3
+	uOpYZtXQ5eyEgjhmvbshEMfNZ/KOi4tvRri4fYD9GTwfQrs5K/1brDmelzRjHBTh
+	2Melc+LaXLWYG0pPBvn8liPzmVnVgkaN6fHwT0g3rTlLb8JbS2aztFCwAdiPsbLg
+	7xkwScpT7Se+XF64XvUw/qcCR7K3rfepKKFraE94WYFP4noIdl7Af/4B8Du9uONg
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g2fsqmp3j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Aug 2026 22:13:35 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67HMBi6V031377;
+	Mon, 17 Aug 2026 22:13:34 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4g354y7t43-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Aug 2026 22:13:34 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67HMDXKZ22414006
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Aug 2026 22:13:33 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4489B58059;
+	Mon, 17 Aug 2026 22:13:33 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BCE6458058;
+	Mon, 17 Aug 2026 22:13:32 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.11.167])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Aug 2026 22:13:32 +0000 (GMT)
+Message-ID: <2fb152d374a14a0e30b20de73d74a90b195e0793.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima_tpm.sh: update test2 to detect integrity violations
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org
+In-Reply-To: <20260817105556.GA1951950@pevik>
+References: <20260814135704.1247403-1-zohar@linux.ibm.com>
+	 <20260817105556.GA1951950@pevik>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 17 Aug 2026 18:13:32 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE3MDE2OCBTYWx0ZWRfX2/Hx/HJW546D
+ repS9XPAS4Em/y1KiMgNzYP6p2I1dtJwiydxir34GrmfabZt9t4q6+aY9yi64fPP/2RaCnfILsD
+ ijtRrdKVbd/5QOuBUgmDN5mHJVC33uYaPFdFqpNVg3AkhSvitOnKqrUjGd5HPq6hmGY1sPNsiUG
+ eMxUeB8xqDCA1XF15KrY5R1fOL0bCtBeYpy5K26B/GSBy2xY64PO6v+AUkFsNSlBesmh9WJPwli
+ KpZpiICtYqQ9LyFsm1IOD+ehYXlAFFJQ6N8Blm12G05Pq9tX5CJuehGrRvKzj4fg1cFnPlzDEDF
+ OSmA6vKOyc/OHR0x4fXYdEwxgQ4Xm++inzjSIVvJjwOjMge7EFuwMthQaN7d5UdtQ8EMGgSlZsX
+ EDsTqm1umlMvvhD2sRZygzVSWbjN45O7Q0h4sWSg32ROWE3p4sWIeUbJljwd49wJBmggCGk4iWA
+ B0r5ELBV9A5JloMNVHg==
+X-Proofpoint-ORIG-GUID: 36ss2kx5yaistmmORZ_JKd3aPs80BoSB
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODE3MDE2OCBTYWx0ZWRfX37J93XU2wCmF
+ KiX12EwvUl7fyCs0wgISbmZ5RUJdRKqXXN3Q50ag6eHpCYBbRQ6GFMMfrA6/Mua5vg+4vHWYuuK
+ ylmtLPi2w8TQg5nrNgGFcn856N44fgk=
+X-Authority-Analysis: v=2.4 cv=DJe/JSNb c=1 sm=1 tr=0 ts=6a83878f cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VnNF1IyMAAAA:8
+ a=NaXFS9rsp0321YIt4qoA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 36ss2kx5yaistmmORZ_JKd3aPs80BoSB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-17_04,2026-08-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015 bulkscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608170168
 
-On Sat, Aug 08, 2026 at 05:20:29PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=113c53b9580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=145fa60d73086782
-> dashboard link: https://syzkaller.appspot.com/bug?extid=448c2e24b1ceff13ed2a
-> compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/disk-c21bb419.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmlinux-c21bb419.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/283184100427/bzImage-c21bb419.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> syzkaller #0 Not tainted
-> ------------------------------------------------------
-> syz.3.857/8643 is trying to acquire lock:
-> ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
-> ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
-> ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
-> 
-> but task is already holding lock:
-> ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
-> ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
-> 
+Hi Petr,
 
-I had AI whip up a reproducer for this, but it's not mutually exclusive to the
-added patch. Tested by running reproducer, then unapplied patch, still
-reproduced on v7.2-rc4.
+On Mon, 2026-08-17 at 12:55 +0200, Petr Vorel wrote:
+> Hi Mimi,
+>=20
+> > <securityfs>/integrity/ima/violations reflects the number of
+> > integrity violations.  Include the "--ignore-violations" option,
+> > if there are any violations, on the initial IMA measurement list
+> > verification.
+>=20
+> Thanks for your patch!
+>=20
+> LGTM and it should be fixed. But there are some potential problems
+> (see bellow).
 
-I'll need to simplify it before I post it.
+And here I thought this was a simple performance improvement to execute evm=
+ctl
+with/without the --ignore-violations option once.
 
-#syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in process_measurement (6)
+>=20
+> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > ---
+> >  .../security/integrity/ima/tests/ima_tpm.sh   | 20 ++++++++++++-------
+> >  1 file changed, 13 insertions(+), 7 deletions(-)
+>=20
+> > diff --git a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh b=
+/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
+> > index 5d34d8679..acd8b6d30 100755
+> > --- a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
+> > +++ b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
+> > @@ -142,6 +142,8 @@ read_pcr_tpm2()
+> >  get_pcr10_aggregate()
+> >  {
+> >  	local cmd=3D"evmctl -vv ima_measurement $BINARY_MEASUREMENTS"
+> > +	local violations=3D"$IMA_DIR/violations"
+> > +	local num_violations=3D0
+> >  	local msg=3D"$ERRMSG_EVMCTL"
+> >  	local res=3DTCONF
+> >  	local pcr ret
+> > @@ -151,16 +153,20 @@ get_pcr10_aggregate()
+> >  		res=3DTFAIL
+> >  	fi
+>=20
+> > -	$cmd > hash.txt 2>&1
+> > -	ret=3D$?
+> > -	if [ $ret -ne 0 -a -z "$MISSING_EVMCTL" ]; then
+> > -		tst_res TFAIL "evmctl failed, trying with --ignore-violations"
+> You removed TFAIL (potential problem, see later).
+>=20
+> > +	if [ ! -f "$violations" ]; then
+> > +		tst_res TINFO "missing $violations"
+> > +	else
+> > +		num_violations=3D$(cat "$violations")
+> > +	fi
+> > +
+> > +	if [ "$num_violations" -eq 0 ]; then
+> > +		$cmd > hash.txt 2>&1
+> > +		ret=3D$?
+> > +	else
+> > +		tst_res TINFO "ignoring $num_violations violations"
+> >  		cmd=3D"$cmd --ignore-violations"
+> >  		$cmd > hash.txt 2>&1
+> >  		ret=3D$?
+> > -	elif [ $ret -ne 0 -a "$MISSING_EVMCTL" =3D 1 ]; then
+> > -		tst_res TFAIL "evmctl failed $msg"
+> And here again removed TFAIL (see later).
+>=20
+> The main problem is that you removed the code when evmctl is not installe=
+d.
 
-See below for un-applied repro result.
+If I'm understanding the code correctly, the original code executed evmctl
+whether it existed or not.  Let's fix that first.  My question is whether t=
+he
+test should fail or be skipped?
 
-Best,
-Fred
+>=20
+> Therefore trying to rerun evmctl on failure on older release (e.g. 1.3) i=
+t will
+> fail due option have different name or not exist at all in evmctl < 1.2).
+> -a "$MISSING_EVMCTL" =3D 1 check had meaning "don't rerun with --ignore-v=
+iolations
+> on old evmctl which does not have the option.
 
-[   23.443936] ======================================================
-[   23.443988] WARNING: possible circular locking dependency detected
-[   23.444028] 7.2.0-rc4 #11 Not tainted
-[   23.444062] ------------------------------------------------------
-[   23.444095] repro-deadlock./159 is trying to acquire lock:
-[   23.444121] ffff8881033da7b0 (&ima_iint_mutex_key[depth]#2){+.+.}-{4:4}, at: process_measurement+0x298/0xc10
-[   23.444184]
-[   23.444184] but task is already holding lock:
-[   23.444217] ffff88810210ac68 (&subsys->lock){+.+.}-{4:4}, at: nvmet_ns_enable+0x26/0x1e0
-[   23.444265]
-[   23.444265] which lock already depends on the new lock.
-[   23.444265]
-[   23.444302]
-[   23.444302] the existing dependency chain (in reverse order) is:
-[   23.444340]
-[   23.444340] -> #2 (&subsys->lock){+.+.}-{4:4}:
-[   23.444378]        lock_acquire+0xc7/0x2e0
-[   23.444401]        __mutex_lock+0xc7/0x1120
-[   23.444425]        nvmet_ns_device_path_store+0x31/0xd0
-[   23.444454]        configfs_write_iter+0xc8/0x140
-[   23.444484]        vfs_write+0x2af/0x530
-[   23.444508]        ksys_write+0x73/0xf0
-[   23.444531]        do_syscall_64+0x121/0x630
-[   23.444568]        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   23.444598]
-[   23.444598] -> #1 (&p->frag_sem){.+.+}-{4:4}:
-[   23.444634]        lock_acquire+0xc7/0x2e0
-[   23.444653]        down_read+0x31/0x150
-[   23.444678]        __configfs_open_file+0x5d/0x1f0
-[   23.444708]        do_dentry_open+0x136/0x4a0
-[   23.444740]        vfs_open+0x34/0xf0
-[   23.444763]        dentry_open+0x34/0x60
-[   23.444786]        ima_calc_file_hash+0x8a/0xe0
-[   23.444816]        ima_collect_measurement+0x2eb/0x3a0
-[   23.444845]        process_measurement+0x4e4/0xc10
-[   23.444874]        ima_file_check+0x60/0x90
-[   23.444899]        security_file_post_open+0x2e/0x40
-[   23.444928]        path_openat+0x51f/0x1140
-[   23.444950]        do_file_open+0xe4/0x1a0
-[   23.444976]        do_sys_openat2+0x7f/0xe0
-[   23.445003]        __x64_sys_openat+0x56/0xa0
-[   23.445040]        do_syscall_64+0x121/0x630
-[   23.445075]        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   23.445112]
-[   23.445112] -> #0 (&ima_iint_mutex_key[depth]#2){+.+.}-{4:4}:
-[   23.445163]        check_prev_add+0xeb/0xe80
-[   23.445199]        __lock_acquire+0x149d/0x1d10
-[   23.445233]        lock_acquire+0xc7/0x2e0
-[   23.445257]        __mutex_lock+0xc7/0x1120
-[   23.445288]        process_measurement+0x298/0xc10
-[   23.445323]        ima_file_check+0x60/0x90
-[   23.445354]        security_file_post_open+0x2e/0x40
-[   23.445396]        path_openat+0x51f/0x1140
-[   23.445424]        do_file_open+0xe4/0x1a0
-[   23.445452]        file_open_name+0xd1/0x1a0
-[   23.445488]        filp_open+0x28/0x40
-[   23.445516]        nvmet_file_ns_enable+0x2b/0xf0
-[   23.445553]        nvmet_ns_enable+0x13c/0x1e0
-[   23.445590]        nvmet_ns_enable_store+0x8a/0xb0
-[   23.445626]        configfs_write_iter+0xc8/0x140
-[   23.445662]        vfs_write+0x2af/0x530
-[   23.445691]        ksys_write+0x73/0xf0
-[   23.445719]        do_syscall_64+0x121/0x630
-[   23.445755]        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   23.445790]
-[   23.445790] other info that might help us debug this:
-[   23.445790]
-[   23.445839] Chain exists of:
-[   23.445839]   &ima_iint_mutex_key[depth]#2 --> &p->frag_sem --> &subsys->lock
-[   23.445839]
-[   23.445918]  Possible unsafe locking scenario:
-[   23.445918]
-[   23.445958]        CPU0                    CPU1
-[   23.446004]        ----                    ----
-[   23.446035]   lock(&subsys->lock);
-[   23.446066]                                lock(&p->frag_sem);
-[   23.446109]                                lock(&subsys->lock);
-[   23.446153]   lock(&ima_iint_mutex_key[depth]#2);
-[   23.446190]
-[   23.446190]  *** DEADLOCK ***
-[   23.446190]
-[   23.446230] 5 locks held by repro-deadlock./159:
-[   23.446268]  #0: ffff888101ce6428 (sb_writers#10){.+.+}-{0:0}, at: ksys_write+0x73/0xf0
-[   23.446325]  #1: ffff888101f19080 (&buffer->mutex){+.+.}-{4:4}, at: configfs_write_iter+0x2e/0x140
-[   23.446382]  #2: ffff88810221faf0 (&p->frag_sem){.+.+}-{4:4}, at: configfs_write_iter+0xa0/0x140
-[   23.446439]  #3: ffffffff82e80be8 (nvmet_config_sem){+.+.}-{4:4}, at: nvmet_ns_enable_store+0x4d/0xb0
-[   23.446496]  #4: ffff88810210ac68 (&subsys->lock){+.+.}-{4:4}, at: nvmet_ns_enable+0x26/0x1e0
-[   23.446553]
-[   23.446553] stack backtrace:
-[   23.446583] CPU: 0 UID: 0 PID: 159 Comm: repro-deadlock. Not tainted 7.2.0-rc4 #11 PREEMPT(lazy)
-[   23.446585] Hardware name: QEMU Ubuntu 24.04 PC v2 (i440FX + PIIX, arch_caps fix, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   23.446586] Call Trace:
-[   23.446587]  <TASK>
-[   23.446588]  dump_stack_lvl+0x78/0xe0
-[   23.446591]  print_circular_bug+0x2ca/0x400
-[   23.446593]  check_noncircular+0x161/0x180
-[   23.446597]  check_prev_add+0xeb/0xe80
-[   23.446600]  __lock_acquire+0x149d/0x1d10
-[   23.446602]  lock_acquire+0xc7/0x2e0
-[   23.446603]  ? process_measurement+0x298/0xc10
-[   23.446605]  ? lock_acquire+0xc7/0x2e0
-[   23.446607]  __mutex_lock+0xc7/0x1120
-[   23.446608]  ? process_measurement+0x298/0xc10
-[   23.446610]  ? fs_reclaim_acquire+0x4c/0xd0
-[   23.446612]  ? process_measurement+0x298/0xc10
-[   23.446614]  ? find_held_lock+0x2b/0x80
-[   23.446617]  ? process_measurement+0x298/0xc10
-[   23.446618]  process_measurement+0x298/0xc10
-[   23.446625]  ima_file_check+0x60/0x90
-[   23.446627]  security_file_post_open+0x2e/0x40
-[   23.446629]  path_openat+0x51f/0x1140
-[   23.446632]  ? __lock_acquire+0x5df/0x1d10
-[   23.446633]  do_file_open+0xe4/0x1a0
-[   23.446639]  file_open_name+0xd1/0x1a0
-[   23.446640]  filp_open+0x28/0x40
-[   23.446642]  nvmet_file_ns_enable+0x2b/0xf0
-[   23.446644]  nvmet_ns_enable+0x13c/0x1e0
-[   23.446646]  nvmet_ns_enable_store+0x8a/0xb0
-[   23.446647]  configfs_write_iter+0xc8/0x140
-[   23.446650]  vfs_write+0x2af/0x530
-[   23.446653]  ksys_write+0x73/0xf0
-[   23.446655]  do_syscall_64+0x121/0x630
-[   23.446657]  ? clear_bhb_loop+0x40/0x90
-[   23.446659]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   23.446660] RIP: 0033:0x7f6d63b105a4
-[   23.446662] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d a5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
-[   23.446663] RSP: 002b:00007ffdbeb92468 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-[   23.446665] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f6d63b105a4
-[   23.446666] RDX: 0000000000000002 RSI: 000055be1939cba0 RDI: 0000000000000001
-[   23.446666] RBP: 00007ffdbeb92490 R08: 0000000000000073 R09: 0000000000000000
-[   23.446667] R10: 00000000ffffffff R11: 0000000000000202 R12: 0000000000000002
-[   23.446667] R13: 000055be1939cba0 R14: 00007f6d63bf85c0 R15: 00007f6d63bf5ee0
-[   23.446670]  </TASK>
+Thank you for the explanation.
+
+Before appending the "--ignore-violations" we should make sure it is suppor=
+ted.
+I guess for backwards compatibility we still want to verify the measurement
+list, knowing it will fail.
+
+Hopefully with these two changes this patch will work properly.
+
+Mimi
+
+>=20
+> FYI the code is a bit complicated, because here on TPM2 we require evmctl=
+ 1.3.1
+> to have --ignore-violations (renamed from --validate), which was released=
+ in
+> 2020 - too new for old enterprise distros to ignore; also TPM1 we require=
+ only
+> 1.1 from 2018, probably still too new. Once SLE12-SP3 EOL (in 1 year we m=
+ay just
+> expect 1.3.1 to simplify).
+>=20
+> > -		return
+> >  	fi
+>=20
+> >  	[ $ret -ne 0 ] && tst_res TWARN "evmctl failed, trying to continue $m=
+sg"
+> Back to removed TFAIL. While this is OK as TWARN (some problem, but not r=
+elated
+> to testing) we might end up to TBROK "Test didn't report any results" err=
+or in
+> tst_test.sh which quits test with TBROK "Test didn't report any results" =
+if
+> there is no TPASS/TFAIL/TCONF message.
+>=20
+> _tst_resstr()
+> {
+> 	echo "$TST_PASS$TST_FAIL$TST_CONF"
+> }
+>=20
+> _tst_rescmp()
+> {
+> 	local res=3D$(_tst_resstr)
+>=20
+> 	if [ "$1" =3D "$res" ]; then
+> 		tst_brk TBROK "Test didn't report any results"
+> 	fi
+> }
+>=20
+> And this happen later in test2():
+> 	get_pcr10_aggregate > tmp.txt
+> 	pcr_aggregate=3D"$(cat tmp.txt)"
+> 	if [ -z "$pcr_aggregate" ]; then
+> 		return
+> 	fi
+>=20
+> Other option would be to print TFAIL message in test2():
+>=20
+> 	get_pcr10_aggregate > tmp.txt
+> 	pcr_aggregate=3D"$(cat tmp.txt)"
+> 	if [ -z "$pcr_aggregate" ]; then
+> 		tst_res TBROK "failed to get aggregate PCR-10"
+> 		return
+> 	fi
+>=20
+> Lol, I'm disappointed how complicated and error prone I wrote back then.
+> Part of the problem is that quit with tst_brk does not work, when code wh=
+ich
+> does it is run in a subshell (via $(...) or `...) ), which quits subshell=
+ but
+> not the parent shell.
