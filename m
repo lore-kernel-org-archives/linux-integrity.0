@@ -1,260 +1,232 @@
-Received: from mailgate-2.zdv.net (mailgate-2.zdv.net [134.93.178.242])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C19D3BD241;
-	Mon, 17 Aug 2026 10:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.93.178.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587C43E5A2A
+	for <linux-integrity@vger.kernel.org>; Mon, 17 Aug 2026 10:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786962323; cv=none; b=SbZ1HhU6WNKLJLwTNjGXrSdcdZZja16/vJJGJkDBskvEfmfp9c8pfgZomOjBwjLFKxGzyN1WbpzCUI1zYKnSh65oZsgimfoyFONhZa5fNQ7H9feJ7OXYX3KokKmwdwC2M6qHUJHHgItKslEqz08jgWSo+Y4EUJhYJEKs0ZfhHDE=
+	t=1786964173; cv=none; b=TUu9Dh9cV80mgQNBQC4Nn9CBHnF/M1m4zVtvBHUjRHyoG3NxJoasL7sYN1rlYFnTURJnZLjPO9PNkOvxF7aawDYMR1UJVwOJxJ4McJuVgNsSpyfAo4fCiKH0ZaWHuupjapckDYhO3+jS/CEx+LEbQqWq+k9e0uX7ha04jHnrpiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786962323; c=relaxed/simple;
-	bh=4HHGROo951n1Rxf6Nm5gMAPOTXQHlvWlXNnVxWQ0aNQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g3NuO4vaLxvFQbJYrnsLRziWeYKqCbZdO7Dm/Q0UIejK8/uh5lj3sUM6rvAFGrfzNQCJT7XkzVDu1IFGfW+fZFyaVvmvgVYukQ80zbyylmCGVib4UIBG9koAzRcIIih197SdCDfZu2EKN6zAQHj5yIv1H0K9LpX/NN4wIo1SPr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hs-mainz.de; spf=pass smtp.mailfrom=hs-mainz.de; arc=none smtp.client-ip=134.93.178.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hs-mainz.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hs-mainz.de
-X-CSE-ConnectionGUID: Vj3vFjKSRza3rVBuho0Iyw==
-X-CSE-MsgGUID: Oho5jCg/T+KTEdtiw3u22A==
-X-IPAS-Result: =?us-ascii?q?A2B5BwBf4IJq/z72XgpSCIJbghaBM3hyHQGWLJFNjk8PA?=
- =?us-ascii?q?QEBDgE9FAQBAYUFjWwnOBMBAgQDAgMBAQEBAQEBAQEBAQsBAQEFAQEBAQEBB?=
- =?us-ascii?q?gQBgSGGCQwGNA1JAQwBhjwBRoE9DoIvWAGCdBTHeoEB3keBcgkBC4E4hXGCb?=
- =?us-ascii?q?QGFAoERhGE2gVVEgRWDaYQcCYZjBIIigQyBWyJLP4hKA4c9SIECeCwBVRMNC?=
- =?us-ascii?q?gsHBYFmAzUSKhVuMh2BIz4XNVgbBgWBHYEohDcjGTZ8gQlegSsqYQESF4EJg?=
- =?us-ascii?q?goCgnOCBgIBSQ4LGA1IESw3FBkEPm4HjhcggVUtES0GIDQ7CCQFKiFBDAMUE?=
- =?us-ascii?q?QgNBQEFDwkHGwEMIgIPCRKSQxRUgmkBjHGifTQHgjmBaIFgBgyKL5U6TYQEg?=
- =?us-ascii?q?VeSQJJQAZJOhjqOCpU0hVoCBAIEBQIYgX9QgS4zGiRPgmcJShcCD4QpigMBF?=
- =?us-ascii?q?og4Oy7GWncCOwIHAgcOAwuKTYcdLTEBgR0BAQ?=
-IronPort-Data: A9a23:TKM9iKgZTNxR/utjUcpsOmeYX1612xEKZh0ujC45NGQN5FlHY01je
- htvD2+EbKneZGbxL9F2Pt+/oE4DvpHTz4RjTQU5rCxnFXwW8JqUDtmwEBz9bniYRiHhZBk+s
- 5hBMImowOMcFyeA9krybOCJQV1Uj/zgqm/UUbacUsxJbVY6Dn9n1VQ7wrBRbrdA2bCRGxmKt
- c75v/rRMVqk3y8cGm8P4spvkjs21BjJkG1e5AFWicxj5geEySFFVc1HfMldElOhKmVqNr/nL
- wr85OnRElPxp38FFt6jm7DnRUwGKpa6FRSOkHdfR5+5iRFEoCEouo5jXBbLQR4K49kht4kZJ
- ORl7fRcey9wVkH/sL11vy1jLs1LFfYuFIkrg5SImZf7I0XuKxMAyhj1Za08FdVwFu1fWQmi+
- RGEQdwARkjrug64/F60Ytdu3doNLurQBpEW4Wte5yzZCq4HUI+WFs0m5fcAtNsxrtJCA7PTd
- 8EZLGApXjj+JTtCJj/7CrpnxKH52j+lL2Me9gj9SakfugA/yCR30bPqNNPUPN+XQ9lHk26Yv
- SfD9mX/EFcWObRzzBLfqS/237+ewUsXXqo1FLrl9NVlx2HQ5VA+BAEXSgCm+6OQ3xvWt9V3b
- hZ8FjAVhawz8lG7C9j7QxC3un+YrzYCVNdKVe438geAzuzT+QnxLnoDTjdbQNgnstImAz0g0
- xmCmNaBLSZourCPVXXb7b6Pti6aOTUcMmIDIyQDSGMt79zivJsiyBHGVd9/E6+zptLwEDD0h
- TuNqUAWiq8ShogQ0aKk913djBqrvJHCSgNz7QLSNkq95x59TJaseojt7F/c9/sGJ4GcJnGDu
- X8egcmFxOYHCJyM0iuXT40lB7yz6PutMDTYhU9pWZIm8lyF/3+lYJAV+zx1OV1oLtdBfDjlf
- UvekR1e6YUVP3awa6JzJYWrBKwCyanmCMSgVf3OaNdKSoZ+eRXB/yx0Y0OUmWf3nyARfboXK
- 5uFNMu8BnZfU+J1wCTwQeoBuVM2+h0DKarobciT53yaPXC2PRZ5lZ9t3IOyU90E
-IronPort-HdrOrdr: A9a23:IT3ava3GEIWkXNXZ6EuPfwqjBLckLtp133Aq2lEZdPRUGvb1qy
- nIpoV46faUskd1ZJhOo7690cW7K080lqQFgrX5X43CYOCOggLBR72KhbGSpwEIcBeQygcy78
- pdm/8UMqyXMbEDt6bHCV6DYrEd/OU=
-X-Talos-CUID: =?us-ascii?q?9a23=3AicBSimrDlGjeur2PXbUBIXHmUf4nKWPzzlTrGV2?=
- =?us-ascii?q?xUnxXYqCVTgex6bwxxg=3D=3D?=
-X-Talos-MUID: 9a23:hsj8jwTuqEmUvNo0RXTLhDY/NuxnpJjtK3wgnYkHpJKZb3ZZbmI=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.25,228,1779141600"; 
-   d="scan'208";a="23521894"
-Received: from zdv-exch-2.zdv.net ([10.94.246.62])
-  by mailgate-2.zdv.net with ESMTP/TLS/ECDHE-ECDSA-AES256-GCM-SHA384; 17 Aug 2026 12:24:07 +0200
-Received: from MacBook-Pro-von-Nicolai-2.fritz.box (91.37.89.206) by
- zdv-exch-2.ZDV.Net (fd42:4323:8cdd:70e:9a03:9bff:fe77:8f92) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Mon, 17 Aug 2026 12:24:06 +0200
-From: Nicolai Kuntze <nicolai.kuntze@hs-mainz.de>
-To: <linux-integrity@vger.kernel.org>
-CC: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
-	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric
- Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC] IMA: periodic runtime re-measurement of process .text/GOT
-Date: Mon, 17 Aug 2026 12:23:22 +0200
-Message-ID: <20260817102323.35950-1-nicolai.kuntze@hs-mainz.de>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1786964173; c=relaxed/simple;
+	bh=aA9hJ8MaXdmbbKDwz3HuQOk06N1Czkgm3oa305agxao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDlhGzg+Zuheoip0NX8Bm0XSiEiVUSII2bjFmSDDMXepoHen78e1oW5Nj4ID5E4a627n/ohpZoSfz0t98kZxlQDXIMYjoVay6RNIMdHWltUYVQACGw+9daJgQECAh4FBWEFhjiAt74LgsAnVCFW6FTy4S9FJILwKABdojjFYGI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=te3hj0on; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3W7V1Jtm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cfV0tWrn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rBysBLW7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="te3hj0on";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3W7V1Jtm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cfV0tWrn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rBysBLW7"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AC12F83F66;
+	Mon, 17 Aug 2026 10:55:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1786964162;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1z01BEAX5s0M6N9y9boMtIFQiNrk3vsTW4CDkHtpa7g=;
+	b=te3hj0onBhkhoUSxn5Oyk+AwJxh+yQkod6AykDos3oGUSb6BuNdddTMi17mQxGDsrB8XZ2
+	XqFh+gXWENSokYU17i8xHX45j5cRSKZMNaiJf0sQVDg+kqqgynb1UonAWNt+MUabVPasJF
+	LnpZ6jgxr90Dg9nZdlJ36Vb/l+zwi/U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1786964162;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1z01BEAX5s0M6N9y9boMtIFQiNrk3vsTW4CDkHtpa7g=;
+	b=3W7V1JtmcGe6AEBmyb0h3nh8m5fMjpso/7Uy+H3iDkjPngOsu9sGsRygzaIl/98+ko7zjw
+	HWEZEwwGm8gzRuDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1786964158;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1z01BEAX5s0M6N9y9boMtIFQiNrk3vsTW4CDkHtpa7g=;
+	b=cfV0tWrnVkaOmrcTLKBYdRLPS7afZNp3kFAIlPY+25f1mIb3Bka4RGnI/Z2IBD57fwxPEb
+	/tU/vZ5Pw2GWfSCufcT9sd5asNZeR/TIykorQPHNfUeUiEAVckELKHxV5/07E9psPg/Gxf
+	NEd575XeNAfSz2pRAUgj1JHMbE++QRA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1786964158;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1z01BEAX5s0M6N9y9boMtIFQiNrk3vsTW4CDkHtpa7g=;
+	b=rBysBLW7usYX2kFWbtCbVMjsH7A8sOCr67jYeTpiEV2dms/Ej6VqpMJPYls4975L5xxjyB
+	baymvPIrEvysnoDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 67D967941A;
+	Mon, 17 Aug 2026 10:55:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QHS/Fb7ogmqJGwAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Mon, 17 Aug 2026 10:55:58 +0000
+Date: Mon, 17 Aug 2026 12:55:56 +0200
+From: Petr Vorel <pvorel@suse.cz>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] ima_tpm.sh: update test2 to detect integrity violations
+Message-ID: <20260817105556.GA1951950@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20260814135704.1247403-1-zohar@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: zdv-exchfe-3.ZDV.Net (2001:4c80:40:70b:21d:d8ff:feb7:30df)
- To zdv-exch-2.ZDV.Net (fd42:4323:8cdd:70e:9a03:9bff:fe77:8f92)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260814135704.1247403-1-zohar@linux.ibm.com>
+X-Spam-Score: -3.50
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
+	RCPT_COUNT_THREE(0.00)[3];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_EQ_FROM(0.00)[]
 
-Hi,
+Hi Mimi,
 
-This is a design RFC, not a patch submission -- I'd like feedback on
-the approach before polishing the patch series further. A working
-reference implementation exists today for demonstration; details and
-links below.
+> <securityfs>/integrity/ima/violations reflects the number of
+> integrity violations.  Include the "--ignore-violations" option,
+> if there are any violations, on the initial IMA measurement list
+> verification.
 
-Problem
+Thanks for your patch!
 
-Every existing IMA hook (FILE_CHECK, MMAP_CHECK, BPRM_CHECK,
-MODULE_CHECK, ...) measures once, at load time: file open, exec,
-mmap, module load, or an explicit ima_measure_critical_data() call.
-Nothing in IMA today re-measures an object after it's already
-resident. A process's .text or GOT can be modified in memory after
-load (ptrace(), a kernel exploit writing through /proc/pid/mem, or
-similar) without IMA ever re-examining it -- the load-time
-measurement stays valid in the log forever, even after the live
-content has diverged from it.
+LGTM and it should be fixed. But there are some potential problems
+(see bellow).
 
-This is exactly the gap Andre Rein's DRIVE paper (ASIA CCS '17,
-https://doi.org/10.1145/3052973.3052975) addresses: periodic
-re-hashing of a process's executable memory against reference values
-derived from its on-disk ELF, anchored in a TPM PCR via the same
-extend-chain model IMA already uses. This RFC proposes bringing that
-capability into IMA's own policy-driven measurement model, rather
-than as a separate, out-of-tree mechanism.
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  .../security/integrity/ima/tests/ima_tpm.sh   | 20 ++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
 
-Scenario / Rational
+> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
+> index 5d34d8679..acd8b6d30 100755
+> --- a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
+> @@ -142,6 +142,8 @@ read_pcr_tpm2()
+>  get_pcr10_aggregate()
+>  {
+>  	local cmd="evmctl -vv ima_measurement $BINARY_MEASUREMENTS"
+> +	local violations="$IMA_DIR/violations"
+> +	local num_violations=0
+>  	local msg="$ERRMSG_EVMCTL"
+>  	local res=TCONF
+>  	local pcr ret
+> @@ -151,16 +153,20 @@ get_pcr10_aggregate()
+>  		res=TFAIL
+>  	fi
 
-Load-time-only measurement is a materially weaker guarantee on
-systems that stay up for a long time between reboots than on systems
-that cycle power regularly. Every reboot is itself a fresh
-measured-boot event -- a natural bound on how long an in-memory
-tamper that bypassed load-time measurement can persist undetected,
-since the next boot re-measures everything from scratch.
+> -	$cmd > hash.txt 2>&1
+> -	ret=$?
+> -	if [ $ret -ne 0 -a -z "$MISSING_EVMCTL" ]; then
+> -		tst_res TFAIL "evmctl failed, trying with --ignore-violations"
+You removed TFAIL (potential problem, see later).
 
-Railway signalling and interlocking equipment is a concrete example
-of the opposite case: field devices are routinely designed to run
-for months or years without a reboot, both for safety-availability
-reasons (a signalling function restarting is itself an operationally
-disruptive event) and because physical access for a controlled
-maintenance reboot is often scheduled, not on-demand. On that kind
-of system, load-time IMA measurement establishes a trustworthy
-baseline at boot and then provides no further guarantee for the
-entire multi-month uptime that follows -- an attacker who achieves a
-one-time in-memory modification (no on-disk change, so FILE_CHECK
-never fires again) can persist for as long as the device stays up,
-which on this class of hardware is the normal case, not an edge
-case. The same shape of argument applies to other long-uptime
-industrial-control and embedded contexts more generally; railway is
-simply where this is currently being evaluated. Periodic
-re-measurement turns "trustworthy at boot" into "trustworthy for as
-long as it keeps checking," which is the property this class of
-system actually needs.
+> +	if [ ! -f "$violations" ]; then
+> +		tst_res TINFO "missing $violations"
+> +	else
+> +		num_violations=$(cat "$violations")
+> +	fi
+> +
+> +	if [ "$num_violations" -eq 0 ]; then
+> +		$cmd > hash.txt 2>&1
+> +		ret=$?
+> +	else
+> +		tst_res TINFO "ignoring $num_violations violations"
+>  		cmd="$cmd --ignore-violations"
+>  		$cmd > hash.txt 2>&1
+>  		ret=$?
+> -	elif [ $ret -ne 0 -a "$MISSING_EVMCTL" = 1 ]; then
+> -		tst_res TFAIL "evmctl failed $msg"
+And here again removed TFAIL (see later).
 
-Proposed design
+The main problem is that you removed the code when evmctl is not installed.
 
-Two pieces:
+Therefore trying to rerun evmctl on failure on older release (e.g. 1.3) it will
+fail due option have different name or not exist at all in evmctl < 1.2).
+-a "$MISSING_EVMCTL" = 1 check had meaning "don't rerun with --ignore-violations
+on old evmctl which does not have the option.
 
-1. Policy grammar: a new interval= option (milliseconds), together
-   with three new func= hook names -- RUNTIME_TEXT_CHECK,
-   RUNTIME_GOT_CHECK, KERNEL_TEXT_CHECK -- added to the existing
-   __ima_hooks() X-macro in ima.h, so the enum, the measuring-string
-   table, and the policy-readback token array all stay in sync
-   automatically, the same as every existing hook. interval= is
-   required for, and only accepted with, those three hooks, enforced
-   in ima_validate_rule() the same way IMA already enforces every
-   other func-specific option. Example rule this grammar accepts:
+FYI the code is a bit complicated, because here on TPM2 we require evmctl 1.3.1
+to have --ignore-violations (renamed from --validate), which was released in
+2020 - too new for old enterprise distros to ignore; also TPM1 we require only
+1.1 from 2018, probably still too new. Once SLE12-SP3 EOL (in 1 year we may just
+expect 1.3.1 to simplify).
 
-       measure func=RUNTIME_TEXT_CHECK interval=30000 pcr=16
+> -		return
+>  	fi
 
-2. A dispatch engine: a new security/integrity/ima/ima_runtime.c,
-   compiled into ima.o (not a separate loadable module), holding a
-   delayed_work-based periodic worker that ima_update_policy()
-   starts, reconfigures, or stops to track whatever
-   RUNTIME_TEXT_CHECK rule is currently active. On each tick it
-   walks every live task's file-backed executable VMAs under a
-   locked snapshot, then hashes unlocked (a two-pass split that
-   exists specifically to avoid a nested-mmap_read_lock self-
-   deadlock hit during prototyping -- see "What's already been
-   tested" below), reuses ima_calc_buffer_hash() for the hash
-   itself, and PCR-extends via tpm_pcr_extend(ima_tpm_chip, ...)
-   directly, deliberately bypassing ima_add_template_entry()'s
-   measurement-list/htable path. That path dedups by (digest, pcr)
-   alone and skips the PCR extend on a repeat digest -- which would
-   silently break external verification, since an auditor replaying
-   the log's extend chain needs to reproduce exactly what the TPM
-   really did, including repeats of unchanged content across ticks.
-   Log-growth from repeatedly re-measuring unchanged content is
-   instead bounded by a small (pid, address)-keyed dedup cache,
-   checked after every hash (never instead of hashing), so nothing
-   is ever skipped without being freshly examined first.
+>  	[ $ret -ne 0 ] && tst_res TWARN "evmctl failed, trying to continue $msg"
+Back to removed TFAIL. While this is OK as TWARN (some problem, but not related
+to testing) we might end up to TBROK "Test didn't report any results" error in
+tst_test.sh which quits test with TBROK "Test didn't report any results" if
+there is no TPASS/TFAIL/TCONF message.
 
-RUNTIME_GOT_CHECK and KERNEL_TEXT_CHECK are accepted by the grammar
-but not yet wired to the dispatch engine -- v1 measures .text only.
-Kernel-image .text re-measurement in particular needs its own
-reference-value handling (a statically-linked kernel image has
-link-time-relocated content, unlike the userspace PIC/PIE case this
-prototype already handles) and is intentionally left for a follow-up
-rather than folded into this first round.
+_tst_resstr()
+{
+	echo "$TST_PASS$TST_FAIL$TST_CONF"
+}
 
-What's already been tested (reference implementation)
+_tst_rescmp()
+{
+	local res=$(_tst_resstr)
 
-Public repo, with everything below runnable, not just described:
+	if [ "$1" = "$res" ]; then
+		tst_brk TBROK "Test didn't report any results"
+	fi
+}
 
-    https://gitlab.rlp.net/nicolai.kuntze/memory_attestation
+And this happen later in test2():
+	get_pcr10_aggregate > tmp.txt
+	pcr_aggregate="$(cat tmp.txt)"
+	if [ -z "$pcr_aggregate" ]; then
+		return
+	fi
 
-- The full DRIVE pipeline -- runtime re-measurement, DML/SMAF chain,
-  ELF-derived reference values (.text and per-GOT-slot), and an
-  external OBS/VS verification split with TPM-Quote cross-checking
-  -- is prototyped and validated end-to-end as a standalone
-  out-of-tree module (drive_ima/) plus a Rust verification toolchain
-  (drive-rs/), including real ptrace()-based tamper injection
-  correctly detected in every case, and real PCR extends confirmed
-  against a swtpm-backed TPM via tpm2_pcrread.
+Other option would be to print TFAIL message in test2():
 
-- The two mainline patches this RFC describes
-  (kernel-patches/0001-ima-policy-add-interval-and-runtime-hook-
-  funcs.patch and 0002-ima-runtime-dispatch-engine-v1.patch), plus a
-  follow-on 0003-ima-runtime-per-mapping-dedup.patch adding the
-  dedup cache, apply cleanly against v6.8, pass checkpatch.pl
-  --no-tree with 0 errors/0 warnings, compile clean under W=1, link
-  into a full vmlinux, and boot and dispatch for real under QEMU/KVM:
-  writing a RUNTIME_TEXT_CHECK rule to /sys/kernel/security/ima/policy
-  in a running kernel causes the worker to fire on the configured
-  interval, correctly measure every live process each cycle, and
-  correctly reconfigure after a policy rewrite -- all empirically
-  timed, not just log-inspected.
+	get_pcr10_aggregate > tmp.txt
+	pcr_aggregate="$(cat tmp.txt)"
+	if [ -z "$pcr_aggregate" ]; then
+		tst_res TBROK "failed to get aggregate PCR-10"
+		return
+	fi
 
-- One thing not yet exercised: a genuine hardware PCR extend from
-  this dispatch engine specifically. The test environment (QEMU
-  8.2.2 + SeaBIOS 1.16.3) hits a reproducible ACPI early-boot fault
-  whenever any TPM device is attached, confirmed unrelated to this
-  patch (fault is at PID 0, well before IMA runs). With no TPM
-  present, the code correctly takes its documented -ENODEV fallback
-  rather than crashing; that path is tested, a real PCR write from
-  this specific code path is not, in this environment. (The extend
-  call itself, and the extend-chain format, are the same ones
-  already confirmed working against real hardware in the standalone
-  prototype above.)
+Lol, I'm disappointed how complicated and error prone I wrote back then.
+Part of the problem is that quit with tst_brk does not work, when code which
+does it is run in a subshell (via $(...) or `...) ), which quits subshell but
+not the parent shell.
 
-Threat-model note, already accounted for
-
-Read-write access to /sys/kernel/security/ima/policy at runtime
-(CONFIG_IMA_WRITE_POLICY=on) lets anyone with CAP_SYS_ADMIN silently
-remove or weaken an active RUNTIME_TEXT_CHECK rule without touching
-any signed code -- which would defeat the "isolated from a post-boot
-adversary" property this is meant to provide, and matters more, not
-less, on the long-uptime deployments described above, since there's
-no near-term reboot to force a policy re-load. This isn't a gap in
-the proposed patches; it's a statement about deployment
-configuration, and it's already documented as a hard requirement for
-production use of this extension: CONFIG_IMA_WRITE_POLICY should be
-off, making the policy write-once at boot the same way it already is
-for every other IMA policy today.
-
-Questions for the list
-
-- Is a delayed_work periodic worker compiled into ima.o the right
-  shape for a non-event-triggered hook class, or would the list
-  prefer this live behind a separate mechanism (a kthread, an
-  LSM-adjacent facility, something eBPF-driven) rather than inside
-  IMA's own hook dispatch?
-
-- Is bypassing ima_add_template_entry()'s measurement-list htable
-  (for the reason given above -- external-verifier replay needs
-  every real extend, not a deduped view) an acceptable precedent, or
-  is there a preferred way to get an un-deduped extend through the
-  existing measurement-list path instead of calling
-  tpm_pcr_extend() directly?
-
-- Any objection to the interval= grammar addition / the X-macro-
-  based hook additions as scoped here, ahead of a full patch series?
-
-- Kernel-image .text re-measurement (KERNEL_TEXT_CHECK) is
-  deliberately left unimplemented in this round -- is that the
-  right place to split the series, or would the list rather see it
-  land together with RUNTIME_TEXT_CHECK?
-
-
-Thanks,
-Nicolai
+Kind regards,
+Petr
