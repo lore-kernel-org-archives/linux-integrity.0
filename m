@@ -1,84 +1,75 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-oo2-f9.google.com (mail-oo2-f9.google.com [74.125.231.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587C43E5A2A
-	for <linux-integrity@vger.kernel.org>; Mon, 17 Aug 2026 10:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683DE3B47C3
+	for <linux-integrity@vger.kernel.org>; Mon, 17 Aug 2026 20:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786964173; cv=none; b=TUu9Dh9cV80mgQNBQC4Nn9CBHnF/M1m4zVtvBHUjRHyoG3NxJoasL7sYN1rlYFnTURJnZLjPO9PNkOvxF7aawDYMR1UJVwOJxJ4McJuVgNsSpyfAo4fCiKH0ZaWHuupjapckDYhO3+jS/CEx+LEbQqWq+k9e0uX7ha04jHnrpiE=
+	t=1786999425; cv=none; b=L8M5dDxmagRy9gAzOOd1523OVyDjMeLYe+MLpeIgZaCgmZFzXR8wF9JsFJXfatCd7ZM78Nj0Mqi3o0HimAo0M78KVdvtUTQ67LRRO2glwBprVZF1Xpex/cLGtDDvulrTYElX+q7dyjpCRx3GdkpQzW0MoQrfa6iqwEUrfo+3vQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786964173; c=relaxed/simple;
-	bh=aA9hJ8MaXdmbbKDwz3HuQOk06N1Czkgm3oa305agxao=;
+	s=arc-20240116; t=1786999425; c=relaxed/simple;
+	bh=9aWsYjxU1yrw8viF0+Sf5scIs3DMWcLcR3xM0bHXtys=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDlhGzg+Zuheoip0NX8Bm0XSiEiVUSII2bjFmSDDMXepoHen78e1oW5Nj4ID5E4a627n/ohpZoSfz0t98kZxlQDXIMYjoVay6RNIMdHWltUYVQACGw+9daJgQECAh4FBWEFhjiAt74LgsAnVCFW6FTy4S9FJILwKABdojjFYGI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=te3hj0on; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3W7V1Jtm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cfV0tWrn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rBysBLW7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	 Content-Type:Content-Disposition:In-Reply-To; b=OyqG48biAyWmEeaAhE+8lteVVUbfn4Epyg0Gvtl2oFrMMNS6WAOadV1FxabgzTiMUCRIdDCqzvcMEHygBhxRsXBvMqiEEtnoTBF6e5zS5f3IyXf9PryTg590hqbMsDPSin0Sa7/uJF6OPKhRBcoQOwJ3qx9ZkrzQvAwOWehoRjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=MF7zWiyA; arc=none smtp.client-ip=74.125.231.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="te3hj0on";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3W7V1Jtm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cfV0tWrn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rBysBLW7"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AC12F83F66;
-	Mon, 17 Aug 2026 10:55:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1786964162;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1z01BEAX5s0M6N9y9boMtIFQiNrk3vsTW4CDkHtpa7g=;
-	b=te3hj0onBhkhoUSxn5Oyk+AwJxh+yQkod6AykDos3oGUSb6BuNdddTMi17mQxGDsrB8XZ2
-	XqFh+gXWENSokYU17i8xHX45j5cRSKZMNaiJf0sQVDg+kqqgynb1UonAWNt+MUabVPasJF
-	LnpZ6jgxr90Dg9nZdlJ36Vb/l+zwi/U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1786964162;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1z01BEAX5s0M6N9y9boMtIFQiNrk3vsTW4CDkHtpa7g=;
-	b=3W7V1JtmcGe6AEBmyb0h3nh8m5fMjpso/7Uy+H3iDkjPngOsu9sGsRygzaIl/98+ko7zjw
-	HWEZEwwGm8gzRuDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1786964158;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1z01BEAX5s0M6N9y9boMtIFQiNrk3vsTW4CDkHtpa7g=;
-	b=cfV0tWrnVkaOmrcTLKBYdRLPS7afZNp3kFAIlPY+25f1mIb3Bka4RGnI/Z2IBD57fwxPEb
-	/tU/vZ5Pw2GWfSCufcT9sd5asNZeR/TIykorQPHNfUeUiEAVckELKHxV5/07E9psPg/Gxf
-	NEd575XeNAfSz2pRAUgj1JHMbE++QRA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1786964158;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1z01BEAX5s0M6N9y9boMtIFQiNrk3vsTW4CDkHtpa7g=;
-	b=rBysBLW7usYX2kFWbtCbVMjsH7A8sOCr67jYeTpiEV2dms/Ej6VqpMJPYls4975L5xxjyB
-	baymvPIrEvysnoDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 67D967941A;
-	Mon, 17 Aug 2026 10:55:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QHS/Fb7ogmqJGwAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Mon, 17 Aug 2026 10:55:58 +0000
-Date: Mon, 17 Aug 2026 12:55:56 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] ima_tpm.sh: update test2 to detect integrity violations
-Message-ID: <20260817105556.GA1951950@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20260814135704.1247403-1-zohar@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="MF7zWiyA"
+Received: by mail-oo2-f9.google.com with SMTP id 006d021491bc7-6aaf6076546so1360712eaf.1
+        for <linux-integrity@vger.kernel.org>; Mon, 17 Aug 2026 13:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1786999422; x=1787604222; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=8hQvq3XnTlInZZFipkXBqM/QS0vM+oWvL7vzyru0XOw=;
+        b=MF7zWiyALDAvigHeNFELoUu2pQ5DBnl6SkGtCRuXow8DyfAKKd0xBj22pEOvs1GFtD
+         78vJioJg2isUwh0glZ9ttCkNs1PDYZRWE4H8CeZSmwkNArsI9Nhi2XJdrrhehILix5oO
+         iHwDf1pCLq34a2bxKPaxGxYM+efqroBM3biA7nk/1AogTmmccasyet6jJo8ek6hTpZ/s
+         MscGx4FEddY6AFeyi7rolQGma0hJwPm+iVPDbZS8qkHmakwKyzY+5vlckRCHQ29shZVf
+         LrkogMio/k5WnqwGUwIkBdmHNrcF9CXxo9i/toG/azGhbqWCEApewyCHewW0R2jGQuEO
+         7jPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786999422; x=1787604222;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8hQvq3XnTlInZZFipkXBqM/QS0vM+oWvL7vzyru0XOw=;
+        b=sFPFt2H3jCct6rA4tg7aRCoE1ss/SXNwdSoiWwfIuh/cEwfT0KjJF6aI3gSpqM2dfn
+         A0AeB3CxVMfpuz43rwpPY2Qp9vDB8/Yl/PlcZGT8Oe2+JBGeGVt584LtER/YP9FTrbdH
+         NpD6hyy0Fb+HbzZpzUzFT8YUr34lUoSDT3/sY0MJOguNTMcE+agbk4Ek/bP/0g8aGhND
+         MMoWEp/Jme4ztpLCdbxlDTxo/zrz02ryCCQrCfNB5CBJhImf/vYp++fb0ZQi39kwlESl
+         /wDfaVi53C2YwhZJ0ackhWQDmomGo4Pktio5fRv1J5tIoSXZKSxcUFziKhJicKB0amfX
+         azrA==
+X-Forwarded-Encrypted: i=1; AHgh+Rr3iHEaNxXYM9SB1nnX8L20pwZ7J8taNnWoJrZkdlzvXYujxy0BFktg3lfSTpWX3UCXdjUHLeOK0Vqs8IDT0rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcgdn4M5OyaKtLhaWx17KgyjPJgnWDKV4g/LT/wdlm1JaaK5CP
+	C9bYuLlqupEmiYdFBbFg47gcyMjNqw4FO6u1YCsCCUYHrk4AAcdIN8hIZ1GgOQ5Rt0o=
+X-Gm-Gg: AR+sD10bA1oJKJC0ie7JSCJnOdLUumcNg2D5Dk7TnJv9t6MyMsHc5d2/4hRpzcdun88
+	tohZZSoCU5zVRTL31AdupfZ6SBR23C58D+5bZBKhrm3+bpumcFadM7ipUXmRSGrlxIojfXnFTXW
+	kt/8JHv4eqgNDiL7B5DZvta3NrGYMqb7iJJHOk+f3P/OFzWSDHgUllVTx4Euwv6szkvvh+vjp7A
+	BLfqmBa9pVJF9zNp3+vIZPAOLE0XzutONGblZLtDkmYAi//01sHC1FqGv5wHmUwNWF7fIsw7aZb
+	xZXpc3iCzHHnk7ynA9I8dEsI5ep4Mmhg3js9Qu6C1MPqLM3I5j5Md03h13tiOY3ZALtkTektUEN
+	enIxEc2upn89OPxtoWxCxrmjubDBOOaWPaUGed6GWa2t3+eLYOgvjimFQfupamYtIO3SRtTgfXL
+	2wFg2U0wyqzEM02U9wUO1ZC/BEWx8z+SdCykEYmu0=
+X-Received: by 2002:a05:6820:1795:b0:6a3:bdc5:591a with SMTP id 006d021491bc7-6b0d6919fd2mr25263755eaf.32.1786999422065;
+        Mon, 17 Aug 2026 13:43:42 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:62])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b1165cd62fsm2616325eaf.5.2026.08.17.13.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Aug 2026 13:43:41 -0700 (PDT)
+Date: Mon, 17 Aug 2026 15:43:38 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: syzbot <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>
+Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+Subject: Re: [syzbot] [lsm?] [integrity?] possible deadlock in
+ ima_file_truncate
+Message-ID: <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
+References: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -87,146 +78,187 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260814135704.1247403-1-zohar@linux.ibm.com>
-X-Spam-Score: -3.50
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
-	RCPT_COUNT_THREE(0.00)[3];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_EQ_FROM(0.00)[]
+In-Reply-To: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
 
-Hi Mimi,
+On Sat, Aug 08, 2026 at 05:20:29PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=113c53b9580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=145fa60d73086782
+> dashboard link: https://syzkaller.appspot.com/bug?extid=448c2e24b1ceff13ed2a
+> compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/disk-c21bb419.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmlinux-c21bb419.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/283184100427/bzImage-c21bb419.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> syzkaller #0 Not tainted
+> ------------------------------------------------------
+> syz.3.857/8643 is trying to acquire lock:
+> ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
+> ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
+> ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
+> 
+> but task is already holding lock:
+> ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
+> ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
+> 
 
-> <securityfs>/integrity/ima/violations reflects the number of
-> integrity violations.  Include the "--ignore-violations" option,
-> if there are any violations, on the initial IMA measurement list
-> verification.
+I had AI whip up a reproducer for this, but it's not mutually exclusive to the
+added patch. Tested by running reproducer, then unapplied patch, still
+reproduced on v7.2-rc4.
 
-Thanks for your patch!
+I'll need to simplify it before I post it.
 
-LGTM and it should be fixed. But there are some potential problems
-(see bellow).
+#syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in process_measurement (6)
 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  .../security/integrity/ima/tests/ima_tpm.sh   | 20 ++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
+See below for un-applied repro result.
 
-> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-> index 5d34d8679..acd8b6d30 100755
-> --- a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-> +++ b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-> @@ -142,6 +142,8 @@ read_pcr_tpm2()
->  get_pcr10_aggregate()
->  {
->  	local cmd="evmctl -vv ima_measurement $BINARY_MEASUREMENTS"
-> +	local violations="$IMA_DIR/violations"
-> +	local num_violations=0
->  	local msg="$ERRMSG_EVMCTL"
->  	local res=TCONF
->  	local pcr ret
-> @@ -151,16 +153,20 @@ get_pcr10_aggregate()
->  		res=TFAIL
->  	fi
+Best,
+Fred
 
-> -	$cmd > hash.txt 2>&1
-> -	ret=$?
-> -	if [ $ret -ne 0 -a -z "$MISSING_EVMCTL" ]; then
-> -		tst_res TFAIL "evmctl failed, trying with --ignore-violations"
-You removed TFAIL (potential problem, see later).
-
-> +	if [ ! -f "$violations" ]; then
-> +		tst_res TINFO "missing $violations"
-> +	else
-> +		num_violations=$(cat "$violations")
-> +	fi
-> +
-> +	if [ "$num_violations" -eq 0 ]; then
-> +		$cmd > hash.txt 2>&1
-> +		ret=$?
-> +	else
-> +		tst_res TINFO "ignoring $num_violations violations"
->  		cmd="$cmd --ignore-violations"
->  		$cmd > hash.txt 2>&1
->  		ret=$?
-> -	elif [ $ret -ne 0 -a "$MISSING_EVMCTL" = 1 ]; then
-> -		tst_res TFAIL "evmctl failed $msg"
-And here again removed TFAIL (see later).
-
-The main problem is that you removed the code when evmctl is not installed.
-
-Therefore trying to rerun evmctl on failure on older release (e.g. 1.3) it will
-fail due option have different name or not exist at all in evmctl < 1.2).
--a "$MISSING_EVMCTL" = 1 check had meaning "don't rerun with --ignore-violations
-on old evmctl which does not have the option.
-
-FYI the code is a bit complicated, because here on TPM2 we require evmctl 1.3.1
-to have --ignore-violations (renamed from --validate), which was released in
-2020 - too new for old enterprise distros to ignore; also TPM1 we require only
-1.1 from 2018, probably still too new. Once SLE12-SP3 EOL (in 1 year we may just
-expect 1.3.1 to simplify).
-
-> -		return
->  	fi
-
->  	[ $ret -ne 0 ] && tst_res TWARN "evmctl failed, trying to continue $msg"
-Back to removed TFAIL. While this is OK as TWARN (some problem, but not related
-to testing) we might end up to TBROK "Test didn't report any results" error in
-tst_test.sh which quits test with TBROK "Test didn't report any results" if
-there is no TPASS/TFAIL/TCONF message.
-
-_tst_resstr()
-{
-	echo "$TST_PASS$TST_FAIL$TST_CONF"
-}
-
-_tst_rescmp()
-{
-	local res=$(_tst_resstr)
-
-	if [ "$1" = "$res" ]; then
-		tst_brk TBROK "Test didn't report any results"
-	fi
-}
-
-And this happen later in test2():
-	get_pcr10_aggregate > tmp.txt
-	pcr_aggregate="$(cat tmp.txt)"
-	if [ -z "$pcr_aggregate" ]; then
-		return
-	fi
-
-Other option would be to print TFAIL message in test2():
-
-	get_pcr10_aggregate > tmp.txt
-	pcr_aggregate="$(cat tmp.txt)"
-	if [ -z "$pcr_aggregate" ]; then
-		tst_res TBROK "failed to get aggregate PCR-10"
-		return
-	fi
-
-Lol, I'm disappointed how complicated and error prone I wrote back then.
-Part of the problem is that quit with tst_brk does not work, when code which
-does it is run in a subshell (via $(...) or `...) ), which quits subshell but
-not the parent shell.
-
-Kind regards,
-Petr
+[   23.443936] ======================================================
+[   23.443988] WARNING: possible circular locking dependency detected
+[   23.444028] 7.2.0-rc4 #11 Not tainted
+[   23.444062] ------------------------------------------------------
+[   23.444095] repro-deadlock./159 is trying to acquire lock:
+[   23.444121] ffff8881033da7b0 (&ima_iint_mutex_key[depth]#2){+.+.}-{4:4}, at: process_measurement+0x298/0xc10
+[   23.444184]
+[   23.444184] but task is already holding lock:
+[   23.444217] ffff88810210ac68 (&subsys->lock){+.+.}-{4:4}, at: nvmet_ns_enable+0x26/0x1e0
+[   23.444265]
+[   23.444265] which lock already depends on the new lock.
+[   23.444265]
+[   23.444302]
+[   23.444302] the existing dependency chain (in reverse order) is:
+[   23.444340]
+[   23.444340] -> #2 (&subsys->lock){+.+.}-{4:4}:
+[   23.444378]        lock_acquire+0xc7/0x2e0
+[   23.444401]        __mutex_lock+0xc7/0x1120
+[   23.444425]        nvmet_ns_device_path_store+0x31/0xd0
+[   23.444454]        configfs_write_iter+0xc8/0x140
+[   23.444484]        vfs_write+0x2af/0x530
+[   23.444508]        ksys_write+0x73/0xf0
+[   23.444531]        do_syscall_64+0x121/0x630
+[   23.444568]        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   23.444598]
+[   23.444598] -> #1 (&p->frag_sem){.+.+}-{4:4}:
+[   23.444634]        lock_acquire+0xc7/0x2e0
+[   23.444653]        down_read+0x31/0x150
+[   23.444678]        __configfs_open_file+0x5d/0x1f0
+[   23.444708]        do_dentry_open+0x136/0x4a0
+[   23.444740]        vfs_open+0x34/0xf0
+[   23.444763]        dentry_open+0x34/0x60
+[   23.444786]        ima_calc_file_hash+0x8a/0xe0
+[   23.444816]        ima_collect_measurement+0x2eb/0x3a0
+[   23.444845]        process_measurement+0x4e4/0xc10
+[   23.444874]        ima_file_check+0x60/0x90
+[   23.444899]        security_file_post_open+0x2e/0x40
+[   23.444928]        path_openat+0x51f/0x1140
+[   23.444950]        do_file_open+0xe4/0x1a0
+[   23.444976]        do_sys_openat2+0x7f/0xe0
+[   23.445003]        __x64_sys_openat+0x56/0xa0
+[   23.445040]        do_syscall_64+0x121/0x630
+[   23.445075]        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   23.445112]
+[   23.445112] -> #0 (&ima_iint_mutex_key[depth]#2){+.+.}-{4:4}:
+[   23.445163]        check_prev_add+0xeb/0xe80
+[   23.445199]        __lock_acquire+0x149d/0x1d10
+[   23.445233]        lock_acquire+0xc7/0x2e0
+[   23.445257]        __mutex_lock+0xc7/0x1120
+[   23.445288]        process_measurement+0x298/0xc10
+[   23.445323]        ima_file_check+0x60/0x90
+[   23.445354]        security_file_post_open+0x2e/0x40
+[   23.445396]        path_openat+0x51f/0x1140
+[   23.445424]        do_file_open+0xe4/0x1a0
+[   23.445452]        file_open_name+0xd1/0x1a0
+[   23.445488]        filp_open+0x28/0x40
+[   23.445516]        nvmet_file_ns_enable+0x2b/0xf0
+[   23.445553]        nvmet_ns_enable+0x13c/0x1e0
+[   23.445590]        nvmet_ns_enable_store+0x8a/0xb0
+[   23.445626]        configfs_write_iter+0xc8/0x140
+[   23.445662]        vfs_write+0x2af/0x530
+[   23.445691]        ksys_write+0x73/0xf0
+[   23.445719]        do_syscall_64+0x121/0x630
+[   23.445755]        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   23.445790]
+[   23.445790] other info that might help us debug this:
+[   23.445790]
+[   23.445839] Chain exists of:
+[   23.445839]   &ima_iint_mutex_key[depth]#2 --> &p->frag_sem --> &subsys->lock
+[   23.445839]
+[   23.445918]  Possible unsafe locking scenario:
+[   23.445918]
+[   23.445958]        CPU0                    CPU1
+[   23.446004]        ----                    ----
+[   23.446035]   lock(&subsys->lock);
+[   23.446066]                                lock(&p->frag_sem);
+[   23.446109]                                lock(&subsys->lock);
+[   23.446153]   lock(&ima_iint_mutex_key[depth]#2);
+[   23.446190]
+[   23.446190]  *** DEADLOCK ***
+[   23.446190]
+[   23.446230] 5 locks held by repro-deadlock./159:
+[   23.446268]  #0: ffff888101ce6428 (sb_writers#10){.+.+}-{0:0}, at: ksys_write+0x73/0xf0
+[   23.446325]  #1: ffff888101f19080 (&buffer->mutex){+.+.}-{4:4}, at: configfs_write_iter+0x2e/0x140
+[   23.446382]  #2: ffff88810221faf0 (&p->frag_sem){.+.+}-{4:4}, at: configfs_write_iter+0xa0/0x140
+[   23.446439]  #3: ffffffff82e80be8 (nvmet_config_sem){+.+.}-{4:4}, at: nvmet_ns_enable_store+0x4d/0xb0
+[   23.446496]  #4: ffff88810210ac68 (&subsys->lock){+.+.}-{4:4}, at: nvmet_ns_enable+0x26/0x1e0
+[   23.446553]
+[   23.446553] stack backtrace:
+[   23.446583] CPU: 0 UID: 0 PID: 159 Comm: repro-deadlock. Not tainted 7.2.0-rc4 #11 PREEMPT(lazy)
+[   23.446585] Hardware name: QEMU Ubuntu 24.04 PC v2 (i440FX + PIIX, arch_caps fix, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   23.446586] Call Trace:
+[   23.446587]  <TASK>
+[   23.446588]  dump_stack_lvl+0x78/0xe0
+[   23.446591]  print_circular_bug+0x2ca/0x400
+[   23.446593]  check_noncircular+0x161/0x180
+[   23.446597]  check_prev_add+0xeb/0xe80
+[   23.446600]  __lock_acquire+0x149d/0x1d10
+[   23.446602]  lock_acquire+0xc7/0x2e0
+[   23.446603]  ? process_measurement+0x298/0xc10
+[   23.446605]  ? lock_acquire+0xc7/0x2e0
+[   23.446607]  __mutex_lock+0xc7/0x1120
+[   23.446608]  ? process_measurement+0x298/0xc10
+[   23.446610]  ? fs_reclaim_acquire+0x4c/0xd0
+[   23.446612]  ? process_measurement+0x298/0xc10
+[   23.446614]  ? find_held_lock+0x2b/0x80
+[   23.446617]  ? process_measurement+0x298/0xc10
+[   23.446618]  process_measurement+0x298/0xc10
+[   23.446625]  ima_file_check+0x60/0x90
+[   23.446627]  security_file_post_open+0x2e/0x40
+[   23.446629]  path_openat+0x51f/0x1140
+[   23.446632]  ? __lock_acquire+0x5df/0x1d10
+[   23.446633]  do_file_open+0xe4/0x1a0
+[   23.446639]  file_open_name+0xd1/0x1a0
+[   23.446640]  filp_open+0x28/0x40
+[   23.446642]  nvmet_file_ns_enable+0x2b/0xf0
+[   23.446644]  nvmet_ns_enable+0x13c/0x1e0
+[   23.446646]  nvmet_ns_enable_store+0x8a/0xb0
+[   23.446647]  configfs_write_iter+0xc8/0x140
+[   23.446650]  vfs_write+0x2af/0x530
+[   23.446653]  ksys_write+0x73/0xf0
+[   23.446655]  do_syscall_64+0x121/0x630
+[   23.446657]  ? clear_bhb_loop+0x40/0x90
+[   23.446659]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   23.446660] RIP: 0033:0x7f6d63b105a4
+[   23.446662] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d a5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
+[   23.446663] RSP: 002b:00007ffdbeb92468 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+[   23.446665] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f6d63b105a4
+[   23.446666] RDX: 0000000000000002 RSI: 000055be1939cba0 RDI: 0000000000000001
+[   23.446666] RBP: 00007ffdbeb92490 R08: 0000000000000073 R09: 0000000000000000
+[   23.446667] R10: 00000000ffffffff R11: 0000000000000202 R12: 0000000000000002
+[   23.446667] R13: 000055be1939cba0 R14: 00007f6d63bf85c0 R15: 00007f6d63bf5ee0
+[   23.446670]  </TASK>
