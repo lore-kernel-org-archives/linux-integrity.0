@@ -1,68 +1,68 @@
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+Received: from mail-yx2-f9.google.com (mail-yx2-f9.google.com [74.125.224.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A4036F433
-	for <linux-integrity@vger.kernel.org>; Tue, 18 Aug 2026 19:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59AA37204C
+	for <linux-integrity@vger.kernel.org>; Tue, 18 Aug 2026 19:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787081731; cv=none; b=Z5GbA6zsHR4nRei3rILT6To3XqAUvkjaNx0GpwC02twiHyoMu/z9PPROB5r2eA3+PNjdLRlYjyG5/rExR446FbChtLafoluhiG66Ifq2dMiNG/YsaVhV0g8qfLaOVz3coRDoOlJd2cuk7UZDPR/1EmPZTacTDcOpMKO+OKTjh3I=
+	t=1787081733; cv=none; b=QZVXyAhVJnLAs5XBSSxq1+7TLwWWKCePNdFh8MuWwPOIiNNVbXi2VEidyxNmcd6uPvIyg8/P0oE3zmV5tst9pbnJ6pP4d2eGgmJv2JTuCw1qBhEqtDrUwwOYL0UQgfs3+IOPDGK2wtMXGkBRcv1TDwI2gEDTBV1PtaHjNPYnyoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787081731; c=relaxed/simple;
-	bh=4Dr8FUckZZs6x07b+xsKvc6HgeTnce7Z1vxgvZfvoJU=;
+	s=arc-20240116; t=1787081733; c=relaxed/simple;
+	bh=7LZjP32jUfaZ5RKmBNaB9NcgyxlHRwbSA/1nT2Radhc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ivI4PTkxTSyJ6NSoekf6WNUZcxcOtpER2KpDxAJuR0dN4I8fLDWaIfcIfuKZLpfyQUixVFnNKpF/+C9kQAQ/xohOmDDd0gvrYE1A5Tt3RhnSacPptITSxVJbCD40sQ/ow3i903kEPMN7+5rbpVeQp9P3Qf2R5HZb2SoRlPLZu0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ZFAwIJUX; arc=none smtp.client-ip=74.125.224.49
+	 In-Reply-To:To:Cc; b=M0st8cQM5KlVzPsEwTH242HbBo878Kvc/FGJzqjk07VH8pfE+Ehw2GKn+IZyQajeYHOZ3WAG+pfU2CexULbK7jiOK2KtRpu84h+ua5Mv8g8zPzo47eQNhuKtQFrV/dXqxvCZnV+cv6RYkEujcuYG8jbi7PRrb6SA2XDZ0wN1Uqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=HXaYmoUt; arc=none smtp.client-ip=74.125.224.137
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ZFAwIJUX"
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-66c7e3a2332so296368d50.2
-        for <linux-integrity@vger.kernel.org>; Tue, 18 Aug 2026 12:35:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="HXaYmoUt"
+Received: by mail-yx2-f9.google.com with SMTP id 956f58d0204a3-66c711552ccso409570d50.1
+        for <linux-integrity@vger.kernel.org>; Tue, 18 Aug 2026 12:35:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1787081729; x=1787686529; darn=vger.kernel.org;
+        d=cloudflare.com; s=google09082023; t=1787081731; x=1787686531; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=rXoczBGO5I6N9TIC59uDIKSOp13YmyqaSWTBgCd4pCI=;
-        b=ZFAwIJUXkjrCH8wddjUm4XfqvqvcqX9lsBKwOOmSsaNqTECOTB04LXgF4WbHbpfMWI
-         QxeGH1aXcpi+um7atjAIOZcx3uAzeePU02P6WBSocdCKRRZ9TS8cd7Qcyr/T8UeB/JRL
-         rwe0q4dsZqeYFFMg2r/YjFmmw83WPZ8whBw/Yw6V3zHB/HWRGUEu9e9BHm1SCGoT58ds
-         Z3IRAgaUOyEjb3VAfZUA4jJJE0Bg+TJRMT0F1mmVAYwi9iAKmFM2PR+qnMiaHQYRPvJl
-         WuXs8uFsUJTlr28hZnU/9GGCNzWzlcQLqZpaYngpiEmZ98tw/UGBTHAuYFThldRjINYS
-         vSzQ==
+        bh=3UXJUp6qjJ2HIYsQIMwEd5fSfbeRNaFsH8a8Xw28Ey4=;
+        b=HXaYmoUtBoAj1nnNe0YyIgi7sRHAU31p9sq6rkC8N4iIBoSfZD/vFRG33g0Tio3fIb
+         KErGPdd1qvTTHtwWmPr+cYPVt/KkA3WVDscLQzGeP6X0Zj7ZV85vEmGiWz8SsAlJJNvv
+         Yh17WFGug6XbGqFODcskEj0pSav6OA7xpUkOfR9FymM+z6JEphP/e4WE7j4XunJ8sCQw
+         r2TmqVUOqds1Po05fylbua3tbob6tslUAvE6/heU2EvkRuKH8plQlWgHxdnJT+fmAoMH
+         b2hobCtE3bHMuQBFTUnlFguTV6aBcUgBEAAdoewoG8beIMlTQcG70qF1MOusxrytrhdH
+         d36w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787081729; x=1787686529;
+        d=1e100.net; s=20251104; t=1787081731; x=1787686531;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=rXoczBGO5I6N9TIC59uDIKSOp13YmyqaSWTBgCd4pCI=;
-        b=b8n4EwQBhwDBZbqZ8QSDOAErLMF63J1ZpDwNoIq5YHrcwuS2NJ9vd/wkWz8i19VoAb
-         Jy4dhBTif/QkjKr4s/qiyfqa2wYYukHBR9GPzQJSu8Pj/QaSa7sgQJFGmYErNJTEPhYw
-         HD97I4PaG4YjWc0u8X+X3ZcjsRFAweSEawbrLWWBtmv/4jaGV7zHHId9VFX1wdYMspzu
-         dLcbaYWQOXrmVXXJqln1HupMLFIC6YKGC93sccyfhJIMbX1SBEKLV+cLfCInu0tz5by8
-         Q6kzAqgyreS1lfGj5Iu9R5o0QFwV9h1q7W2UxLS86unrD4uVcT18CNGLvM4m0JBrQP/l
-         mgfQ==
-X-Forwarded-Encrypted: i=1; AHgh+Ro0UCaPVYEldla6gQi+yC84CwqkJ8aX+LICcoYU3evxGpKmUkmgstyUblX406ffFvrJpWvr1ujcYetVz8UA/xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRnXMHu4Pl3KzEJydqujPgPt2giNH4g7WXjVaupMkNnmAAeYnb
-	USuugMlnhxSdZoPKJQga9/dfHhjUWDSViPzQXIYMuJABm5vsoME9GRuW6kmUa0wZWPWpnnWVRVP
-	v76JLUEEqqw==
-X-Gm-Gg: AR+sD13bYcoJ5sV1EIZqAHeN+Um/UGw6hekl++/oGskwt7IpygApPM75siYFs+IGjaQ
-	47nNqPhcRDv5IdlS4HCv2YcUN++jROfC9kh21QFKfynr5nO6zTSHBu6fCtgERBgFwqWa1RjqC/F
-	SdQjG0jGmoLl84YBSJJy3CvGEPHhExWw2jvQk8cb382VwxU363uw4XrEZqJCelduXUvoG6i6ZnF
-	/jmf0f9rOK7B8NxGZ8MBX2GQEyxSueF5giwqL9JbgWuFwXm804UrDmt5XmVeoEzf1YR9Ek1K3pK
-	iwKhaE74wT6hrBpBf+DAID8IkLS8l0v4YNa2h8OMTF2QXqYKryxSG3QPUfi6vSUUgKVGZiijfe6
-	sitXSboUyThKPfuAZaeUDn4F4xCSPEQdG0fctmXipHoDRBPHTV7BDMExx6sCYfbL9azhT961guG
-	lRsdJuQgnnJRmYt8cfy9Fxbls+mX+1ltz8P6gY0YyVgmq2
-X-Received: by 2002:a53:a60b:0:b0:66c:85e3:7f45 with SMTP id 956f58d0204a3-66cca5a58bbmr59786d50.49.1787081728671;
-        Tue, 18 Aug 2026 12:35:28 -0700 (PDT)
+        bh=3UXJUp6qjJ2HIYsQIMwEd5fSfbeRNaFsH8a8Xw28Ey4=;
+        b=gB1K82fY+TDa6YrKTX1TK7MeZDRB/zI/hfTWR/ojYo7vtOmzaegH566dL8jtPmCDVb
+         uRwf6s7DJy/nAE/iD4ahlvpN6trQtCg0NCHFGht54Bfi/cSC0cJ0dVsZHyf7br5Eo/cO
+         xDjUEo1CXmeqDu2cUROQVHxH90oLKd+jLTg7JyObWKvd+2zIpSnHjsdxOicYnYNW0FwL
+         JapiKtnRq34Rb6cPAg0CMwvsMFmLfSugSVAdz6zLQkHFsziahYy3aQhlicCz4V4px8Ob
+         /N3HyahkAnNwA5oR2mp1c4BuV43IHxCgbZpY+5cotP+yVWe47m2L+RKdXSxKSJE+8N66
+         jsqg==
+X-Forwarded-Encrypted: i=1; AHgh+RrkOJZ0yt+GNL0VT/mjADuGpUqbpry5pK5qU8hf1IqA815v+rt5zrCY74IZUrCy763A9ni4l30KeAZA87TwWf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWSNWM42yagA8bdGxdrjAd5Oj8YAX5WoONTHewm9Neh3kaOx1O
+	scHcD5oGQjghBOovWtF5P6sd167NFw8Us5IusYlwFbnYmXkxGtByxL4qWLzcNh+/aFH85GuVBXs
+	2oDdfqRYAZ/60
+X-Gm-Gg: AR+sD13AVOBXpLQCqAswcyww22VzYl7ovG3hWJs5DHJVesHov64hCT5zM4uinsMSJvD
+	uJ8ta0oEoSg+dFo+0sRY8CqPtxSJjb9JsNaWi1++QXV1VsW5ThShU4z7Yblms1JPt5N6Kp9Thug
+	xqQwcmQ2zXgpuk7axfKy5Zccjd3w3JFt5i7IWRy7B/0u4uuOm5Z113p3b7Lsxw9ES+5nxlZtRhn
+	hqdY+udomzVxMlC4XV7hcaNQH/ebBf9qZQsyv1RasPvhnwuHo/itp6M5L5jA7okUHvzhJbsvaRR
+	I0TvVpRcUH4aMKB5YG7Fj5wf57t3fGA3MEatdD1osXvAd6jrwluEL5voQWedA/+NwXNsEuqXDeq
+	vNf5fyasDnohos6uBQRPwKOb5RPZ2nyKJYUDgonaGFYNJwyQBGfxneMBdhMP1truGObBcLcD2Q3
+	k+T0MTpEbjnYdjcVVQqBDbgjjDu57RpBMyVVaatGqr9inh0tVdTuRgZ+4=
+X-Received: by 2002:a53:bc0c:0:b0:66b:3c40:17e0 with SMTP id 956f58d0204a3-66cca5db977mr58091d50.43.1787081730600;
+        Tue, 18 Aug 2026 12:35:30 -0700 (PDT)
 Received: from [127.0.1.1] ([2a09:bac6:947f:3af::5e:52])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66cb47809c6sm2795622d50.11.2026.08.18.12.35.27
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66cb47809c6sm2795622d50.11.2026.08.18.12.35.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Aug 2026 12:35:28 -0700 (PDT)
+        Tue, 18 Aug 2026 12:35:29 -0700 (PDT)
 From: Frederick Lawler <fred@cloudflare.com>
-Date: Tue, 18 Aug 2026 14:35:15 -0500
-Subject: [PATCH 1/2] configfs: move CONFIGFS_MAGIC definition to magic.h
+Date: Tue, 18 Aug 2026 14:35:16 -0500
+Subject: [PATCH 2/2] ima: don't measure/appraise files on configfs
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260818-configfs-v1-1-a2329043cf86@cloudflare.com>
+Message-Id: <20260818-configfs-v1-2-a2329043cf86@cloudflare.com>
 References: <20260818-configfs-v1-0-a2329043cf86@cloudflare.com>
 In-Reply-To: <20260818-configfs-v1-0-a2329043cf86@cloudflare.com>
 To: Andreas Hindborg <a.hindborg@kernel.org>, 
@@ -82,71 +82,67 @@ To: Andreas Hindborg <a.hindborg@kernel.org>,
  James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
 Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
  linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>
+ Frederick Lawler <fred@cloudflare.com>, 
+ syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1753; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=4Dr8FUckZZs6x07b+xsKvc6HgeTnce7Z1vxgvZfvoJU=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqhLP9geiL+zExdgGlu6I2vB3H1Nmq+DpnXKnnD
- iOAuL1cpp2JAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaoSz/QAKCRCrJbR2A5LT
- bdKiEADoWx9BRs0O46WPuq+MDXdp1N3M3QreUWuMnNAVw4Ky/3IG8DmWgIoGxMzcRZomE4vNk8t
- MGT3K7t6DZ4x6Yvd4gbP0pgLdrUnWzXfFrThoa3SW2icHYtdAwW8DbK5IWIob7zTAmVqLXRYiOe
- UmZRlFjAnTzu0uthejnbCkoFxy08oiO7aOx4pVVCbFD3PgAhvEzfLO5BW9UGncde9eNlzzeNRr/
- MVB+F71zPn+88yiYeEvTPydnRUss7ODtt+vXaAIhMjrSgQOSmiyvCzUAD7bUuws3JD5yT/V89v+
- s2CvnIv/9Tr0MUxfBLsPuXTskoiMzGTDcm445BkW/66k4SmpJts/a+7Mz3GW3P5jA/NMFsTPZ9l
- QNcMit0wuUw9vwZbF8CC+g0StQgmzHoYMqrLRB2+fJIA5iRUi+7pu8pgY6DqJeGVmLfC1BjwX8f
- yd/prGfsdrQj/HFoSQH+fQPYDhtOu0m1Hxn09ZC9Be7m712GPcCI36GwplkjO2wMCbuPvAflmNR
- cw4xKhMkoCpBBQAlKCwf36L3j8lnGjPjqtRdmohqkDic0w50IKG9dEhRGbl+XNlXFxj5OGzz+uL
- yKq8Oyr1hgRj8eQVketEXTF6LXlW7Y3IylTPq3JgT3PV3BsRxqrqLlDYZnHcegUJBZWRg2HQ3l/
- bW+kURz9M4JVg4g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2105; i=fred@cloudflare.com;
+ h=from:subject:message-id; bh=7LZjP32jUfaZ5RKmBNaB9NcgyxlHRwbSA/1nT2Radhc=;
+ b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqhLP9Vx66id6HzUGNVJl0dOeeNDs0MBZQgcfLJ
+ ozGhqJGiNaJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaoSz/QAKCRCrJbR2A5LT
+ bQVIEAC1Z72vgOQ5JGNsxpTTajJOI51TP6Rnol/Bx7J2tcFGgHnnHtMnf5fd/EDtCDec5qNK4cb
+ rhvU/uwkK0HBll+nTe32AAgK9R7ABEF34DZPls68z5hz5cJPyNvpfDY/n6SkHkxT+DjKfgK8qPz
+ oMmLJs7AgQvQRBjF/YFZbFFvWOGkz8tJ2ar1Bz1bf31+CgbqwIKakWokyp92wdjbXdCIyor5Ovo
+ fOpsgCFUEZjgvovWR1w2ITdKCu6rn29UldScCH1TdpmE523wL/POA8NSV2060fEpzuLcP27mAPD
+ IDes0e25PVxznRDQ0tY3foFCVaH06CZqy3sT7KkFq47z0enMvmF0nzn0LPLz0mgvjV74WkDWYay
+ igd9xjoO+4W6WfzNd4FHague17tw43Gyaigmcc4PWvAZCojhOL5mf8/t8rRuBF8z/afkKdAlHCB
+ VC5vtDKqpHvAobWdA7m/+hytXaS5lNB9GtQYQn4kyfdUw1m2ObL+grd22K3OgtFKFPVxbJ70Er0
+ cfK8N98igspB5ILoHEIrkJ47vQBBIspKykEujbZisq2n36e7XRxC0F5ZyLWH33Hyt7hq256MJ5J
+ jisxr61kCS5tdm5bGlIBi4Fb3AjSH1qVmtN29IRONnbbsuJxZl4jLxDVCn7Ukww5lQtwbN8P682
+ qIzx3FXQQ1caHTw==
 X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
  fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
 
-IMA shouldn't measure or appraise configfs, but currently does because
-it's missing from the default exclusion policies. Move CONFIGFS_MAGIC to
-magic.h to expose the file system's magic to IMA, as well as other userland
-applications.
+When IMA appraises/measures a file configfs, it has an opportunity to
+hold onto the ima_iint_mutex while another file from a different file
+system is attempting to appraise/measure. This may cause a cyclical
+lock dependency.
 
+Add configfs to the default don't measure/appraise lists, similarly to
+other pseudo file systems.
+
+Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/all/6a77c7cd.b50370da.49fe0.0031.GAE@google.com/
 Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Frederick Lawler <fred@cloudflare.com>
 ---
- fs/configfs/mount.c        | 4 +---
- include/uapi/linux/magic.h | 1 +
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ security/integrity/ima/ima_policy.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/configfs/mount.c b/fs/configfs/mount.c
-index 4929f343118946eaa55a539db4192e9c6621a8dc..d8cac1cbf3bd573a0549f2f044714c9d669205a4 100644
---- a/fs/configfs/mount.c
-+++ b/fs/configfs/mount.c
-@@ -9,6 +9,7 @@
-  */
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index f79d07bb63c6fc4ba6fe594140de8d59f57e4f0b..68d9a5e6c232ea0678e9f51f105cebecccccb43e 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -165,7 +165,10 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
+ 	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
+ 	 .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
+-	{.action = DONT_MEASURE, .fsmagic = EFIVARFS_MAGIC, .flags = IMA_FSMAGIC}
++	{.action = DONT_MEASURE, .fsmagic = EFIVARFS_MAGIC,
++	 .flags = IMA_FSMAGIC},
++	{.action = DONT_MEASURE, .fsmagic = CONFIGFS_MAGIC,
++	 .flags = IMA_FSMAGIC}
+ };
  
- #include <linux/fs.h>
-+#include <linux/magic.h>
- #include <linux/module.h>
- #include <linux/mount.h>
- #include <linux/fs_context.h>
-@@ -19,9 +20,6 @@
- #include <linux/configfs.h>
- #include "configfs_internal.h"
- 
--/* Random magic number */
--#define CONFIGFS_MAGIC 0x62656570
--
- static struct vfsmount *configfs_mount = NULL;
- struct kmem_cache *configfs_dir_cachep;
- static int configfs_mnt_count = 0;
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index 4f2da935a76ccae6e1c3310b2fae5379186548b8..d5b9958ddfaae90b270b66fe7853c5a3d49ce739 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -8,6 +8,7 @@
- #define AUTOFS_SUPER_MAGIC	0x0187
- #define CEPH_SUPER_MAGIC	0x00c36400
- #define CODA_SUPER_MAGIC	0x73757245
-+#define CONFIGFS_MAGIC		0x62656570	/* some random number */
- #define CRAMFS_MAGIC		0x28cd3d45	/* some random number */
- #define CRAMFS_MAGIC_WEND	0x453dcd28	/* magic number with the wrong endianess */
- #define DEBUGFS_MAGIC          0x64626720
+ static struct ima_rule_entry original_measurement_rules[] __ro_after_init = {
+@@ -211,6 +214,8 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+ 	{.action = DONT_APPRAISE, .fsmagic = EFIVARFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
++	{.action = DONT_APPRAISE, .fsmagic = CONFIGFS_MAGIC,
++	 .flags = IMA_FSMAGIC},
+ #ifdef CONFIG_IMA_WRITE_POLICY
+ 	{.action = APPRAISE, .func = POLICY_CHECK,
+ 	.flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
 
 -- 
 2.43.0
