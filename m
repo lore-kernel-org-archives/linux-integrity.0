@@ -1,179 +1,153 @@
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2533B9D95;
-	Tue, 18 Aug 2026 09:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A4036F433
+	for <linux-integrity@vger.kernel.org>; Tue, 18 Aug 2026 19:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787043814; cv=none; b=RQp1z+84goryEOkNPklXK/X3aThlt5joJjTroNTIdFFbXayTc/fRFRzqzuIAfFavz0VMKbxN9NEcqgUVr18mPND7MYAJpKT6BUmGouymDeD9wpplnh6jrM9W/3BiHSLL609leErehN+Lsn/0FXLHTPiHPJ9wjY9D6gG+1EkZY+w=
+	t=1787081731; cv=none; b=Z5GbA6zsHR4nRei3rILT6To3XqAUvkjaNx0GpwC02twiHyoMu/z9PPROB5r2eA3+PNjdLRlYjyG5/rExR446FbChtLafoluhiG66Ifq2dMiNG/YsaVhV0g8qfLaOVz3coRDoOlJd2cuk7UZDPR/1EmPZTacTDcOpMKO+OKTjh3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787043814; c=relaxed/simple;
-	bh=WO3NGxY4syeZ2ZD3BmzUXP3M7Bt0QwU8LVneEp3Vn2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cz+F5X1e+4l3SWhl6sK/5X+hcxIza7yu0U35SROpWcS5TbbOrJPsQwsre52fnk/yUALu3VcQQfvt4d9MZEGu2pw0eRlVlVNRPzY/ixCoApLAyPv2N7b6o8syx2i5tzaRhI39sJaoMZkXFGwdZ/YZSyzb+BolexK8CQXknUMsKkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de; spf=pass smtp.mailfrom=jaseg.de; dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b=WPZZoKGM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NYaRi+TS; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaseg.de
+	s=arc-20240116; t=1787081731; c=relaxed/simple;
+	bh=4Dr8FUckZZs6x07b+xsKvc6HgeTnce7Z1vxgvZfvoJU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ivI4PTkxTSyJ6NSoekf6WNUZcxcOtpER2KpDxAJuR0dN4I8fLDWaIfcIfuKZLpfyQUixVFnNKpF/+C9kQAQ/xohOmDDd0gvrYE1A5Tt3RhnSacPptITSxVJbCD40sQ/ow3i903kEPMN7+5rbpVeQp9P3Qf2R5HZb2SoRlPLZu0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ZFAwIJUX; arc=none smtp.client-ip=74.125.224.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b="WPZZoKGM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NYaRi+TS"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailflow.phl.internal (Postfix) with ESMTP id 5C82F1380244;
-	Tue, 18 Aug 2026 05:03:31 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Tue, 18 Aug 2026 05:03:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaseg.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1787043811;
-	 x=1787051011; bh=ZX1CnQZZsg94K1w9ifnkc6/NmgcRySaktgXNfBgb7AQ=; b=
-	WPZZoKGM/D3I5ywu6hWxeUzIxxVJ8JaogWauiMKsZIA9L+2KD8F1opSZimhHAVKL
-	5a0sb6E7AE1N+ZTNYCeJQBZ+m2FEM4CV7GMsqbHBUWfOHXeEjAaQ1OAiBbBbW59J
-	b1PhzIsGrQ2x+2Dni2rvrHfHUrqMx08mPCwM/2bfa9SldiuOZjcpcWOlGE1HpOcd
-	G0YIdXoV0HVGd4L+mxlNmNNDIhof5BifyFVcHuhiep66N7ofIvUZTm6prDYrlyWK
-	zAEmkzqJ+outKDKC0CHUxyq53gCJ6k58wqWemTPbG92+4A3wfTcxtWmA675wMRHC
-	QYOZU0KDnVhgr69AP0V0Bg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1787043811; x=
-	1787051011; bh=ZX1CnQZZsg94K1w9ifnkc6/NmgcRySaktgXNfBgb7AQ=; b=N
-	YaRi+TSIddvpqgRTVgxa6VkeBfERJbKBvbyZhIzfXNJys/mMTEU1csXrJL5DGzbN
-	PCKZKgL431iiunzQQDBvFuzWW69BqYCSsFA5vAr0RhpoL1B1z9aPTFCNw7/QA19A
-	saZ0S0t62u9ilibZlZt1i/7WvU/qVXs+q65oY7JWrtfuouhLYcwOK4sxpw9so70V
-	0/BgQw+DhldDFVQAVyvQgDYSDnmVHgBz/o60QfvZIbIrNu09JczWI0nsBqGFZNEN
-	5UPYGIzCosYhlot0IWvFxAqjKXNQIIe5Nc3jckxMBZ736pOuOvMzIar47qPI4WKI
-	FVKhOCCNDBW0c2jXhd1ZA==
-X-ME-Sender: <xms:4B-EauM8Y-WoFhcHV7CDKlTqAXtB-K4KRmaH8Ji1IGVdeubq9ketyQ>
-    <xme:4B-Ealztkx_kES_mWsN78pZXU9JB54Mew-argE8U363HXR6ZZcMDZrZ1r7KLZayGA
-    VUMOnw_bfE8_HFBnwIY6yzIzSIEfLRM4kpRnIw3jK-F75RiMw1zRw>
-X-ME-Received: <xmr:4B-Ear2lM4JA7KsBrcTQX5tTYYYgKvP9cy4R-UIHarqqQ6wJIAuSBmfYB-cMSSdOV5yu6OXNk-afOhj4igKm>
-X-ME-Proxy-Cause: dmFkZTFpA2CAQ9HsB/cHX0jgjtdDSxrlNaH1N5XdMBpyCH9Ywi6Hdh5ucTA96FWQa4HkQJ
-    FvEd7sRFuzES1QTCCXc72OlhgrTRDpI/mv/2h44E6mQB5bIPt7uKTuP2q0GgZRoIvFIf7T
-    TMZ3/nzGVeOohp8c3ZE54qSC9/YJNe9f6CUcVKmuTPT1A2+XUIsIivDdrhAHumwFv6AQfa
-    NNzoFOD5IVmP3t/+TNxvkur2XMEg96QOc5X07R9jGlcw1D3FBObbnwVn6TapmMDjTj8mel
-    XF3EW9HqD7I9ZDaJuBDS4ARPRSLFsySvU1MjYl98Znh+hLcqka5PZ2lKMDy4GytU3qjXHP
-    98DJem6QpOGqfB3BYBGJDTFsCAtPWcw71a1t0bx+yVXLzQg/zX2eANVIW+Pof9QleQxvN9
-    P/N2zoRmGcsxnzVAX9yilz5Hf18JYw9RDeTkD0e4hVVYoyZ9d7hMxsqFj8qpAc09VhOuqd
-    r9AoF++WkVV8iSPyIp43mJ0TdeQR0JQhCzxLX9LtVsEaNESQdPbIT8kPTvzqYUZ7lqGq/k
-    PEaZa2BEeR2Eln3RH9rkvTn6MqyAurRLUbA+ihdv70Bc4xu6lg5mm9xC/+Pb5HPANA2dOd
-    Ytxl5ozIB8gbREK41rFGTIGGQ9URIpBxDMvfEg9AUeTxj19lPYQvx6jTJGSQ
-X-ME-Proxy: <xmx:4B-EasH0JHdfdUJp3cw75hmN4JbAktp9qP7MbFjC7JV7n6UctIxhEg>
-    <xmx:4B-EagKH8JC384TlH3cR7ulRAHL02wkXnaDo1V9ztrqMfX9MoWhZwg>
-    <xmx:4B-EarwND5OYC8e2x_4D5dXRVAx5TKWwG_rdZqfJdmokI7UUzMRH2Q>
-    <xmx:4B-Eai1Yt3SDtzatr_bnVyQU5MFRORQZ930EDB5uwIJ17WKuX-K8FQ>
-    <xmx:4x-EahEHf5VCv1VRvxU22t6K4tWi1wKnPfuGOHSqlSCXyfMxLQLJcyjV>
-Feedback-ID: i60a14417:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Aug 2026 05:03:21 -0400 (EDT)
-Message-ID: <9071e03b-a633-43e4-ac77-3b05291c1f66@jaseg.de>
-Date: Tue, 18 Aug 2026 11:03:19 +0200
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ZFAwIJUX"
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-66c7e3a2332so296368d50.2
+        for <linux-integrity@vger.kernel.org>; Tue, 18 Aug 2026 12:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1787081729; x=1787686529; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=rXoczBGO5I6N9TIC59uDIKSOp13YmyqaSWTBgCd4pCI=;
+        b=ZFAwIJUXkjrCH8wddjUm4XfqvqvcqX9lsBKwOOmSsaNqTECOTB04LXgF4WbHbpfMWI
+         QxeGH1aXcpi+um7atjAIOZcx3uAzeePU02P6WBSocdCKRRZ9TS8cd7Qcyr/T8UeB/JRL
+         rwe0q4dsZqeYFFMg2r/YjFmmw83WPZ8whBw/Yw6V3zHB/HWRGUEu9e9BHm1SCGoT58ds
+         Z3IRAgaUOyEjb3VAfZUA4jJJE0Bg+TJRMT0F1mmVAYwi9iAKmFM2PR+qnMiaHQYRPvJl
+         WuXs8uFsUJTlr28hZnU/9GGCNzWzlcQLqZpaYngpiEmZ98tw/UGBTHAuYFThldRjINYS
+         vSzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787081729; x=1787686529;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=rXoczBGO5I6N9TIC59uDIKSOp13YmyqaSWTBgCd4pCI=;
+        b=b8n4EwQBhwDBZbqZ8QSDOAErLMF63J1ZpDwNoIq5YHrcwuS2NJ9vd/wkWz8i19VoAb
+         Jy4dhBTif/QkjKr4s/qiyfqa2wYYukHBR9GPzQJSu8Pj/QaSa7sgQJFGmYErNJTEPhYw
+         HD97I4PaG4YjWc0u8X+X3ZcjsRFAweSEawbrLWWBtmv/4jaGV7zHHId9VFX1wdYMspzu
+         dLcbaYWQOXrmVXXJqln1HupMLFIC6YKGC93sccyfhJIMbX1SBEKLV+cLfCInu0tz5by8
+         Q6kzAqgyreS1lfGj5Iu9R5o0QFwV9h1q7W2UxLS86unrD4uVcT18CNGLvM4m0JBrQP/l
+         mgfQ==
+X-Forwarded-Encrypted: i=1; AHgh+Ro0UCaPVYEldla6gQi+yC84CwqkJ8aX+LICcoYU3evxGpKmUkmgstyUblX406ffFvrJpWvr1ujcYetVz8UA/xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRnXMHu4Pl3KzEJydqujPgPt2giNH4g7WXjVaupMkNnmAAeYnb
+	USuugMlnhxSdZoPKJQga9/dfHhjUWDSViPzQXIYMuJABm5vsoME9GRuW6kmUa0wZWPWpnnWVRVP
+	v76JLUEEqqw==
+X-Gm-Gg: AR+sD13bYcoJ5sV1EIZqAHeN+Um/UGw6hekl++/oGskwt7IpygApPM75siYFs+IGjaQ
+	47nNqPhcRDv5IdlS4HCv2YcUN++jROfC9kh21QFKfynr5nO6zTSHBu6fCtgERBgFwqWa1RjqC/F
+	SdQjG0jGmoLl84YBSJJy3CvGEPHhExWw2jvQk8cb382VwxU363uw4XrEZqJCelduXUvoG6i6ZnF
+	/jmf0f9rOK7B8NxGZ8MBX2GQEyxSueF5giwqL9JbgWuFwXm804UrDmt5XmVeoEzf1YR9Ek1K3pK
+	iwKhaE74wT6hrBpBf+DAID8IkLS8l0v4YNa2h8OMTF2QXqYKryxSG3QPUfi6vSUUgKVGZiijfe6
+	sitXSboUyThKPfuAZaeUDn4F4xCSPEQdG0fctmXipHoDRBPHTV7BDMExx6sCYfbL9azhT961guG
+	lRsdJuQgnnJRmYt8cfy9Fxbls+mX+1ltz8P6gY0YyVgmq2
+X-Received: by 2002:a53:a60b:0:b0:66c:85e3:7f45 with SMTP id 956f58d0204a3-66cca5a58bbmr59786d50.49.1787081728671;
+        Tue, 18 Aug 2026 12:35:28 -0700 (PDT)
+Received: from [127.0.1.1] ([2a09:bac6:947f:3af::5e:52])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66cb47809c6sm2795622d50.11.2026.08.18.12.35.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Aug 2026 12:35:28 -0700 (PDT)
+From: Frederick Lawler <fred@cloudflare.com>
+Date: Tue, 18 Aug 2026 14:35:15 -0500
+Subject: [PATCH 1/2] configfs: move CONFIGFS_MAGIC definition to magic.h
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/13] kexec: add CRASH_WIPE_SECRETS to wipe secrets
- before kdump
-To: Baoquan He <baoquan.he@linux.dev>, Lukas Wunner <lukas@wunner.de>
-Cc: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- Mike Rapoport <rppt@kernel.org>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Pratyush Yadav <pratyush@kernel.org>, Dave Young <ruirui.yang@linux.dev>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Ignat Korchagin <ignat@linux.win>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- Marc Dionne <marc.dionne@auristor.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Jaegeuk Kim <jaegeuk@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>,
- Benjamin Marzinski <bmarzins@redhat.com>, kexec@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mm@kvack.org, keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-afs@lists.infradead.org,
- netdev@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, dm-devel@lists.linux.dev
-References: <20260811-crash-zeroize-rework-v2-0-9561d13c2340@jaseg.de>
- <20260811-crash-zeroize-rework-v2-1-9561d13c2340@jaseg.de>
- <anw9ILJiO5xIjP4f@MiWiFi-R3L-srv>
- <9765f7ea-36bb-4c7b-a19b-7facec97b762@jaseg.de> <aoGpcczo5GkBsPwt@wunner.de>
- <aoK6jXA-tF9qfKOZ@MiWiFi-R3L-srv> <aoLFai0gzzH2bGgy@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <contact@jaseg.de>
-In-Reply-To: <aoLFai0gzzH2bGgy@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260818-configfs-v1-1-a2329043cf86@cloudflare.com>
+References: <20260818-configfs-v1-0-a2329043cf86@cloudflare.com>
+In-Reply-To: <20260818-configfs-v1-0-a2329043cf86@cloudflare.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>, 
+ Breno Leitao <leitao@debian.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
+ Frederick Lawler <fred@cloudflare.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1753; i=fred@cloudflare.com;
+ h=from:subject:message-id; bh=4Dr8FUckZZs6x07b+xsKvc6HgeTnce7Z1vxgvZfvoJU=;
+ b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqhLP9geiL+zExdgGlu6I2vB3H1Nmq+DpnXKnnD
+ iOAuL1cpp2JAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaoSz/QAKCRCrJbR2A5LT
+ bdKiEADoWx9BRs0O46WPuq+MDXdp1N3M3QreUWuMnNAVw4Ky/3IG8DmWgIoGxMzcRZomE4vNk8t
+ MGT3K7t6DZ4x6Yvd4gbP0pgLdrUnWzXfFrThoa3SW2icHYtdAwW8DbK5IWIob7zTAmVqLXRYiOe
+ UmZRlFjAnTzu0uthejnbCkoFxy08oiO7aOx4pVVCbFD3PgAhvEzfLO5BW9UGncde9eNlzzeNRr/
+ MVB+F71zPn+88yiYeEvTPydnRUss7ODtt+vXaAIhMjrSgQOSmiyvCzUAD7bUuws3JD5yT/V89v+
+ s2CvnIv/9Tr0MUxfBLsPuXTskoiMzGTDcm445BkW/66k4SmpJts/a+7Mz3GW3P5jA/NMFsTPZ9l
+ QNcMit0wuUw9vwZbF8CC+g0StQgmzHoYMqrLRB2+fJIA5iRUi+7pu8pgY6DqJeGVmLfC1BjwX8f
+ yd/prGfsdrQj/HFoSQH+fQPYDhtOu0m1Hxn09ZC9Be7m712GPcCI36GwplkjO2wMCbuPvAflmNR
+ cw4xKhMkoCpBBQAlKCwf36L3j8lnGjPjqtRdmohqkDic0w50IKG9dEhRGbl+XNlXFxj5OGzz+uL
+ yKq8Oyr1hgRj8eQVketEXTF6LXlW7Y3IylTPq3JgT3PV3BsRxqrqLlDYZnHcegUJBZWRg2HQ3l/
+ bW+kURz9M4JVg4g==
+X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
+ fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
 
-On 8/17/26 10:25, Baoquan He wrote:
-> On 08/17/26 at 03:38pm, Baoquan He wrote:
->> On 08/16/26 at 02:13pm, Lukas Wunner wrote:
->>> On Wed, Aug 12, 2026 at 12:08:39PM +0200, Jan Sebastian Götte wrote:
->>>> I can imagine one alternative way to approach this, tell me what you think:
->>>> Instead of registering wipe handlers that memzero places on panic, I could
->>>> put an optional registry of (addr, len) descriptors into crashkernel memory
->>>> that the original kernel populates with the PAs of buffers to clear ahead of
->>>> time. Then the kdump kernel could do the actual memzero. This would remove
->>>> all code from the actual kdump path here. The registry could be made
->>>> per-core to avoid locks.
-> 
-> If this has to be done in kernel, your (addr, len) registry idea is a
-> better direction, and we can make it a bit more general.
-> 
-> Instead of a secrets-only wipe registry, consider a small "crash memory
-> region" table with an action per entry:
-> 
-> enum crash_region_action {
->      CRASH_REG_WIPE,   /* memzero, then dump normally (leave zeros) */
->      CRASH_REG_SKIP,   /* do not include in the vmcore at all */
-> };
-> 
-> struct crash_region {
->      phys_addr_t addr;
->      size_t      len;
->      enum crash_region_action action;
-> };
-> 
-> void crash_reg_add(phys_addr_t addr, size_t len,
->                     enum crash_region_action action);
-> void crash_reg_del(phys_addr_t addr, size_t len);
-> 
-> Two actions because the use cases differ:
-> 
-> - WIPE is what you need: zero the secret,
-> - SKIP covers things people do not want in the dump at all
->     — Registering as SKIP reduce dump size. I have been considering how
->       to shrink vmcore size on some big system with huge memory, the
->       vmcore size usually is several or tens of GB.
-> 
-> If this is OK to you, you can start a regiestry table
-> infrastructure with wiping secrets, we can add SKIP later and plus some
-> driver used memory.
-> 
-> I am not sure if it's satisfactory, but you can give it a shot to show
-> what it looks like.
-I think that's a good idea. I'll post a patch adding that registry this 
-or next week.
+IMA shouldn't measure or appraise configfs, but currently does because
+it's missing from the default exclusion policies. Move CONFIGFS_MAGIC to
+magic.h to expose the file system's magic to IMA, as well as other userland
+applications.
 
-Thanks,
-Jan
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+---
+ fs/configfs/mount.c        | 4 +---
+ include/uapi/linux/magic.h | 1 +
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fs/configfs/mount.c b/fs/configfs/mount.c
+index 4929f343118946eaa55a539db4192e9c6621a8dc..d8cac1cbf3bd573a0549f2f044714c9d669205a4 100644
+--- a/fs/configfs/mount.c
++++ b/fs/configfs/mount.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <linux/fs.h>
++#include <linux/magic.h>
+ #include <linux/module.h>
+ #include <linux/mount.h>
+ #include <linux/fs_context.h>
+@@ -19,9 +20,6 @@
+ #include <linux/configfs.h>
+ #include "configfs_internal.h"
+ 
+-/* Random magic number */
+-#define CONFIGFS_MAGIC 0x62656570
+-
+ static struct vfsmount *configfs_mount = NULL;
+ struct kmem_cache *configfs_dir_cachep;
+ static int configfs_mnt_count = 0;
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index 4f2da935a76ccae6e1c3310b2fae5379186548b8..d5b9958ddfaae90b270b66fe7853c5a3d49ce739 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -8,6 +8,7 @@
+ #define AUTOFS_SUPER_MAGIC	0x0187
+ #define CEPH_SUPER_MAGIC	0x00c36400
+ #define CODA_SUPER_MAGIC	0x73757245
++#define CONFIGFS_MAGIC		0x62656570	/* some random number */
+ #define CRAMFS_MAGIC		0x28cd3d45	/* some random number */
+ #define CRAMFS_MAGIC_WEND	0x453dcd28	/* magic number with the wrong endianess */
+ #define DEBUGFS_MAGIC          0x64626720
+
+-- 
+2.43.0
 
