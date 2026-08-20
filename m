@@ -1,172 +1,170 @@
-Received: from mail-oi2-f1.google.com (mail-oi2-f1.google.com [74.125.231.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAAB26ED4F
-	for <linux-integrity@vger.kernel.org>; Wed, 19 Aug 2026 23:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC394502F;
+	Thu, 20 Aug 2026 00:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787183144; cv=none; b=FrsNUYrBoWCTMlsEb4++iC69cgU02eXlllzTKBN7pECcp5VRGm2eI/2hFXDmZwK5xx+eYLr/zrx7taf5w3LaTL6jLkQpCRZfdBw39l92eiYLKNdqY/oSkSvW5FSZEp6HR66bozhiFbPy6oiQU1bEDthOSRMgU74F1CxcEtnyWeQ=
+	t=1787184648; cv=none; b=P17WTmLotkAtsI61RWxfccW5sRvQrTp8UwXAFJ/LjhLfuTMwjwE2QoaT5+EcynCxI+kCpFm5OajyTcpfzrn6ftJIxJhSzkJXVy3fNjFiqVpzeukfpM4H4MTfb2IKD19PyBH3tp8ET/hbdIoY02K1NGLCjirM9caaw7g7RbiTymI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787183144; c=relaxed/simple;
-	bh=oFpEEkzZuw0/h/6GrG817pqCoPcXIXnRLQcyhoYplYY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jsU+pt5q1ww9mq3Wr5M7pGoqK6taMMEmhQKfqEqj5vFWuCLpHCWOBj6hCNNEFL8KihWYuyKOytUHDh2h7ax7fAaKuoREpZlB/Q40sqwsh8g0uFLMqhJ9EuwOY+1EoCi4WSEzbHw3H375EXycjI0pagCcCIEkipvc9ii7Ew5hNRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=IISIJqeT; arc=none smtp.client-ip=74.125.231.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1787184648; c=relaxed/simple;
+	bh=rHg+HJ0PnKLAvlmQUVhhMUtJiNJcZgRm/7GSxGvJssI=;
+	h=Message-ID:Subject:From:To:Cc:Content-Type:Date:MIME-Version; b=hkZ+sPO7kHW5rPYQt0D2t30yRdL4qojuKg7M/OpeswFZawE8i5qVpYtrPru2Fe6LE8Kzr8XXqaY+uDoH6XcLbE1SjEbqyvuj3ILW96USHEVgcU++3/WniBNZwAwCG3Ju/3ROxAbTN/z9NjIMcE0ACRTBV3tzwS8eQOt1qGmendg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S3Ear7Me; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="IISIJqeT"
-Received: by mail-oi2-f1.google.com with SMTP id 5614622812f47-495f936d5ecso427423b6e.0
-        for <linux-integrity@vger.kernel.org>; Wed, 19 Aug 2026 16:45:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1787183138; x=1787787938; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=XAWmDaL9ozcPdtpfoj1zroE11nOQ3lqCom2P7tPqO1M=;
-        b=IISIJqeTbXPTrnm65gTPFOuSRqHK1vPOPQrkpNq0m9Kg7+6DNgMaibh5aYWsDsAzYt
-         +qBR8PCs8000A87S9JR7tIt+URb0+01z+fG1h4+bQyIKDhv4zUpECrV+9tZp419gMVeN
-         8RuEVynhG0WkKJAOAAFRcWKwRQnID/AQILwxYQrtWO4wQsVcCAL1XnJpcvVpxT5Z2rzl
-         ib6ynJtT8vLlga3Gl/BJxRwWniVHeMKe8sV59TaUg3WX43LRI+XDjzLYAjeeqJ8I7/tu
-         uSC6eoNAQR9ieVk8MCPVOb+Y3l61csNLEOmLv0qsL6V99L2XEEe4A4cjZLqbEM5QrmZL
-         t0cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787183138; x=1787787938;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=XAWmDaL9ozcPdtpfoj1zroE11nOQ3lqCom2P7tPqO1M=;
-        b=YqggRZIlIFlxRA8VZXuwab/c3QOpLyayQQgA+J2kr7nyphSLySDA0TFoKvZafrk6Ie
-         ljNj7ZrKQ2Kskghpo958/ZCobJu5PbUj1fU3qv6mEAQuEV4EeBxTJ8z2P1DCBrhlurnX
-         l6tmluMBnW86ovw+w9M3RgF2Nm64BiLrP4tSXBaIB/e1Xk5jtwNvoXs8z9m5eVYS10Uk
-         cQJtm9IQx0Zrt5RwbTXRvZgiN2gYnY7gH50Huh5Aw7vLl8lOT+vyBo/ZT534cPPJ9bTx
-         pSEe1bzbz3DSdetuRq5QrzUZ1uQPYakEC3SqAXcGzaJTfJ7LwvydaxPPxSil54yK2xVb
-         1ssQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rpb8+pLxcE5mPdpWYsL5As34uvovHc8bwlaB7y8OGHgrfuGaC1NrfyftRuDFMcuiJ5HW21xCHO2rf3KhGk3bgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVnA11b/i32BLFap9kp3IBhHxQoFEMOrZtPt4XRcQ4asm1Js3Y
-	AuFO8v6lvCazXLwrLLMLwTovkqJ09ZNg5HqKTNwNynOSNGLUqKdmbIeP+dOKeywtxYY=
-X-Gm-Gg: AR+sD11kB9FBE0ZvREKXBzoyuxPBGJ8T0FxHHD6moiJJ4hfzZY2VBJEgmFLAoPLIt5D
-	VQMCu3PQUtXZDCWsI69T1Y6YHwUVazsP4d2HmHbxiqvWqhQuwhvcYMOFUivhHCMFDffl62x+Z/c
-	wGr0Mu8fXn1ui9TYc/zuhKIg81GF1eRvJNdfW6dYnMrG8vcIN2h6WxG3AbS/p0P9achfcP/HOv9
-	cM5SU1AT/dxs06cnTJYF9UllXPPq7A/ROH4x/OIG+HQHeDvMRgZk/E0ZRXtWPJZuBILkzyBm2Ag
-	XtHGl1Jd5lZGlt0/f5AH6taaqvHeyhQUcWDQeDx7U0L0vN1X3xjF1TypcsdglnUwJxM23mynePU
-	zmUlOySRJf4RGR/YJ/HFVWe6s1y47cZdVPG3JFEGIGH+i6dQI0vroaMV4TZl+bMygTas74mVNM4
-	lLU4kqub6Wz4hIwOVZRAIoDtiYb4zPZ11wivXpdWBXSbfb
-X-Received: by 2002:a05:6820:4dfb:b0:6ab:13:b207 with SMTP id 006d021491bc7-6b13c628f09mr7498861eaf.27.1787183138499;
-        Wed, 19 Aug 2026 16:45:38 -0700 (PDT)
-Received: from [127.0.1.1] ([2a09:bac6:947f:3af::5e:75])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b13c90d160sm3470216eaf.0.2026.08.19.16.45.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Aug 2026 16:45:38 -0700 (PDT)
-From: Frederick Lawler <fred@cloudflare.com>
-Date: Wed, 19 Aug 2026 18:45:23 -0500
-Subject: [PATCH v2 2/2] ima: don't measure/appraise files on configfs
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S3Ear7Me"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67JLVx4j3544030;
+	Thu, 20 Aug 2026 00:10:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=ds1YuBYaGoYYTKoA49Gp2LjFwVhj
+	mlEJkESIqYklsEM=; b=S3Ear7Meux3fUkBigSKvEh2xeHVvKsIDX8YvFifxkRr3
+	oPLvaYq4ufR0HMOTg+8eMa0+T7J2Yn7MksCOoE2ShDt2qHtj5F97sZ0KYZ8Xl98Q
+	cHdc1mDauwXE+Xb6epO0pIXmwnr6zvnD8be4nUaERg9rSZvvEBpChfdnJfGOJAMs
+	xBDQ7oYdksSXcehXQnKcRcp+ZZW2FThCVTfzlNme0zRhq2x9/DsPsQNBl+0+xW+F
+	vL9SkZ1RlcOUdGdmXEMXAKNtr/Hs9wTm7h3wVa7z5S3EEo3fH7iWRMKsGnexAFgS
+	o67CRytqyFP8MhoYjBrwLPPL99cAL+yioKVQD48tnQ==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g4yu26ss7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Aug 2026 00:10:40 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67JNuVje003619;
+	Thu, 20 Aug 2026 00:10:40 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4g33xhbhs4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Aug 2026 00:10:40 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67K0AdNb13238808
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Aug 2026 00:10:39 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D531C58045;
+	Thu, 20 Aug 2026 00:10:39 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5846A58052;
+	Thu, 20 Aug 2026 00:10:39 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.90.157])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Aug 2026 00:10:39 +0000 (GMT)
+Message-ID: <6246d8de26d1cce22b4c2e5f53891fff44af02ca.camel@linux.ibm.com>
+Subject: [GIT PULL] integrity: subsystem fixes for v7.3
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel	
+ <linux-kernel@vger.kernel.org>,
+        Roberto Sassu
+ <roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 19 Aug 2026 20:10:38 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260819-configfs-v2-2-cb6e65d11589@cloudflare.com>
-References: <20260819-configfs-v2-0-cb6e65d11589@cloudflare.com>
-In-Reply-To: <20260819-configfs-v2-0-cb6e65d11589@cloudflare.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>, 
- Breno Leitao <leitao@debian.org>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>, 
- syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3142; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=oFpEEkzZuw0/h/6GrG817pqCoPcXIXnRLQcyhoYplYY=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqhkAcjHzG/qYuRMvT477GhsiecXpJmpmZ+kUik
- MSqeZmGa2mJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaoZAHAAKCRCrJbR2A5LT
- bbLJD/9vc+sLrrAclb35dsYrwJ7oYmcDmAS3qVF7MzUZO5x1fYWx4kwedfpm0L+CKwMTqEv2if8
- visFeiT2CYEaiPBCr6pg6I57TeuFuIrGIDQp5ma4lZdM9CLIiA4ncx/Otex6JxNdbGdvLmJo0Yy
- X1m94AT3jJkEP7azM8jTP1+BB/WZEbwK8Y45ZKwyNth2J6yOxw/3n6q6aYFI87NcbTTGsDyHfGa
- YPVD+vGMlm7CwI6sW9Argi9+I9eFs0vq39RscMFzIqOdQotu9Pyk7NgwzUbJFG2b9B2Vdr8bl/t
- KNyWr76ZH5llepvFgJ7K9sZWrVuuWYKI9lNPgVPyva6IRMmhZtfOjF6iyVVaB3mD5ZYN1lnXnok
- lSSKYpbt2vxa+KZrYE3LAfxaLDTcb78v3bZ9mLbHn5sPuXBLsnY884N0jCw/cjFA0tU6/D0avaN
- ccUYcVQmZWTZ9/FfrPWG9oKBMqDWu2E6MVEdZEcAmjbMEU2K2hwsITiZa76uBom+8DcGyWb3fVo
- +fyqkNe9G76pRV7Epv8WN3JXfLfpq1avTL7tCL/BtI5THwNVmgTGGfVY+HlXBJIFbkOPK61WQWj
- +3F5rd/PfKJSHVgsFTXZADuiPHfLZMw7MYfzsbJgkQM4JJwmhFZAIb/3ydtjeUSTcwS0oHCcdrq
- jHXJKWBSdH+UXCw==
-X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
- fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=AdqB2XXG c=1 sm=1 tr=0 ts=6a864600 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=VwQbUJbxAAAA:8
+ a=Ol3P_JN7KJFd9DtwO2UA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: W6dTi73dFDrPetv4WNbwnv_ZQXATh9mY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE5MDE4NCBTYWx0ZWRfX8wKiAbtUNqul
+ 7sdL9JluV48EAriXVletRg0264M3g0uQvrLzAEDA8MKl/4vbPd9rEaYIucPVq2e7vHhT09pwZ9b
+ pg5/kq0T0Qz4GAuCi21d99UNQ77fRZnv6ALiiYM9tt65XCiVALJMxP1uhygHWiuOtm66oYkr8SG
+ hnCZka0fmwjjVfj6jgjaONsfsIhf3OqLkR/JvfKBJ2xUC2vb0vBPlOxVOCEWfNR/D+AoGfv5mjL
+ OITD7Igpp/Mf2XazEdCitefa379MvMFpWNA0z9P7iez9C11LvcBnYsUGvFeoexYw4JoR5uAWeo/
+ re0T6cSxSFQFJK6pJhzlZqPy47lpOhqnsUATZ/zRXLxQI+cOkvtVJr9FShUOlFSbNzGTXKY2C5/
+ PUdx0fjcM72bDkEeJsUHdEdGUcnPwYV5NzIzZdiaNvolWxWxB2Fu/If0/uLO2XPfyEXQRtfcJ1N
+ gk0JjfKQyGpPRa9bLYw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODE5MDE4NCBTYWx0ZWRfXwYIFLl62DgEC
+ wwv4WWn4BJqnTKhG1NNRVyrGpXkP1N81HLVHTIV32FdKfhjUAdFlT/T+aAAKz4Vte7kpKk0tB3v
+ 4MmVS8brP0IAMyF7wzwcefoH2Z87/rs=
+X-Proofpoint-ORIG-GUID: W6dTi73dFDrPetv4WNbwnv_ZQXATh9mY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-19_06,2026-08-19_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 suspectscore=0 malwarescore=0
+ impostorscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0 phishscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2608190184
 
-IMA measurement of a configfs file causes process_measurement() to hold
-iint->mutex while performing a kernel_read() to hash it, which re-enters
-configfs's own file locking (buffer->mutex, frag_sem).
+Hi Linus,
 
-Separately, opening any file with O_TRUNC now causes ima_file_truncate()
-to take iint->mutex to reset the cached action flags, while sb_writers is
-already held for that mount.
+There are two main changes:                                                =
+    =20
+                                                                           =
+    =20
+- TPM initialization is sometimes delayed until deferred_probe_initcall. Si=
+nce
+ordering is not guaranteed within the same initcall level, IMA may initiali=
+ze
+before the TPM and fall back to TPM-bypass mode.  A new config option,
+CONFIG_IMA_INIT_LATE_SYNC, allows those building the kernel to defer IMA
+initialization to late_initcall_sync, accepting the integrity risk of missi=
+ng
+early measurements in exchange for avoiding TPM-bypass mode.
+                                                                           =
+    =20
+- The raw policy rules are now measured, as well as the complete policy, cl=
+osing
+a gap in integrity measurement coverage.
 
-When a configfs-backed nvmet namespace is involved, these two independent
-lock chains combine into a cycle:
+thanks,
 
-iint->mutex -> configfs locks -> subsys->lock -> sb_writers -> iint->mutex
+Mimi
 
-Add configfs to the builtin don't measure/appraise rules, similarly to
-other pseudo file systems, so IMA never takes iint->mutex for configfs
-file in the first place.
+The following changes since commit b80bed5c871a80151351342c065579405ce77145=
+:
 
-Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/6a77c7cd.b50370da.49fe0.0031.GAE@google.com/
-Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
----
- Documentation/ABI/testing/ima_policy | 3 +++
- security/integrity/ima/ima_policy.c  | 7 ++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+  ima: Instantiate file_truncate and path_truncate hooks (2026-08-04 12:35:=
+02 -0400)
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 19258471b7b26b2c42c1ab2d11b4fd630b2e6f81..b8a763e4c9fb1a5ccca97518e80e0452554c9e96 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -108,6 +108,9 @@ Description:
- 			# NSFS_MAGIC
- 			dont_measure fsmagic=0x6e736673
- 			dont_appraise fsmagic=0x6e736673
-+			# CONFIGFS_MAGIC
-+			dont_measure fsmagic=0x62656570
-+			dont_appraise fsmagic=0x62656570
- 
- 			measure func=BPRM_CHECK
- 			measure func=FILE_MMAP mask=MAY_EXEC
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index f79d07bb63c6fc4ba6fe594140de8d59f57e4f0b..68d9a5e6c232ea0678e9f51f105cebecccccb43e 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -165,7 +165,10 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
- 	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
- 	 .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
--	{.action = DONT_MEASURE, .fsmagic = EFIVARFS_MAGIC, .flags = IMA_FSMAGIC}
-+	{.action = DONT_MEASURE, .fsmagic = EFIVARFS_MAGIC,
-+	 .flags = IMA_FSMAGIC},
-+	{.action = DONT_MEASURE, .fsmagic = CONFIGFS_MAGIC,
-+	 .flags = IMA_FSMAGIC}
- };
- 
- static struct ima_rule_entry original_measurement_rules[] __ro_after_init = {
-@@ -211,6 +214,8 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
- 	{.action = DONT_APPRAISE, .fsmagic = EFIVARFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
-+	{.action = DONT_APPRAISE, .fsmagic = CONFIGFS_MAGIC,
-+	 .flags = IMA_FSMAGIC},
- #ifdef CONFIG_IMA_WRITE_POLICY
- 	{.action = APPRAISE, .func = POLICY_CHECK,
- 	.flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+are available in the Git repository at:
 
--- 
-2.43.0
+  https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git=
+/ tags/integrity-v7.3
 
+for you to fetch changes up to f1e10b10874051e4d99911dae0dd7b75a9f8ae66:
+
+  ima: measure userspace policy writes before parsing (2026-08-04 12:35:03 =
+-0400)
+
+----------------------------------------------------------------
+integrity-v7.3
+
+----------------------------------------------------------------
+Enrico Bravi (2):
+      ima: add critical data measurement for loaded policy
+      ima: measure userspace policy writes before parsing
+
+Jonathan McDowell (1):
+      security: ima: rename boot_aggregate when ima is initialised at late_=
+sync
+
+Yeoreum Yun (2):
+      security: lsm: allow LSMs to register for late_initcall_sync init
+      security: ima: introduce IMA_INIT_LATE_SYNC option
+
+ include/linux/lsm_hooks.h                 |  2 +
+ security/integrity/ima/Kconfig            | 10 ++++
+ security/integrity/ima/ima.h              |  5 ++
+ security/integrity/ima/ima_efi.c          |  2 +
+ security/integrity/ima/ima_fs.c           |  9 ++-
+ security/integrity/ima/ima_init.c         | 15 +++--
+ security/integrity/ima/ima_main.c         | 26 +++++++++
+ security/integrity/ima/ima_policy.c       | 95 +++++++++++++++++++++++++++=
++++-
+ security/integrity/ima/ima_template_lib.c |  3 +-
+ security/lsm_init.c                       | 13 ++++-
+ 10 files changed, 170 insertions(+), 10 deletions(-)
