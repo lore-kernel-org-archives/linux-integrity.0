@@ -1,39 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2262E92BA
-	for <linux-integrity@vger.kernel.org>; Thu, 20 Aug 2026 23:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F189475;
+	Fri, 21 Aug 2026 00:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787268970; cv=none; b=B79CGGDeSmcbaLn2VGaU8BLPJ/MFPzdkR4uHQtgIvFEYv2SHX56/ec9XUm1gd04XZtdr4p9aqcEKNxLrup9dQ2ejSEThZymiyIspdRcYS6kkmGUU/2cfZ7Bs7ONGampJkhYCIEQj1gP7a1YopFkr44yoUpn1szOcMRAyqXrGnKg=
+	t=1787270613; cv=none; b=R5QYSMoczMqiIVeoENz+kOHZaaHKEyeNqCG/1xkwIBIt1p6Og3PLSIZTiDc6b03Ty75afNu9FRWanlvKLhELf9PPw6MCyS26YC1tLSsKJ+MGLfYYaATkW7CeGm4Skl+7VjLpONTpmVYzPd4vYdSOVLxbP1GU9m9qau38X8fKRSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787268970; c=relaxed/simple;
-	bh=k56U3/TeDJx4xaZCeNeCMqtTl0gFlsMrMqeRe3SqIng=;
+	s=arc-20240116; t=1787270613; c=relaxed/simple;
+	bh=uOVKZFnPH8o5K67dQhSo+RueQptoFuVeeYd5o/6x+7k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZSwMbd9g1g3MSiLJt988BYi7nYTvt+z7spPczAGw3mTykr3ppYagAG8zTJR753T2jqrptlEICTLf8VNXg+JxvyWkEMwA88s3V5iDyC9VoqKW1K/19MN1yuZJuvzRncA4Q8/SAd+LI1dZDjbc9OaaVTUHff9ZWvyQlWKzo4lxVuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZWk7zBN; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxL6NVHnQKKTKlaG+L8/NQ+ua87tUkf3PO/NjjBnf0n4Y9IzDKPqvgjF8Y82tRtJ3kB96aE8KF6Cn4j3UY6N6JSoHi0UjQZ/XH6Yr2Wvilg7sqTvP21p4r8vIQHNC8Kv6Ig2XG2j7bio1qr+zse9/awN7PuX/oWI068pVbN89Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5n9wv3U; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZWk7zBN"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BE1AC1F000E9;
-	Thu, 20 Aug 2026 23:36:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5n9wv3U"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 332111F000E9;
+	Fri, 21 Aug 2026 00:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787268969;
-	bh=3wWbCywc7rHk7M10qNsMrsFx3GqV+4Ia0dAz6sbHjPo=;
+	s=k20260515; t=1787270611;
+	bh=ZMOaH3Ifg3zYiZwwfg92Dtd+BEAAcTWCMj96C6OWaGM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jZWk7zBNRgiz/Y6dWJ/kMA/EAQysiR8lOuo0Me+q5KFcU99kVLckr+fociLZbYJ0P
-	 0fenrSbvGCY5UiB0XyPdTnFNKF2qdDgGS42s7kKMjbkziv2DSVL3xGZcTGIyrXsOyx
-	 erRCVUcScLzUcXDJx7vCrlu6yrKMmtkfZvY8EK09pjEypRqK0nseI7T6ACIIk5MAwW
-	 7fUAzviasvTlFn49kGqvEAfItpm1UNWuTsEYibi7Y/30P0iSXJ2OMo8XXmx0pL1YUU
-	 WdsFADkchrwSXCCT47Rem0M1/hT5d0Y5aUdPLS+Vo7IbD8GxvZFmacg4ZBFjMqlrIU
-	 s3qtWe8e5MGxA==
-Date: Fri, 21 Aug 2026 02:36:05 +0300
+	b=Q5n9wv3UMuIVNNtVKpB/5iBO0z0hHn44PwV1f8lGZiseBX3KpLBrj8LSwLjuHfYVi
+	 2xEJGYCUWNlSAoQGLMTu0n6W7+YVC0xM603C5E4M2LMnRwszD7U7apnB2DH7LyZEEy
+	 MewwkKkgwnfS93c8wliAkPhSz3uStjsRkXD1RiiUjUG7vrTQRZNy8SrkUS6TqjrAvs
+	 S4pQ+3I1A3ZmfLPA3mjgPM08n496rdfLcI0qvucw1QOIw6m8dvjh5j/THArm0ZQWB7
+	 VwghisgiE7f9jIgvXGML7lN8Gz51GaeSryRsFA9A23jXHeHIRHwXiAxVeXF3OF9kBE
+	 kYIzG0zQjDBuw==
+Date: Fri, 21 Aug 2026 03:03:27 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Li Jun <lijun01@kylinos.cn>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] tpm: tpm_tis_spi: fix nodef CR50 tpm_tis_spi_resume is
- null
-Message-ID: <aoePZSImVOBKHyZ4@kernel.org>
-References: <20260812100914.3540149-1-lijun01@kylinos.cn>
+To: Thomas Huth <thuth@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 0/3] lib/crypto: Provide a function for zeroizing
+ hmac_sha1_ctx
+Message-ID: <aoeVz8FsDOEP32M2@kernel.org>
+References: <20260812163336.3103835-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -42,43 +53,37 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260812100914.3540149-1-lijun01@kylinos.cn>
+In-Reply-To: <20260812163336.3103835-1-thuth@redhat.com>
 
-On Wed, Aug 12, 2026 at 06:09:14PM +0800, Li Jun wrote:
-> if no define CONFIG_TCG_TIS_SPI_CR50 in config,
-> the add of tpm_tis_spi_resume is null, this cause the tpm chip to
-> fail to resume.
+On Wed, Aug 12, 2026 at 06:33:33PM +0200, Thomas Huth wrote:
+> It's maybe not worth the effort for hmac_sha1_ctx right now (since there
+> is only one spot that forgot to zeroize the structure in case of errors),
+> but offering a function for zeroizing the data via __cleanup might help to
+> get future code into the proper shape right from the start. Thus let's
+> introduce a hmac_sha1_zeroize_ctx() function now and use it in the
+> appropriate spots.
 > 
-> Signed-off-by: Li Jun <lijun01@kylinos.cn>
-> ---
->  drivers/char/tpm/tpm_tis_spi.h | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> Thomas Huth (3):
+>   crypto: Provide a wrapper for zeroizing hmac_sha1_ctx
+>   security: keys: trusted: always clear the hmac_sha1_ctx before
+>     returning
+>   lib/crypto: sha1: Use hmac_sha1_zeroize_ctx() instead of
+>     memzero_explicit()
 > 
-> diff --git a/drivers/char/tpm/tpm_tis_spi.h b/drivers/char/tpm/tpm_tis_spi.h
-> index d0f66f6f1931..ced416ecd92c 100644
-> --- a/drivers/char/tpm/tpm_tis_spi.h
-> +++ b/drivers/char/tpm/tpm_tis_spi.h
-> @@ -40,8 +40,12 @@ static inline int cr50_spi_probe(struct spi_device *spi)
->  }
->  #endif
->  
-> -#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_TCG_TIS_SPI_CR50)
-> -extern int tpm_tis_spi_resume(struct device *dev);
-> +#if defined(CONFIG_PM_SLEEP)
-> +	#if defined(CONFIG_TCG_TIS_SPI_CR50)
-> +		extern int tpm_tis_spi_resume(struct device *dev);
-> +	#else
-> +		#define  tpm_tis_spi_resume tpm_tis_resume
-> +	#endif
->  #else
->  #define tpm_tis_spi_resume	NULL
->  #endif
+>  include/crypto/sha1.h                     | 17 +++++++++++++++++
+>  lib/crypto/sha1.c                         |  2 +-
+>  security/keys/trusted-keys/trusted_tpm1.c |  2 +-
+>  3 files changed, 19 insertions(+), 2 deletions(-)
+> 
 > -- 
-> 2.25.1
+> 2.55.0
 > 
+
+Looks right to me:
+
+
+For 1-3:
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-thanks
 
 BR, Jarkko
