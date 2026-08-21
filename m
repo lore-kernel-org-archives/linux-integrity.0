@@ -1,50 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F189475;
-	Fri, 21 Aug 2026 00:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69B51AF0BB;
+	Fri, 21 Aug 2026 01:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787270613; cv=none; b=R5QYSMoczMqiIVeoENz+kOHZaaHKEyeNqCG/1xkwIBIt1p6Og3PLSIZTiDc6b03Ty75afNu9FRWanlvKLhELf9PPw6MCyS26YC1tLSsKJ+MGLfYYaATkW7CeGm4Skl+7VjLpONTpmVYzPd4vYdSOVLxbP1GU9m9qau38X8fKRSI=
+	t=1787274470; cv=none; b=SPtGDHfMrBkvEMaYlclvSf/CfLftXYvKEwWL6bTMhE4Bh2wJyi8q7QPcFjx10xcLzKa86zbQHrBsNBnc9cuBr8LD9lvWtr5oot0JvH39mWmTQXKqrLeOIjKV4zGr2asPOqPbqzayEvS1YIoBAWILnyIlN19Japi1+sG91vrHe8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787270613; c=relaxed/simple;
-	bh=uOVKZFnPH8o5K67dQhSo+RueQptoFuVeeYd5o/6x+7k=;
+	s=arc-20240116; t=1787274470; c=relaxed/simple;
+	bh=Qe/hLCLYVsNekNUW0rTbmhzhv2y6kmoRK6z3G/vnB+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxL6NVHnQKKTKlaG+L8/NQ+ua87tUkf3PO/NjjBnf0n4Y9IzDKPqvgjF8Y82tRtJ3kB96aE8KF6Cn4j3UY6N6JSoHi0UjQZ/XH6Yr2Wvilg7sqTvP21p4r8vIQHNC8Kv6Ig2XG2j7bio1qr+zse9/awN7PuX/oWI068pVbN89Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5n9wv3U; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuW87M+V6lNRTZVp9yWSlAU/OyvnMUTDTp/E/R79Tz5FLjSrwWP5T5TMGrEWIJU0JQuTJDTpugXmjZIfVPa+5CJaFPdrHeTPb7mrmj3qt/sIWkzFlXlhlU9QdgmlSdfdr0CsFnCfHAVx6LbUZv44ibDI/gOKRoXaRjSxG9cmNW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaZGx4Et; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5n9wv3U"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 332111F000E9;
-	Fri, 21 Aug 2026 00:03:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaZGx4Et"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D05D61F000E9;
+	Fri, 21 Aug 2026 01:07:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787270611;
-	bh=ZMOaH3Ifg3zYiZwwfg92Dtd+BEAAcTWCMj96C6OWaGM=;
+	s=k20260515; t=1787274469;
+	bh=5ixlCRupb3RSD4KscFNJPtgLQAVPkqF4+DHdRz/PTYw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Q5n9wv3UMuIVNNtVKpB/5iBO0z0hHn44PwV1f8lGZiseBX3KpLBrj8LSwLjuHfYVi
-	 2xEJGYCUWNlSAoQGLMTu0n6W7+YVC0xM603C5E4M2LMnRwszD7U7apnB2DH7LyZEEy
-	 MewwkKkgwnfS93c8wliAkPhSz3uStjsRkXD1RiiUjUG7vrTQRZNy8SrkUS6TqjrAvs
-	 S4pQ+3I1A3ZmfLPA3mjgPM08n496rdfLcI0qvucw1QOIw6m8dvjh5j/THArm0ZQWB7
-	 VwghisgiE7f9jIgvXGML7lN8Gz51GaeSryRsFA9A23jXHeHIRHwXiAxVeXF3OF9kBE
-	 kYIzG0zQjDBuw==
-Date: Fri, 21 Aug 2026 03:03:27 +0300
+	b=SaZGx4EtkcsZjVuMIFbZiVSPKvMCPdR4un73a5Zj2uR5GD3bG/gp4C7FjxUSGt1u3
+	 Hm419rV4V8lIrmsa3sxpT5olQPDBLDOvFv9Dn3cWW5GRITjYdlVOcn25+3v3BrWTLA
+	 XU6tY3rNzSrHftimVZjyhd2gLPY9/QQ5bTBkbXk1ahWd9KvPc19s++/1T1WhfKHOH4
+	 tcV8uEdWsdub3Loynlsusg7AnQT7Xn7sLMUXBiknQHLqPD1L2/vibYM2yIR+gQBEdx
+	 KfeWZ36UkqPPAbyHZwv7eoSncJG9z0W/V4YmpH5HxXtjAVh8iNLT97bBMlNOP8MoXY
+	 SRvuG0mrPnXWw==
+Date: Fri, 21 Aug 2026 04:07:45 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thomas Huth <thuth@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/3] lib/crypto: Provide a function for zeroizing
- hmac_sha1_ctx
-Message-ID: <aoeVz8FsDOEP32M2@kernel.org>
-References: <20260812163336.3103835-1-thuth@redhat.com>
+To: Ruoyu Wang <ruoyuw560@gmail.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] tpm: st33zp24: Return zero on status read failure
+Message-ID: <aoek4RzTzKQeswUd@kernel.org>
+References: <20260813153032.3951878-1-ruoyuw560@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -53,37 +42,50 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260812163336.3103835-1-thuth@redhat.com>
+In-Reply-To: <20260813153032.3951878-1-ruoyuw560@gmail.com>
 
-On Wed, Aug 12, 2026 at 06:33:33PM +0200, Thomas Huth wrote:
-> It's maybe not worth the effort for hmac_sha1_ctx right now (since there
-> is only one spot that forgot to zeroize the structure in case of errors),
-> but offering a function for zeroizing the data via __cleanup might help to
-> get future code into the proper shape right from the start. Thus let's
-> introduce a hmac_sha1_zeroize_ctx() function now and use it in the
-> appropriate spots.
+On Thu, Aug 13, 2026 at 11:30:31PM +0800, Ruoyu Wang wrote:
+> st33zp24_status() ignores the result of the transport read and returns
+> data even when no byte was received. The I2C transport, for example,
+> skips i2c_master_recv() when the register-select write is short or fails,
+> leaving data uninitialized. The resulting stack value can be interpreted
+> as TPM_STS flags and let status checks complete spuriously.
 > 
-> Thomas Huth (3):
->   crypto: Provide a wrapper for zeroizing hmac_sha1_ctx
->   security: keys: trusted: always clear the hmac_sha1_ctx before
->     returning
->   lib/crypto: sha1: Use hmac_sha1_zeroize_ctx() instead of
->     memzero_explicit()
+> The status callback cannot propagate a transport error. Return zero
+> unless recv() reports exactly one byte. With no status bits set, callers
+> retry or take their existing timeout or error path instead of acting on
+> an invalid status value.
 > 
->  include/crypto/sha1.h                     | 17 +++++++++++++++++
->  lib/crypto/sha1.c                         |  2 +-
->  security/keys/trusted-keys/trusted_tpm1.c |  2 +-
->  3 files changed, 19 insertions(+), 2 deletions(-)
+> This issue was found by a static analysis checker and confirmed by manual
+> source review.
 > 
+> Fixes: 251a7b08213a ("TPM: STMicroelectronics ST33 I2C KERNEL 3.x")
+> Signed-off-by: Ruoyu Wang <ruoyuw560@gmail.com>
+> ---
+>  drivers/char/tpm/st33zp24/st33zp24.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+> index e2b7451ea7ccd3..898e8d01d26698 100644
+> --- a/drivers/char/tpm/st33zp24/st33zp24.c
+> +++ b/drivers/char/tpm/st33zp24/st33zp24.c
+> @@ -93,7 +93,9 @@ static u8 st33zp24_status(struct tpm_chip *chip)
+>  	struct st33zp24_dev *tpm_dev = dev_get_drvdata(&chip->dev);
+>  	u8 data;
+>  
+> -	tpm_dev->ops->recv(tpm_dev->phy_id, TPM_STS, &data, 1);
+> +	if (tpm_dev->ops->recv(tpm_dev->phy_id, TPM_STS, &data, 1) != 1)
+> +		return 0;
+> +
+>  	return data;
+>  }
+>  
 > -- 
-> 2.55.0
+> 2.51.0
 > 
-
-Looks right to me:
-
-
-For 1-3:
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+thanks
 
 BR, Jarkko
