@@ -1,129 +1,173 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92FC23395F
-	for <linux-integrity@vger.kernel.org>; Sat, 22 Aug 2026 00:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE27D32AAA8;
+	Sat, 22 Aug 2026 08:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.188.251
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787357752; cv=none; b=fUyJgLl1Rvb4hpfbfpBaqJqmitXT3ULovw65wFKmfZbKCURhA/EIf1f2KGqVEgwNlitq0KvpD7SDM+Piceo4tnPTMQeoYZFc1DLzjWYMhGgWu0nmpnK243iL3GxYiurV5edHxsremAIviWeNQxibRZR7RiNpVDcH634vuLkE7mM=
+	t=1787387154; cv=none; b=YjioKquymiBo0oqjOjZJlUNSK7wWv3I5FEoWViU6/dH9a73L0IuROYolgQqH2/r1Qcr9EDqTGuv4sAqxLtIlreGoTF3cnDjgctKKvoq20hPLx1TdYiKDRsZfpBMn8MpFjn0kYKL7OqkKYd9OeyoSBSTjoUzk9fBarS8azI4QjV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787357752; c=relaxed/simple;
-	bh=1TA2bio4/II8+zwpwrc2qqpC4JhhhuR3h2RWPm5OjLw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XcojHLs2WValEe4mmO9ZvT3Qy4jVBH+dsdFrQm5MeS0lE+T6fMLlvfyvxD/031vANUXjqB46E+h3bBTmLYTQPbBU/wNrvIhnTacKqKk6miJwX+G65HMCCEH1y7i16+r8tLo54Xi88ib6fQndiuL7IFayZrNunH1SGUSQUbGxGYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M4sQVwgp; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787387154; c=relaxed/simple;
+	bh=8SbYoHIqVUdJZchRflRs4wb7rNgWqL2Hq59V1mXAZZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KvPywM0FANaGTOUu2ntI+CbPsj85oou/ItoGp6NFsDSyMAAIMaVIzSsRYIGhBpfwG0vu5PFybKgu17Dd/CF36JK3Z4uQdcwaCgokh/LAuifjNClb3b4pz3L5U9YC/niuArfSHLVyy+kFAUTFzUvMmP2SEZ9LYzeiDEQEdVDruWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=nEL4/Noh; arc=none smtp.client-ip=51.159.188.251
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4sQVwgp"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-47fecbb7000so703913f8f.2
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Aug 2026 17:15:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787357749; x=1787962549; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=D4nn8Adu34scllPu0PVpeNyTmxzz7pa6nBrXKjE6XjA=;
-        b=M4sQVwgpKSzyHi/WYFF2MDekN/8zvNv5wwAxNLtWOI6LIFbaw7THm1hJOFouboWre/
-         tiLQuoLJgtEvi/XWE32fWxHvcjNrN6JXSgOA08HUIMD3gVf1XjDF+kr8UkquC6QBW5/N
-         FJ9Frc9ng5bRDOzeTDlmEvWUZ5GFbmsfGtL8z30X8D3Wg+apdUrgFxT34mSfr9LSVAkv
-         TIHIhieBF9LubggBAi4f96ksUBF0kfh3aNPFbdknS43w2x21XVYvVN2G4P3OjrrV/QdQ
-         W3zUpH1GKk6oJVQbu1l8wYEfDo/mqAANcMmOqRNVzd24gsMN0o707hPlWIYspyalYfrK
-         jEQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787357749; x=1787962549;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=D4nn8Adu34scllPu0PVpeNyTmxzz7pa6nBrXKjE6XjA=;
-        b=VvJUdfEH0zJ9Ob0+q1e612yQhSaFlW3LQEgtOdwEDqTWwwn8Nn8F6GMxDbGcBzrEeH
-         iF61sY3jHuN+QN2Q51Mrx8uh7WJqoNMAxESSNqk6VXSDUxkV5mprd/GOrYJpwnjpSB0U
-         pGaBnk4RmLNjZHZGVFJfRAbMbSJ083XHWxA98SgpH4rM83sWqASj0tovr2Me+Fiqrq7X
-         afl9IaUlrj3DGbmv595/+mx4L28LutgAoeCzVeqFz5Ixl1EsxaaQ8WFOyshVQZy1Ym9k
-         rRBqGksV0suI1ud99bUEoRZWNuFuUNxlGpTZYCX0ZVSAt902DhoBYl8e8rtod1rOvsoy
-         v5eg==
-X-Forwarded-Encrypted: i=1; AHgh+Rr4dO5P/nfQWl4PmmiB6n+D/YrvvGiozxUIg45Bc/7Jv0WrpWMvmwCD+j3t7gS0rA50bRLphHsfmU4CYKk80/g=@vger.kernel.org
-X-Gm-Message-State: AFuF++kONQH8Th1cwf2kO2zJHpfrlMgpz+ZcG+EQ+CoUTD1ZQUQSnG3b
-	Z/EcfurB2qYYu8GFlI6jy3lxfcjly9zepl3DKTYwwi7RGIln8r0lY8iB
-X-Gm-Gg: AR+sD11fs7/t86nND9PsL1xp/yfpEQ5wQ4Oezyu+jCS41aL5KNAH8GMxwBT1Xw6SYnK
-	7SDUMLQ+AWslPrLjVZXCUxPMUhkzw9WuZ4sarrD71zOOui6x9w8wvEILV11X8H8cLnYFyUWoweH
-	smefs9Lqa6+asy3OxcH+iP3GMZ5AkyoLuNHSTS55PtAUUVY025qsnFe+JXjN6gCXpaJetY0Hb+X
-	xUU1iYfFoU3bp+aHO3RLOYQp4RbQL0q58QsodjC4B4DFMGyt25fprRb7u3cGJBqgltocpULTQIF
-	5hOF3VZNd2CXQeugPEtWvRCCzI2ssr8mbRw5oxT+KJkfGHTrcjdBQeVNn+K4Lt5O+FldZ3Ib7D8
-	ZhgO3aJCe5BjF0AgFi7iivj4jVoH+da3TfSm3qpmlSECOTBrTnd5b3fBTXSY8JcBIkikyn/rcHK
-	/WzVF4TEemsu5RR+hwHEBprpoQyyEM2x5R0zyMzKQx82DKbz7OQt2q66i7eRE+9uhK81pPzFGgy
-	ORxoJVxVvxaSJPpZ10IsFGo4MmbaH3sWj4JbB5h3M9GBXbpV+n4
-X-Received: by 2002:a05:6000:601:b0:482:a8b1:aa6d with SMTP id ffacd0b85a97d-482c81bd354mr1785152f8f.10.1787357748724;
-        Fri, 21 Aug 2026 17:15:48 -0700 (PDT)
-Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482c9b855cdsm445514f8f.16.2026.08.21.17.15.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2026 17:15:48 -0700 (PDT)
-Sender: Julian Braha <julian.braha@gmail.com>
-From: Julian Braha <julianbraha@gmail.com>
-To: zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: eric.snowberg@oracle.com,
-	linux-integrity@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="nEL4/Noh"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=uJ1ZUKxXbCTSIZD7Fsdft5wZqfjqJSQrTkWsgAqQh4c=; b=nEL4/NohMZmy0DVASmmR/Wu1FU
+	pkZzSkrx+VgFjN7yfhXVWo8EHEWpOWFVOdnYk3W5pMiGG8xFVy8I+Bt8M+14F6TMIPiD/JW0ECqkc
+	JLofoGQAqKyrKvXEsHPctohG+yEpWExaBoirGFpabFZPPSdlMvYlvuHS7dRuu9X8qFH6Xk8JVLsfr
+	+OQbly8Wz7wkvQoEab5RITbuBEfwxVbPzLhp51ErWc0cOtc7BaUG+Du0Qdj1EPvBsHPP0Fo9wZnSc
+	LR0daW0+a3CdlpUIYTjY0meBM8WifFUh12KnT80wWVVE6viQRTgv0PzvLbAuRR6s4Vz51kdDpnFmv
+	xlUCdInA==;
+Received: from [151.115.150.205] (port=43822 helo=gepetto..)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.99.5)
+	(envelope-from <Jeremy.Jean@oss.cyber.gouv.fr>)
+	id 1wxh2v-00000008PL2-125a;
+	Sat, 22 Aug 2026 10:25:43 +0200
+From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Julian Braha <julianbraha@gmail.com>
-Subject: [PATCH] ima: clean up IMA_MEASURE_PCR_IDX in Kconfig
-Date: Sat, 22 Aug 2026 01:15:45 +0100
-Message-ID: <20260822001545.354195-1-julianbraha@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
+Subject: [PATCH] ima: reject modsig if detached data cannot be supplied
+Date: Sat, 22 Aug 2026 08:24:35 +0000
+Message-ID: <20260822082434.489470-2-Jeremy.Jean@oss.cyber.gouv.fr>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-The IMA_MEASURE_PCR_IDX option is not visible for users to set, so it
-always uses its default, 10. This means that the 'range 8 14' is dead
-code, and the "If unsure, use the default 10" in the help text is
-misleading because the user *has no other choice*.
+ima_collect_modsig() binds the file being appraised to the parsed PKCS#7
+message with pkcs7_supply_detached_data().  If the message already contains
+embedded data, the helper returns -EINVAL.  However, ima_collect_modsig()
+silently returns because its return type is void.
 
-During the first patch submission to add this option in 2008 [1],
-the submitter originally gave this option a prompt:
+ima_modsig_verify() subsequently calls verify_pkcs7_message_sig() with a
+NULL data pointer.  That verifies the embedded PKCS#7 data instead of the
+file being appraised.  An attacker can therefore take a valid
+detached signature, insert the original signed bytes as embedded content
+without the private key, and append the resulting message to an unrelated
+file.  IMA accepts the unrelated file.
 
-"PCR for Aggregate (8 <= Index <= 14)"
+This bypasses the module authenticity boundary when an IMA modsig appraisal
+rule is enforced while CONFIG_MODULE_SIG is disabled.
 
-then later removed it in the revision, without adjusting the rest of the
-option accordingly [2].
+Return detached-data binding errors and stop measurement collection when
+binding fails.  Keep digest extraction optional because algorithms such as
+ML-DSA can verify the message directly.  Appraisal then rejects the file
+rather than reaching verification with embedded content active.
 
-Let's clean up this of this IMA_MEASURE_PCR_IDX config option to be
-consistent with its current, non-visible state.
-
-This dead range was found by kconfirm, a static analysis tool for Kconfig.
-
-Signed-off-by: Julian Braha <julianbraha@gmail.com>
+Fixes: 15588227e086 ("ima: Collect modsig")
+Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+Assisted-by: Codex:gpt-5
 ---
- security/integrity/ima/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ security/integrity/ima/ima.h        |  7 ++++---
+ security/integrity/ima/ima_api.c    |  7 +++++--
+ security/integrity/ima/ima_modsig.c |  9 +++++++--
+ 3 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index b3a9f86809b0..8a67bc1faa4c 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -46,12 +46,11 @@ config IMA_KEXEC
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 10214f73ca1e..ac1d593a42c1 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -559,7 +559,7 @@ static inline void __init init_ima_appraise_lsm(const struct lsm_id *lsmid)
+ #ifdef CONFIG_IMA_APPRAISE_MODSIG
+ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
+ 		    struct modsig **modsig);
+-void ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size);
++int ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size);
+ int ima_get_modsig_digest(const struct modsig *modsig, enum hash_algo *algo,
+ 			  const u8 **digest, u32 *digest_size);
+ int ima_get_raw_modsig(const struct modsig *modsig, const void **data,
+@@ -572,9 +572,10 @@ static inline int ima_read_modsig(enum ima_hooks func, const void *buf,
+ 	return -EOPNOTSUPP;
+ }
  
- config IMA_MEASURE_PCR_IDX
- 	int
--	range 8 14
- 	default 10
- 	help
- 	  IMA_MEASURE_PCR_IDX determines the TPM PCR register index
- 	  that IMA uses to maintain the integrity aggregate of the
--	  measurement list.  If unsure, use the default 10.
-+	  measurement list.
+-static inline void ima_collect_modsig(struct modsig *modsig, const void *buf,
+-				      loff_t size)
++static inline int ima_collect_modsig(struct modsig *modsig, const void *buf,
++				     loff_t size)
+ {
++	return -EOPNOTSUPP;
+ }
  
- config IMA_LSM_RULES
- 	bool
+ static inline int ima_get_modsig_digest(const struct modsig *modsig,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 122d127e108d..e2b167f24778 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -262,8 +262,11 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 	 * the file digest without collecting the modsig in a previous
+ 	 * measurement rule.
+ 	 */
+-	if (modsig)
+-		ima_collect_modsig(modsig, buf, size);
++	if (modsig) {
++		result = ima_collect_modsig(modsig, buf, size);
++		if (result)
++			goto out;
++	}
+ 
+ 	if (iint->flags & IMA_COLLECTED)
+ 		goto out;
+diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
+index 632c746fd81e..57dc8dc43b55 100644
+--- a/security/integrity/ima/ima_modsig.c
++++ b/security/integrity/ima/ima_modsig.c
+@@ -96,8 +96,10 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
+  * Since the modsig is part of the file contents, the hash used in its signature
+  * isn't the same one ordinarily calculated by IMA. Therefore PKCS7 code
+  * calculates a separate one for signature verification.
++ *
++ * Return: 0 if the file data was supplied, error code otherwise.
+  */
+-void ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size)
++int ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size)
+ {
+ 	int rc;
+ 
+@@ -109,11 +111,14 @@ void ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size)
+ 		sizeof(struct module_signature);
+ 	rc = pkcs7_supply_detached_data(modsig->pkcs7_msg, buf, size);
+ 	if (rc)
+-		return;
++		return rc;
+ 
+ 	/* Ask the PKCS7 code to calculate the file hash. */
+ 	rc = pkcs7_get_digest(modsig->pkcs7_msg, &modsig->digest,
+ 			      &modsig->digest_size, &modsig->hash_algo);
++
++	/* Some signature algorithms operate on the message without a digest. */
++	return 0;
+ }
+ 
+ int ima_modsig_verify(struct key *keyring, const struct modsig *modsig)
 -- 
-2.55.0
-
+2.47.3
