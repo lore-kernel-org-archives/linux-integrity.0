@@ -1,72 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D602C9D;
-	Sun, 23 Aug 2026 03:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07823126D6;
+	Sun, 23 Aug 2026 16:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787454224; cv=none; b=IovB8trnbYLrnO7DRJI9/DRFzfpvZHwguHSdvr2Z8ulWd3yAQ51SMoGoZwv3FxxG3mtbJMYG0eAh37VD5/1JiDfRXveSunf8roXaAhu5Akw2V230Hnqi0sKByAlanD8ROGI/Dh/lXPbnSxu3TWImflbj9J6ni/auvIF6DkNiWYc=
+	t=1787502679; cv=none; b=aYr0RUuLWn7AQHGxzPtALy3WwAx0hTPgDjmJjuPtZiGCMmY+AqhxAIgwec6mtEnP01GmvSsujGer8fpiTS8mMfI0KTDhdTQC84nk1QMKKPr1a7q1bQA9oiaDMj+OahZ9d9fSEAhabKpZhvLNkmxQ97XIQqsZexo4/aF5rhOnie4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787454224; c=relaxed/simple;
-	bh=d1ir6N71ozEd/kcDs9L1jvLcWM9tWjnENjlsk8ZX2LU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uehB6Qpl7Fj8xM4i9qQhyDLJguMJhEtIy7NZ4DvAk0nULeujBUlotZldlp8VmA4xVCsiVTUVL8KfzXny8UE+CvkNbsAObd7bVHFtLLL6Td4YYV9h7O8DebgOhG/yTyMk1wkhg+9xm+EDZ8Fr30eEyVtMa4wP6tTsHcNKgMW9SNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMKg4Dt1; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787502679; c=relaxed/simple;
+	bh=R5ne7KmCaXEYUqqUN2VBmSMcsFdvWsPrldVybsgvv8E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=A0IMCbEvzAIfJeJMYaSBePhlnZyDGTIMas52zJ/dDFh8ZliuyKR9NdT1JqTFmF6N0dXvORosl/UWwwZ+Uq0uNlWdF8B9BPGL2M3HumVKyc/znTXobb940QQqW4UxMw13pNuRFSIdtgWc5lwwENhThbiDwJPR5XG5h3XOQ9sPCqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8M8BFXj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMKg4Dt1"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 21F2E1F000E9;
-	Sun, 23 Aug 2026 03:03:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8M8BFXj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C771F01572;
+	Sun, 23 Aug 2026 16:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787454222;
-	bh=/iUsPgrvL+UmTBxicXrFaNOKPTzY/U427jWY/jp+GWI=;
-	h=Date:From:To:Cc:Subject;
-	b=GMKg4Dt1buhocGxaRdxfYABhxK9ek1U29vHllGX2HB0OpKMzI53HB6zA8YPGWHfyC
-	 qcfvi0E6H+Ka78g6xQ1sfgx8FAN/48zPlUg9dXyHI0KNl5l4UjGVPsi3dbS/dAx4Pv
-	 VdRmqyYMJWozfAaaEAPAktUYxtS5EPxwT/o1EyDgqxKuKcA9sHkBloDMynOvb+cP9q
-	 ThedWMpgOZ27qcVGpzM+facYguyeDmOx3uIsbr01tKzIP4w5dbI1QtAFPDWmMQu+hx
-	 u9waUDzrtJFBn9E61ZRzOt8c7RzvSMoq5geS+yydJU9xPC+eqy5DPjtoSlxaRNSuCs
-	 HIAp8O9xKfLBg==
-Date: Sun, 23 Aug 2026 06:03:37 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org
-Subject: [GIT PULL] KEYS: for-next-keys-v7.3
-Message-ID: <aopjCf7Srz1ejx2I@kernel.org>
+	s=k20260515; t=1787502668;
+	bh=M/b6WfklxMi1HQdFk+7zXIusvgfovG55xOyfTDpwLcc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc;
+	b=E8M8BFXjIFIdnsAPRaFIYtx8Tr+LYnpEWAJWt62Va4ykXxOD28um0k60zBbDvTNd/
+	 abLnYx7JnaRg7YQu/S02Cn4CUoCGOfkvsuEQ1JSj5S7AT8JtNdqL0tFmpGYDODhJY3
+	 2v/6kRSveOEy9WFNTkg2aboMsdShifUev4ahZGtnCvZuvT5WlgDLJqn8Hz1XieDuHa
+	 vTFN+W87DaIHFGdULxl5YI26xshD8lUvYY/rvSF6OO31MPRWdQOV+/LapS2XcBos43
+	 MlFbbTNgFmtkhHgZ1+b6lguTE/aW0rPRKBUecE5B5ShZKrsPNBESLLDCGXUe0djTp2
+	 VEnxlPPjgnkCw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id F28EB380AA78;
+	Sun, 23 Aug 2026 16:30:17 +0000 (UTC)
+Subject: Re: [GIT PULL] KEYS: for-next-keys-v7.3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aopjCf7Srz1ejx2I@kernel.org>
+References: <aopjCf7Srz1ejx2I@kernel.org>
+X-PR-Tracked-List-Id: <keyrings.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aopjCf7Srz1ejx2I@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/for-next-keys-v7.3
+X-PR-Tracked-Commit-Id: 5e2d672280d97d83de43031d93761b12dadd7b8a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8552019d09867164a6350bda7d731f140a90d7ac
+Message-Id: <178750261666.2078512.301274795305878798.pr-tracker-bot@kernel.org>
+Date: Sun, 23 Aug 2026 16:30:16 +0000
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: aerc
 
-The following changes since commit 7f063b2f17eaba2a35e251aa53627f2a70d536e2:
+The pull request you sent on Sun, 23 Aug 2026 06:03:37 +0300:
 
-  Merge tag 'for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost (2026-08-20 17:07:50 -0700)
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/for-next-keys-v7.3
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8552019d09867164a6350bda7d731f140a90d7ac
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/for-next-keys-v7.3
+Thank you!
 
-for you to fetch changes up to 5e2d672280d97d83de43031d93761b12dadd7b8a:
-
-  KEYS: trusted: Fix TPM teardown ordering (2026-08-21 04:33:21 +0300)
-
-----------------------------------------------------------------
-Hi,
-
-My v7.3 pull request for keyrings has just a single bug fix.
-
-BR, Jarkko
-
-----------------------------------------------------------------
-Chengfeng Ye (1):
-      KEYS: trusted: Fix TPM teardown ordering
-
- security/keys/trusted-keys/trusted_tpm1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
