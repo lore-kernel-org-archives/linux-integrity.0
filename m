@@ -1,44 +1,51 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C1D3F12F9;
-	Tue, 25 Aug 2026 14:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06ACD2E06E4;
+	Tue, 25 Aug 2026 14:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787666821; cv=none; b=CWh2DPdTZvzuLfVJ7iqq5DsUbUsBz7W5bU7WAmmuI+N0yrKUQka1U9HXQ2usws8a9Z1jGTFOD7/0e3tjqG+483p2xS+B9V6Ml5isGgVPpYaITBX+OY48tt3AB0h+dEKeoeRWsq8xUqCJbWdjpmiH2DIEYJMI79t5zWBSMxcDSVM=
+	t=1787667052; cv=none; b=DX584QajOnObxjsVgECVxN1epHybjJZfX2fWrHtbr4J0mOxzNVNsqRjK68frBPZNZ7WVZvyxzi7pwvDie6Ca40vpdQBDAdsTzyJsX3GLgvbjDrOcsPlf+X39M/FoE6hpRCAKSstEaolIDDxVJPdCV4ByBC6QKjh/5lUk1z+uOss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787666821; c=relaxed/simple;
-	bh=/DCL2Wd5ABMMdfHiA5VXKmT76TcoUlejxrwEdvyMLcQ=;
+	s=arc-20240116; t=1787667052; c=relaxed/simple;
+	bh=NHD2yBZ6sB22hkVHymYwcXEhUEOc8JWXw1fQh2zQzTI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tiF6zgIJ2bwokRSlNunQc8KpI2qkb2zCbJpiggcYBRMvl1YghiNHvNMyW8n0YnSqiJhzBNlN9rOQeGCiIOzLhoYzGtOV1jYUFZbf8jXLriMRhjNmrf2OhEEFcUaeo3ngnAaFTcaypUokMw5nTqXD7Vg5q+dxDTmCaW6He8WPrc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=atNHsjr0; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=jV725/OWlOcl8xJU6y3y7lFSS7CY2o5ukiO3Dn+qP0gZwyWjl03LOK3wQ0+UUU+GW/De0aUiX8X8zhUpJQwNP6ezRzYNrZfpVm3P7IiO3xl/apC9qjXXYFVQSKTHEO2hPdVDs1v7FAdnHj6TqT3F01vKCovtR+jaySeIahNKej8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=E5PungHK; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="atNHsjr0"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7D1A31F000E9;
-	Tue, 25 Aug 2026 14:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787666819;
-	bh=zb2dR1ky3e/i5jY9uLyTx7grJbKpM/glhXzntMr7hu8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=atNHsjr0X6f3Chro5uZ8uIRUeuHFeZKo7krQDdTIL2ftctr03anYju7o9PjMmroD6
-	 2/Kde4GueqynQPrERRzJO0dHW/UD7F9Xh5uT3n1cgNV+CZsXpt8AmoO1GvjlXreX6s
-	 ApXw7K7hyhWG2AgqRO9EWCQtx3MUZwwBousfqjTloYbacrCrNFTpsteYM7l9nFNwQn
-	 rC3SjQPnGwwdeGWfmM8YNEYdgOZcuxux3sxZ5lDqng7jNkV1R1ayYdUSXXVHWqq9kD
-	 2KaBIh5tSWR2t2VA8MdJcmL6+EkV8NTKzQQ9WjO/L+LuVIsrfTR6ea4rcmMkIUQUkA
-	 FPhGIVp2znzQw==
-Date: Tue, 25 Aug 2026 17:06:54 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Julien <julien82453@gmail.com>, linux-integrity@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH v2] ACPI: scan: Do not combine resources that overlap
- completely
-Message-ID: <ao2hfu9ioyLSMmpg@kernel.org>
-References: <12955564.O9o76ZdvQC@rafael.j.wysocki>
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="E5PungHK"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YdPYAT+boZ9/kN51fWnNRwc2bjydxSYXTJ5llYSbpxA=; b=E5PungHK75nQSZY1+LYWf5t1yy
+	fcgxX8TNX0Eizl4xJ7oHvRc5FiKfRaqU3svseFHOnTGo2KFe3czfPQ7t2qPwP0YGPMfTXcL6rxF0X
+	yXE9AM1oT4mARTaBPtNUiBcyWvpo9a5gUBa4Q8sKXrbpwIW+Bvk1S2Z2tYYgp/Y9WahHBor1zzKJl
+	nYPpg6P6Ss5cBQy4wYUZ6BW5ojDYIFHm3w1x4YVtnsrUB9GMgPit2k5fkM/ZX/0tQzarwVW82FgCf
+	ZqwyjPBlgixW4Y9pZyT1cNUo0SXtRiFlA3k4oFGYTHVYhh/AZzdoKmSArgyYYnc+4tpoqz10pjRlH
+	XEGNmBGA==;
+Received: from authenticated-user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.96)
+	(envelope-from <leitao@debian.org>)
+	id 1wyrqo-00EUcM-2f;
+	Tue, 25 Aug 2026 14:10:07 +0000
+Date: Tue, 25 Aug 2026 07:10:02 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Frederick Lawler <fred@cloudflare.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH v2 1/2] configfs: move CONFIGFS_MAGIC definition to
+ magic.h
+Message-ID: <ao2iHWDZAJf0FRqh@gmail.com>
+References: <20260819-configfs-v2-0-cb6e65d11589@cloudflare.com>
+ <20260819-configfs-v2-1-cb6e65d11589@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -47,65 +54,18 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <12955564.O9o76ZdvQC@rafael.j.wysocki>
+In-Reply-To: <20260819-configfs-v2-1-cb6e65d11589@cloudflare.com>
+X-Debian-User: leitao
 
-On Thu, Aug 20, 2026 at 09:11:14PM +0200, Rafael J. Wysocki wrote:
-> From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+On Wed, Aug 19, 2026 at 06:45:22PM -0500, Frederick Lawler wrote:
+> IMA shouldn't measure or appraise configfs, but currently does because
+> it's missing from the default exclusion policies. Move CONFIGFS_MAGIC to
+> magic.h to expose the file system's magic to IMA, as well as other userland
+> applications.
 > 
-> Commit f234fdaae1ca ("ACPI: scan: Avoid registering platform devices
-> with resource overlaps") attempted to avoid platform device registration
-> errors due to overlaps of resources of the same type returned by the
-> same _CRS object in the ACPI tables.  It did that by combining two or
-> more overlapping resources into one, but it went too far and also
-> caused resources that overlap completely to be combined which broke
-> the arm-cmn driver that expects two MMIO resources to be present for
-> each device it binds to and it expects those two resources to overlap
-> completely.
-> 
-> Address this issue by adding checks for completely overlapping
-> resources to acpi_platform_adjust_resources() and add a comment
-> explaining what is done there.
-> 
-> Fixes: f234fdaae1ca ("ACPI: scan: Avoid registering platform devices with resource overlaps")
-> Reported-by: Nathan Chancellor <nathan@kernel.org> 
-> Tested-by: Nathan Chancellor <nathan@kernel.org> 
-> Closes: https://lore.kernel.org/linux-acpi/20260819003752.GA3063251@ax162/
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> v1 -> v2:
->    * It is better to check for complete overlaps both ways as suggested
->      by Sashiko.
-> 
-> @Julien: I would appreciate testing this on the machine that needed
-> commit f234fdaae1ca.
-> 
-> ---
->  drivers/acpi/acpi_platform.c |    8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> --- a/drivers/acpi/acpi_platform.c
-> +++ b/drivers/acpi/acpi_platform.c
-> @@ -85,7 +85,13 @@ static unsigned int acpi_platform_adjust
->  	for (i = 0; i < count; ) {
->  		struct resource *res = &resources[i];
->  
-> -		if (resource_type(new_res) != resource_type(res) ||
-> +		/*
-> +		 * Look for overlaps of resources of the same type that would
-> +		 * cause resource insertion to fail down the road.
-> +		 */
-> +		if (__resource_contains_unbound(res, new_res) ||
-> +		    __resource_contains_unbound(new_res, res) ||
-> +		    resource_type(new_res) != resource_type(res) ||
->  		    !resource_union(new_res, res, new_res)) {
->  			i++;
->  			continue;
-> 
-> 
-> 
+> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
 
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-BR, Jarkko
+Do you want this change to go thorugh the configfs tree, or the tree
+specific for IMA?
+?
