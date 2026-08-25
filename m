@@ -1,176 +1,111 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627F73EE1E9
-	for <linux-integrity@vger.kernel.org>; Tue, 25 Aug 2026 09:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C1D3F12F9;
+	Tue, 25 Aug 2026 14:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787650938; cv=none; b=bK2cYh3ezw0bsll/Q1MKD9znVZujzQobKqw2yphZlTvBiazKPqapy0yCMmBxP4x5tbHZDothKiSxpNfgrNu4ls1VgijWbUWR8zqO3RWvAqOtazMBIvthLusaxTK/kCMzFYLH3x4N7hDW+MDNPpq+U1thTgZmDR5EIDGC0Aa+u4s=
+	t=1787666821; cv=none; b=CWh2DPdTZvzuLfVJ7iqq5DsUbUsBz7W5bU7WAmmuI+N0yrKUQka1U9HXQ2usws8a9Z1jGTFOD7/0e3tjqG+483p2xS+B9V6Ml5isGgVPpYaITBX+OY48tt3AB0h+dEKeoeRWsq8xUqCJbWdjpmiH2DIEYJMI79t5zWBSMxcDSVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787650938; c=relaxed/simple;
-	bh=TRCjrVT6a0nm5nOjYaRUYlFXYFxAVmK1oCXXhDKXrQU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FIk6tSwZJZFJ8WAXmhx80jaqpcLS0Qvuzz0ckxyzlA9l+Yfaw0+nHIwqdJifDIMExGjxqTt67QLx2SpBw50AV9N7GSI53mH3w0+RlF5JtSuRPcsTgJYrsVgJT6Q29pAYPS1cugwgfhIHdHVLQwmEqOSA6Ly/VB/ki5RYSR1e1nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJkQrKGH; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787666821; c=relaxed/simple;
+	bh=/DCL2Wd5ABMMdfHiA5VXKmT76TcoUlejxrwEdvyMLcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tiF6zgIJ2bwokRSlNunQc8KpI2qkb2zCbJpiggcYBRMvl1YghiNHvNMyW8n0YnSqiJhzBNlN9rOQeGCiIOzLhoYzGtOV1jYUFZbf8jXLriMRhjNmrf2OhEEFcUaeo3ngnAaFTcaypUokMw5nTqXD7Vg5q+dxDTmCaW6He8WPrc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=atNHsjr0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJkQrKGH"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4996c452e95so2467855e9.0
-        for <linux-integrity@vger.kernel.org>; Tue, 25 Aug 2026 02:42:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787650933; x=1788255733; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=qmTx7tD1rUFhIsjzkYVNdRt+/Y88by0P9eG+nC4RYUI=;
-        b=nJkQrKGHMg+QqYc9gXw8NbGWR+jTs3nnBYuDucUOfqom4ztT9+UOAFrhGuL5NzbEXo
-         4xKAbV9XzDi2DUI1V/Ifzx+5u6nMDZ+7b1fjgF9yhtW8wj8d+dtKVJk73p6B26Ch9HCj
-         fYSJ6WK8j03C2mhN/tlGx+QYP1T5ohuzx2xDjuXjEaI2uLt4mZDjHR0DD2LvKFiAkt0T
-         rwAEIXveV0gvJf2YC/sVwFCfb+Py3swp7hmE94i9xnPPAmBvuucuT2PGrD4kmkA0X/9Z
-         zpS16GY/F/j0q0W4Qck0hDvrfXO2pTOq9IQVklBjAlTMFJGzT2+SbH9vzddTcWuMZED2
-         id5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787650933; x=1788255733;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=qmTx7tD1rUFhIsjzkYVNdRt+/Y88by0P9eG+nC4RYUI=;
-        b=q9SPjI4q9B0dCeJYXaskn8XS8Q79ofO+N37nhYP9PZ88MvGNB7sUChaif/O8sBUUXa
-         /lLLqP2IH68RihPKDzZwincPiLnJi1KjdFZc6eOfUnZvkYe2vPoeHhhmdpIkTlFyL5Zg
-         HOs9AjTh4+XBWWbuo5c0CdSEf+AnqYAOTZRyvalJzsV3SeZ0kGCu0LqRcx3xyfkUcEVD
-         U9Y4UjPfmwvtNqNue9sf0ivnmA0EBEp67G0ZIiCbGzElBnMMqaLUpPCJLHV2uWjviE4R
-         a/KmffW6s/YgVav60VkOzBlkRVkVe4U44rP6zvgu8S5iNPbx5zAvQvxIcoxhRG4uQ2gS
-         yHrQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rp/A6KOeN9bO3cIdvT6iA5Om2Y89RQp8YGKjTbk7hEOX9Af+zWLpdBegml19Chx/FMH7jsE1i7dN/h8OK96k3I=@vger.kernel.org
-X-Gm-Message-State: AFuF++ls0IUK0xJjQu5I/UmCfMyehGWkBPPo05W8mTqgmVLyMDqVpbMp
-	/Yf4Y8vqYfS5HYr6cTRfCg/9oZC5NLR89lLquooARMrklGkUXkyvjWIG
-X-Gm-Gg: AR+sD12muSYfsUG6zY/sVV/EFPGBSkiZQmlob98pPNOwMfH+i8Wzj2PpJHNQRRYHUA8
-	+8uvbiEKPn12aAAcxq14tpV+rVATlOibF7BYkVZDHBs+cAuGv6hwpXDSfU3FKVsOkJXPzHCUH9J
-	koEFhNQFqz42eFi+Gpdk0dEvNmQrjDpHXVPPZJ+ljHPYj7/OEAbZD9VJSLLQqZohpOFVcFW6pAY
-	rPl4RQfZYEMblz+DJLUrxuoa0p3DE8oQy/e9Ht9eKrZAmmj+yUbQdpuqRz2yyVHcjnW+CuwUHco
-	/aA2CXbaxE0oCTYWo3bGUqFi+6Dlgl6ZUasS5jeVRsjQz3beQnI/4iZyEYOlvz9AXQFgYgka7jQ
-	rMn0rXrPg0tOidwhpg8CenzdjGzcVOplQ8L1nkQHm6pE5272k+CYKdr3PDh6mOaDb3KNC6Olr7m
-	UU34IKydmmXGGQcPOJ4eZkFV7ixlIn1t7HpdoRiJ4/oBqbU32InXIkIBP1sTOluduFI7vaALH8k
-	3jF9w7WNeXN4X1VjxoIkriCv8y2RPI=
-X-Received: by 2002:a05:600c:1392:b0:499:a660:f4ae with SMTP id 5b1f17b1804b1-499b8353024mr204215045e9.1.1787650933330;
-        Tue, 25 Aug 2026 02:42:13 -0700 (PDT)
-Received: from [128.93.83.149] (wifi-pro-83-149.paris.inria.fr. [128.93.83.149])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499d63553d6sm23460235e9.8.2026.08.25.02.42.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 02:42:13 -0700 (PDT)
-Message-ID: <a62fc816-259a-4d28-a265-e425bc17ed50@gmail.com>
-Date: Tue, 25 Aug 2026 11:42:12 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="atNHsjr0"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7D1A31F000E9;
+	Tue, 25 Aug 2026 14:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787666819;
+	bh=zb2dR1ky3e/i5jY9uLyTx7grJbKpM/glhXzntMr7hu8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=atNHsjr0X6f3Chro5uZ8uIRUeuHFeZKo7krQDdTIL2ftctr03anYju7o9PjMmroD6
+	 2/Kde4GueqynQPrERRzJO0dHW/UD7F9Xh5uT3n1cgNV+CZsXpt8AmoO1GvjlXreX6s
+	 ApXw7K7hyhWG2AgqRO9EWCQtx3MUZwwBousfqjTloYbacrCrNFTpsteYM7l9nFNwQn
+	 rC3SjQPnGwwdeGWfmM8YNEYdgOZcuxux3sxZ5lDqng7jNkV1R1ayYdUSXXVHWqq9kD
+	 2KaBIh5tSWR2t2VA8MdJcmL6+EkV8NTKzQQ9WjO/L+LuVIsrfTR6ea4rcmMkIUQUkA
+	 FPhGIVp2znzQw==
+Date: Tue, 25 Aug 2026 17:06:54 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Julien <julien82453@gmail.com>, linux-integrity@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH v2] ACPI: scan: Do not combine resources that overlap
+ completely
+Message-ID: <ao2hfu9ioyLSMmpg@kernel.org>
+References: <12955564.O9o76ZdvQC@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Thomas Fourier <fourier.thomas@gmail.com>
-Subject: Re: [PATCH] tpm: Fix barriers to prevent hwrng from activating during
- resume
-To: Richard Lyu <richard.lyu@suse.com>, Jarkko Sakkinen <jarkko@kernel.org>
-Cc: stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
- Jason Gunthorpe <jgg@ziepe.ca>, Jerry Snitselaar <jsnitsel@redhat.com>,
- "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20260803092240.18348-2-fourier.thomas@gmail.com>
- <anpm2fdZEwOlnMwv@kernel.org> <aogdHNl9HLMR89cW@r1chard>
-Content-Language: en-US
-In-Reply-To: <aogdHNl9HLMR89cW@r1chard>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12955564.O9o76ZdvQC@rafael.j.wysocki>
 
-Thank you all for your time and comments. Revisiting my patch after my 
-vacation, I now think none of the barriers are actually necessary.
-
-On 21/08/2026 11:40, Richard Lyu wrote:
->>> memory reordering between the wake up and clearing the flag is allowed.
+On Thu, Aug 20, 2026 at 09:11:14PM +0200, Rafael J. Wysocki wrote:
+> From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 > 
-> When exactly can this reordering happen?
+> Commit f234fdaae1ca ("ACPI: scan: Avoid registering platform devices
+> with resource overlaps") attempted to avoid platform device registration
+> errors due to overlaps of resources of the same type returned by the
+> same _CRS object in the ACPI tables.  It did that by combining two or
+> more overlapping resources into one, but it went too far and also
+> caused resources that overlap completely to be combined which broke
+> the arm-cmn driver that expects two MMIO resources to be present for
+> each device it binds to and it expects those two resources to overlap
+> completely.
 > 
->>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->>> index 12b7394b34bd..7f500797b7a7 100644 --- a/drivers/char/tpm/tpm- 
->>> chip.c
->>> +++ b/drivers/char/tpm/tpm-chip.c @@ -173,6 +173,9 @@ int
->>> tpm_try_get_ops(struct tpm_chip *chip) if (chip->flags &
->>> TPM_CHIP_FLAG_SUSPENDED) goto out_lock;
->>>
->>> +    /* Ensure that device is fully resumed */
->>> +    rmb();
->>> +
->>>      rc = tpm_chip_start(chip);
->>>      if (rc)
->>>          goto out_lock;
+> Address this issue by adding checks for completely overlapping
+> resources to acpi_platform_adjust_resources() and add a comment
+> explaining what is done there.
 > 
-> Where inside tpm_chip_start do we actually need to avoid loading a stale 
-> state or flag?
-tpm_chip_start() reads chip->locality for example.  I'm not sure it can 
-be written to concurrently but some drivers write to it. It might not be 
-a problem as it would just trigger a call to tpm_request_locality().
-
-Since speculative writes are not possible, so rmb() is sufficient; in 
-any case, no need for a read-to-write memory barrier.
+> Fixes: f234fdaae1ca ("ACPI: scan: Avoid registering platform devices with resource overlaps")
+> Reported-by: Nathan Chancellor <nathan@kernel.org> 
+> Tested-by: Nathan Chancellor <nathan@kernel.org> 
+> Closes: https://lore.kernel.org/linux-acpi/20260819003752.GA3063251@ax162/
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
 > 
->>> diff --git a/drivers/char/tpm/tpm-interface.c
->>> b/drivers/char/tpm/tpm-interface.c index f745a098908b..2de12b02f62b 
->>> 100644
->>> --- a/drivers/char/tpm/tpm-interface.c +++
->>> b/drivers/char/tpm/tpm-interface.c @@ -474,13 +474,12 @@ int
->>> tpm_pm_resume(struct device *dev) if (chip == NULL) return -ENODEV;
->>>
->>> -    chip->flags &= ~TPM_CHIP_FLAG_SUSPENDED;
->>> -
->>>      /*
->>>       * Guarantee that SUSPENDED is written last, so that hwrng does not
->>>       * activate before the chip has been fully resumed.
->>>       */
->>>      wmb();
->>> +    chip->flags &= ~TPM_CHIP_FLAG_SUSPENDED;
->>
->> Can you rationalize this change?
-This change is mostly based on your comment: tpm_pm_resume() is called 
-after the hardware-specific operations have been performed, and the flag 
-must be set after these operations are complete.
-
-I assumed hwrng corresponds to tpm_hwrng_read() which calls 
-tpm_get_random() which itself calls tpm_try_get_ops(). After 
-tpm_chip_start() is called, tpm_try_get_ops() can return a valid 
-pointer, and tpm_hwrng_read() can work.
-
-Individual drivers implement the .resume() method by doing 
-hardware-specific operations then calling tpm_pm_resume(), so ordering 
-needs to happen between those hardware-specific operations and 
-tpm_pm_resume().  This ensures that the order of operations is:
-   - hardware-specific resume operations,
-   - tpm_pm_resume(), including clearing the TPM_CHIP_FLAG_SUSPENDED flag,
-   - check that TPM_CHIP_FLAG_SUSPENDED is clear,
-   - run of tpm_chip_start().
-
-If tpm_try_get_ops() succeeds, then tpm_chip_start() is run so the 
-hardware-specific resume operations are complete.
-
+> v1 -> v2:
+>    * It is better to check for complete overlaps both ways as suggested
+>      by Sashiko.
 > 
-> I agree the clearing of the flag should be moved after wmb() to 
-> guarantee that SUSPENDED is written last, the flag has to be cleared 
-> after the barrier.
-> That part makes sense.
+> @Julien: I would appreciate testing this on the machine that needed
+> commit f234fdaae1ca.
 > 
-> My remaining question is whether we actually need the wmb() barrier here?
-Revisiting the patch, I agree that this point is not fully clear. 
-Looking at the implementations of tpm drivers, most use the 
-tpm_pm_resume() function directly as the .resume() method.
+> ---
+>  drivers/acpi/acpi_platform.c |    8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> --- a/drivers/acpi/acpi_platform.c
+> +++ b/drivers/acpi/acpi_platform.c
+> @@ -85,7 +85,13 @@ static unsigned int acpi_platform_adjust
+>  	for (i = 0; i < count; ) {
+>  		struct resource *res = &resources[i];
+>  
+> -		if (resource_type(new_res) != resource_type(res) ||
+> +		/*
+> +		 * Look for overlaps of resources of the same type that would
+> +		 * cause resource insertion to fail down the road.
+> +		 */
+> +		if (__resource_contains_unbound(res, new_res) ||
+> +		    __resource_contains_unbound(new_res, res) ||
+> +		    resource_type(new_res) != resource_type(res) ||
+>  		    !resource_union(new_res, res, new_res)) {
+>  			i++;
+>  			continue;
+> 
+> 
+> 
 
-Three drivers implement specific .resume() methods:
-   - tpm_infineon.c: which uses writeb/outb that adds the necessary 
-barriers,
-   - st33zp24/st33zp24.c: which calls tpm_pm_resume() without 
-driver-specific operation depending on the config,
-   - tpm_tis_core.c: which makes a self-test before calling tpm_pm_resume().
 
-None of those cases seem to require a barrier at all.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-
+BR, Jarkko
