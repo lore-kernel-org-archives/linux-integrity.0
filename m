@@ -1,183 +1,161 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194EF31E844
-	for <linux-integrity@vger.kernel.org>; Wed, 26 Aug 2026 22:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBDC3955CA;
+	Wed, 26 Aug 2026 23:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787783382; cv=none; b=s7VkDc1kYmR83QR18vTwXvOFCSX2OforrPHMZlJ4IdXf8hXcxcy9UADj6uuzbnlxUNzIu5cS5LdanL3yZ+2U6Q/nbqfeg8smmHZ4IA+NrMYomh/FPNH+X9vhSxAT9vpC5cPahKsV+DbiZ+X4ol/O5d5kv8fHr+17Oxzb6455wnQ=
+	t=1787786071; cv=none; b=u5bfTsn8yMih8qo9DKHI8ty7r8uBpqzacIBWkDjk78qbg6uFbmhujFGIzJwoLmGiHBEn+vLr91LuUHcLKqzf1Ffz6nQEe/5FqEktpNwSrN9DKHK1cVBvvLFPAOrwUtHBmpd8tUjVaum9h4NUOCSbSGvy5QMInvSdQWsgKKtY2i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787783382; c=relaxed/simple;
-	bh=L6VjAzAUJf2M9ER59vS/pw+p5msSNAPxZVNNj+lCJH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aeEo7It28R0EBpwQJjQTFeXAKHQt1TLSndNFSzXuhDoA/J4fwHMI/dBxQH1YQmNzbExKNrCVhUAGaoG4M0NyIYgAjSzdYnIOCyk0VeYZnZWRoUaGurH8cxcVVViOa9BuyI0E+BKUPoPIQm8r83lDZLIXtxMwjVUhG7zme1q1irA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dblbpITv; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1787786071; c=relaxed/simple;
+	bh=r4Q+9FRjTXyHrCbuzgzJZEne8FbiCn4ajw263KnS9Xw=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=Qo32aHRJb4BVn9StPieIg8NY68Iu6t1fig6mqXr/SS51MyOqSPv0APozyyC/DvGPUF2Sn/HVd/NlIuWaV+ElZozUH6IYll8qv2bWK/VnDd6bSG4EJN+Xm37H79ygIf9o06gnpCU0ybDhrAmBfq6IjQRj5kIpIw1Ai+J/PNFZjVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z9pptXh6; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dblbpITv"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67QL1tEJ853478;
-	Wed, 26 Aug 2026 22:29:27 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z9pptXh6"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67QL1Ynk3280523;
+	Wed, 26 Aug 2026 23:14:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=L853njexZJ//RSiZG+KeWf1FauvA2KERRE/cGUEIU
-	Bg=; b=dblbpITvViAg9NZCjc0fRwxc6h3vUugyiO1sa0W0FW9locwaxilRkiGdY
-	YTiqCHCD5EIsKRlbEiF80O7gX0PgzHl0/7EBkxayaT4Yyf8E8GHJQjtma44q57iu
-	4CCqZ1LX3ySpJEu4AKpvtdOkIXIZS0ucJP9Uey9eVQFzBJfOJkWMOncGxolS7md3
-	k5DWSgnlFhZTJSj71JK5WXOfbvOmYX1224YjBP1xlzWs8sc1GWWGBhnx9Uq1JhFE
-	kKzxiwQeF38S12KAob+ygc2o0q/586v8ujMuycPYLdE494XuBmT5F2s1m4Ge2bFg
-	5oEM9IJONcQFXab4s0zIrbyl3nQZg==
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=lcAJfX
+	iOPQp6Qh0jISwkxyBYW5KhBfvBU3njyOUt4q4=; b=Z9pptXh6tzy8hqEhXoJG64
+	JM5DKPclJ0roBJIcwpfDKGXiWdxMY+nSpjo8xMhgB7FymI5e6I2qeYbne+dsZFXk
+	MjRFacsJq2cCHTPkWXwanzgD4x1hiaksHeXkvf+vJo7Z6imBSGdmj83MbfQlCmJ0
+	94eBRnh3jmCisKyCaEmAnAEaKskptAOp6sx1JU1U78WhT4XMjxBgxBtnmBcZe5OY
+	YYZUD1QybmI3iCvmBh//G8xfxmu6v20UaiYe3+vEm5Cg9l9ABHUWqVsxk3NuDKKr
+	gyqLVBswloPepVqihOil3jEVj6btyTrIMtyDYk1o/lRPl8VDOkOpVFMTQYoIuBwA
+	==
 Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g716j1n09-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g73er1nes-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Aug 2026 22:29:27 +0000 (GMT)
+	Wed, 26 Aug 2026 23:14:20 +0000 (GMT)
 Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67QMQGFS032251;
-	Wed, 26 Aug 2026 22:29:26 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4g7ragmcdx-1
+	by ppma13.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67QNBFKE021876;
+	Wed, 26 Aug 2026 23:14:19 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4g7ragmj06-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Aug 2026 22:29:26 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67QMTOVf49217824
+	Wed, 26 Aug 2026 23:14:19 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67QNEJMc19399202
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Aug 2026 22:29:24 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5D3F220043;
-	Wed, 26 Aug 2026 22:29:24 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3A42920040;
-	Wed, 26 Aug 2026 22:29:23 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.fios-router.home (unknown [9.61.80.63])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Aug 2026 22:29:23 +0000 (GMT)
+	Wed, 26 Aug 2026 23:14:19 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0F4885805E;
+	Wed, 26 Aug 2026 23:14:19 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 70D3F58051;
+	Wed, 26 Aug 2026 23:14:18 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.80.63])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Aug 2026 23:14:18 +0000 (GMT)
+Message-ID: <21bf74a181df485f9daf47f9740972443e31471d.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: select the SHA384 PCR bank for the boot aggregate
 From: Mimi Zohar <zohar@linux.ibm.com>
-To: ltp@lists.linux.it
-Cc: Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v2] ima_tpm.sh: properly detect failure to verify the IMA measurement list
-Date: Wed, 26 Aug 2026 18:29:13 -0400
-Message-ID: <20260826222913.802598-1-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.55.0
+To: "Singh, Jashandeep" <jashandeep.singh@hpe.com>,
+        Roberto Sassu
+	 <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+        "linux-integrity@vger.kernel.org"
+	 <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+	 <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>,
+        Jashandeep Singh <jdsw@juniper.net>
+In-Reply-To: <PH7PR84MB16549E7A6AC842D358493B0F96AE2@PH7PR84MB1654.NAMPRD84.PROD.OUTLOOK.COM>
+References: <20260826191051.219090-1-jashandeep.singh@hpe.com>
+	 <4ea0433a82c219d6efdb83ad0bf267045c91a374.camel@linux.ibm.com>
+	 <PH7PR84MB16549E7A6AC842D358493B0F96AE2@PH7PR84MB1654.NAMPRD84.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 26 Aug 2026 19:14:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI2MDE4NSBTYWx0ZWRfX/OlTqOoioLWx
- lQGN4YWSEYO8pChBpWKs6L+5qxrvhPUiiePcau+kYbWgN/oiHxsnMDlHPmTmVSluK81AbPMCz9W
- sDV9dkZEqdl09gB5yeTUcCu62JWt46c=
-X-Proofpoint-GUID: 455Zp8SfPEsdM_ofYhCSZVnsXtt6cKl6
-X-Proofpoint-ORIG-GUID: 455Zp8SfPEsdM_ofYhCSZVnsXtt6cKl6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI2MDE4NSBTYWx0ZWRfXy6oswekeXHBE
- 99Eq8T607GGwzjxThPAK2mfvhETdbXWl1MxHSgI2cO7IA/jI9lpjrX7N4hWASJM4fa8rlWSQOCC
- UDyf25HZuW3ex0bWq/kxceCyGwyEdkFNc+WVZcqqppkWCrWeDHtf1wTv1Cd7azOaLDwn2xcvvNQ
- H/YRLboWBuAb6zP4KRXfQ9IcP4toEh+315jXdz4IdYigR27J04wdHyOnmm4O7FWKhgnOPt2TSie
- d5QsuFNZyBVqw5ktmeZI71+Sj7CFb+jQ2gv4hGB6fsWGlnNZkFw4s5jCHTsOzmW3eSBwWsbsuj1
- 91seSnW8oMGBeQKdOxydgri17B/3wtK+4+r16opoAueSg8knuM3UaKGzTWDqQ0EfUXDvvXYE6w+
- OAAXUpgEAlg2pWO+ghNLu7zw88z5/csubgVry4AkNIiTunmB13ciGTH+857XlkZXIvzoneapt88
- yji7Jy6aepPjdh0TN6A==
-X-Authority-Analysis: v=2.4 cv=H7brBeYi c=1 sm=1 tr=0 ts=6a8f68c7 cx=c_pps
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-GUID: wNikh9eYVxmC-4eVOCiDDOryJYocVdrX
+X-Proofpoint-ORIG-GUID: StecVo8jO5gnhUsJ4qYZWkyE-TgWwa0b
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI2MDE5NCBTYWx0ZWRfX4VThMTaynoE8
+ rtrMk3wyOQ6pY1uiO9RikrB42l88rFQ7+PY7aMXOepUngS2OakpU7onk91tr0jLEYfcEhHxVTdu
+ ThQ075TA+p3Og/gV0DsLPF6oA1M3JNwUb8Yts41rKyLk+IxMAitelQtklSNNrpO/WgorvaPxlUp
+ XY2kQcJLIRT29qULZ8kOmUAovoUWasgH+mnHQ4cVT/uW4XXhxg3uI2ytEPLZiNIx07pLLDYDrrK
+ HmV9o232M2H322tWqwcTnui/7vgFHJZqpmxROMjadv333XceOcibJf4TuzaAPulCs6d4g9lGksW
+ X775EnZBW4tP1ZSXI0cwCfJQEZ9K/Db0jV9Y/bnv1BGZjlFsZVmhLfksst9HiP0g9+wtPNKa5In
+ 7jtpuspiNwLrd79HzrxqFn/OVhuCP+O5xl/JSgD+BRaSXDoKadlFhMxlbOwFUr9JzXhmFzfsx6G
+ DIgCqVvzTCChn7z5+Jw==
+X-Authority-Analysis: v=2.4 cv=QsRuG1yd c=1 sm=1 tr=0 ts=6a8f734c cx=c_pps
  a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VnNF1IyMAAAA:8 a=DcaeczIwcw92CAh3fjEA:9
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
+ a=tfP5eB9Pq6O3CzWxs5kA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODI2MDE5NCBTYWx0ZWRfX80Pc8yKdOK/b
+ Vn7ppxk8VfhNKMU/UKe6CskKvyLUJnUvQvz6dPCsTBfwdJfQXTniAQGtzLl8JVrAl+KX8vt4R9/
+ Xivtx+jWWTPEuDrjAdtcs946UkeLjH8=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-08-26_06,2026-08-26_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
- bulkscore=0 adultscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ malwarescore=0 adultscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
+ spamscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608260185
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608260194
 
-test2 attempts to compare the aggregate PCR-10 value with the current
-TPM PCR value based on the current measurement list, but does not take
-into account that the measurement list might have grown.
+Hi Jashan,
 
-evmctl returns success/failure when verifying the IMA measurement list
-and displays the measurement list line number that matched.
+Mail to the kernel mailing lists are in plain text. Please refer to
+https://docs.kernel.org/process/submitting-patches.html#no-mime-no-links-no=
+-compression-no-attachments-just-plain-text
 
-Update test2 to check the return code, before failing the test.
-Include the matched line number and total number of measurement
-list records.
+On Wed, 2026-08-26 at 22:35 +0000, Singh, Jashandeep wrote:
+> Thanks Mimi.
+>=20
+>=20
+> Agreed that all allocated banks are extended via tpm_pcr_extend() - but t=
+hat's
+> the PCR-extend (write) path. The failure is in ima_calc_boot_aggregate(),=
+ which
+> reads PCRs 0-9 from a *single* selected bank.
+>=20
+>=20
+> The issue is that a TPM can be provisioned with *only* the SHA-384 bank e=
+nabled,
+> while the default IMA hash algorithm is SHA-256. In this configuration, t=
+he
+> current selection logic only matches the configured IMA default, then SHA=
+-256,
+> and then SHA-1 - it never considers SHA-384.
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
-Changelog:
-- addressed AI comments, minimizing changes
+It's walking the list of allocated TPM banks and, if allocated, sets bank_i=
+dx.
 
- .../security/integrity/ima/tests/ima_tpm.sh   | 25 +++++++++++++++----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+        for (i =3D 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
+                crypto_id =3D ima_tpm_chip->allocated_banks[i].crypto_id;
+                if (crypto_id =3D=3D hash->algo) {
+                        bank_idx =3D i;
+                        break;
+                }
 
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-index acd8b6d30..8bb86ea4a 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-@@ -146,7 +146,7 @@ get_pcr10_aggregate()
- 	local num_violations=0
- 	local msg="$ERRMSG_EVMCTL"
- 	local res=TCONF
--	local pcr ret
-+	local lineno pcr ret
+The question is why isn't the sha384 bank found in the list of
+nr_allocated_banks?
 
- 	if [ -z "$MISSING_EVMCTL" ]; then
- 		msg=
-@@ -178,10 +178,13 @@ get_pcr10_aggregate()
- 		tst_res $res "failed to find aggregate PCR-10 $msg"
- 		tst_res TINFO "hash file:"
- 		cat hash.txt >&2
--		return
-+		return $ret
- 	fi
+Mimi
 
--	echo "$pcr"
-+	lineno=$(grep -E "^($ALGORITHM )*PCR(.*10)*: succeed at entry" \
-+		 hash.txt | tail -1 | awk '{print $NF}')
-+	echo "$pcr $lineno"
-+	return $ret
- }
-
- test1_tpm_bypass_mode()
-@@ -249,7 +252,9 @@ test1()
-
- test2()
- {
--	local hash pcr_aggregate out ret
-+	local hash pcr_aggregate lineno out ret
-+	local measurement_count="$IMA_DIR/runtime_measurements_count"
-+	local total_measurements
-
- 	tst_res TINFO "verify PCR values"
-
-@@ -288,7 +293,9 @@ test2()
- 	tst_res TINFO "real PCR-10: '$hash'"
-
- 	get_pcr10_aggregate > tmp.txt
--	pcr_aggregate="$(cat tmp.txt)"
-+	ret=$?
-+
-+	pcr_aggregate="$(cat tmp.txt | awk '{print $1}')"
- 	if [ -z "$pcr_aggregate" ]; then
- 		return
- 	fi
-@@ -296,6 +303,14 @@ test2()
-
- 	if [ "$hash" = "$pcr_aggregate" ]; then
- 		tst_res TPASS "aggregate PCR value matches real PCR value"
-+	elif [ $ret -eq 0 ]; then
-+		lineno="$(cat tmp.txt | awk '{print $2}')"
-+		if [ -z "$lineno" ]; then
-+			return
-+		fi
-+		total_measurements=$(cat "$measurement_count")
-+
-+		tst_res TPASS "aggregate PCR value matched real PCR value (line: $lineno/$total_measurements)"
- 	else
- 		tst_res TFAIL "aggregate PCR value does not match real PCR value"
- 	fi
---
-2.55.0
-
+>=20
+> Adding a SHA-384 match allows the boot aggregate to be computed correctly
+> (sha384:...) instead of returning 0 and logging "No suitable TPM algorith=
+m for
+> boot aggregate". The fact that the SHA-384 bank can be selected and the b=
+oot
+> aggregate computed also confirms that the SHA-384 bank is recognized and
+> allocated, rather than being missing.
