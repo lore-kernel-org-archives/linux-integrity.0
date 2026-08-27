@@ -1,137 +1,146 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE562BE05F
-	for <linux-integrity@vger.kernel.org>; Thu, 27 Aug 2026 01:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.175
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787794966; cv=pass; b=DfaXHLYGaixB7vKUi9SjivKMg1q4NkeSaffwp/88TyPv2KY7uqpTAZsN+a5qjPPvVUXQ2KQk7CJUEAzdyje79tfAIgQLdebrJdf7m/UHvKrxiJcPAXLsNa9MZRbupfM/L1ktrCpE9CQ7w2mV1bJJsvt6qJtrMmPticnK9Zdtvrw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787794966; c=relaxed/simple;
-	bh=jQXZpWEa69A8mhfcE1SS+n9nS7LZ88iDUXIZo6zOxlc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U3hJxrJe/Kh9oo5dqH7wbHWapy3uxj3JpY2hAVQUDTBpLvUsesEQY/7c2MqVyJ9eb8DxM1eEPVgvUj5uc4EGENfLmHbat0svAxmpoD7vwrgR7dpmojYfCAZ5vHq/zdW/npkKMbfhQLz8nlZJ0xMX+TucjiodHXhGRAJcrwbbgIs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZS/rb9Jb; arc=pass smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9674435CB60;
+	Thu, 27 Aug 2026 06:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787811828; cv=none; b=XFZFoY1LXMOIrLP/OKlMAyh2gBTqCfdU2BA7Z7QzcTEMKv5xKoPviieYDip/ZtAFpBWkZwoJCyoJohah+pZI5g0hm4PboE81z9dbBySGcWCc+mssxBdW84eaWGtTTa6wK9E6kefNNBDvEjaf4AmQ+jXRoQi5eSZ5Hsh/rSq01nM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787811828; c=relaxed/simple;
+	bh=H/nY6FHTc9WKFAZwZWSoXmVvAP2y6OjzohTVZsAyhoU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HAPpNHkHn4MpOKVw6AxyQRqTNp46l0TUhHp7udM6nVUR6j/97oi9EBSQWpECgcd59RaTc5tazrn61+qGDiy5A7Qw/IJsfBDjiyT/pESbZc7Pe3s18HJbEb2cwPJBifUqeCGE5M3Qfk44Q5aVCv2iJGFphlhw9Kj0azM7fnwiP5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=reiRl5us; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZS/rb9Jb"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-cbedf433a99so1472087a12.2
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Aug 2026 18:42:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787794965; cv=none;
-        d=google.com; s=arc-20260327;
-        b=lEy7r6y2jC5flxAed/p8aUwXyXyT3/pCKgAx71wbS7R2Ihz2J1X9sFZalVzKAsfdV2
-         WPML8RM+9GsQpAZc9MJdu/U6RjnY5f535takLEWF4ohqqqRdCMTqmOxgU7HNTyRG2hAY
-         X8gpVaIdeaddUruek9QS6Go/48O1Mm+PjaqhJAL7Zdo5Re/4cAh9tEK7I1IWY+mCTZTQ
-         C4ZsV3rjnNFygWakvKMPkyxMZmmceBYwV/MElHOd1N0gn1EfVydAAGH4N7DdMt4VHDQC
-         zuUpjAtiDP1PW6Dvtea9YQ9EmBVsch1b0beSIfBme3Ui+YBRdkbswnmBHRAC96evJLGi
-         v7lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=MW12y6xPgbaKCNUYBedVgTiCqU80qClCqNc6nnpgicY=;
-        fh=IlhTjDxpxrBRWnJV6xlPEKUDUQpP1gOEFS8F+hwNWOk=;
-        b=TDzVD4DL0sDh/8RG+R+NPmJf7/uXaLULa3PIo0sXMHPlZN90rNbszX7yWxibJk9Fl/
-         nNjOdfrqNpWwP/OUSPH4K3L4Ig6OH0Qqv2IwFpRat3xoXhFQQKV35YKaHKi6qtqYD/fH
-         5yKcY/BqCXkAEVf0O+xgrNHhn5kodQAU0h8jsGgfsX1gL0wDH0jjNg8yF68UaFPZXjlc
-         g9cwRqhDqIUP+/5GRAJvRIgIKlLfIRGfHK+KS/D/J/s34WaGTSwM/grxkwOG18pcSgIx
-         g7/ot6Cz2jE/K6NBPAq8lNkZT0DttZMfv2V2a7CR4+J4VxdDa1uvMWSnNmVyBHzrMD58
-         d9zA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1787794964; x=1788399764; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=MW12y6xPgbaKCNUYBedVgTiCqU80qClCqNc6nnpgicY=;
-        b=ZS/rb9JbpBtoMVh7PAYy6LGfjcUOZP2BzJct6dr68tYf05WpE0/kXRfugBF2dt1Xmp
-         1SX1TGUOyJpv3Ekc98KdvsO9TqoPSoJDMl7a5U/mYuf/mT480m+596SZIHcwwDxSBuQP
-         fbk3Fmw3qOIQDaCNJjzxAtzqZ3ayPdb/izVnwgfw6I+u29RzyxufkTocXOsm5dnDhvYz
-         gYI1GEr0iGbXl4e9kQE7CSSROv7FGbZ3Y/0xb6kytciu7fohVc26DxWGwu0EjROrsOZg
-         v1z0KAe1QAWQFgmpgodEuZr7DfP/ysAWOuUr11HAF9js4TeX/w+SVXp35Dvm3HRsWJs+
-         u3VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787794964; x=1788399764;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MW12y6xPgbaKCNUYBedVgTiCqU80qClCqNc6nnpgicY=;
-        b=Kowv4q9hSZy4pD4mOpsX/+0HjZHyXDqq8Q5hYDy+NLsoVhwRx/YXYzAS+D/cPV5PDL
-         Hh2htf+aENPDMCwfrp3AUSejSkzscpp5mVMpP32rZwnbXSBTtVQySgYrdme2t65LKukx
-         0A0kMuAZPWVeEDODYYAyKqA9gM6+yyqCQKNjsuVlaDo7rP1wDqJzpEifQpPPTtCLy3VA
-         hrgrAr3pMySrxM2c1oxyOoAGZRMBQbWoP3MkdTBWz9oM5spn66zr+zMa+CAKhuX7/gQM
-         WY6+DvgQJ+eyqfSt5Wbr1IxaF2OF+S9nIHsBIsEfox7RLqV0gajWvXpWtruiMFqArNd5
-         9uvA==
-X-Forwarded-Encrypted: i=1; AHgh+RowLOoRzxT8Fdnpn0gzkWujGVNkbTypAM2LokkiDBLkUNTHLgRRBIiacsgNQo6O5hsovlC4Oy312XQEVtkCLio=@vger.kernel.org
-X-Gm-Message-State: AFuF++laqwkJV2Qw+s352WuWY3+hp0eCiZSAj/QJ3zq6bfS8Y6581sBP
-	qkCr7Ir3fdvSsong8oWMoDIx8S0IIaLTuwA6kYEpSizhZIbEFyuH+QyEFf3+h7pDm8CC745cGCA
-	gi66OEoaFZNrfKmccekUolgniEYwXTnP6ejd2pF3H
-X-Gm-Gg: AR+sD1212mbUJlwFxqbXjiRgXwxfVRFC16jxZiSf30THrrxkCkKJUYMgN2GaTPhg9X5
-	rPu6kitJMroKawK5LVal4MnAUD3q2i5zRMyu4i2qNbNG8/OCtT0w2q+xyLDyjMTEiFCbHs3+6X/
-	l/WHW8ljjzClycByeOS3hTsdcu94o1PNIATMcnen2k2FVgkMWQviig+1T0ZKqeb4nuFyFu5qTb0
-	LezQ74mtQixDods7W6DbpXz1/UVHv6tZBgx28SyRAYP3cPGIFKat4xwXXezzF8UN5loIEhgNSYL
-	BTwRQuuET7+Ggw1PRkBffjzuiX7PPPIZnrjp6NY1ZpU0
-X-Received: by 2002:a05:6a21:9202:b0:3c3:64cb:9b99 with SMTP id
- adf61e73a8af0-3cf76283ed6mr24475298637.6.1787794964690; Wed, 26 Aug 2026
- 18:42:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="reiRl5us"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67R3VdO61715236;
+	Thu, 27 Aug 2026 06:23:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=wDkkBq/zQRjvyGz/fv752jvBhNJjNG8gKU9apD71w
+	gA=; b=reiRl5usw1lINty/gEgjr9NSOi8+ogsIHO2hurHS9IVGWV4ZnC9AK8/3n
+	S8Lr1VDyiwszhT3cz182tiBR9Y9yBD2bvMvfOcVZbXWOsY7eb//76hA+n8EoAkYH
+	XFwFgCzCrkV0/69BH1agRMRx911yGHn5in5675Gpcw5tR4U0ZHcIKqFYytRVsH35
+	k/ehxI49mzUkVJzhNMGvOs+GwuZSd/whMA6ibyI3iqE3V3/HZEToUuyqv1AY7wHj
+	7tCmghJoUDI+CZnpI/3NrQbviaEiAxdcazWoBDCf+a47M+aQ5Cp35XO2Qw0xwMkb
+	k9TYRQ8W/M5vU0vxn+2upVKuCjtEA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g716j3ndd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Aug 2026 06:23:29 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67R6BIfS025454;
+	Thu, 27 Aug 2026 06:23:28 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4g7q3k6fhy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Aug 2026 06:23:28 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67R6NOBe30867940
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Aug 2026 06:23:24 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 81E4920043;
+	Thu, 27 Aug 2026 06:23:24 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9DE3520040;
+	Thu, 27 Aug 2026 06:23:13 +0000 (GMT)
+Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.ibm.com.com (unknown [9.76.202.253])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 27 Aug 2026 06:23:12 +0000 (GMT)
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, James.Bottomley@HansenPartnership.com,
+        jarkko@kernel.org, zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
+        rnsastry@linux.ibm.com, ssrish@linux.ibm.com
+Subject: [PATCH 0/8] Extend PKWM to support user-created wrapping keys
+Date: Thu, 27 Aug 2026 11:53:00 +0530
+Message-ID: <20260827062309.724808-1-ssrish@linux.ibm.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6a8f89e5.1d9ded08.62e62.00bf.GAE@google.com> <7F4D890F-C006-4855-888A-62ED786A32ED@mainlining.org>
- <CAHC9VhRvoDkJ0Pn1WHgTAEJ5RwZTmD4vChFGgqATn90C-Aae+g@mail.gmail.com> <1129ADC2-8838-47EE-A817-87631D933BA0@mainlining.org>
-In-Reply-To: <1129ADC2-8838-47EE-A817-87631D933BA0@mainlining.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 26 Aug 2026 21:42:33 -0400
-X-Gm-Features: AcwNN1UZQjdl8nAFoKRE5OXLt1mXTI6xe4mUlw-2BQCvwnerelt_uTfOeFp0llk
-Message-ID: <CAHC9VhT-SH8ci5f4cEGafAub4qE09KgWPJHRMgO_Uhwca2c3Bg@mail.gmail.com>
-Subject: Re: [syzbot] [audit?] BUG: unable to handle kernel paging request in integrity_audit_message
-To: Bradley Morgan <brads@mainlining.org>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com, audit@vger.kernel.org, 
-	eparis@redhat.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODI3MDA0OCBTYWx0ZWRfX2X5Glst8xwqu
+ hMrbTtfNiANWbpwzLVDkyUHzc1wpnAcV7yOU/Rfdk5QHwb0/KUM6McxFTCxC9ko5XXUy93OavkS
+ G27q3Y3W+ORuHjGkqPM9o07XbbOKRl8=
+X-Proofpoint-GUID: zawEhz905MFPrAEf-En517P1M1_zeAGf
+X-Proofpoint-ORIG-GUID: EFJOoTvm_tREc0dQ_TZE1nks12qiD96N
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI3MDA0OCBTYWx0ZWRfX8elJOjg6cFbB
+ vd1NOyDrNLqntbGxs+6HjFPnOymXqFYRN186HtZ2gkm1257Q4mR6lo+ypRAlx5rd7xzAx86vXVa
+ gk2ooxyA1Z6xWGad4WQbm47ln6Wqkny/Xvv5TcTCp2NHnFj98gkoAMhiDRsWKvMiZXdssvzBA/c
+ CWIsjVt/Onkk6mV/asRqvkuz2nPryhEIkHymdYwAjQDUlB17aLD7sAV1rr20jgmHeiMGLP4Vd64
+ vvgdG8XijK8YlsIau2VkAvTuSaj8kZRRMPHMMsHfigzXw0Bqc8/D9xw888+rDP7mAuO6pIqpUxs
+ gZ11U/Z8FmTbvsbhwrmZWV0VUERo6fSNrPZZL5zPELUt0excvIDJ7pYINAyNmzA3qgto3PX1gJX
+ 7MceXIySo5BDwKYsqAlqg5vDzRJ4a3609HQLYvi8zd/qU9+4vuPBbcnLHI7gzUOEy6rywwhkrN1
+ anZQLNXEghAbCF4VK0g==
+X-Authority-Analysis: v=2.4 cv=H7brBeYi c=1 sm=1 tr=0 ts=6a8fd7e1 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=Y2IxJ9c9Rs8Kov3niI8_:22 a=A93gRhB2vYe917ExAJkA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-27_02,2026-08-26_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 adultscore=0 priorityscore=1501 clxscore=1011 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608270048
 
-On Wed, Aug 26, 2026 at 9:23=E2=80=AFPM Bradley Morgan <brads@mainlining.or=
-g> wrote:
-> On 27 August 2026 02:22:17 BST, Paul Moore <paul@paul-moore.com> wrote:
-> >On Wed, Aug 26, 2026 at 9:06=E2=80=AFPM Bradley Morgan <brads@mainlining=
-.org>
-> >wrote:
-> >> On 27 August 2026 01:50:45 BST, syzbot
-> >> <syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com> wrote:
-> >> >Hello,
-> >> >
-> >> >syzbot found the following issue on:
-> >>
-> >> #syz set subsystems security:
-> >>
-> >> Note:  here's my suggested fix, in security/ima_appraise.c
-> >>
-> >>  path =3D dentry_path(dentry, pathbuf, PATH_MAX);
-> >>  +if (IS_ERR(path))
-> >>   path =3D NULL;
-> >>
-> >> apparmor and tomoyo both IS_ERR check their dentry_path calls, ima
-> >> is the only one that doesnt. NULL fname is already handled by the audi=
-t
-> >> side
-> >
-> >Thanks for taking a look Bradley.  Adding Mimi, Roberto, and the
-> >linux-integrity list as the security/integrity/ima/ima_appraise.c file
-> >is their domain.
->
-> np man, do you want me to submit a patch for it? or nahhhh
+The PKWM trusted source currently uses a single default wrapping key per
+LPAR. This key is created during trusted source initialization, and all
+trusted keys backed by PKWM are sealed and unsealed using it.
 
-That's a question for Mimi and Roberto, but if you can put together a
-patch without too much effort it definitely couldn't hurt to post it
-(make sure you post it to linux-integrity).
+Recent versions of PKWM allow users to create and manage their own wrapping
+keys through a set of lifecycle operations. This patch series brings these
+PKWM capabilities into the kernel, allowing users to create, manage, and
+select wrapping keys for sealing and unsealing their trusted keys, rather
+than requiring all trusted keys to use the default wrapping key.
 
---=20
-paul-moore.com
+In addition to implementing user-created wrapping key support, this series
+includes five prerequisite cleanup patches for the PLPKS and PKWM code.
+These patches improve error handling and type consistency, rename a macro
+for clarity, prevent unsupported capabilities from being exposed through
+the sysfs, and make minor documentation and MAINTAINERS updates.
+
+Srish Srinivasan (8):
+  pseries/plpks: update PKS documentation and maintainer entry
+  pseries/plpks: fix error handling in plpks_read_var()
+  pseries/plpks: improve type consistency and parameter validation
+  pseries/plpks: rename the default wrapping key macro
+  pseries/plpks: hide wrapping_features when unsupported
+  pseries/plpks: add HCALLs for PKWM wrapping key life cycle management
+  keys/trusted_keys: enable PKWM wrapping key selection by label
+  pseries/plpks/wrapkey: expose PKWM wrapping key management to
+    userspace via sysfs
+
+ .../ABI/testing/sysfs-firmware-plpks          | 106 ++++
+ Documentation/arch/powerpc/papr_hcalls.rst    |  49 +-
+ .../security/keys/trusted-encrypted.rst       |   4 +-
+ MAINTAINERS                                   |   2 +-
+ arch/powerpc/include/asm/hvcall.h             |   5 +-
+ arch/powerpc/include/asm/plpks.h              |  40 +-
+ arch/powerpc/platforms/pseries/Kconfig        |  13 +
+ arch/powerpc/platforms/pseries/Makefile       |   1 +
+ arch/powerpc/platforms/pseries/plpks-sysfs.c  |  31 +-
+ .../platforms/pseries/plpks-wrapkey-sysfs.c   | 407 +++++++++++++
+ arch/powerpc/platforms/pseries/plpks.c        | 557 ++++++++++++++++--
+ include/keys/trusted_pkwm.h                   |   3 +
+ security/keys/trusted-keys/trusted_pkwm.c     |  40 +-
+ 13 files changed, 1188 insertions(+), 70 deletions(-)
+ create mode 100644 arch/powerpc/platforms/pseries/plpks-wrapkey-sysfs.c
+
+-- 
+2.52.0
+
