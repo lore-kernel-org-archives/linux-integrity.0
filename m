@@ -1,161 +1,290 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBDC3955CA;
-	Wed, 26 Aug 2026 23:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787786071; cv=none; b=u5bfTsn8yMih8qo9DKHI8ty7r8uBpqzacIBWkDjk78qbg6uFbmhujFGIzJwoLmGiHBEn+vLr91LuUHcLKqzf1Ffz6nQEe/5FqEktpNwSrN9DKHK1cVBvvLFPAOrwUtHBmpd8tUjVaum9h4NUOCSbSGvy5QMInvSdQWsgKKtY2i8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787786071; c=relaxed/simple;
-	bh=r4Q+9FRjTXyHrCbuzgzJZEne8FbiCn4ajw263KnS9Xw=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=Qo32aHRJb4BVn9StPieIg8NY68Iu6t1fig6mqXr/SS51MyOqSPv0APozyyC/DvGPUF2Sn/HVd/NlIuWaV+ElZozUH6IYll8qv2bWK/VnDd6bSG4EJN+Xm37H79ygIf9o06gnpCU0ybDhrAmBfq6IjQRj5kIpIw1Ai+J/PNFZjVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z9pptXh6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A0C3612F8
+	for <linux-integrity@vger.kernel.org>; Thu, 27 Aug 2026 01:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787793753; cv=pass; b=E2SkNctu48OvIHPqJPLgJOXEJ5NInegzFYNaRy2VICN+o0QS4BpbOPHm7AWbaAVc+L9SXS78CnNWc9Pp9iroHyVUx+XqGehUHd05nlUsEMtt7yRk3Df2w10vdZPXZPJx1qCEasObeKRNp4/Is6xbxByEkZQm8OBVn3zZI/4bFqE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787793753; c=relaxed/simple;
+	bh=6my6Rbe9hoRTmVEb8pjTS/ygGkOLLImmDRVshZSy60c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CNCbD7IKBp744qbKmOGbfWHBGOdN6tzRKQwuFydqmox9NYO9R2K1gPo8E79U0jg9Lk751yCvYk4zMsYopnYFyvY+2gX4UhyFehCkQH6ElRNNgTFEcMjX/pKlWliCVhqAaX2DF+7UlHTv+Hgo7iHbQbvI1jflr7Bv4ppNGsihmoo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RzXmsVdq; arc=pass smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z9pptXh6"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67QL1Ynk3280523;
-	Wed, 26 Aug 2026 23:14:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=lcAJfX
-	iOPQp6Qh0jISwkxyBYW5KhBfvBU3njyOUt4q4=; b=Z9pptXh6tzy8hqEhXoJG64
-	JM5DKPclJ0roBJIcwpfDKGXiWdxMY+nSpjo8xMhgB7FymI5e6I2qeYbne+dsZFXk
-	MjRFacsJq2cCHTPkWXwanzgD4x1hiaksHeXkvf+vJo7Z6imBSGdmj83MbfQlCmJ0
-	94eBRnh3jmCisKyCaEmAnAEaKskptAOp6sx1JU1U78WhT4XMjxBgxBtnmBcZe5OY
-	YYZUD1QybmI3iCvmBh//G8xfxmu6v20UaiYe3+vEm5Cg9l9ABHUWqVsxk3NuDKKr
-	gyqLVBswloPepVqihOil3jEVj6btyTrIMtyDYk1o/lRPl8VDOkOpVFMTQYoIuBwA
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g73er1nes-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Aug 2026 23:14:20 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67QNBFKE021876;
-	Wed, 26 Aug 2026 23:14:19 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4g7ragmj06-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Aug 2026 23:14:19 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67QNEJMc19399202
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Aug 2026 23:14:19 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0F4885805E;
-	Wed, 26 Aug 2026 23:14:19 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 70D3F58051;
-	Wed, 26 Aug 2026 23:14:18 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.80.63])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Aug 2026 23:14:18 +0000 (GMT)
-Message-ID: <21bf74a181df485f9daf47f9740972443e31471d.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: select the SHA384 PCR bank for the boot aggregate
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: "Singh, Jashandeep" <jashandeep.singh@hpe.com>,
-        Roberto Sassu
-	 <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-        "linux-integrity@vger.kernel.org"
-	 <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-	 <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>,
-        Jashandeep Singh <jdsw@juniper.net>
-In-Reply-To: <PH7PR84MB16549E7A6AC842D358493B0F96AE2@PH7PR84MB1654.NAMPRD84.PROD.OUTLOOK.COM>
-References: <20260826191051.219090-1-jashandeep.singh@hpe.com>
-	 <4ea0433a82c219d6efdb83ad0bf267045c91a374.camel@linux.ibm.com>
-	 <PH7PR84MB16549E7A6AC842D358493B0F96AE2@PH7PR84MB1654.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 26 Aug 2026 19:14:17 -0400
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RzXmsVdq"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-383b4a3755fso2063489a91.3
+        for <linux-integrity@vger.kernel.org>; Wed, 26 Aug 2026 18:22:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787793750; cv=none;
+        d=google.com; s=arc-20260327;
+        b=lKesGTmmi6Mz2fwvyPEMHd49Ka4u6KwUvQgjAPEO1lCx3juwDZ2SfWyKPkY2gmVDuL
+         WjygeuOpGe4yGF8emSW6qkh3twaM36KUCVWwB92ShBHc8UdiR3uwZQtXw579HucB13Kd
+         xmskrl89TmGYcCYF+9X2JjWi9ptC9i90a1mYfDNmpl8+9jPO/FS+UQgAVlLJRAF3RPTf
+         iZFQfLjMuqZLlWP4281M6/pvUWvOWrAtKUANxjgXfLymcgYhVYlIT/uyJc7OQOQJ4FzT
+         foOcgVUmQfqwy9EleoP0J7DIESibUREI4ViXHIfquNE8Xxzt22nZCJiQWjTFnMEVHxTC
+         L1zQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=/kxjHtQoTs9r1PEGWctB7z+AQyNDSJTM7xtEIDj4Z/g=;
+        fh=cy0bZ8kNWnAR8yqw6qa9DuuXUZqXr9/dXj3NyT4AEzE=;
+        b=oXRDfdwHZl3UJcwYY/YMr3LjS9Ee2qwA3ml9SDzLERCZELhVkVvSzWqQ3yITvk6KL/
+         LMnmiiDWO1z9ob7Usd2Wwiej4UcCWe3OSrS9MXm2b1AKcQRvTP7uzLdxZiLmJxF6JT0n
+         GLmglEHiS2xs3xapH0UP8fAE2gwhcOF9PSNLqUl+Pt1eSMNOfGOFumLs/xvIdwTOxn7b
+         KoJGKuwvk00gtAFLB/xXcjEBhhx1242VhDi2DKcQUg1jsZkQzVfSXf8Y7PmSYmMQjNCF
+         kRdkGRQ4g1WoRh9IfGEQuLzYdAd3HhVPfniPXdCxwrwoLAOj0Wc9ddH7E94DzRYaGtb/
+         AdqA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1787793750; x=1788398550; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=/kxjHtQoTs9r1PEGWctB7z+AQyNDSJTM7xtEIDj4Z/g=;
+        b=RzXmsVdqDOA3dEpwWKHFEtfHneM3h8QPDb9+cG+t+dljf3yO5IJof97mAsm3IkjnCN
+         tiVTTFuxjWdpT0PJ6IkL766uMRYfYCienYO78gKVvEttnn8XW/0b+vuYkdjO9icePMER
+         NaaRoC6sQFY2/dKt3IEeQa+84bPuFyeLTwBWLYSamBO6f27YtKIt/mtOd5a3yrnPlHI2
+         25V86TXZvZYn9LJeug87NLfJiC7mCt+Zjmn8a8lQBqntMp3/OoYLveU1XZFSm7ihvv8o
+         /DAE4Q9E1uMVdWtFe+2et9h8WIVDgBqDnEw6RpVpjD6gHEs2B0JhCESE3vEZs7fTcxYl
+         nRGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787793750; x=1788398550;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/kxjHtQoTs9r1PEGWctB7z+AQyNDSJTM7xtEIDj4Z/g=;
+        b=kISSc0taA3zmItjDmmUgNJG3VIhp3VAVNsyfaocn18CmAKmsuf7Ro19DADYB7+uiYe
+         UExPHlYijcv+l05TK+0FWoXBsEc5nalI6qCA4oKGLtLhohYHtGar2aCf5sd4llvhPWqH
+         /ypr7SKMoEOruULPWz4tpndhVj2klTbGI8pir6ttBl4Kx1BanVjB7fY441d2TrdfhJJ7
+         YPtOoOLNo2TyVAm11hQoINHm6A9SSHJ1CZFqPeqn9M+PXqiIa+hyHou0LNEtriiHL4SF
+         kFILFM2wuZuZujA063sxIVEJMqtOyXfOPH1cLYrVtsFQGSKtbANNhMBp13pBrU/R2m1d
+         Kwbg==
+X-Forwarded-Encrypted: i=1; AHgh+Rocpj6v7+wBCk17KCWwajqdo5dG0aWF36OT5q9dpzmiPsrTaPWQeYqipbdIyT1MFGq5rZxbaoSe4f4n5b+6pY4=@vger.kernel.org
+X-Gm-Message-State: AFuF++kKVC5OQdkyIJ4MO2eoydhol3PxhjIDYJBJxaQZxMbEHaL700Hp
+	3r7HtTFt4QkEerpf19mhGJRHHCHTZb6Dv2BB8gxw+8gKRmPAh1mK0ziESQHPeVibOJBHIyJbIis
+	wCOW7TO+lqyB5hJ4gh9wE52DrPVNU9APYb3OWzJG4
+X-Gm-Gg: AR+sD108L+ytMHZBfMkPoh/ocJGCrj/gqom1xHA2MAwaM0Gav5rr2LpXvSd9/p/p5AU
+	w7txayF4nphsgmeHVb78VQnxaD039Hx80eb3Sdzi2eTFjLar9dtMj6r6ZRwYpTm+1l+Vb1Fjicj
+	3h/JQiSeKiyv5htUZDdDXFxaig4YaemxhUBQd+ybN4/mi2eF04jCzVz33e0OR/VscdCPRiGdkHY
+	HqwoY8zrfc6KOc0ygOW7HRtYu9X48sUviv6EpbKuuc6SXuzSeXGZIySx1HrRQwsgBt+I5/sBolp
+	UDvic9nSUKQ73bQHf8KH8LUGS8ZUheHnElF8EDidI6T7
+X-Received: by 2002:a17:90b:388e:b0:396:6344:3b63 with SMTP id
+ 98e67ed59e1d1-3966d364af9mr22642101a91.2.1787793749572; Wed, 26 Aug 2026
+ 18:22:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-GUID: wNikh9eYVxmC-4eVOCiDDOryJYocVdrX
-X-Proofpoint-ORIG-GUID: StecVo8jO5gnhUsJ4qYZWkyE-TgWwa0b
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI2MDE5NCBTYWx0ZWRfX4VThMTaynoE8
- rtrMk3wyOQ6pY1uiO9RikrB42l88rFQ7+PY7aMXOepUngS2OakpU7onk91tr0jLEYfcEhHxVTdu
- ThQ075TA+p3Og/gV0DsLPF6oA1M3JNwUb8Yts41rKyLk+IxMAitelQtklSNNrpO/WgorvaPxlUp
- XY2kQcJLIRT29qULZ8kOmUAovoUWasgH+mnHQ4cVT/uW4XXhxg3uI2ytEPLZiNIx07pLLDYDrrK
- HmV9o232M2H322tWqwcTnui/7vgFHJZqpmxROMjadv333XceOcibJf4TuzaAPulCs6d4g9lGksW
- X775EnZBW4tP1ZSXI0cwCfJQEZ9K/Db0jV9Y/bnv1BGZjlFsZVmhLfksst9HiP0g9+wtPNKa5In
- 7jtpuspiNwLrd79HzrxqFn/OVhuCP+O5xl/JSgD+BRaSXDoKadlFhMxlbOwFUr9JzXhmFzfsx6G
- DIgCqVvzTCChn7z5+Jw==
-X-Authority-Analysis: v=2.4 cv=QsRuG1yd c=1 sm=1 tr=0 ts=6a8f734c cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
- a=tfP5eB9Pq6O3CzWxs5kA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI2MDE5NCBTYWx0ZWRfX80Pc8yKdOK/b
- Vn7ppxk8VfhNKMU/UKe6CskKvyLUJnUvQvz6dPCsTBfwdJfQXTniAQGtzLl8JVrAl+KX8vt4R9/
- Xivtx+jWWTPEuDrjAdtcs946UkeLjH8=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-26_06,2026-08-26_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
- spamscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608260194
+References: <6a8f89e5.1d9ded08.62e62.00bf.GAE@google.com> <7F4D890F-C006-4855-888A-62ED786A32ED@mainlining.org>
+In-Reply-To: <7F4D890F-C006-4855-888A-62ED786A32ED@mainlining.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 26 Aug 2026 21:22:17 -0400
+X-Gm-Features: AcwNN1VT5whZXg1VeLLPP9smaLz8-zHRmxlwBY2ml9d33Av8g2PxBy3YiGmv6Og
+Message-ID: <CAHC9VhRvoDkJ0Pn1WHgTAEJ5RwZTmD4vChFGgqATn90C-Aae+g@mail.gmail.com>
+Subject: Re: [syzbot] [audit?] BUG: unable to handle kernel paging request in integrity_audit_message
+To: Bradley Morgan <brads@mainlining.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Cc: syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com, 
+	audit@vger.kernel.org, eparis@redhat.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jashan,
+On Wed, Aug 26, 2026 at 9:06=E2=80=AFPM Bradley Morgan <brads@mainlining.or=
+g> wrote:
+> On 27 August 2026 01:50:45 BST, syzbot
+> <syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com> wrote:
+> >Hello,
+> >
+> >syzbot found the following issue on:
+>
+> #syz set subsystems security:
+>
+> Note:  here's my suggested fix, in security/ima_appraise.c
+>
+>  path =3D dentry_path(dentry, pathbuf, PATH_MAX);
+>  +if (IS_ERR(path))
+>   path =3D NULL;
+>
+> apparmor and tomoyo both IS_ERR check their dentry_path calls, ima
+> is the only one that doesnt. NULL fname is already handled by the audit
+> side
 
-Mail to the kernel mailing lists are in plain text. Please refer to
-https://docs.kernel.org/process/submitting-patches.html#no-mime-no-links-no=
--compression-no-attachments-just-plain-text
+Thanks for taking a look Bradley.  Adding Mimi, Roberto, and the
+linux-integrity list as the security/integrity/ima/ima_appraise.c file
+is their domain.
 
-On Wed, 2026-08-26 at 22:35 +0000, Singh, Jashandeep wrote:
-> Thanks Mimi.
->=20
->=20
-> Agreed that all allocated banks are extended via tpm_pcr_extend() - but t=
-hat's
-> the PCR-extend (write) path. The failure is in ima_calc_boot_aggregate(),=
- which
-> reads PCRs 0-9 from a *single* selected bank.
->=20
->=20
-> The issue is that a TPM can be provisioned with *only* the SHA-384 bank e=
-nabled,
-> while the default IMA hash algorithm is SHA-256. In this configuration, t=
-he
-> current selection logic only matches the configured IMA default, then SHA=
--256,
-> and then SHA-1 - it never considers SHA-384.
+> >HEAD commit:    66fb95a52111 Merge tag 'caps-pr-20260820' of
+> >git://git.ker..
+> >git tree:       upstream
+> >console output: https://syzkaller.appspot.com/x/log.txt?x=3D1560d5495800=
+00
+> >kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db0978f5ed290=
+5b98
+> >dashboard link:
+> >https://syzkaller.appspot.com/bug?extid=3D5ebeb3089ea6439c37be
+> >compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for =
+Debian) 2.44
+> >syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D16fb462558=
+0000
+> >
+> >Downloadable assets:
+> >disk image:
+> >https://storage.googleapis.com/syzbot-assets/e7d9049723b0/disk-66fb95a5.=
+raw.xz
+> >vmlinux: https://storage.googleapis.com/syzbot-assets/a04d6efe59a0/vmlin=
+ux-66fb95a5.xz
+> >kernel image:
+> >https://storage.googleapis.com/syzbot-assets/81e3f2b9c049/bzImage-66fb95=
+a5.xz
+> >
+> >IMPORTANT: if you fix the issue, please add the following tag to the com=
+mit:
+> >Reported-by: syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com
+> >
+> >BUG: unable to handle page fault for address: ffffffffffffffdc
+> >#PF: supervisor read access in kernel mode
+> >#PF: error_code(0x0000) - not-present page
+> >PGD eb97067 P4D eb97067 PUD eb99067 PMD 0
+> >Oops: Oops: 0000 [#1] SMP KASAN NOPTI
+> >CPU: 0 UID: 0 PID: 5818 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(=
+full)
+> >Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >Google 07/16/2026
+> >RIP: 0010:strlen+0x30/0xa0 lib/string.c:402
+> >Code: 00 00 00 00 00 fc ff df 55 48 89 fa 48 89 fd 53 48 c1 ea 03 48 83 =
+ec 08 0f b6 04 02 48 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 50 <80> 7d 00 00 7=
+4 3d 48 bb 00 00 00 00 00 fc ff df 48 89 e8 48 83 c0
+> >RSP: 0018:ffffc90003d77940 EFLAGS: 00010246
+> >RAX: 0000000000000000 RBX: ffffffffffffffdc RCX: 0000000000000000
+> >RDX: 0000000000000004 RSI: ffffffff8207fb91 RDI: ffffffffffffffdc
+> >RBP: ffffffffffffffdc R08: 0000000000000004 R09: 00000000000000b7
+> >R10: 00000000000006c0 R11: ffffffff8bc921d3 R12: ffff8880785a84c0
+> >R13: 0000000000000007 R14: 00000000fffffff3 R15: ffffffffffffffdc
+> >FS:  000055555ec16500(0000) GS:ffff888123b86000(0000) knlGS:000000000000=
+0000
+> >CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >CR2: ffffffffffffffdc CR3: 0000000075fb6000 CR4: 00000000003526f0
+> >Call Trace:
+> > <TASK>
+> > __fortify_strlen include/linux/fortify-string.h:218 [inline]
+> > audit_log_untrustedstring+0x19/0x30 kernel/audit.c:2203
+> > integrity_audit_message+0x366/0x4f0
+> > security/integrity/integrity_audit.c:60
+> > integrity_audit_msg+0x41/0x60 security/integrity/integrity_audit.c:32
+> > validate_hash_algo security/integrity/ima/ima_appraise.c:752 [inline]
+> > ima_inode_setxattr+0x512/0x5f0 security/integrity/ima/ima_appraise.c:77=
+5
+> > security_inode_setxattr+0x2d0/0x560 security/security.c:1940
+> > __vfs_setxattr_locked+0xad/0x2b0 fs/xattr.c:309
+> > vfs_setxattr+0x14a/0x390 fs/xattr.c:344
+> > do_setxattr+0x145/0x180 fs/xattr.c:662
+> > file_setxattr fs/xattr.c:672 [inline]
+> > file_setxattr+0x139/0x1b0 fs/xattr.c:666
+> > path_setxattrat+0x335/0x3b0 fs/xattr.c:732
+> > __do_sys_fsetxattr fs/xattr.c:782 [inline]
+> > __se_sys_fsetxattr fs/xattr.c:779 [inline]
+> > __x64_sys_fsetxattr+0xc5/0x140 fs/xattr.c:779
+> > do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+> > do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+> > entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >RIP: 0033:0x7f506239e0d9
+> >Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 =
+f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 f=
+f ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+> >RSP: 002b:00007fff3373f938 EFLAGS: 00000246 ORIG_RAX: 00000000000000be
+> >RAX: ffffffffffffffda RBX: 00007f5062625fa0 RCX: 00007f506239e0d9
+> >RDX: 0000200000000380 RSI: 0000200000000080 RDI: 0000000000000004
+> >RBP: 00007f5062435024 R08: 0000000000000000 R09: 0000000000000000
+> >R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+> >R13: 00007f5062625fac R14: 00007f5062625fa0 R15: 00007f5062625fa0
+> > </TASK>
+> >Modules linked in:
+> >CR2: ffffffffffffffdc
+> >---[ end trace 0000000000000000 ]---
+> >RIP: 0010:strlen+0x30/0xa0 lib/string.c:402
+> >Code: 00 00 00 00 00 fc ff df 55 48 89 fa 48 89 fd 53 48 c1 ea 03 48 83 =
+ec 08 0f b6 04 02 48 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 50 <80> 7d 00 00 7=
+4 3d 48 bb 00 00 00 00 00 fc ff df 48 89 e8 48 83 c0
+> >RSP: 0018:ffffc90003d77940 EFLAGS: 00010246
+> >RAX: 0000000000000000 RBX: ffffffffffffffdc RCX: 0000000000000000
+> >RDX: 0000000000000004 RSI: ffffffff8207fb91 RDI: ffffffffffffffdc
+> >RBP: ffffffffffffffdc R08: 0000000000000004 R09: 00000000000000b7
+> >R10: 00000000000006c0 R11: ffffffff8bc921d3 R12: ffff8880785a84c0
+> >R13: 0000000000000007 R14: 00000000fffffff3 R15: ffffffffffffffdc
+> >FS:  000055555ec16500(0000) GS:ffff888123b86000(0000) knlGS:000000000000=
+0000
+> >CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >CR2: ffffffffffffffdc CR3: 0000000075fb6000 CR4: 00000000003526f0
+> >----------------
+> >Code disassembly (best guess):
+> >   0:  00 00                   add    %al,(%rax)
+> >   2:  00 00                   add    %al,(%rax)
+> >   4:  00 fc                   add    %bh,%ah
+> >   6:  ff                      lcall  (bad)
+> >   7:  df 55 48                fists  0x48(%rbp)
+> >   a:  89 fa                   mov    %edi,%edx
+> >   c:  48 89 fd                mov    %rdi,%rbp
+> >   f:  53                      push   %rbx
+> >  10:  48 c1 ea 03             shr    $0x3,%rdx
+> >  14:  48 83 ec 08             sub    $0x8,%rsp
+> >  18:  0f b6 04 02             movzbl (%rdx,%rax,1),%eax
+> >  1c:  48 89 fa                mov    %rdi,%rdx
+> >  1f:  83 e2 07                and    $0x7,%edx
+> >  22:  38 d0                   cmp    %dl,%al
+> >  24:  7f 04                   jg     0x2a
+> >  26:  84 c0                   test   %al,%al
+> >  28:  75 50                   jne    0x7a
+> >* 2a:  80 7d 00 00             cmpb   $0x0,0x0(%rbp) <-- trapping instru=
+ction
+> >  2e:  74 3d                   je     0x6d
+> >  30:  48 bb 00 00 00 00 00    movabs $0xdffffc0000000000,%rbx
+> >  37:  fc ff df
+> >  3a:  48 89 e8                mov    %rbp,%rax
+> >  3d:  48                      rex.W
+> >  3e:  83                      .byte 0x83
+> >  3f:  c0                      .byte 0xc0
+> >
+> >
+> >---
+> >This report is generated by a bot. It may contain errors.
+> >See https://goo.gl/tpsmEJ for more information about syzbot.
+> >syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> >syzbot will keep track of this issue. See:
+> >https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >
+> >If the report is already addressed, let syzbot know by replying with:
+> >#syz fix: exact-commit-title
+> >
+> >If you want syzbot to run the reproducer, reply with:
+> >#syz test: git://repo/address.git branch-or-commit-hash
+> >If you attach or paste a git patch, syzbot will apply it before testing.
+> >
+> >If you want to overwrite report's subsystems, reply with:
+> >#syz set subsystems: new-subsystem
+> >(See the list of subsystem names on the web dashboard)
+> >
+> >If the report is a duplicate of another one, reply with:
+> >#syz dup: exact-subject-of-another-report
+> >
+> >If you want to undo deduplication, reply with:
+> >#syz undup
+> >
+> >
+>
+> --- Thanks!
+> https://lore.kernel.org/all/EE579805-42F2-4C58-B752-F28779EEB717@grrlz.ne=
+t/
 
-It's walking the list of allocated TPM banks and, if allocated, sets bank_i=
-dx.
 
-        for (i =3D 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
-                crypto_id =3D ima_tpm_chip->allocated_banks[i].crypto_id;
-                if (crypto_id =3D=3D hash->algo) {
-                        bank_idx =3D i;
-                        break;
-                }
 
-The question is why isn't the sha384 bank found in the list of
-nr_allocated_banks?
-
-Mimi
-
->=20
-> Adding a SHA-384 match allows the boot aggregate to be computed correctly
-> (sha384:...) instead of returning 0 and logging "No suitable TPM algorith=
-m for
-> boot aggregate". The fact that the SHA-384 bank can be selected and the b=
-oot
-> aggregate computed also confirms that the SHA-384 bank is recognized and
-> allocated, rather than being missing.
+--=20
+paul-moore.com
