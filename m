@@ -1,43 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085763CA486;
-	Thu, 27 Aug 2026 21:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FDA3F106C;
+	Fri, 28 Aug 2026 01:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787864513; cv=none; b=A6/XZ8OpZH/AlFDUEDHKnrDFvikKwatie54ekBiwOTF09W8mEOc18Tk4gOya9NRfoeqC9VQ03psjj9vXEFvs/yW+a0nxIEsRgAn6cq6JeP0tOsYHLV6D1/1xsAO/JNUS1y6uc0MSVOQk6dD9A82ohxOXXZN6KyTmxzeX5AyVaBg=
+	t=1787881474; cv=none; b=R89F0E1GzQe7/PDskxpoea26J90DvFrtnd1hdgVfVDI4DDtfuNTqokjeO/sbcagb0mOc5Q7mdITOIVU68BafM9rg9wmqBZF0keq+0g1Ude+WY27BkdwpjyLERK/NmXkRKTzYIY/kjV7bwUgcLw/UChERoY9btTzj73S3x/ZODIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787864513; c=relaxed/simple;
-	bh=z7g2QR/6D7EsZU71dJHbAnqAlfmfQGRRSVBKM3W0Zho=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SNfa4nYNKTepOsfsEzDNGn+0syPXx9iUMk+hsajnvbytn2v96hpd8ZX3JSMOB0ZwPY+KC8O4LGf0QrUR85xV/mlaAy5mIESJb4UY9Fv6Kn9m06LsquQ9RWwhM3SsIVbwQl9oWiagUsqJv0xrgK+Pg391UDda2j0G1KuxoY5gdS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnGTbrfD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787881474; c=relaxed/simple;
+	bh=Jie+QLkYg6YgDo8ApBRmyR11+TL4JDlQwsPxo4+6amY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbmgGu/SrNiAoOz1mMgr+4pC/8hfFN7A2ykm/o7pAA+jTeRCh9NmOagPq5IyfmRYMoCheWS4cr4q64R/vcOdAH0evIB7Wj+gkBsK1dHfcY8yR4X/xnkWEKxnTr3NLOk1moBbiFNPQEfQRufjcGs0CzS0j4zT6QMaoNVeG8atgMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GofVuAGE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnGTbrfD"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 048FC1F000E9;
-	Thu, 27 Aug 2026 21:01:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GofVuAGE"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 195861F000E9;
+	Fri, 28 Aug 2026 01:44:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787864511;
-	bh=wk8NtGvLNqSJDyy9AbjGsCvf7C2Ow3jcgzXTkEjtS2A=;
-	h=Date:From:To:Cc:Subject;
-	b=MnGTbrfD/rAlVfeCdf9DaMBRUbgll9qUblqEqHr0KP0A9Z+KYWjKg+hNetSy7qAbo
-	 yBe4qrTcCAjbI6zeH6q8O4zQEqAY2TE9d95C80tRhOTRILbeQVZlTauevNPdKqL2fp
-	 A5peZdBalZl0XZxQUqpewHAmr2MRdo56hdR3jpvWYQIjUoejNYN3XhTeEoJs8B67um
-	 n0VO5scXUo0atl5A5sW+/p4f4MHt7mmJ12BWKS2Reb55Pcs7fMl5Dl/QwBvU2Tr0LC
-	 IHgmD8HoplA1A9JkiUvfUwF78pA45MndevFk/JXjA27VwXYEzWrVAhZwiBjZQWGh3f
-	 b/Qx9ENTe8UVQ==
-Date: Fri, 28 Aug 2026 00:01:47 +0300
-From: jarkko@kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Daniel P. Smith" <dpsmith@apertussolutions.com>,
-	trenchboot-devel@googlegroups.com,
-	Ross Philipson <ross.philipson@gmail.com>, x86@kernel.org
-Subject: [GIT PULL] TPM DEVICE DRIVER: for-next-tpm-7.3
-Message-ID: <apCluywYWo97vyYr@kernel.org>
+	s=k20260515; t=1787881472;
+	bh=ptnA8B4SOg2D1E4VCTxVl7KR4hgwvDyXWo+zLIjdg3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GofVuAGEYqcjKWWKyO90i6xTGjHcx6cEhcPDQcRDAFCuYWYcVTaI5U6ZaVgy845d6
+	 +mvfNkVEelT7Ltce5qOQlrCM/jS+oS0jgvQ1dcmGnzg/SpNOmtSEYCQ3FmjZXmi2Sr
+	 yttQJG6iuIf/fXJLt2cN4M8QbZhm8vwAGizYiQe6AVLJ3GWS6tAGs9svZ9++7xDUjK
+	 BwI1iu9na3htC4YV3vBaaM0ygBRS6ziTqLq4H4Zs0RzkoekeiWYQiSrokJeuXi3y6q
+	 Em4iSk983HU/UdqqAyrXhmEYVq+CVEDEcel4oGxCe9K5sZPA+2y7M7QFFB6hMEP4rK
+	 F7zQ+u4cKN1qw==
+Date: Fri, 28 Aug 2026 04:44:28 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: sn0x-sharma <sanketsharmacsec@gmail.com>
+Cc: James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
+	dhowells@redhat.com, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+	security@kernel.org, w@1wt.eu
+Subject: Re: [PATCH 2/2] keys: trusted: tpm1: reject unauthenticated response
+ tag in TSS_checkhmac1/2
+Message-ID: <apDn_ODmEGo0JxRQ@kernel.org>
+References: <20260825182919.15943-1-sanketsharmacsec@gmail.com>
+ <20260825182919.15943-2-sanketsharmacsec@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -46,98 +46,56 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20260825182919.15943-2-sanketsharmacsec@gmail.com>
 
-The following changes since commit 66498c75b4f8017f62d720d9b59675bdf3abce91:
+On Tue, Aug 25, 2026 at 06:29:19PM +0000, sn0x-sharma wrote:
+> TSS_checkhmac1() and TSS_checkhmac2() silently return success when the
+> response tag is TPM_TAG_RSP_COMMAND (0x00c4), bypassing HMAC
+> verification entirely. A forged TPM response with this unauthenticated
+> tag allows an attacker to skip integrity checks on TPM responses.
+> 
+> Reject TPM_TAG_RSP_COMMAND with -EINVAL in both functions, requiring
+> all responses to carry a proper authenticated tag.
+> 
+> Reported-by: sn0x-sharma <sanketsharmacsec@gmail.com>
 
-  Merge tag 'dmaengine-7.3-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine (2026-08-24 12:21:15 -0700)
+SOB is enough.
 
-are available in the Git repository at:
+> Link: https://lore.kernel.org/linux-integrity/
+> Signed-off-by: sn0x-sharma <sanketsharmacsec@gmail.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/for-next-tpm-7.3
+If by any means possible, use your real name here.
 
-for you to fetch changes up to 55ba91d4c54ab31ee8387bae40e799de467f8269:
+> ---
+>  security/keys/trusted-keys/trusted_tpm1.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+> index d47cb7108..c89fc6cfe 100644
+> --- a/security/keys/trusted-keys/trusted_tpm1.c
+> +++ b/security/keys/trusted-keys/trusted_tpm1.c
+> @@ -202,7 +202,7 @@ static int TSS_checkhmac1(unsigned char *buffer,
+>  	ordinal = command;
+>  	result = LOAD32N(buffer, TPM_RETURN_OFFSET);
+>  	if (tag == TPM_TAG_RSP_COMMAND)
+> -		return 0;
+> +		return -EINVAL;
+>  	if (tag != TPM_TAG_RSP_AUTH1_COMMAND)
+>  		return -EINVAL;
+>  	authdata = buffer + bufsize - SHA1_DIGEST_SIZE;
+> @@ -270,7 +270,7 @@ static int TSS_checkhmac2(unsigned char *buffer,
+>  	result = LOAD32N(buffer, TPM_RETURN_OFFSET);
+>  
+>  	if (tag == TPM_TAG_RSP_COMMAND)
+> -		return 0;
+> +		return -EINVAL;
+>  	if (tag != TPM_TAG_RSP_AUTH2_COMMAND)
+>  		return -EINVAL;
+>  	authdata1 = buffer + bufsize - (SHA1_DIGEST_SIZE + 1
+> -- 
+> 2.53.0
+> 
 
-  tpm-buf: Add TPM buffer support header for standalone reuse (2026-08-25 18:13:37 +0300)
-
-----------------------------------------------------------------
-Hi,
-
-I had to think a lot how to put this into few paragraphs.  I hope this will
-makes sense to you and I'm not too confusing.
-
-The bulk of this pull request are Ross Philipson's TPM enablers for the
-Trenchboot patch series.  The commits expose TPM constants, and decouple
-and improve robustness of tpm_buf a bit in order to implement a minimal
-early TPM driver.
-
-Early boot code will call either SKINIT on AMD or GETSEC[SENTER] on Intel
-before jumping into kernel's entry point.  They re-initalize TPM PCRs but
-leave up to the early boot code measure initrd, boot_params and Trenchboot
-associated metadata.
-
-The motivation here is just that we would want in future iterations of the
-series put our full focus to the x86 part of the review, and call it a day
-as per TPM changes.  Further, even if Trenchboot turned out to be empty
-lottery the worst possible outcome for TPM driver is that things get
-cleaned up a bit.
+otherwise looks ok
 
 BR, Jarkko
-
-----------------------------------------------------------------
-Alec Brown (1):
-      tpm: Remove main TPM header from TPM event log header
-
-Jarkko Sakkinen (3):
-      tpm-buf: Merge TPM_BUF_BOUNDARY_ERROR and TPM_BUF_OVERFLOW
-      tpm-buf: Remove chip parameter from tpm_buf_append_handle()
-      tpm-buf: Memory-safe allocations
-
-Karl Mehltretter (1):
-      tpm: atmel: depend on X86
-
-Li Jun (1):
-      tpm: tpm_tis_spi: fix nodef CR50 tpm_tis_spi_resume is null
-
-Myeonghun Pak (1):
-      tpm: tpm_i2c_nuvoton: disable IRQ on wait timeout
-
-Pan Chuang (1):
-      tpm: Remove redundant dev_err()
-
-Ross Philipson (6):
-      tpm: Initial step to reorganize TPM public headers
-      tpm: Move TPM1 specific definitions to the command header
-      tpm: Move TPM2 specific definitions to the command header
-      tpm: Move TPM common base definitions to the command header
-      tpm: Move platform specific definitions to the new PTP header
-      tpm-buf: Add TPM buffer support header for standalone reuse
-
-Ruoyu Wang (2):
-      tpm: st33zp24: Return zero on status read failure
-      tpm: st33zp24: Validate locality read result
-
- drivers/char/tpm/Kconfig                  |   3 +-
- drivers/char/tpm/st33zp24/st33zp24.c      |  13 +-
- drivers/char/tpm/tpm-buf.c                | 145 +++++----
- drivers/char/tpm/tpm-sysfs.c              |  26 +-
- drivers/char/tpm/tpm.h                    | 180 -----------
- drivers/char/tpm/tpm1-cmd.c               | 180 +++++------
- drivers/char/tpm/tpm2-cmd.c               | 321 ++++++++----------
- drivers/char/tpm/tpm2-sessions.c          | 164 +++++-----
- drivers/char/tpm/tpm2-space.c             |  57 ++--
- drivers/char/tpm/tpm_i2c_nuvoton.c        |   8 +-
- drivers/char/tpm/tpm_tis_core.h           |  64 +---
- drivers/char/tpm/tpm_tis_i2c_cr50.c       |   4 +-
- drivers/char/tpm/tpm_tis_spi.h            |   8 +-
- drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +-
- include/keys/trusted_tpm.h                |   1 -
- include/linux/tpm.h                       | 230 +------------
- include/linux/tpm_buf.h                   |  60 ++++
- include/linux/tpm_command.h               | 518 +++++++++++++++++++++++++++++-
- include/linux/tpm_eventlog.h              |   2 +-
- include/linux/tpm_ptp.h                   | 133 ++++++++
- security/keys/trusted-keys/trusted_tpm1.c |  45 ++-
- security/keys/trusted-keys/trusted_tpm2.c | 166 +++++-----
- 22 files changed, 1255 insertions(+), 1103 deletions(-)
- create mode 100644 include/linux/tpm_buf.h
- create mode 100644 include/linux/tpm_ptp.h
