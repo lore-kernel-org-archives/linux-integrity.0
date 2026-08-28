@@ -1,49 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA6729405;
-	Fri, 28 Aug 2026 01:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D8E318EC4;
+	Fri, 28 Aug 2026 02:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787882372; cv=none; b=RHmXwl0qpijS7uO7CXP+yfa2iH0sDbkJmabgbBP+k+it1sFK3gca7j4ZB/owxZAf+A3wHkf0k+zAFhz+VqZMH0VLB3IdDJYrKdaBULOOScyP4IjROaDcPbnRNcYyCQEFtcbcrzxaernvOb3TLflVKcRZnY+kolIJKE3qEDGnlI8=
+	t=1787882699; cv=none; b=kln+P0IjKgsnyYdrPafH3S0741nqWyzwJkO9rhXBLtse+ttPceVcy/sPmxdIz0qBobPz9s/YrysTTYU8hMHu2VXUYLTx7IUXXqXb1RDxVyQfnzLObJIzXR8AnK4e+41DTvvYOkK0Comsa20P1Jxf/SBKRWi8t09V5690pkzM2ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787882372; c=relaxed/simple;
-	bh=PLUrSJ7Bgr42fAa7hl3L90oFyHaK/ng3BsHc6DjlYsg=;
+	s=arc-20240116; t=1787882699; c=relaxed/simple;
+	bh=a4oe8ZdC6UeisTQKpKxHPEeb0NPLaBZZLo0RDJzV0+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TwH4PczUyFzbig4jJ4R15lEDqRT7s0XuEkzgSiNhR++xtcep4EbhyTT6/6DZ8/lBWJGbpV+eeJ+qvMc8rSalZgS24e/XAMeJqGaVLU4YfIdn78IRQuxn6iUYvKl2m7JQjPj/TqxhKtUbel9vVnIZSCabxidsw0Hr8wo1bVk2rdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alyJu5Ry; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=TWuiTjbmT1bLehvR7PBheGPATIZ4VOG8vFfl+g7zRaiV07/if6GwGsGryMyPIF19lqljBrsARAjlHcydrPLt0zigXm96+RHB3FPAdCTJL5JGLWypHVCF5yfD1Yk0FbPc1hDX39PrQw3ffp+wLGjiiN3NsZQIFmS1CVxkYmEJmes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGIK5FTd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alyJu5Ry"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B51761F000E9;
-	Fri, 28 Aug 2026 01:59:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGIK5FTd"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 5EB831F00A3A;
+	Fri, 28 Aug 2026 02:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787882371;
-	bh=BmMeT+sGruSoarJZXTMiWDmYAjjQLaM8q39gUOJQkx8=;
+	s=k20260515; t=1787882697;
+	bh=a4oe8ZdC6UeisTQKpKxHPEeb0NPLaBZZLo0RDJzV0+E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=alyJu5RyJZxHpySxmSX2EQq01LxMYALxg4y2c7/trNsJ8eg1uAVvo3Ay8zeIfizUT
-	 a1TZZEP8ghnZT7m+o1kxgQbg+UMP57BmgZEpv7WUkf70OpF5fg0ESZnQWa0dSfLH3n
-	 J1wj613i20sY6qEp2Z7S0IdG04bRyXQg7Wug+Q1CJCn99pDT1gX0XFW7cK45t39C3O
-	 d/wNvxDqLspl04zBg3cTdxrdZFxU4NbIMxvXoAFGO0TaKV2GVTzWPYEsJUOAruawKe
-	 Rl0XgcYaJ+IFN00KAUOzqYTfnOcH/yXW6iCR0sFbrmYwqM6NJsZvIRsV84GIP/yKm6
-	 0+0XXkf3ek2UA==
-Date: Fri, 28 Aug 2026 04:59:27 +0300
+	b=NGIK5FTd8b9G4QBKpMrX+tIHd1+dl6TaNmLKw7N2k83kPCb+izxGY9gA0a2lBhFYC
+	 ATJhhKMLpZh+2OD55fTLHxsYux1eifRJBDCwvhgJo+z+PYkhP7Gv0/EFlROF/HB1b/
+	 rBTO98q3gkI4IJ6Bhvbva4X/U+w39Cpu/Ydy6MUNDjX5a+PyL42cuO4+v/eGF2XOYn
+	 ZTBGCd02eDCh97eXdA7ua3jb81EHAXSrWA9/5wRum7aiKSE2iBMyEV/cFADF0eNqNx
+	 pu7ndDvUn0qCBPlcP3E2/HzOCyXF8+7ClBwb+x0GjVi9IPh3gOlKs/KUkWsm8U3+TU
+	 LDF1gyzPBX57g==
+Date: Fri, 28 Aug 2026 05:04:54 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Cen Zhang (Microsoft Security FORGE Labs)" <blbllhy@gmail.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Roberto Sassu <roberto.sassu@polito.it>,
-	David Safford <safford@watson.ibm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>, Francis Perron <francis@akrites.dev>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Akrites SIRT <sirt@akrites.dev>,
-	AutonomousCodeSecurity@microsoft.com,
-	Cen Zhang <cenzhang@microsoft.com>
-Subject: Re: [PATCH v2] KEYS: encrypted: fix integer overflow of datablob_len
-Message-ID: <apDrfyDB883Nl5Sd@kernel.org>
-References: <20260826154456.85974-1-blbllhy@gmail.com>
+To: microfish <f13208471983@163.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] tpm: crb: handle ACPI NVS memory region overlap
+Message-ID: <apDseLwm7saXAdbd@kernel.org>
+References: <20260827035511.49582-1-f13208471983@163.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -52,110 +43,18 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260826154456.85974-1-blbllhy@gmail.com>
+In-Reply-To: <20260827035511.49582-1-f13208471983@163.com>
 
-On Wed, Aug 26, 2026 at 11:44:56AM -0400, Cen Zhang (Microsoft Security FORGE Labs) wrote:
-> From: "Cen Zhang (Microsoft Security FORGE Labs)" <cenzhang@microsoft.com>
-> 
-> The datablob_len field in struct encrypted_key_payload and the local
-> variable in encrypted_key_alloc() are declared as unsigned short, which
-> has a maximum value of 65535. The datablob_len is computed as:
-> 
->   format_len + 1 + strlen(master_desc) + 1 + strlen(datalen) + 1
->   + ivsize + 1 + encrypted_datalen
-> 
-> An attacker can create an encrypted key with a very long datalen string
-> (e.g., 32756 characters of leading zeros followed by "4096", which
-> kstrtol() happily parses as 4096), and then update it with a very long
-> master_desc string (~32760 characters). The combined lengths exceed
-> 65535, causing the unsigned short to silently wrap around. This results
+On Thu, Aug 27, 2026 at 11:55:11AM +0800, microfish wrote:
+> On certain Lenovo/AMD systems, the BIOS declares an ACPI NVS region
+> that covers a large memory range (e.g. 0xccc40000-0xccd3efff) which
+> includes the TPM CRB MMIO area (0xccd35000-0xccd38fff). The E820
+> subsystem registers this NVS region with IORESOURCE_BUSY in the
+> iomem_resource tree.
 
-Please use concrete sizes as possible. E.g., 16-bit word or u16 would be
-much less involved than "unsigned short".
+Cannot and will not move forward given undefined and open set of gear.
 
-> in a grossly undersized kzalloc() allocation, and the subsequent
-> memcpy() in __ekey_init() writes ~32KB past the end of the buffer,
-> corrupting adjacent slab objects.
-
-One more: please describe the issue as ergnomic as possible (but still
-complete). I care neither Alice nor Bob.
-
-> 
-> Fix this by:
-> 1. Using check_add_overflow() to calculate datablob_len directly into
->    its existing unsigned short destination.
-> 2. Checking the total payload length the same way before passing it to
->    key_payload_reserve(), since key->datalen is also unsigned short.
-> 3. Using kzalloc_flex() to allocate encrypted_key_payload together with
->    its trailing payload_data[] array.
-> 
-> Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
-> Cc: stable@vger.kernel.org
-> Assisted-by: GitHub-Copilot:claude-opus-4.6
-> Signed-off-by: Cen Zhang (Microsoft Security FORGE Labs) <cenzhang@microsoft.com>
-> Signed-off-by: Francis Perron (Akrites SIRT) <francis@akrites.dev>
-> ---
-> Changes in v2:
-> - Keep datablob_len unchanged and check both unsigned short bounds with
->   check_add_overflow().
-> - Use kzalloc_flex() for the trailing payload_data[] array.
-> - Correct the attribution and sign-off trailers.
-> 
-> The initial version was discussed off-list and is not publicly archived.
-> 
->  security/keys/encrypted-keys/encrypted.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-> index 59cb77b237b3..e07092ea301a 100644
-> --- a/security/keys/encrypted-keys/encrypted.c
-> +++ b/security/keys/encrypted-keys/encrypted.c
-> @@ -19,6 +19,7 @@
->  #include <linux/parser.h>
->  #include <linux/string.h>
->  #include <linux/err.h>
-> +#include <linux/overflow.h>
->  #include <keys/user-type.h>
->  #include <keys/trusted-type.h>
->  #include <keys/encrypted-type.h>
-> @@ -579,6 +580,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
->  {
->  	struct encrypted_key_payload *epayload = NULL;
->  	unsigned short datablob_len;
-> +	unsigned short payload_totallen;
->  	unsigned short decrypted_datalen;
->  	unsigned short payload_datalen;
->  	unsigned int encrypted_datalen;
-> @@ -632,16 +634,22 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
->  
->  	encrypted_datalen = roundup(decrypted_datalen, blksize);
->  
-> -	datablob_len = format_len + 1 + strlen(master_desc) + 1
-> -	    + strlen(datalen) + 1 + ivsize + 1 + encrypted_datalen;
-> +	if (check_add_overflow(format_len + 1 + strlen(master_desc) + 1
-> +			       + strlen(datalen) + 1 + ivsize + 1,
-> +			       encrypted_datalen, &datablob_len))
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	if (check_add_overflow(datablob_len,
-> +			       payload_datalen + HASH_SIZE + 1,
-> +			       &payload_totallen))
-> +		return ERR_PTR(-EINVAL);
->  
-> -	ret = key_payload_reserve(key, payload_datalen + datablob_len
-> -				  + HASH_SIZE + 1);
-> +	ret = key_payload_reserve(key, payload_totallen);
->  	if (ret < 0)
->  		return ERR_PTR(ret);
->  
-> -	epayload = kzalloc(sizeof(*epayload) + payload_datalen +
-> -			   datablob_len + HASH_SIZE + 1, GFP_KERNEL);
-> +	epayload = kzalloc_flex(*epayload, payload_data, payload_totallen,
-> +				GFP_KERNEL);
->  	if (!epayload)
->  		return ERR_PTR(-ENOMEM);
->  
-> -- 
-> 2.55.0
+There was also a corrupted email address in the CC list (microfish at
+kernel dot org).
 
 BR, Jarkko
