@@ -1,212 +1,470 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05B33C1F57
-	for <linux-integrity@vger.kernel.org>; Mon, 31 Aug 2026 11:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F10E44C4F2;
+	Mon, 31 Aug 2026 13:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788175595; cv=none; b=ke7aACmTKeX+JDIRAZdP+bEq7ND+omYpuJlWkJu5NizFYCAWmVi+MX7tql0swHzCaMwgzFCxVr93uc7FJZ9hxJT1jroio7aGjtepQaXQgCGGb6lgg3b11EB3EG4GUMt3rQkqlQnLiBumY4GfomjiA3kvtgU4E50D6J0014awUTU=
+	t=1788183263; cv=none; b=aBotEJ6b09nW84XREoaa850sFgtLfUZ3FYrft9L8siMaVZwApM08pycazSLRGnOi87AufKrZ78TmwQy/KfnfgTOthR8Njix+TChOnpAJlfafZgFnyuCkSYFfezEOt1H2T+k27YsTT3cmGwUpIFYMZhYIoU7v99ue341kSnPji8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788175595; c=relaxed/simple;
-	bh=SZXxCQIYWsUg4ahPxedyt07MQGWzfBccOL+3jDOGBDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZNXLejlJQp1hZtVXyHLMpL0ZNJgZUp/bbSj767WPz4r75DP4bSjzUVdUpL9GSqegQ4Mr4bNf7GABx2qBh3NRDiVzIEEZwu+Vtv0yamLWoGNxL3VJQdcnj4d4dbO1UrbYl8kcgEonOclKfMKAlIbhkVattxLJWRZmnVXeSh4o/nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Bc03u2+N; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SX4tlpZY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788183263; c=relaxed/simple;
+	bh=4dwgWVwz4ZRqbMOX6hL1Y835EV4fxFoNSlSJJOu9CuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XqdGvtO+Qj98ijcPWXzye/BYsavtMwjzVNiCmUv6noZbUWRuYy2CJq2g5kgWoWM9LYtY4XQACKsd4GpT/8MGh3p+SIeX8qn+W1Fcyxf5K8hJh8ihljLh2Cfl3m5XGH9tinF1eo0iTdCmgRP70zFoH5PPUFlu+URghiBnmbPt1fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSI8qjiM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Bc03u2+N";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SX4tlpZY"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67VBADh34099253
-	for <linux-integrity@vger.kernel.org>; Mon, 31 Aug 2026 11:26:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UWuFeN+BQaevlcj0WqFSPunVnUDxXUWFNKXnkxSodb4=; b=Bc03u2+NH7c4uu+s
-	J1dZYgqF4br/6toJy6mLik8ITJ4t7A+mRmTgLL0X8kqvehy8o7bkag09Y4R2S9gd
-	D3ycLojvfpHaJL6/VEb13SUY1HfG8unNch4qSA5qtfpTR3bGaHA13Im/4zAu6RlL
-	Pcp+1AZqm7JebwGGcQmzLoDtcgDhzzrJ8kRDmHKyO5oLdN6TUDWoD1V3yFrmG8iC
-	rpc8GdOAzV/2K+S7qUS8WIi6hczqPOuSbzA15q4178q+vcK6IFC/qmXtD0GoYPN1
-	Vx+P71Mx2jDUWbx2Kld/LSiL0eRb7jKKepI3wQAXp1YJM6MyxIip5Rlw+LL35BqL
-	u4EWhA==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gd4x091dv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Mon, 31 Aug 2026 11:26:32 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-ca8aee88725so5840767a12.3
-        for <linux-integrity@vger.kernel.org>; Mon, 31 Aug 2026 04:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788175592; x=1788780392; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UWuFeN+BQaevlcj0WqFSPunVnUDxXUWFNKXnkxSodb4=;
-        b=SX4tlpZYF84vLcnb4D0Su7l3YpvT+L9jDXoPPqAihqGrw1NcAYhlE+ScYpjLBaajbv
-         8xUg5uMNDYF/2WeedIHSPnGrGVE8F9875+Pi7QeUsZbuHp6AH4CvNbbf8jfOBLcsxvhh
-         7sqIPXg+O0ESt9EapVAirD5Oi2inXH+8Ub/rNDSV0GfHJ4gUA1q4wSIUf5q9pcOKHTBG
-         4RUjanjzgZwfPX30F37NmsDTTWVk5jJ8C5iyeUiHgPOkcn0naV90qB3WtNNYp/gIVGVb
-         M+N0iHuHtruIGSrG1sQ4MyqI9rAeDDREtQgDAcO1tDDh0kiPEIZ2G+yOqXUpjzcX5uTq
-         ja1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788175592; x=1788780392;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=UWuFeN+BQaevlcj0WqFSPunVnUDxXUWFNKXnkxSodb4=;
-        b=YBgGVSSKFa4ACP7LSpRPYSqXpdfGyWkwqfA8M7qlirqGbV7zLxcmNGYantB35JNWeP
-         OFj9AOFoserp7UjSCaj/Pvdl7yvYUpgawul29EQ5IUh7iAJESro3f6P/+i7IaUbtC13p
-         ygkjX9cXt9dKs3WWAxX5xwb2bH13AImN5S2Odavb9pcyMpV9Rs+hMbhx5SPH4jzOHpXL
-         XgRf9WTxg1HONgclOGovtXwDn5KLdZhnR/99MXel+x5XnAyqJYN22ZNmLT2tUycsUrtf
-         TTqyd8NGeTryWne45u4H/+uUk9I0bHYPzwmDv2VZ/3PfMmVqSgs3ftda8deIdZBjTBIS
-         3h2w==
-X-Forwarded-Encrypted: i=1; AHgh+RpgTmJAK+YFGzmi0ruIlyC9Jt2RJBhbLe4PGrmM+l/PocEB1VzBsx17cDS6vwG3KNv9t7fLagKiiEGPS5QaHaM=@vger.kernel.org
-X-Gm-Message-State: AFuF++lD6Kihn1Z+Md+rVuKfI+iiZzS6Szw81LteECtM1Fosw7hC/54d
-	bouFuDJkU+8E9XcU7WN8U+OfQZxrBx+CWeu57dlulx2anadoxy6Yr4c691PCadE+jEHW7SfmKfG
-	rpMRTJR4qa3Tbvy4byXWttJpZVJD4/5QOrO+Pfr6jPoeU3c3pq/to6XxDhtGwOfHQDr5GIec=
-X-Gm-Gg: AR+sD10/e0UCE1J6mZ0uixbq6jiN/HiaNgBEe7UxmR4m7H0vTJ0EN/bpTHkRMF+prBv
-	1fwDOqKDn9+IMwxvxm9x0bgjROTJnp68Pr4qEKy5Dn2Cf1VkA7qKa0IFDB3NyRWQaKoWZtOXmCD
-	EkeWKxPXPbaY0JQ8z8es0/A5e/yfyb2xWEBYCT/R5IqK3Cfv/1Sc2BM5q9vsaebWJkWfvRGyB+r
-	pdJH2qnd2RbPOVYidawjOz0u9q6e3BdoFBaNTv33evJJWb0TUprzQSzDStpuSumEuflVv8nKEfM
-	VoD7TBGDzonI4ZW/8PD9MNznzryAxpZSRbCfnMqJDafyu031fDOyHs57AuZGoXxEmRWDcgO6F3R
-	CXzE+C1WBBDT2XOO+PGoWLf+JdJ3R6+M=
-X-Received: by 2002:a05:6a21:a0a:b0:3d0:abdb:de03 with SMTP id adf61e73a8af0-3d7ad788edbmr439187637.2.1788175592303;
-        Mon, 31 Aug 2026 04:26:32 -0700 (PDT)
-X-Received: by 2002:a05:6a21:a0a:b0:3d0:abdb:de03 with SMTP id adf61e73a8af0-3d7ad788edbmr439110637.2.1788175591875;
-        Mon, 31 Aug 2026 04:26:31 -0700 (PDT)
-Received: from [10.92.160.219] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3286f99585csm28349834eec.21.2026.08.31.04.26.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Aug 2026 04:26:31 -0700 (PDT)
-Message-ID: <8a61f8b5-bead-4114-8363-42b469738599@oss.qualcomm.com>
-Date: Mon, 31 Aug 2026 16:56:25 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSI8qjiM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03F31F00ACA;
+	Mon, 31 Aug 2026 13:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788183260;
+	bh=FVEIMvQRhEEYabIx3Us3sDKbsfe1vi4QRyuPrzSIVew=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=YSI8qjiM39dMfsQL5VLIsN279pgF7LShWDjcaU6DIJmp2oYwQAOmo+3DSB91BqVkb
+	 3zsFQWq8G9Xt3pDIsTw+mVJoqdOVymGL8jBvRWDEvI5aA9fR3KPb6lGOtyhQFZKTev
+	 jrH7imdLNpx45H4J0vIRevJYfKMneaQ9txc3ZbRpMOc2FYVnXU6aeNyD1UIBM7YPRB
+	 M7qeExVwR2ofzWLeMa90VptLSbhAZQ1JmTIgCldkQSdK0rmlAPTYXjsnCm+pR6xx8D
+	 nmZyPKsTazkLRG7+dNqzE7qhR3tsA0fSZx+ePdWfSm0Yk3La4+WV9dU7zNi67TN3Re
+	 lTesZS9lAISYw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Sasha Levin <sashal@kernel.org>,
+	roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18-5.10] ima: return error early if file xattr cannot be changed
+Date: Mon, 31 Aug 2026 09:21:10 -0400
+Message-ID: <20260831133314.4125787-42-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
+References: <20260831133314.4125787-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] firmware: tpm: Introduce tpm-qcom driver
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-        Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20260831-tpm_qcom_driver-v1-0-6f16fa6924fa@oss.qualcomm.com>
- <20260831-tpm_qcom_driver-v1-2-6f16fa6924fa@oss.qualcomm.com>
- <e7f7f0ea-cb63-41f2-93c6-5d47fe4cca3b@oss.qualcomm.com>
-Content-Language: en-US
-From: Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
-In-Reply-To: <e7f7f0ea-cb63-41f2-93c6-5d47fe4cca3b@oss.qualcomm.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODMxMDA5OCBTYWx0ZWRfX7BsmBmlh6YI4
- KudspWYRkT9MEZvxctZslVKqIWwLA0+7hUuur8l4BuNQswZ+IYoI+E4asfecHe6DEZl+kUZD6h5
- HEGusVAOYh4WNEUWIol7sqmnKCytDB0=
-X-Proofpoint-ORIG-GUID: W7RMsgjGWHRNKyc0HNBjhL6jcY7Lh15Q
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODMxMDA5OCBTYWx0ZWRfX59wvMe3AbQ5e
- UrjMWbUN5ILRqortO00srx5COGNx4FZUsPc8UtXdu62248u5hZHltCTZBjKARJZOjOl5fQbT+r4
- W21Cb3gu4sUX19C+9UwZOLcaoX/Dgj2QH/MeSWfSyAAnTFFmRpLJS3+dU351AZT7tkWpfYdQ+9C
- YofPaSfgYcsz+GI68YZESffmAfVLu8J1iVjqKhIhuQgmsKL9pOKkv2eaYvMUxg6UKF4CIOpCZ+D
- 0DuMWeiZwoIxffqMVbCmw49HcwMQhpOFY6FXfcA47n5w/rMBAz8EyZC2/TbLaR6a8prxSzN3jHn
- //qs72Cqmpol7pquYc2MuLa5VGL09w8WCM7HdQCyQ9f+E1CNx56aZBk4GR9uGZl6yKtXULtVKAC
- KaUWh+5u4H35kf9LFJp3WGb+BRXadjKTDxFrNqj8h7be0f0AICgCXFLZqIBUQIK5OEWEiI94hOy
- P3qit7bvYB9n0HWcEmQ==
-X-Authority-Analysis: v=2.4 cv=Iqsutr/g c=1 sm=1 tr=0 ts=6a9564e9 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=I8atxffxcjRlebx0Ix8A:9 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-GUID: W7RMsgjGWHRNKyc0HNBjhL6jcY7Lh15Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-31_04,2026-08-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 spamscore=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608310098
+Content-Transfer-Encoding: 8bit
 
-On 31-08-2026 16:45, Konrad Dybcio wrote:
-> On 8/31/26 11:43 AM, Kuldeep Singh wrote:
->> Add a TPM chip driver for platforms where a TPM 2.0 instance is
->> implemented by a Trusted Application (TA) running in Qualcomm's Trusted
->> Execution Environment (QTEE), reachable over the QCOMTEE object-IPC
->> transport.
-> 
-> [...]
-> 
->> +static int tpm_qcom_get_client_env_obj(struct tee_context *ctx,
->> +				       struct tee_param_objref *client_env_obj)
->> +{
->> +	int ret;
->> +	struct tee_ioctl_object_invoke_arg inv_arg;
->> +	struct tee_param param[2];
-> 
-> nit: Reverse-Christmas-tree would be preferred
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
 
-Ok.
+[ Upstream commit 69fc6474236d9edda6983623e4282f2bdfd8e3d8 ]
 
-> 
->> +
->> +	memset(&inv_arg, 0, sizeof(inv_arg));
->> +	memset(&param, 0, sizeof(param));
-> 
-> You can zero-initialize local struct variables like this:
-> 
-> struct foo bar = { };
-> 
-> [...]
-> 
->> +static int tpm_qcom_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
->> +			 size_t cmd_len)
->> +{
->> +	struct tpm_qcom_private *pvt_data = dev_get_drvdata(chip->dev.parent);
->> +	size_t rsp_len = PAGE_ALIGN(MAX_RESPONSE_SIZE);
->> +	size_t copy_len;
->> +	int ret;
->> +
->> +	if (cmd_len > MAX_COMMAND_SIZE) {
->> +		dev_err(&chip->dev,
->> +			"%s: len=%zd exceeds MAX_COMMAND_SIZE\n",
->> +			__func__, cmd_len);
-> 
-> The name of the function isn't helpful here, this is the only time this
-> message appears, so it's easy to grep
+During early boot, the filesystem is read-only and any changes
+to xattrs are not allowed. This fails in case of ext4 because
+changing xattr starts an ext4 transaction which fails with the
+following warning.
 
-Sure.
+WARNING: fs/ext4/ext4_jbd2.c:75 at ext4_journal_check_start+0x63/0xa0 [ext4], CPU#1: systemd-sysroot/561
+CPU: 1 UID: 0 PID: 561 Comm: systemd-sysroot Not tainted 6.19.12-1-default #1 PREEMPT(voluntary) openSUSE Tumbleweed  c2dfc3c9d9f6f1233251c5d4410574fe82a348ee
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 02/02/2022
+RIP: 0010:ext4_journal_check_start+0x63/0xa0 [ext4]
+Call Trace:
+  __ext4_journal_start_sb+0x3e/0x180 [ext4 6d025f3bc52c89a957b89a89d211fadf5e9434e1]
+  ext4_xattr_set+0x104/0x150 [ext4 6d025f3bc52c89a957b89a89d211fadf5e9434e1]
+  __vfs_setxattr+0x9a/0xd0
+  __vfs_setxattr_noperm+0x76/0x1f0
+  ima_appraise_measurement+0x23e/0xe40
+  ima_d_path+0x5a/0xd0
+  process_measurement+0xb29/0xc40
+  ? copy_from_kernel_nofault+0x21/0xe0
+  ? fscrypt_file_open+0xc0/0xe0
+  ? ext4_file_open+0x60/0x490 [ext4 6d025f3bc52c89a957b89a89d211fadf5e9434e1]
+  ? bpf_prog_31efb7c56239148b_restrict_filesystems+0xab/0x126
+  ? __bpf_prog_exit+0x23/0xd0
+  ? __bpf_tramp_exit+0xd/0x50
+  ? bpf_trampoline_6442530367+0x9f/0xea
+  ima_file_check+0x57/0x80
+  security_file_post_open+0x50/0xf0
+  path_openat+0x493/0x1650
+  do_filp_open+0xc7/0x170
 
-> 
-> [...]
-> 
-> 
->> +	err = tpm_chip_register(pvt_data->chip);
->> +	if (err) {
->> +		dev_err(dev, "%s: tpm_chip_register failed with rc=%d\n",
->> +			__func__, err);
-> 
-> Likewise
+Detect the state of the file early and return the error.
 
-Since it's dev_err so dev name should be sufficient i think.
-Let me drop function naming from log.
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
 
-> 
-> [...]
-> 
->> +#define QCOMTEE_TPM_GET_TA_VERSION_ID		0x0001000
->> +#define QCOMTEE_TPM_TA_VERSION_GET_MAJOR(ver)	((u32)(ver) >> 16)
->> +#define QCOMTEE_TPM_TA_VERSION_GET_MINOR(ver)	((u32)(ver) & 0x0000ffffU)
-> 
-> That's FIELD_GET(mask, x)
+LLM Generated explanations, may be completely bogus:
 
-Sounds good, Let me use FIELD_GET.
+# Stable Backport Analysis: `ima: return error early if file xattr
+cannot be changed`
 
+**Local tree:** `v6.18.43` (`make kernelversion` → 6.18.43)
+
+---
+
+## PHASE 1: COMMIT MESSAGE FORENSICS
+
+### Step 1.1: Subject line
+**Record:** `[ima]` `[return]` — Early-return from IMA xattr fix path
+when the inode cannot accept xattr changes.
+
+### Step 1.2: Commit message tags
+**Record:**
+- **Signed-off-by:** Goldwyn Rodrigues `<rgoldwyn@suse.com>` (author)
+- **Signed-off-by:** Mimi Zohar `<zohar@linux.ibm.com>` (IMA maintainer)
+- No Fixes:, Reported-by:, Tested-by:, Reviewed-by:, Acked-by:, Link:,
+  or Cc: stable tags (absence is expected per review pipeline)
+
+**Notable:** Maintainer sign-off from Mimi Zohar carries weight for IMA
+changes.
+
+### Step 1.3: Commit body analysis
+**Record:**
+- **Bug:** With `IMA_APPRAISE_FIX`, IMA tries to write `security.ima`
+  xattrs during file open even when the filesystem is read-only (typical
+  early boot before remount-rw).
+- **Symptom:** ext4 starts a journal transaction for xattr set, hits
+  `WARN_ON_ONCE(sb_rdonly(sb))` in `ext4_journal_check_start()`, logs a
+  kernel warning.
+- **Reproducer:** `systemd-sysroot` opening files on read-only ext4
+  during early boot on openSUSE Tumbleweed 6.19.12; full stack trace
+  provided.
+- **Root cause (author):** IMA does not check whether the
+  file/filesystem is writable before calling `__vfs_setxattr_noperm()`.
+- **Fix approach:** Detect read-only/immutable state early in
+  `ima_fix_xattr()` and return `-EROFS`/`-EPERM`.
+
+### Step 1.4: Hidden bug fix detection
+**Record:** Yes — despite not using "fix" in the subject verb, this is a
+correctness bug fix. IMA was attempting an operation guaranteed to fail,
+driving filesystem code down an error/warning path. Not cosmetic
+cleanup.
+
+---
+
+## PHASE 2: DIFF ANALYSIS
+
+### Step 2.1: Change inventory
+**Record:**
+- **Files:** `security/integrity/ima/ima_appraise.c` (+5 lines, 0
+  removed)
+- **Function modified:** `ima_fix_xattr()`
+- **Scope:** Single-file, surgical fix
+
+### Step 2.2: Code flow change
+**Record:**
+- **Hunk (ima_fix_xattr):**
+  - **Before:** Always prepared xattr data and called
+    `__vfs_setxattr_noperm()`, even on read-only filesystems or
+    immutable inodes.
+  - **After:** Returns `-EROFS` if `IS_RDONLY(d_inode(dentry))`,
+    `-EPERM` if `IS_IMMUTABLE(d_inode(dentry))`, before touching xattr
+    data or calling VFS.
+  - **Path affected:** `IMA_APPRAISE_FIX` path in
+    `ima_appraise_measurement()` (line 602) and `ima_update_xattr()`
+    (line 646).
+
+### Step 2.3: Bug mechanism
+**Record:**
+- **Category:** Logic/correctness fix — missing precondition checks
+  before VFS xattr write.
+- **Mechanism:** `IS_RDONLY()` expands to `sb_rdonly((inode)->i_sb)` —
+  the same condition ext4 warns on at `ext4_jbd2.c:76`. Early return
+  avoids the pointless journal start and `WARN_ON_ONCE`.
+
+### Step 2.4: Fix quality
+**Record:**
+- **Quality:** Obviously correct; mirrors existing EVM guard pattern in
+  `evm_main.c:267-269`.
+- **Regression risk:** Very low. On failure paths the code already
+  received `-EROFS` from ext4; this only avoids the warning and
+  unnecessary FS work.
+- **Minor gap vs EVM:** EVM also checks `s_readonly_remount`; this patch
+  does not. That is a pre-existing difference, not a regression from
+  this fix. The reported early-boot RO-root case is covered by
+  `IS_RDONLY()`.
+
+---
+
+## PHASE 3: GIT HISTORY INVESTIGATION
+
+### Step 3.1: Blame changed lines
+**Record:** Stable tree blame shows `ima_fix_xattr()` at lines 88–106
+without the guard checks. Function and `nop_mnt_idmap` usage are present
+in v6.18.43. Exact mainline introduction commit not traceable in this
+stable snapshot (single base commit in file history).
+
+### Step 3.2: Fixes: tag
+**Record:** N/A — no Fixes: tag in commit message.
+
+### Step 3.3: Related file history
+**Record:** Recent IMA commits in this tree include `b6766b171a5c4`,
+`148e4f7ece720`, `9e1f51c1ad57c`, etc. No related fix for this issue
+already present. Standalone one-patch series (v1 only).
+
+### Step 3.4: Author context
+**Record:** Goldwyn Rodrigues (SUSE). Mimi Zohar (IMA maintainer)
+reviewed and signed off. Author has other commits in tree (e.g., btrfs
+tracepoint fix).
+
+### Step 3.5: Dependencies
+**Record:** No prerequisites. Uses `IS_RDONLY`, `IS_IMMUTABLE`,
+`d_inode()` — all present. `nop_mnt_idmap` and `__vfs_setxattr_noperm`
+already used in the same function. Applies standalone.
+
+---
+
+## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
+
+### Step 4.1: Original patch discussion
+**Record:**
+- **b4 dig URL:** https://patch.msgid.link/aposxvqsrlbe7gtyvtsdh5nyg5sgo
+  fimerqpt6ez4fbxhtqyjj@4u3othdcgipp
+- **Series:** v1 only (no v2/v3)
+- **Mimi Zohar reply:** "Thank you! The patch makes a lot of sense."
+- No NAKs found. No explicit stable nomination in thread.
+
+### Step 4.2: Reviewers
+**Record:** CC'd to `linux-integrity@vger.kernel.org`. Mimi Zohar
+(maintainer) responded positively and signed off in the committed
+version.
+
+### Step 4.3: Bug report
+**Record:** Concrete stack trace in commit message from openSUSE
+Tumbleweed / QEMU, `systemd-sysroot` during early boot. Severity from
+reporter: kernel WARNING (not oops/panic).
+
+### Step 4.4: Related patches
+**Record:** Part of a larger SUSE series on mainline (`[PATCH 02/19]` in
+mirror), but this specific patch is self-contained with no series
+dependencies.
+
+### Step 4.5: Stable list history
+**Record:** Not searched on lore stable list (no indication of prior
+stable discussion). Not a negative signal.
+
+---
+
+## PHASE 5: CODE SEMANTIC ANALYSIS
+
+### Step 5.1: Key functions
+**Record:** `ima_fix_xattr()` (modified); callers
+`ima_appraise_measurement()`, `ima_update_xattr()`.
+
+### Step 5.2: Callers
+**Record:**
+- `ima_appraise_measurement()` ← `process_measurement()` ←
+  `ima_file_check()` (LSM `file_post_open` hook)
+- `ima_update_xattr()` ← post-write xattr update path
+- **Context:** File open during boot (`systemd-sysroot`), common
+  security hook path.
+
+### Step 5.3: Callees
+**Record:** `__vfs_setxattr_noperm()` → `__vfs_setxattr()` → filesystem
+`xattr_set` (ext4 starts journal).
+
+### Step 5.4: Reachability
+**Record:**
+- Trigger: `CONFIG_IMA_APPRAISE` + `IMA_APPRAISE_FIX` mode + read-only
+  root during early boot + files opened that fail IMA appraisal.
+- Reachable from normal file open syscall path via LSM hook. Not obscure
+  module-init-only code.
+
+### Step 5.5: Similar patterns
+**Record:** EVM already guards identically before xattr update:
+
+```267:273:security/integrity/evm/evm_main.c
+                        } else if (!IS_RDONLY(inode) &&
+                                   !(inode->i_sb->s_readonly_remount) &&
+                                   !IS_IMMUTABLE(inode) &&
+                                   !is_unsupported_hmac_fs(dentry)) {
+                                evm_update_evmxattr(dentry, xattr_name,
+                                                    xattr_value,
+                                                    xattr_value_len);
+```
+
+IMA was missing the equivalent guard — clear oversight.
+
+---
+
+## PHASE 6: CROSS-REFERENCE WITH LOCAL TREE (v6.18.43)
+
+### Step 6.1: Buggy code present?
+**Record:** **Yes.** `ima_fix_xattr()` at lines 88–106 lacks
+`IS_RDONLY`/`IS_IMMUTABLE` checks. Fix is not yet applied (`grep` found
+no matches).
+
+### Step 6.2: Backport complications
+**Record:** **Clean apply expected.** Context matches exactly (same
+function, same `nop_mnt_idmap` usage, same line structure).
+
+### Step 6.3: Related fixes already present?
+**Record:** **No.** No prior commit in this tree addresses this issue.
+
+---
+
+## PHASE 7: SUBSYSTEM CONTEXT
+
+### Step 7.1: Subsystem criticality
+**Record:** **security/integrity/ima** — IMPORTANT. IMA is used on
+secure-boot and integrity-measurement deployments (enterprise Linux,
+embedded secure systems).
+
+### Step 7.2: Subsystem activity
+**Record:** Active — multiple IMA fixes in v6.18.y stable queue already.
+
+---
+
+## PHASE 8: IMPACT AND RISK
+
+### Step 8.1: Who is affected
+**Record:** Systems with `CONFIG_IMA_APPRAISE` and `IMA_APPRAISE_FIX`
+(or `ima_appraise=fix` boot param) on read-only root during early boot.
+Relevant to dracut/initramfs/systemd-sysroot workflows on ext4 (and
+potentially other journaled FS).
+
+### Step 8.2: Trigger conditions
+**Record:**
+- Early boot, RO root filesystem
+- IMA appraise-fix mode attempting to repair missing/wrong
+  `security.ima` xattrs on file open
+- **Likelihood:** Moderate for IMA-enabled distros during every boot
+  until rw remount
+- **Unprivileged trigger:** Indirectly — any file open during sysroot
+  phase can trigger it
+
+### Step 8.3: Failure mode severity
+**Record:** `WARN_ON_ONCE` from ext4 journal layer. **Severity: MEDIUM**
+— no crash, panic, corruption, or deadlock, but spurious kernel warnings
+on every affected file open during early boot. Pollutes logs and may
+trigger monitoring alerts on security-hardened systems.
+
+### Step 8.4: Risk-benefit
+**Record:**
+- **Benefit:** Eliminates reproducible boot-time warnings; aligns IMA
+  with EVM; avoids pointless FS journal operations.
+- **Risk:** Minimal (5 lines, well-understood checks).
+- **Ratio:** Favorable — low risk, real (if non-critical) user-visible
+  bug fix.
+
+---
+
+## PHASE 9: FINAL SYNTHESIS
+
+### Step 9.1: Evidence summary
+
+**FOR backport:**
+- Reproducible bug with full stack trace (openSUSE)
+- IMA maintainer endorsed ("makes a lot of sense") and signed off
+- 5-line surgical fix, obviously correct
+- Mirrors existing EVM pattern in same subsystem
+- Buggy code confirmed present in v6.18.43
+- Clean apply, no dependencies
+- Real logic bug (attempting impossible xattr write)
+
+**AGAINST backport:**
+- Failure mode is WARNING only, not crash/corruption/security
+- Requires `IMA_APPRAISE_FIX` — narrower than default IMA enforce mode
+- Does not add EVM's `s_readonly_remount` check (minor, pre-existing
+  gap)
+
+**Unresolved:** Exact mainline commit that introduced `ima_fix_xattr()`
+without guards (not traceable in stable snapshot history).
+
+### Step 9.2: Stable rules checklist
+1. Obviously correct and tested? **PASS** — logic mirrors EVM;
+   maintainer reviewed; reproducer provided.
+2. Fixes a real bug affecting users? **PASS** — concrete openSUSE early-
+   boot warning.
+3. Important issue? **PASS (borderline)** — WARN_ON spam during boot on
+   IMA systems; not crash-level but user-visible on security
+   deployments.
+4. Small and contained? **PASS** — 5 lines, 1 file.
+5. No new features or APIs? **PASS** — defensive checks only.
+6. Can apply to local tree? **PASS** — code exists, patch applies
+   cleanly.
+
+### Step 9.3: Exception categories
+**Record:** None (not device ID, quirk, DT, build fix, or docs).
+Standard bug fix.
+
+### Step 9.4: Decision rationale
+
+For **v6.18.43**, this commit fixes a real, reproducible bug in the IMA
+appraisal-fix path where the kernel incorrectly attempts xattr writes on
+read-only filesystems during early boot. The result is ext4
+`WARN_ON_ONCE` spam — not a crash, but a genuine defect in security
+subsystem code that EVM already handles correctly. The fix is minimal,
+maintainer-approved, and applies cleanly to this tree.
+
+---
+
+## Verification
+
+- **[Phase 1]** Parsed subject, tags, body; identified IMA early-boot RO
+  xattr warning bug
+- **[Phase 2]** Diff analysis: +5 lines in `ima_fix_xattr()`, adds
+  `IS_RDONLY`/`IS_IMMUTABLE` guards
+- **[Phase 3]** `git describe HEAD` → v6.18.43; `git blame`/`git show`
+  confirm buggy code at lines 88–106 without guards
+- **[Phase 3]** No Fixes: tag; no related fix in tree; standalone patch
+- **[Phase 4]** `b4 dig -c 69fc6474236d9edda6983623e4282f2bdfd8e3d8`:
+  lore URL found; v1 only
+- **[Phase 4]** `b4 dig -w`: CC'd linux-integrity@vger.kernel.org
+- **[Phase 4]** Mbox thread: Mimi Zohar — "The patch makes a lot of
+  sense"
+- **[Phase 5]** Call chain verified: `ima_file_check` →
+  `process_measurement` → `ima_appraise_measurement` → `ima_fix_xattr`
+- **[Phase 5]** EVM parallel check at `evm_main.c:267-269` verified via
+  grep
+- **[Phase 5]** `IS_RDONLY` → `sb_rdonly()` verified at
+  `include/linux/fs.h:2546`
+- **[Phase 5]** ext4 warning at `fs/ext4/ext4_jbd2.c:76` —
+  `WARN_ON_ONCE(sb_rdonly(sb))` verified
+- **[Phase 6]** `grep IS_RDONLY` in ima: no matches — fix not present
+- **[Phase 6]** `ima_fix_xattr` and `nop_mnt_idmap` present in v6.18.43
+- **[Phase 8]** Failure mode: WARN_ON_ONCE, severity MEDIUM
+
+**YES**The background history search (`git log --all -S
+"ima_fix_xattr"`) was stopped — `--all` scans too many branches and had
+hung. That didn’t change the backport conclusion.
+
+For **v6.18.43**, the important part is already verified:
+`ima_fix_xattr()` is present **without** the `IS_RDONLY`/`IS_IMMUTABLE`
+guards, so the early-boot ext4 warning is a real issue here. Pinning the
+exact mainline commit that introduced `ima_fix_xattr` isn’t possible in
+this stable snapshot (file history collapses to the release base), and
+it isn’t needed for the decision.
+
+**Verdict for this tree: YES** — small, maintainer-reviewed fix for a
+reproducible IMA appraise-fix warning on read-only root during early
+boot.
+
+ security/integrity/ima/ima_appraise.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 5149ff4fd50d2..d5f7de58caac5 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -90,6 +90,11 @@ static int ima_fix_xattr(struct dentry *dentry, struct ima_iint_cache *iint)
+ 	int rc, offset;
+ 	u8 algo = iint->ima_hash->algo;
+ 
++	if (IS_RDONLY(d_inode(dentry)))
++		return -EROFS;
++	if (IS_IMMUTABLE(d_inode(dentry)))
++		return -EPERM;
++
+ 	if (algo <= HASH_ALGO_SHA1) {
+ 		offset = 1;
+ 		iint->ima_hash->xattr.sha1.type = IMA_XATTR_DIGEST;
 -- 
-Regards
-Kuldeep
+2.53.0
 
