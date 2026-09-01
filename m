@@ -1,233 +1,150 @@
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6806427F89
-	for <linux-integrity@vger.kernel.org>; Tue,  1 Sep 2026 16:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8060E43CE46
+	for <linux-integrity@vger.kernel.org>; Tue,  1 Sep 2026 16:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788278643; cv=none; b=PTX77DrhJuyVQUunkK95qVWDjUqorlYxQqtReqe3zzK+19BpKgQi8UMuKrKym7bPNyO24xuftWTTO296F1rWXWmHok34rqWGoXXvecycSAjFKsaFjq5eTwNWPU3lL1bB0tffX4bAD7oS7JcnWpQwcUTA5mmZwVvFsEKB60yZjVU=
+	t=1788278814; cv=none; b=dq0XiFGPHbkqjTLsedEEU4wWSXD5QwLMnt2PCq1+FVIZv2B89hhzzxycx8FCx/HFVxn1z4AWdn6iXWjbCOm7bgKYZKcpFeTa09qUCrMlpwa3NInOwk1vmXwDXI1waFrj4yIqwhE4lIlPWXhAuvbSS7Gre+EL58TeRFw+foo/EqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788278643; c=relaxed/simple;
-	bh=EIjyPnqw8QTTn+ydcMEjt0qRWEFtEg0Ql8NGv6CxEVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YK+YEevX38KCXtjb6UVsINp0mdv+pHXY7D+lfMEyc/sTyeTOUHjMKJScFpPS6by6inBtr7qv9lcxzJVV9hOfuZX+HXB0K7/UcIiP+FJ8eFVl2htA6iaW9sPpvzBwKhp5OGOcoHknTDRorGH8IuLyZgu87ajjkE4GSgU+EJg3iBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ESbUOJJs; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1788278814; c=relaxed/simple;
+	bh=q44ZV+VsKxN6JVRQY5u21IK1dlCmX3i+WcEkxuAqjPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mIQxRRpi/natnbDXa14fei2dp44PPpFI2Bowe5pCYfeHcEMTdQ7R3eHHkGUMrGxG03conbxZGE7YIELG/AT23JktK6VwZAaexYiwr8GRzW9KeBYQnPZIDu4nMiy+Mfmr2374NCwElw83QFhyxl9LLng5RgM5fVNoTe7s6nHA5mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=daRE5lx/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ozPbe9/5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ESbUOJJs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788278640; bh=gPh+X/iBiqRKhw1S4WGz1YTRGse+nCFpHEMx4R0LHRw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ESbUOJJsF4Zh4tSB9OMnheK5Z4i5gHtroru02rttNIeREQ8Ee9A8EME1LltRSzcyhiHLGOL7ZfmSjSJatI2dWExfFQWov4MgQlEQTmJUWjQ5O2l58iKMOjh14NkXmrti6EuDcMUwFqVBsGimWfpd7b40k2tM66JkJ6bp8OyKwXIN8i/rrTvQN9VCUlrRRo5FHGPOjFSefz90WMFTnvuEWIRNRsWk/6XaWDKt6BCjocPyzymgeWW8XMqnUd6aKqvg9sfeh8rYApqHK5jOjRJ1XVMwiixnYlnwESljMv5kv83TFKGyoRLdyIKgDkiBVRDvCS4D9uSbkIP8m1QN9WEKaA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788278640; bh=ahTZMsxlM7hoA0fM6NBQ7GkyCx/GvgfOIHnMiBc8Gt7=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=kP6fGOiHZLDSvaHJp8phs8wOEcSxKQepKMM4d1TAAscrmoAWXHrHBd1xIkrh2s59i1hZZic2OOZFd+Etlgk/Dq8Aj9QMbKb2SgjF9piOGKZ+seK5l0j/NpceM6DlKftpnrlu+rQ0bWnE9DTAldt2Ld7rGhuc6DW8KRu7qJpwlRgkEavAAmrJyc3nUcHdSKapfF5bojwoFdHc6Sx71SLShbDWyxbIFJe9qGT/eQA+IeS+yeDj6o2PnXxQZuOoBK4SH2IOfL1I6gc0qXasSwNk+NPDw6/Bjn+dJQMyoQuBLTCKK2leR+Elcflb5y3JqhWokwi8JWAmgzT4LbVRM6w54w==
-X-YMail-OSG: BnRSzUsVM1l6DMJ0RcDbVkj8OA4EnfP5.zaF5Sy_6KG2J6a5XNB2nRUsOjT3ART
- x5kLRUjxN7qI.IXN_GOJxUAxbDm4WQ1qWxDFpikbntvRnmDeeModNmJvEuDFj70nMxMVDCfR7i08
- TLoHA1R6hIZ1LhwgEBJz6BXTQpcu137HEdLRqbU3iAMWdmdCgHN.jybBtQrF.C89oj3iXdcwq83U
- kyDrUGwY2QAD56uB_yS9.v1b6lpsfgvy_wVq5Xl.XMcya.NblpqHct.74b_WgBLRj.n2g260Ze_5
- MC6oHD9kLsWBzV7oNxexUIrvLvA2NSEWiiQVAEF5Dyw0J_p2gi34blnPWV1ffY2fr2.2ndZK5mCw
- q8JZUkPybYawiAqbZMETn62xgxSJxqPLZriKVsh.Yur2GcbnN9rZY_BrvztvDaILL1w.poZ6QlwF
- HHWdMVYN65I.NYExwdSzLBLVE_XCTXiFgVwWkHjUWiRUX1WAttlhY7x7O4pRzoFf7rDr5KUvjq5T
- QFYbawEwONrjsddJQcutigmcwqUqQcYbsFsMPcGrG7uqKjThJvkpiyR9ZVvBcSQW7i.VmngJ09L3
- zNPMqOW23l3jYUmLNJA9tdLGcCRY8qixdtT_dA_LF6khvJdag3IzZ0iJXOPiBVwoPqOpVzmSDK0K
- rYXwTp56ucWKOEXaUx9qB5fKNpyhTVno69lmXRn586srKGKH9bcyQNuag15gmd4cQ_bwLRJpsebv
- hrH9oshCVWTElz0zb3kh5ZTnkTH3F540Joo96iqkl4GF1jBVeoHTGqM93jXemH20j.XQzu7F1kjv
- silAPMLu3nlfcOUZEuG6P6yeunGiFF8wT88ZXiNAvrO_eCWdV.BKTTl_GDY8Ki1_nhXYmMPNWTWL
- L4WVgb9bg2GzAGgwe7O_YWw1lUPljGE_7kizgV86h5n6.AeO1GAta2FijW7JtM4CIp94IlvVt3_X
- n2JoT.pEZXBK5T0805WWPzRfy0KT0RDYN2uYFdzPP3vo1mIWkiWPjfBSfdpa0P6T2p84k6QfmCkz
- HPyi8EzuxmPrb0oXLYeiYnj9Wv99M29bnqSOdD_91vneq9YVbWF7Q6Ob8VIQf6f_em9BBLlclDi4
- EXEc8pebwZ6v3bSF9hJIvWVd_1nwlDXudPKpTYbDy01lfwwMPxHqX4U7yo7jMXECMbWjiPC_EIei
- 1rwJ6gZqwT_kXId0dQZTUuj7.NHXwISkRI5c77y.JwwNOrTopnjvAO50EPbmSmBYZ.Wm9.zbd7zz
- 8mffN78xMRX437TWJmZsia5XHlwnD__SwtGTCFgLLDLqG0waLpdI5Gnjsk7PEsRhAB7b3weR_G4t
- mFhIaY7iOjLIM44a1g_LCMSSyJWLGhnL1u9Qf2jhZLL5gJ_6IYVXHVRVfV9ziNetQXEm_8WaIrTT
- tlixevJkEx6Dz..j6uh5NXC35zBpJbSM7StGjzdCZ6VVY86xr1QYX9Xm8BJhSQ7pkqx89uwC3CP0
- .p1kR0Plgh_Gdiw1C.9uSEEfWllyoBISuzXgpocW6t8tN5S53NAmNWF18cQm.SZHhO3Ncak.CkAx
- lo6eXKa52FjEofHF7ZRseScCLRHlnMH854MvxW05_v4OQqzn_dKcr.1mdNt1FlZvmNwoNCvKEhTr
- GBc11oR5WIkXvaO1zclx6FmXGgDjPc.Ie266nDgGo_72clnHYHYUKf875KOPIW1AzvxAW7oCLKHe
- 2ahfFP1DPqv5akZ1S14Gks6tf1x27QnHtgR7mdotq8XOFuwAZe7DpFOphuTtnOuu3rwpY5WAFfoO
- 8trFKjtEC7u.3PTb_9.FyXwuzAcJdZp6xU1DxO1LCDc9QG1ccOvBHiFjpwSgUkohS1J3Mu_vnr1p
- d5Wxy21YJJhYtS21aiCcV50vmBxj0jgvFg59llCpT3vN1pMaxf14PawfRh5PKiqRWhpad2vNXT4f
- FKtJWRdyhVAaFVTSBsbPot7S9XzzRgEInkTcl.vBKUhn9jtA8ADT7YWT9zvV1foYbKik0_X_dnYJ
- 7ckBVPo6fIx2.7eqgJZ8JOsUBOfYNp5C6Cd2io8btrpEiGP8XXEIXv8lNiMIuiZrcm841JUkmksG
- DyK0xgr3MeyHSybaP_Fys7Nltg.EIr4Q0v4309l60Yib91EEQ7awW7xjVpdcnBZw1bekGO9PBACm
- HJtn0fGSUS3U9JB.nlXkq9a.8PxosWl9UkcaGzsm98E_rYsjhEt3dLJIH0eSlHBj8M9ednNL0JvJ
- WkoKD3FJpOYf25tly81HBtlpU0e0sVW1fbNJ3xF70RJgzlCrypYY0bHfiaif786dAoWYR1oDy_Pd
- SPBHQbxcB6yTNOQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: ae5512ae-c89c-4588-a92d-d5c736d4192f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Tue, 1 Sep 2026 16:04:00 +0000
-Received: by hermes--production-gq1-678d9dd684-mxdfs (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7bb86a24437c43194baefa3abed212e3;
-          Tue, 01 Sep 2026 15:53:44 +0000 (UTC)
-Message-ID: <d3656927-c39d-421f-8baa-f04c8d4eeff3@schaufler-ca.com>
-Date: Tue, 1 Sep 2026 08:53:42 -0700
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="daRE5lx/";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ozPbe9/5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1788278811;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ePc7Ut/AZztzEtumFTcDNqc3j4BQeQVeG9iOBqVe9vA=;
+	b=daRE5lx/lNpGb479CIkFDxKimYrwm0mbY6KKvUknDcyV6BldKnLSBOxVGCBEEl3OHFfM62
+	VbaK6Iwf5f9GcwvwY2Cq7zPHDTLSBifVwpDJvhL31lIH+CEG8ZMtreEqrRA8PH+XOGjin6
+	ABZQRI0IdZ/k6S1pvPQJaXDCvqM3vCM=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-49-YvRs66-tOFSasPfuoAR0HQ-1; Tue, 01 Sept 2026 12:06:48 -0400
+X-MC-Unique: YvRs66-tOFSasPfuoAR0HQ-1
+X-Mimecast-MFC-AGG-ID: YvRs66-tOFSasPfuoAR0HQ_1788278807
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4843e59c32dso26275f8f.3
+        for <linux-integrity@vger.kernel.org>; Tue, 01 Sep 2026 09:06:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1788278807; x=1788883607; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=ePc7Ut/AZztzEtumFTcDNqc3j4BQeQVeG9iOBqVe9vA=;
+        b=ozPbe9/5WDwGH1fWjT0773KwUQi8GCMJLM7ImUQPkyfOB79ylGpaYfaWDF1+01OeWV
+         UUD2UpX/xC4K5jq8hPUC+MySGszejvApt+jNJJeb491AV1Pn+eTmJVn1hjiQC7z2YUFL
+         WP4c0g1gtuKYLtWxoR3d+u1F01A18dQ4PHNCpfd/+dmQngwZuENEdRFCMq1SzRDkoYic
+         NNNZePL/NFzY3ueWXjegn5hEwnWDwAIpRfoEAJViQZ6tdRqVxpFrf6O3q0jFaZFZj2Ii
+         cxW3pewgwpPwEc4+Efyc5dq4q0lvqHaB3rEJ/ge4GZtra+lRAsMYJaxWfQi5Goktkc8b
+         tvSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788278807; x=1788883607;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ePc7Ut/AZztzEtumFTcDNqc3j4BQeQVeG9iOBqVe9vA=;
+        b=pRUsDINj5+DTgmyFk2z6Pfxz+2bPVH/Xa2c77neNs1xou6855VSfuiJGMJ96lIxcwN
+         qlNfOC7tOL10legrbqF77jGJ2zfvEQ8rhPtHx6AbJUzKon6SfJlLJwVoC2wbhPi9rLuV
+         MfCNW1KUGkRHGicwlfglQuf4cOzlDiPdzLYu7/qhH02C6WEVkNnTm7rq9nqaag0/ltfZ
+         L31bR3qMTjVxAcYLwf4PgyKvTo4iJ9o4kn7hVs5UnnEyDSt2Va8IoecRV4CvZZ+ouIlO
+         QIJGENCHsooVKhWiJ4Yj7C1IjJcsZUpyNk6s4sz2SpmAN50QDOhru4Cg639m7JQnLaG/
+         mwVA==
+X-Gm-Message-State: AFuF++kbLV9Kl+GzILFKxl93Yyx8OCNREPkt7BF7g6di83U+MSB4QsMz
+	0vAq203UNNiWEyZFaPS+16vRQeE4BigjPJkFhRTbV6TtuGLV5Dp9PtJaGRmvKATXDMlokDSvtKZ
+	AtL3ByHFO/m1xBB3pv5RX9X3ZeidHyzje9tPxRSAij6AD85GQVWuDQTFF3SDCFZr51pGkzA==
+X-Gm-Gg: AYBFou2ON/tULoSsHkKYeqIiME0kIe46UZ3gm3rJ5HxsX29UZzdINNJrt4AuJwOA3xf
+	sNCQvoM5YSOKIXGDXk2fz4UIv5IlfsJWOTb99A89JLlUWxzCDDwaPvczE8HebS99ZiuFwX1ClkP
+	MHDbk0D2hVfR7iQsTJnY6dNCRSwbfjn7rTeFN72blyGf8jelVzUkECcmBy5J8C6ok/lHmJspeUK
+	OSsBvX9S1ToWdbjCg16f7L08/WcHA0fVDdtq1zTSVcJEmVmYQ8J0xQTy/j+mDADYe8B8AG/vWoE
+	ep54VQW9N+9tUfvJmVsiDiDzaDiIxNCKzKDPBDTCHRXL0CuAW2110u4X5gi9sasW/mMpi201eH0
+	IIO4dpTl46Gim93HfZwAHg/VGOANjzvIHHPLd+26+IgReXg==
+X-Received: by 2002:a05:6000:470d:b0:482:e8f9:c6b0 with SMTP id ffacd0b85a97d-482f79b1e7amr57844695f8f.13.1788278806701;
+        Tue, 01 Sep 2026 09:06:46 -0700 (PDT)
+X-Received: by 2002:a05:6000:470d:b0:482:e8f9:c6b0 with SMTP id ffacd0b85a97d-482f79b1e7amr57844520f8f.13.1788278806034;
+        Tue, 01 Sep 2026 09:06:46 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-53-30-11.retail.telecomitalia.it. [79.53.30.11])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48442d787b8sm5977548f8f.29.2026.09.01.09.06.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Sep 2026 09:06:45 -0700 (PDT)
+Date: Tue, 1 Sep 2026 18:06:40 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Stuart Yoder <stuart.yoder@arm.com>, Chu Guangqing <chuguangqing@inspur.com>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm_crb: Remove dead code from crb_map_res()
+Message-ID: <apb2LdIAqUHROYBt@sgarzare-redhat>
+References: <20260901142955.187856-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 24/27] fs: port ->setattr() to pass const mnt_idmap
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Christoph Hellwig <hch@lst.de>, Seth Forshee <sforshee@kernel.org>,
- Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
- Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
- Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
- Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
- Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- linux-unionfs@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
- linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20260901-work-idmap-const-v1-0-54ccd48e100b@kernel.org>
- <20260901-work-idmap-const-v1-24-54ccd48e100b@kernel.org>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20260901-work-idmap-const-v1-24-54ccd48e100b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.26380 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20260901142955.187856-1-jarkko@kernel.org>
 
-On 9/1/2026 5:14 AM, Christian Brauner wrote:
-> Convert to const struct mnt_idmap.
+On Tue, Sep 01, 2026 at 05:29:46PM +0300, Jarkko Sakkinen wrote:
+>In all the pre-existing call sites both @iomem and @iobase_ptr are
+>either NULL or non-NULL.
+
+I don't know this code, but I'm a bit worried about iobase_ptr and 
+*iobase_ptr. IIUC it is true that iobase_ptr and iores are either NULL 
+or non-NULL, but here we are removing the case where *iobase_ptr is 
+NULL.
+
+Now looking at crb_map_io(), IIUC iobase_array is initialized with NULL 
+pointers and the code we are removing was the only one initializing 
+those pointers IIUC, or am I missing something?
+
+Thanks,
+Stefano
+
 >
-> A mount's idmapping is immutable. The only thing that is allowed to be
-> modified afterwards is the reference count and that is hidden behind
-> mnt_idmap_get() and mnt_idmap_put(). Everything else only ever reads
-> from the idmapping. This is the same model that struct cred uses and the
-> idmapping is also rather sensitive.
+>Thus, add invariant for this and remove a dead basic block.
 >
-> So make the idmap argument const wherever we can. The conversion is done
-> from the bottom up so callers can continue to pass a non-const pointer
-> to a const parameter until the conversion is finished.
+>Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>---
+> drivers/char/tpm/tpm_crb.c | 9 +++------
+> 1 file changed, 3 insertions(+), 6 deletions(-)
 >
-> No functional changes.
+>diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+>index ceb4100ba400..e7a61f36c58b 100644
+>--- a/drivers/char/tpm/tpm_crb.c
+>+++ b/drivers/char/tpm/tpm_crb.c
+>@@ -570,15 +570,12 @@ static void __iomem *crb_map_res(struct device *dev, struct resource *iores,
+> 	if (start != new_res.start)
+> 		return IOMEM_ERR_PTR(-EINVAL);
 >
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> ---
->  Documentation/filesystems/locking.rst     | 2 +-
->  Documentation/filesystems/vfs.rst         | 2 +-
->  arch/powerpc/platforms/cell/spufs/inode.c | 2 +-
->  fs/9p/v9fs_vfs.h                          | 2 +-
->  fs/9p/vfs_inode.c                         | 2 +-
->  fs/9p/vfs_inode_dotl.c                    | 2 +-
->  fs/adfs/adfs.h                            | 2 +-
->  fs/adfs/inode.c                           | 2 +-
->  fs/affs/affs.h                            | 2 +-
->  fs/affs/inode.c                           | 2 +-
->  fs/afs/inode.c                            | 2 +-
->  fs/afs/internal.h                         | 2 +-
->  fs/anon_inodes.c                          | 2 +-
->  fs/attr.c                                 | 2 +-
->  fs/bad_inode.c                            | 2 +-
->  fs/btrfs/inode.c                          | 2 +-
->  fs/ceph/inode.c                           | 2 +-
->  fs/ceph/super.h                           | 2 +-
->  fs/coda/coda_linux.h                      | 2 +-
->  fs/coda/inode.c                           | 2 +-
->  fs/configfs/configfs_internal.h           | 2 +-
->  fs/configfs/inode.c                       | 2 +-
->  fs/debugfs/inode.c                        | 2 +-
->  fs/ecryptfs/inode.c                       | 2 +-
->  fs/efivarfs/inode.c                       | 2 +-
->  fs/exfat/exfat_fs.h                       | 2 +-
->  fs/exfat/file.c                           | 2 +-
->  fs/ext2/ext2.h                            | 2 +-
->  fs/ext2/inode.c                           | 2 +-
->  fs/ext4/ext4.h                            | 2 +-
->  fs/ext4/inode.c                           | 2 +-
->  fs/f2fs/f2fs.h                            | 2 +-
->  fs/f2fs/file.c                            | 2 +-
->  fs/fat/fat.h                              | 2 +-
->  fs/fat/file.c                             | 2 +-
->  fs/fuse/dir.c                             | 2 +-
->  fs/gfs2/inode.c                           | 2 +-
->  fs/hfs/hfs_fs.h                           | 2 +-
->  fs/hfs/inode.c                            | 2 +-
->  fs/hfsplus/inode.c                        | 2 +-
->  fs/hostfs/hostfs_kern.c                   | 2 +-
->  fs/hpfs/hpfs_fn.h                         | 2 +-
->  fs/hpfs/inode.c                           | 2 +-
->  fs/hugetlbfs/inode.c                      | 2 +-
->  fs/inode.c                                | 2 +-
->  fs/internal.h                             | 2 +-
->  fs/jffs2/fs.c                             | 2 +-
->  fs/jffs2/os-linux.h                       | 2 +-
->  fs/jfs/file.c                             | 2 +-
->  fs/jfs/jfs_inode.h                        | 2 +-
->  fs/kernfs/inode.c                         | 2 +-
->  fs/kernfs/kernfs-internal.h               | 2 +-
->  fs/libfs.c                                | 4 ++--
->  fs/minix/file.c                           | 2 +-
->  fs/nfs/inode.c                            | 2 +-
->  fs/nfs/namespace.c                        | 2 +-
->  fs/nilfs2/inode.c                         | 2 +-
->  fs/nilfs2/nilfs.h                         | 2 +-
->  fs/ntfs/file.c                            | 2 +-
->  fs/ntfs/inode.h                           | 2 +-
->  fs/ntfs3/file.c                           | 2 +-
->  fs/ntfs3/ntfs_fs.h                        | 2 +-
->  fs/ocfs2/dlmfs/dlmfs.c                    | 2 +-
->  fs/ocfs2/file.c                           | 2 +-
->  fs/ocfs2/file.h                           | 2 +-
->  fs/omfs/file.c                            | 2 +-
->  fs/orangefs/inode.c                       | 2 +-
->  fs/orangefs/orangefs-kernel.h             | 2 +-
->  fs/overlayfs/inode.c                      | 2 +-
->  fs/overlayfs/overlayfs.h                  | 2 +-
->  fs/pidfs.c                                | 2 +-
->  fs/proc/base.c                            | 2 +-
->  fs/proc/generic.c                         | 2 +-
->  fs/proc/internal.h                        | 2 +-
->  fs/proc/proc_sysctl.c                     | 2 +-
->  fs/ramfs/file-nommu.c                     | 4 ++--
->  fs/smb/client/cifsfs.h                    | 2 +-
->  fs/smb/client/inode.c                     | 2 +-
->  fs/tracefs/event_inode.c                  | 2 +-
->  fs/tracefs/inode.c                        | 2 +-
->  fs/ubifs/file.c                           | 2 +-
->  fs/ubifs/ubifs.h                          | 2 +-
->  fs/udf/file.c                             | 2 +-
->  fs/ufs/inode.c                            | 2 +-
->  fs/ufs/ufs.h                              | 2 +-
->  fs/vboxsf/utils.c                         | 2 +-
->  fs/vboxsf/vfsmod.h                        | 2 +-
->  fs/xfs/xfs_iops.c                         | 2 +-
->  fs/zonefs/super.c                         | 2 +-
->  include/linux/fs.h                        | 6 +++---
->  include/linux/lsm_hook_defs.h             | 4 ++--
->  include/linux/nfs_fs.h                    | 2 +-
->  include/linux/security.h                  | 8 ++++----
->  mm/secretmem.c                            | 2 +-
->  mm/shmem.c                                | 2 +-
->  net/socket.c                              | 2 +-
->  security/integrity/evm/evm_main.c         | 4 ++--
->  security/integrity/ima/ima_appraise.c     | 2 +-
->  security/security.c                       | 4 ++--
->  security/selinux/hooks.c                  | 2 +-
->  security/smack/smack_lsm.c                | 2 +-
->  virt/kvm/guest_memfd.c                    | 2 +-
->  102 files changed, 112 insertions(+), 112 deletions(-)
-
-...
-
-
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index df4fc6ff26aa..bb78569b3d5b 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -1270,7 +1270,7 @@ static int smack_inode_permission(struct inode *inode, int mask)
->   *
->   * Returns 0 if access is permitted, an error code otherwise
->   */
-> -static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> +static int smack_inode_setattr(const struct mnt_idmap *idmap, struct dentry *dentry,
->  			       struct iattr *iattr)
-
-Please keep to 80 columns.
-
-+static int smack_inode_setattr(const struct mnt_idmap *idmap,
-+				struct dentry *dentry, struct iattr *iattr)
-
-Note that the above may get whitespace mangled.
-
->  {
->  	struct smk_audit_info ad;
+>+	if ((iores == NULL) != (iobase_ptr == NULL))
+>+		return IOMEM_ERR_PTR(-EINVAL);
+>+
+> 	if (!iores)
+> 		return devm_ioremap_resource(dev, &new_res);
 >
+>-	if (!*iobase_ptr) {
+>-		*iobase_ptr = devm_ioremap_resource(dev, iores);
+>-		if (IS_ERR(*iobase_ptr))
+>-			return *iobase_ptr;
+>-	}
+>-
+> 	return *iobase_ptr + (new_res.start - iores->start);
+> }
+>
+>-- 
+>2.47.3
+>
+>
+
