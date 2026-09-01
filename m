@@ -1,87 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3464D33939D;
-	Tue,  1 Sep 2026 13:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB06313540;
+	Tue,  1 Sep 2026 14:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788270469; cv=none; b=sdL3T4GWs/O/VU9p4ZPkNxfAuAeMukckMYun7+4QdI4R8msZnkNtsGxoEDfJh3hCjn8ABMTQVWDds/LDQ6RaFOK+JEzm1UlklEmHTzY84i+JdvegAvdkv4BRdnfhQDtWpdyEvFXLaA6jsXXWwH6J2Nj38wu0a8ZPHtaWbPbNPdE=
+	t=1788273002; cv=none; b=AQWd5RQpjK88w+wilvpyA2V2TaYcWjdRQzOcSZHOBHUmiAko256UvgQVONiAEFQnRc6/u+hLXz5btpHKcKMnxbdh8hdhfcQJgBAOoPGBFmyw1BkRZ45TIBsmEjqvzbGBNIl1603/wadmW9ue/WgkXAsZ9zfs0CPd28cP89RSOsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788270469; c=relaxed/simple;
-	bh=8NufWEKCYTBSQ9ZAdZ8bxrVe2MhI5ri5JSbDyio0XWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OhuI7bYZOG0egzJ2WXeClUBR6dwOFQyCxFacOqFKj0QsjYdG1WLQYE20tX2ol6ukYKGmR5ahzf45zMvJYMVttw30R2xh8zmvD77tv8ReUH64MPKxNIm3hNs5vKRtO5CMmWQ2efSAnXv0tzl6L4WfchwrJES4nfWwzPVlyzbmPrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQ4XHcNs; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788273002; c=relaxed/simple;
+	bh=ShLRn3DIOFQmncFiXePazjOX56EhJyN//PJ0AIMW4KY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pFDMKrC0m5kV3AipvsgGGO1fER1qqjl+H2L1dmNdUFSYm9mO4W3PYMHRomAkWxq5DYOAyPhY+S3jxeUYkgNxzqF8FnJwtnshYdoxIzu0uPtWeDaoq9+Joqp5e4Ka7Rm6jXHcnExve5J3MaqRUxbP4DCYuUB1weZC1tybwoNmOO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlPKKpD0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQ4XHcNs"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 3D96A1F000E9;
-	Tue,  1 Sep 2026 13:47:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlPKKpD0"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BFA961F000E9;
+	Tue,  1 Sep 2026 14:30:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788270467;
-	bh=IbOOibRuzy5r/5hzD8OOpyB0kg/Phkd6z7W0gt00SUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OQ4XHcNstsu0WL8iVTClgZyYudvrx1S9Wr6nJODnf55JQ23xgYfZMPM5zh8EK/P2m
-	 HdPjn2kqh/Gg+ldW4AcWqu1O194qIWUno6JHSJTgI3ojbumV3dNDNDPKWHv7RQLOYI
-	 /gxuISwqSyaLm0F7M08d0QWlbfIUFvfebiA/BSPuXxqnp5gr3+D6t8asXKYS/jHKL9
-	 9Gn29/zx2Kspn6mr2EA+Ut2Sk57fzGT+wEhL6BjTGznPWclYHkSQTiXPIc59tmH4fy
-	 mSvgi4zCrGJhWvuQeIwmNNggLAT1xYTNfp5uKNainbUlb/GAaTQxumG4i/R14tRgyj
-	 K/UFBaBWMQCFQ==
-Date: Tue, 1 Sep 2026 16:47:44 +0300
+	s=k20260515; t=1788273001;
+	bh=A2AYh5SSryGrBO/HuHjQ4hxDZb/wBIY2xwZDbl2gNUA=;
+	h=From:To:Cc:Subject:Date;
+	b=IlPKKpD0RIgV63tQfh/tikjhcMlecq+P3F98DByODk4RXDVuWFTI3qDcH8iksBvCG
+	 SoUxcSyLOMdrdJo91rU05hl+qf/UrbU48LmxB329h2N0xD2UCJFxLf1y4IZ6VCIIPd
+	 gt1z5zK3ooHIZf77NWUQ/0dAxoXJRdOPY/IGCFagKRfKlhlAzMWfryW2dVU9WD7oJt
+	 ENYCiSjDN8Lvel4egfRaBzQazHuvDsm+zEcg9SUnnGPAi0cLCrx1Cj5QhC2YpFaYcZ
+	 j/jmzSH/CgLiUiN2rIlejEgDuDAjefuMvaS5YzMqpv6E8znlZf0pxTQUONNE2CaqCr
+	 rEjQY/hQOLCRg==
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jiangshan Yi <yijiangshan@kylinos.cn>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, ross.philipson@oracle.com,
-	stefanb@linux.ibm.com, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, 13667453960@163.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] tpm: Fix heap buffer overflow in tpm_transmit_cmd()
-Message-ID: <apbXgGwsxAualfEK@kernel.org>
-References: <20260901062850.379870-1-yijiangshan@kylinos.cn>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Stuart Yoder <stuart.yoder@arm.com>,
+	Chu Guangqing <chuguangqing@inspur.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm_crb: Remove dead code from crb_map_res()
+Date: Tue,  1 Sep 2026 17:29:46 +0300
+Message-ID: <20260901142955.187856-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260901062850.379870-1-yijiangshan@kylinos.cn>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 01, 2026 at 02:28:50PM +0800, Jiangshan Yi wrote:
-> struct tpm_buf now uses an embedded flexible array for data, which is
-> 6 bytes shorter than TPM_BUFSIZE due to the struct header. But
-> tpm_transmit_cmd() still passes PAGE_SIZE to tpm_transmit(), and after
-> clamping to TPM_BUFSIZE in tpm_try_transmit(), chip->ops->recv() can
-> write past the end of data[] by 6 bytes.
-> 
-> Pass buf->capacity to tpm_transmit() instead.
-> 
-> Fixes: 3d9e043dab0a ("tpm-buf: Memory-safe allocations")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jiangshan Yi <yijiangshan@kylinos.cn>
-> ---
->  drivers/char/tpm/tpm-interface.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index f745a098908b..1ccdbde98b69 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -268,7 +268,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
->  	int err;
->  	ssize_t len;
->  
-> -	len = tpm_transmit(chip, buf->data, PAGE_SIZE);
-> +	len = tpm_transmit(chip, buf->data, buf->capacity);
->  	if (len <  0)
->  		return len;
->  
-> -- 
-> 2.25.1
-> 
+In all the pre-existing call sites both @iomem and @iobase_ptr are
+either NULL or non-NULL.
 
-Thank you good catch!
+Thus, add invariant for this and remove a dead basic block.
 
-I'll apply this and put to rc2 PR. 
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/tpm_crb.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-BR, Jarkko
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index ceb4100ba400..e7a61f36c58b 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -570,15 +570,12 @@ static void __iomem *crb_map_res(struct device *dev, struct resource *iores,
+ 	if (start != new_res.start)
+ 		return IOMEM_ERR_PTR(-EINVAL);
+ 
++	if ((iores == NULL) != (iobase_ptr == NULL))
++		return IOMEM_ERR_PTR(-EINVAL);
++
+ 	if (!iores)
+ 		return devm_ioremap_resource(dev, &new_res);
+ 
+-	if (!*iobase_ptr) {
+-		*iobase_ptr = devm_ioremap_resource(dev, iores);
+-		if (IS_ERR(*iobase_ptr))
+-			return *iobase_ptr;
+-	}
+-
+ 	return *iobase_ptr + (new_res.start - iores->start);
+ }
+ 
+-- 
+2.47.3
 
