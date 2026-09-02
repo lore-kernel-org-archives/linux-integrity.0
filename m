@@ -1,187 +1,151 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F125415F15
-	for <linux-integrity@vger.kernel.org>; Wed,  2 Sep 2026 09:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2D241A51B
+	for <linux-integrity@vger.kernel.org>; Wed,  2 Sep 2026 09:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788341069; cv=none; b=P9P0wMwaUbuu+A2bFuN5K3RUhZsnyJpXTlOzw2mE7q4cLcX7TMjIgKV7Sb5vGtkd4EyjB684kuOv+lYLvsDhnHro9EooN661G/oi5ph/RM5Lg+qUGHSaYIiuhZNpWDcbZgw4/1B5ZL9g9g8mUPj3P33vEY4/rvOGns4H1CM3NBQ=
+	t=1788341245; cv=none; b=qLKPNEi8wlL2+OxPk/KjUMrDAKG4w9o0k0ZryOo+zedVqJginEIAbqAcUP3CZdzAxkgrw5FCNCEkpPFMoAUCFbbqTJdXFEmq5IK3omuYnbgzKdgDUZ4zFiUIAfZG5NX6Yp9CGfROBOQVqNycFwQixMvsJo8/99NgSP+AAPRJxeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788341069; c=relaxed/simple;
-	bh=dv1csfbz3+AfIisrDWKM/LTeMZoRYy6BRCz9NaDNXI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rPJDGsWQ97hZDXXTOlJhMSUGDfWK1Lm+HpBUvRgCzj8O3KBtf+K+HNnFe5JKgbxOb7xx1jlG9fGc3TfXlXKvh2s50/JjAjGWlNPHiqkMkDSFuysML8ktfForsApxHEw+ifimQY64a4tqDnbT++fcbOwOB+EVX8FVwj9DunJUkMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DKn3S1rS; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=JyYnDxPi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1788341245; c=relaxed/simple;
+	bh=4RrWg3YRAeHPQUzHKjgVo28GNnYT956K15imGLTP8yk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gh2SD0lpWdWAZvcQByNjD5oaNG6hTazObbUJE87dk4ceHgXr8r+BX3ABrI31weYlwSwK3p+MgDwiHcuyVRbvn0Hyp4uWz1TLYUniaHL0Z0emj5Lm5PLwj9bpEWHHQiSxnw6Z46roE5ROfEoPIEyvYA0bdq1WZ7XKlDvbjEASinU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CVF1nDol; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=c0lSWEnC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DKn3S1rS";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="JyYnDxPi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788341066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8QzyTGdGmNYHVJq7S368eFIeE6Ma1yvkdBRAoiX3kKc=;
-	b=DKn3S1rSZRpSyl3FHhGxt3ILEWTihqGI/rG0tNTwpxCT7Yqj3fv6irbbb6Wcf6z9koP/go
-	xZ2HkSvkh68ax3doeLn5uZHmhe7bzTaDLCMIJYUhmjkutd30ZTtA8kMSTSY9ZA29zX3NLk
-	pJbHWyr3iB/ajVRzqIGSH1j+WKarnfw=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-359-GHdGqoP4OaCQhQuTeUAFCA-1; Wed, 02 Sept 2026 05:24:25 -0400
-X-MC-Unique: GHdGqoP4OaCQhQuTeUAFCA-1
-X-Mimecast-MFC-AGG-ID: GHdGqoP4OaCQhQuTeUAFCA_1788341064
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-47f2de3ba47so575459f8f.1
-        for <linux-integrity@vger.kernel.org>; Wed, 02 Sep 2026 02:24:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CVF1nDol";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="c0lSWEnC"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6829N1FT590064
+	for <linux-integrity@vger.kernel.org>; Wed, 2 Sep 2026 09:27:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gNLzMLJZKI7OImu+XuzOnLBC17S6dnkYMkkwnpIHzgw=; b=CVF1nDol+hpZwsFS
+	MOgvCBfb1EwOK0kpu/Z3JNm/mxhLAgh54XhaeCGkXwlxAj2rRKgmNudMadzRAUB6
+	6VIahtjrGJKoReOrZVYXLEGFRr340+g4JsWIFwWZl2yCIersIw0MU7Bnw//mavuL
+	OoTVWoM5YAztEdwdxd0tLDEnFQIeZ/iIuIuyGb3gMKKvSXd43IpYyfj5PZ2a24Vt
+	PyLbKWBXkxzhRWd6YLdV0QtDLb/OhlYfmF0+BJplbFO+QH6WDUNfJ51h3pEwYY5U
+	UyToNEgTyeLhWpkb0DJIjqLj5adDzsiqMKWdNWSDFmnc9pGRy0KLjsp4mSavnPiK
+	41ffjQ==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ge1wpbpfg-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-integrity@vger.kernel.org>; Wed, 02 Sep 2026 09:27:20 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-396b9ef3070so1563053a91.3
+        for <linux-integrity@vger.kernel.org>; Wed, 02 Sep 2026 02:27:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788341064; x=1788945864; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8QzyTGdGmNYHVJq7S368eFIeE6Ma1yvkdBRAoiX3kKc=;
-        b=JyYnDxPiF2rPoE7R5j1x2Lv3ODL7MDYcdYu/6e58kZl+6RlY6Xk5w4my4eaCxLUYA8
-         zPlAzzeAtMOv9B13xii8ynINbejCEVTZjtFmzgIlM9LLp776aO9BZeLI9HHlCFvRGXvH
-         eKAZum0oe1RalaQrh1p30bYM8fFtx1+DgVrDJR9yhHpyI74zEWFp3Fyir9pnbouy5sy1
-         R+DTB3gg7Y+paqAb2us/ns8Bg7zrtA7avzLIYuCaY43ld/hcPy64idGwDHsxUr3UbesB
-         S/t5UG4GMdr43+9hepMt0/NnfZCzknTiNeEG1rgqH62X5uOCW5ZtzLDFzWdj9anitwgq
-         /CUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788341064; x=1788945864;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1788341239; x=1788946039; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=8QzyTGdGmNYHVJq7S368eFIeE6Ma1yvkdBRAoiX3kKc=;
-        b=IhRLWNVaY8K2GmLD1BKgqPIU5BU+SliXF9Zvrc/MjG+TAi8KNWqMVPqoONcTn5txiZ
-         zvHMA1mFS9Zhg6lFzbD5SckyAROVSCG33/tkfGr1wJEQb5jChC6xGZHekG1XkGXFujyQ
-         mORG9Uj40dy8ESpUHvQaH6cOCKoLnnukOPPJCy4cpCgvTxBVuAGxYD+U+UHAywlNpR7b
-         9+fArxtnPjjP6q/x6gRjnS+r+vjae30j49ooiIzC49RfHZEZWttRWjt6pTbhB5Li1VTE
-         Gw2R93Jd1gORI+c17hXVLEwHFPCalsyQQ8BDdQ3bEUBS4rtcIpy9lgrQVn/bXFMsR4K6
-         8pXg==
-X-Gm-Message-State: AFuF++ldqwRq2movQ5Z9NZW01E0GBAAPbu/gpusaU2Zv5wvGuZKqK+V/
-	oQAfNoQ0ud6huaKyKFHoFQYlw7BDOkCDFY1riIjr+UY1kNYexahKkxiPrvmv1F0oED+YUmytNiN
-	lLI20AikRlTCfJqGPlkg0QYlpGSdNzZUcaSuhZG3ptr4uk5z3cEr5eU7YH8X8DG/G+pi09Q==
-X-Gm-Gg: AYBFou0kFg8WfLEKHg09K8pVn36T9H/fnJxgK0ZCphMXoY4E3lXtwHat/aQc0+FY7yc
-	TI3coGQ9ySRLYZuKiFCcF0OfGmmDnTt1ZnvNw6DuslcAy4w40gXl4fSPyh+DM8I0uFuDRBgTtFE
-	xT8Cfwv4FCKwdBAOn5m175t/Ugxavw70Y0AEyt5Dk9DOjs3i0FlWoXM3YK8EOMSpg9TROVyNmdG
-	GAW8gAIwBjLhQXJmPS4dADy7Q+gJ5VbYTGk9PSCfee8dxLNqMweLmXLa4waVVUvIimIzRsqfu3L
-	cX/sLFWvVdM1hqf8nZsOKQoEAasH60rtysV9nkC17eaG5CHQSgQvZeKjKoK1z4JV5q5jtvzvisO
-	yGSKuQLp3qEL9R+1bwAZTbn/KKD5LZE2ZT1dKT2MfakQIJg==
-X-Received: by 2002:a05:6000:454c:b0:485:1bcc:67f8 with SMTP id ffacd0b85a97d-4851bcc69c1mr3651062f8f.13.1788341064192;
-        Wed, 02 Sep 2026 02:24:24 -0700 (PDT)
-X-Received: by 2002:a05:6000:454c:b0:485:1bcc:67f8 with SMTP id ffacd0b85a97d-4851bcc69c1mr3650988f8f.13.1788341063712;
-        Wed, 02 Sep 2026 02:24:23 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-53-30-11.retail.telecomitalia.it. [79.53.30.11])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448e80388sm6406811f8f.14.2026.09.02.02.24.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2026 02:24:22 -0700 (PDT)
-Date: Wed, 2 Sep 2026 11:24:16 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, stable@vger.kernel.org, 
-	co+6a581c4284f721d4@bugs.sh, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan McDowell <noodles@meta.com>, 
-	Ross Philipson <ross.philipson@gmail.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	Srish Srinivasan <ssrish@linux.ibm.com>, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KEYS: trusted: Fix tpm2_load_cmd() boundary check
-Message-ID: <apfoKo-BdwaLXtkT@sgarzare-redhat>
-References: <20260901205809.2028454-1-jarkko@kernel.org>
+        bh=gNLzMLJZKI7OImu+XuzOnLBC17S6dnkYMkkwnpIHzgw=;
+        b=c0lSWEnClzg2XppVrp/7RBMKxPMYeYw6ZdOIWskOhVe8iyw9qJ2WjXstbDBXgARjrQ
+         g54y8QP2fp10TXB459oa9w3EKlqSTVqoIT+qIWhUEEXpdmLkttSExe3p3XhzrGRcjb4n
+         Ig4gEIZPtGvXKbcjjhM9IHYwmJnJpgl4CxyxylJwGlhKJYEtzVX1ktXu8SWOWqKHwWyD
+         rJyoTiyYaJ2cW+QMWyAfgkkqwrgxpOCfDfrajV4AXg2TLL9rFmXl3VgSYCEQpWwZVE3w
+         /cMbS50srO2deGojeHs9igKmKqi4lUMhJ1LupwkM0atSwwWT/EeH9Pbawoje/4onPKKt
+         0dpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788341239; x=1788946039;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=gNLzMLJZKI7OImu+XuzOnLBC17S6dnkYMkkwnpIHzgw=;
+        b=ogNBXsP601b37EcjC44XpIOLce8gxzypOW3JvH1JIQjqScOWj+pFX1I4pGWkJLzhNx
+         DZMjZNyqJ8n2ckzAakkK42RszGleUdNI3MYxhTW1MEoKA4Vum2Eb3VzAIb3Gg7yGZGnN
+         wvuuTaFbJ3moCYsuI4fj2FCtnt1+gCRq8URhxqH1U+khKBLYrvZJv0C9HhcRDpumNH5+
+         ZxCz4fklt3AXw6HheBGMx6gXzR8xOnm6aE9BR0qwVB9j5GSfssNYBN/Ecjsnb9px63SR
+         +l39DjhJ/3b68tNi55z+MIB/L8TNguNSohLZLFS91wWuWjI73DI21wQ+i2k2ZqbpE/Hz
+         gong==
+X-Forwarded-Encrypted: i=1; AKwUvBxRxLYnUl6GHVKMSqDkaAdGsp0ee3kO9pEmz0eJ/fDYf3bub+CUL+rWEOTn8fC0bVklfei1aBlH1gRei+DvAUw=@vger.kernel.org
+X-Gm-Message-State: AFuF++lynIJHxlnjK/CN9DB7hAbVbtwn+XV5fhVzsvAtvx343KI3x4+G
+	YxCkGG9eXPIC7sQQyMV8odxCcKuxVnQh0ovq3TrTEQQ1G5glc0gk7ys1eIfArd2K1yX7G3htgZ2
+	t5MjNyo/4aEoiDa/f8TJbOXgSrNN7ZxKIUvyX0DdG+FrU+HtIoUr2gX1UZYyH8yqebZx6W9s=
+X-Gm-Gg: AYBFou3UrTFT61WeKNV119B0nlWcRdtMDXcq+DNHonpTeURs2OudJewYrNUwPQS4Y74
+	pC5WajQx/KmIePe+B4blfaACJC2/jI3gWtjlmftzTIUxHxAtAUIcPhY1hldDwKbV0ZAOaP3H78K
+	NXXtLYftmyOfhyv5bBIfI5TgHZmETz/RFHB50KbaN3fzQvOJKmE8HpZ9q9wdcQbslXs44GSYSZG
+	gHDQUQEqEgamKx/rXrs5d8i4HdzT3YHYPJ2Y5/AR67LugjTdQuDrK+p6MSH0CdqEzEKZe039G0p
+	R1wbRmtpyDJn0KV0PLamrmCj5cQHVrP2/rfSs36FLNUXSK0gX8e/6sSS1AaquttwMSTij8SLSZ3
+	czAidDyn1SyeOqH/MYow2A6BGFpFm0TE=
+X-Received: by 2002:a17:90a:f94f:b0:398:bacb:1137 with SMTP id 98e67ed59e1d1-39aee21a4demr5659444a91.19.1788341239437;
+        Wed, 02 Sep 2026 02:27:19 -0700 (PDT)
+X-Received: by 2002:a17:90a:f94f:b0:398:bacb:1137 with SMTP id 98e67ed59e1d1-39aee21a4demr5659371a91.19.1788341239018;
+        Wed, 02 Sep 2026 02:27:19 -0700 (PDT)
+Received: from [10.218.31.125] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1430e9eb4dasm8445304c88.2.2026.09.02.02.27.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Sep 2026 02:27:18 -0700 (PDT)
+Message-ID: <54de34e2-cbe1-4464-b186-3ba242ffe3fd@oss.qualcomm.com>
+Date: Wed, 2 Sep 2026 14:57:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20260901205809.2028454-1-jarkko@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] tee: qcomtee: Register qcom.tz.tpm service for
+ discovery
+To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
+        Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+References: <20260831-tpm_qcom_driver-v1-0-6f16fa6924fa@oss.qualcomm.com>
+ <20260831-tpm_qcom_driver-v1-1-6f16fa6924fa@oss.qualcomm.com>
+Content-Language: en-US
+From: Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
+In-Reply-To: <20260831-tpm_qcom_driver-v1-1-6f16fa6924fa@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=F8JnsKhN c=1 sm=1 tr=0 ts=6a97ebf8 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=3Mugy72lF2TQ84n-Z4MA:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-GUID: 81Xh8Zj2aseo7fe1b9yraFQUvgkimyVn
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDA4MiBTYWx0ZWRfX1BG6zIi6muE8
+ qWu3gabKKiUA2j30OLpvQDno87uSXwZBGJ8VEFZIzFcDI/CtszXlNANDydxRN9Qh39/sKMu5CTY
+ 7erdQZeNrR/o0k6OguvQRUbSk4fGa6I=
+X-Proofpoint-ORIG-GUID: 81Xh8Zj2aseo7fe1b9yraFQUvgkimyVn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDA4MiBTYWx0ZWRfX+WugvDWxzl1T
+ dh+kkzRq5aBmcSs4oEwm4GvWSAq3QpumHGdDh3/0InLF9ys9eKGkTr54H4ojpxahrRDewDRMlkn
+ TiIBVudQE1n7iHFJ3EszsmdOtzOALfsG1gxbu+aBjtlZOhiJ/evTtmTknHKIcT41p5MTFmqGXpf
+ 2LoOCUUtQEehWy8NBIYygul4blEBFvQatcy+y83ebeJn/Jt2sA9vMxVdBa4f/97E1+FplsEswbI
+ 6TH8tH4G/7qF1ZJLPNpWoojmOaYLdTGtrJrTpVNVJ77OYHRSHXfvxzehWtcHZuVksxrHFefgvzY
+ 2R5iAQt0C4y1+WwSD3QLgADiQKZMm9khJGoTawe1d1U/ZEX3JkmWS/b+euHW8dL46Ge79YEi2vz
+ o/Neg4sj1wkZ6cM7xuuf1pyzz63fGSBIeSXAcKq+UKRxLHh1f4VxgusH3ZW8OeHgy5HWkccNPON
+ 4h8U7t7M6yOvhFrFG5w==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-02_02,2026-09-01_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 suspectscore=0 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020082
 
-On Tue, Sep 01, 2026 at 11:58:06PM +0300, Jarkko Sakkinen wrote:
->tpm2_load_cmd() does boundary checks against the ASN.1 size i.e.,
->payload->blob_len. Address this by passing the decoded blob size to
->tpm2_load_cmd(), and use it for the boundary checks.
->
->Cc: stable@vger.kernel.org # v5.13+
->Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
->Reported-by: co+6a581c4284f721d4@bugs.sh
->Closes: https://bugs.sh/b/6a581c4284f721d4/
->Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->---
-> security/keys/trusted-keys/trusted_tpm2.c | 12 +++++++-----
-> 1 file changed, 7 insertions(+), 5 deletions(-)
->
->diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
->index 67225dd562a9..01f18bb37047 100644
->--- a/security/keys/trusted-keys/trusted_tpm2.c
->+++ b/security/keys/trusted-keys/trusted_tpm2.c
->@@ -99,7 +99,7 @@ struct tpm2_key_context {
->
-> static int tpm2_key_decode(struct trusted_key_payload *payload,
-> 			   struct trusted_key_options *options,
->-			   u8 **buf)
->+			   u8 **buf, unsigned int *blob_len)
-> {
-> 	int ret;
-> 	struct tpm2_key_context ctx;
->@@ -120,6 +120,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
+> diff --git a/drivers/tee/qcomtee/qcomtee_msg.h b/drivers/tee/qcomtee/qcomtee_msg.h
+> index ecaf8db67d45..888611b801c8 100644
+> --- a/drivers/tee/qcomtee/qcomtee_msg.h
+> +++ b/drivers/tee/qcomtee/qcomtee_msg.h
+> @@ -106,6 +106,8 @@ union qcomtee_msg_arg {
+>  #define QTEE_VERSION_GET_PATCH(x) ((x) >> 0 & 0xfffU)
+>  
+>  #define QCOMTEE_UEFI_SEC_UID            413
+> +#define QCOMTEE_TPM_UID			489
+There's discussion ongoing in QTEE side on keeping idl with uid 81 and
+not a new idl(uid 489).
 
-	blob = kmalloc(ctx.priv_len + ctx.pub_len + 4, GFP_KERNEL);
+I'll update if needed in my next patch.
 
-Pre-existing, but is `+ 4` here useless?
-
-I'm not asking to fix here, just noticed while reviewing.
-Maybe we can set *blob_len earlier and use it also in the kmalloc().
-Not a strong opinion, that said this LGTM:
-
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-
-	if (!blob)
-> 		return -ENOMEM;
->
-> 	*buf = blob;
->+	*blob_len = ctx.priv_len + ctx.pub_len;
-> 	options->keyhandle = ctx.parent;
->
-> 	memcpy(blob, ctx.priv, ctx.priv_len);
->@@ -384,10 +385,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-> 	int rc;
-> 	u32 attrs;
->
->-	rc = tpm2_key_decode(payload, options, &blob);
->+	rc = tpm2_key_decode(payload, options, &blob, &blob_len);
-> 	if (rc) {
-> 		/* old form */
-> 		blob = payload->blob;
->+		blob_len = payload->blob_len;
-> 		payload->old_format = 1;
-> 	} else {
-> 		/* Bind for cleanup: */
->@@ -399,17 +401,17 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-> 		return -EINVAL;
->
-> 	/* must be big enough for at least the two be16 size counts */
->-	if (payload->blob_len < 4)
->+	if (blob_len < 4)
-> 		return -EINVAL;
->
-> 	private_len = get_unaligned_be16(blob);
->
-> 	/* must be big enough for following public_len */
->-	if (private_len + 2 + 2 > (payload->blob_len))
->+	if (private_len + 2 + 2 > blob_len)
-> 		return -E2BIG;
->
-> 	public_len = get_unaligned_be16(blob + 2 + private_len);
->-	if (private_len + 2 + public_len + 2 > payload->blob_len)
->+	if (private_len + 2 + public_len + 2 > blob_len)
-> 		return -E2BIG;
->
-> 	pub = blob + 2 + private_len + 2;
->-- 
->2.47.3
->
+-- 
+Regards
+Kuldeep
 
