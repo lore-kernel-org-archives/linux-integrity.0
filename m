@@ -1,151 +1,149 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2D241A51B
-	for <linux-integrity@vger.kernel.org>; Wed,  2 Sep 2026 09:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7AA372EF3;
+	Wed,  2 Sep 2026 10:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788341245; cv=none; b=qLKPNEi8wlL2+OxPk/KjUMrDAKG4w9o0k0ZryOo+zedVqJginEIAbqAcUP3CZdzAxkgrw5FCNCEkpPFMoAUCFbbqTJdXFEmq5IK3omuYnbgzKdgDUZ4zFiUIAfZG5NX6Yp9CGfROBOQVqNycFwQixMvsJo8/99NgSP+AAPRJxeo=
+	t=1788345093; cv=none; b=NH8qrsieq9lmIcBPNYb48vKtwWneG+Wv/s6cOoheb0iHEcoyyqDg3cW/DAZ31M2dxJp5FbswZBo35w2t7o5toONyJouK4Ol1M+TUQkPDFR8biRHTUyKJj4IeRRU6grVM/3PQTpqNsMNZUmR/+m//alV0gK+kedpT8XE5H5lcFPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788341245; c=relaxed/simple;
-	bh=4RrWg3YRAeHPQUzHKjgVo28GNnYT956K15imGLTP8yk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gh2SD0lpWdWAZvcQByNjD5oaNG6hTazObbUJE87dk4ceHgXr8r+BX3ABrI31weYlwSwK3p+MgDwiHcuyVRbvn0Hyp4uWz1TLYUniaHL0Z0emj5Lm5PLwj9bpEWHHQiSxnw6Z46roE5ROfEoPIEyvYA0bdq1WZ7XKlDvbjEASinU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CVF1nDol; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=c0lSWEnC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788345093; c=relaxed/simple;
+	bh=ZQPpTtjCF+tpIaDRehby+0XUM/E3xSwEP5nTbBzhFvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G3PghjbHE+hrGtCmIauJkhA6Djt0L6v6UOk7hXjbFcTe2S86zdyaydyktto1xk1jBa5f3lYjHZLp4GNVloKJczVNjmE3kJp6w9BzK9y/VAgBUUY57UugAA+RkxhN6jy3rwmKHt+qHQxYY7mQtGy+RQUQIserwPrJ1P9bgYmrmwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ba7ncZZZ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CVF1nDol";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="c0lSWEnC"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6829N1FT590064
-	for <linux-integrity@vger.kernel.org>; Wed, 2 Sep 2026 09:27:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gNLzMLJZKI7OImu+XuzOnLBC17S6dnkYMkkwnpIHzgw=; b=CVF1nDol+hpZwsFS
-	MOgvCBfb1EwOK0kpu/Z3JNm/mxhLAgh54XhaeCGkXwlxAj2rRKgmNudMadzRAUB6
-	6VIahtjrGJKoReOrZVYXLEGFRr340+g4JsWIFwWZl2yCIersIw0MU7Bnw//mavuL
-	OoTVWoM5YAztEdwdxd0tLDEnFQIeZ/iIuIuyGb3gMKKvSXd43IpYyfj5PZ2a24Vt
-	PyLbKWBXkxzhRWd6YLdV0QtDLb/OhlYfmF0+BJplbFO+QH6WDUNfJ51h3pEwYY5U
-	UyToNEgTyeLhWpkb0DJIjqLj5adDzsiqMKWdNWSDFmnc9pGRy0KLjsp4mSavnPiK
-	41ffjQ==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ge1wpbpfg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Wed, 02 Sep 2026 09:27:20 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-396b9ef3070so1563053a91.3
-        for <linux-integrity@vger.kernel.org>; Wed, 02 Sep 2026 02:27:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788341239; x=1788946039; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=gNLzMLJZKI7OImu+XuzOnLBC17S6dnkYMkkwnpIHzgw=;
-        b=c0lSWEnClzg2XppVrp/7RBMKxPMYeYw6ZdOIWskOhVe8iyw9qJ2WjXstbDBXgARjrQ
-         g54y8QP2fp10TXB459oa9w3EKlqSTVqoIT+qIWhUEEXpdmLkttSExe3p3XhzrGRcjb4n
-         Ig4gEIZPtGvXKbcjjhM9IHYwmJnJpgl4CxyxylJwGlhKJYEtzVX1ktXu8SWOWqKHwWyD
-         rJyoTiyYaJ2cW+QMWyAfgkkqwrgxpOCfDfrajV4AXg2TLL9rFmXl3VgSYCEQpWwZVE3w
-         /cMbS50srO2deGojeHs9igKmKqi4lUMhJ1LupwkM0atSwwWT/EeH9Pbawoje/4onPKKt
-         0dpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788341239; x=1788946039;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=gNLzMLJZKI7OImu+XuzOnLBC17S6dnkYMkkwnpIHzgw=;
-        b=ogNBXsP601b37EcjC44XpIOLce8gxzypOW3JvH1JIQjqScOWj+pFX1I4pGWkJLzhNx
-         DZMjZNyqJ8n2ckzAakkK42RszGleUdNI3MYxhTW1MEoKA4Vum2Eb3VzAIb3Gg7yGZGnN
-         wvuuTaFbJ3moCYsuI4fj2FCtnt1+gCRq8URhxqH1U+khKBLYrvZJv0C9HhcRDpumNH5+
-         ZxCz4fklt3AXw6HheBGMx6gXzR8xOnm6aE9BR0qwVB9j5GSfssNYBN/Ecjsnb9px63SR
-         +l39DjhJ/3b68tNi55z+MIB/L8TNguNSohLZLFS91wWuWjI73DI21wQ+i2k2ZqbpE/Hz
-         gong==
-X-Forwarded-Encrypted: i=1; AKwUvBxRxLYnUl6GHVKMSqDkaAdGsp0ee3kO9pEmz0eJ/fDYf3bub+CUL+rWEOTn8fC0bVklfei1aBlH1gRei+DvAUw=@vger.kernel.org
-X-Gm-Message-State: AFuF++lynIJHxlnjK/CN9DB7hAbVbtwn+XV5fhVzsvAtvx343KI3x4+G
-	YxCkGG9eXPIC7sQQyMV8odxCcKuxVnQh0ovq3TrTEQQ1G5glc0gk7ys1eIfArd2K1yX7G3htgZ2
-	t5MjNyo/4aEoiDa/f8TJbOXgSrNN7ZxKIUvyX0DdG+FrU+HtIoUr2gX1UZYyH8yqebZx6W9s=
-X-Gm-Gg: AYBFou3UrTFT61WeKNV119B0nlWcRdtMDXcq+DNHonpTeURs2OudJewYrNUwPQS4Y74
-	pC5WajQx/KmIePe+B4blfaACJC2/jI3gWtjlmftzTIUxHxAtAUIcPhY1hldDwKbV0ZAOaP3H78K
-	NXXtLYftmyOfhyv5bBIfI5TgHZmETz/RFHB50KbaN3fzQvOJKmE8HpZ9q9wdcQbslXs44GSYSZG
-	gHDQUQEqEgamKx/rXrs5d8i4HdzT3YHYPJ2Y5/AR67LugjTdQuDrK+p6MSH0CdqEzEKZe039G0p
-	R1wbRmtpyDJn0KV0PLamrmCj5cQHVrP2/rfSs36FLNUXSK0gX8e/6sSS1AaquttwMSTij8SLSZ3
-	czAidDyn1SyeOqH/MYow2A6BGFpFm0TE=
-X-Received: by 2002:a17:90a:f94f:b0:398:bacb:1137 with SMTP id 98e67ed59e1d1-39aee21a4demr5659444a91.19.1788341239437;
-        Wed, 02 Sep 2026 02:27:19 -0700 (PDT)
-X-Received: by 2002:a17:90a:f94f:b0:398:bacb:1137 with SMTP id 98e67ed59e1d1-39aee21a4demr5659371a91.19.1788341239018;
-        Wed, 02 Sep 2026 02:27:19 -0700 (PDT)
-Received: from [10.218.31.125] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1430e9eb4dasm8445304c88.2.2026.09.02.02.27.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 02:27:18 -0700 (PDT)
-Message-ID: <54de34e2-cbe1-4464-b186-3ba242ffe3fd@oss.qualcomm.com>
-Date: Wed, 2 Sep 2026 14:57:13 +0530
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ba7ncZZZ"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6829Vgvm3694182;
+	Wed, 2 Sep 2026 10:31:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=l7MEQHy/jGT9zEOmcLhUVNZtZV731geedEGuzsXfB
+	HM=; b=Ba7ncZZZnKs4Qa0FTUkH4ZXq9hO6XEsZXyZX2vX0CMUXHMsogeBuMZkji
+	cG6EdHkWCx+PhsaDN4zdQBPJa2q3cOlUawL5ngROvVTSX9TlA/0GbENcnz8BAdVA
+	AXxEGpWLZNUQrMwbLQr1YMlwpXIjNXLstKcc7zWOuwDu3JM6dG6w8GnT+0Z0Oabv
+	sUcv6Xo4aJ/O3lScnoTNwoWJNd/4kgK9mYUKaTb3u03bu1rF3uFFwfouz9zbqJXe
+	HRdiLA/yKRER7z1UFDwB0OGnb2bJdZAphosxidEYAbAaeG+MCDiT9nsesfXlpn/U
+	rlK3/B1v4Uv/WXVNlqHG7afZegeeQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gbmuhwp1u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 10:31:28 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 682AQOsJ029968;
+	Wed, 2 Sep 2026 10:31:28 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gecjahfdw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 10:31:27 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 682AVNjX43188672
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Sep 2026 10:31:24 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D0B552005A;
+	Wed,  2 Sep 2026 10:31:23 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 78BA820040;
+	Wed,  2 Sep 2026 10:31:21 +0000 (GMT)
+Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.bl1-in.ibm.com (unknown [9.123.14.23])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Sep 2026 10:31:21 +0000 (GMT)
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+        zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
+        rnsastry@linux.ibm.com, ssrish@linux.ibm.com
+Subject: [PATCH v6 0/2] Move TPM-specific fields out of trusted_key_options
+Date: Wed,  2 Sep 2026 16:01:18 +0530
+Message-ID: <20260902103120.222326-1-ssrish@linux.ibm.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] tee: qcomtee: Register qcom.tz.tpm service for
- discovery
-To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-        Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20260831-tpm_qcom_driver-v1-0-6f16fa6924fa@oss.qualcomm.com>
- <20260831-tpm_qcom_driver-v1-1-6f16fa6924fa@oss.qualcomm.com>
-Content-Language: en-US
-From: Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
-In-Reply-To: <20260831-tpm_qcom_driver-v1-1-6f16fa6924fa@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=F8JnsKhN c=1 sm=1 tr=0 ts=6a97ebf8 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=3Mugy72lF2TQ84n-Z4MA:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-GUID: 81Xh8Zj2aseo7fe1b9yraFQUvgkimyVn
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDA4MiBTYWx0ZWRfX1BG6zIi6muE8
- qWu3gabKKiUA2j30OLpvQDno87uSXwZBGJ8VEFZIzFcDI/CtszXlNANDydxRN9Qh39/sKMu5CTY
- 7erdQZeNrR/o0k6OguvQRUbSk4fGa6I=
-X-Proofpoint-ORIG-GUID: 81Xh8Zj2aseo7fe1b9yraFQUvgkimyVn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDA4MiBTYWx0ZWRfX+WugvDWxzl1T
- dh+kkzRq5aBmcSs4oEwm4GvWSAq3QpumHGdDh3/0InLF9ys9eKGkTr54H4ojpxahrRDewDRMlkn
- TiIBVudQE1n7iHFJ3EszsmdOtzOALfsG1gxbu+aBjtlZOhiJ/evTtmTknHKIcT41p5MTFmqGXpf
- 2LoOCUUtQEehWy8NBIYygul4blEBFvQatcy+y83ebeJn/Jt2sA9vMxVdBa4f/97E1+FplsEswbI
- 6TH8tH4G/7qF1ZJLPNpWoojmOaYLdTGtrJrTpVNVJ77OYHRSHXfvxzehWtcHZuVksxrHFefgvzY
- 2R5iAQt0C4y1+WwSD3QLgADiQKZMm9khJGoTawe1d1U/ZEX3JkmWS/b+euHW8dL46Ge79YEi2vz
- o/Neg4sj1wkZ6cM7xuuf1pyzz63fGSBIeSXAcKq+UKRxLHh1f4VxgusH3ZW8OeHgy5HWkccNPON
- 4h8U7t7M6yOvhFrFG5w==
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: plITP7sjoaAWtiCHUIdxTesiJbPK8AeD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDA5MyBTYWx0ZWRfXxjWq7M/8E1ll
+ W54/Q+R9fs//V7swUruRpv6T6jSRUq5GftoG2Br6HeCWe2toDq5pKBr6ud/kdEIMk41d/QXYj1b
+ 5O0qiQrvTNROYt4ckK0SUxyKAxeFs97ZZa7toq/ApF+oDi0WG1P+ohpynkgaLj7PhXF4DMnZSOs
+ fajdw6SZHZTtXDbIO63PePZKuLGEgDLgWw4YlW68NTU0y3x1RYqk0BffOAd9qcgswddTBwRbcXP
+ NttS7W6je4tvjz36IFAi29SVUOXQtWqARzj7jBM6HCaFx4nKyxBfDHEcfiyeP0zJwrZQTVGnD+V
+ c9colnmsw7IclDr99LIJ2cFSA6kSh3vst7ovBp88iBHFAIYL9weD1JH/83WJzQL1y/nP9GQuVr1
+ 9Tt1hCOGgd2mijWMBNMEQA3biLt8q1zUPYAUWnw10jEmnmvt4HbFfnBPAv/n0NwJWn1mFnbEs3g
+ yyezVBvZ7/+EOSPbPwA==
+X-Authority-Analysis: v=2.4 cv=Osl/DS/t c=1 sm=1 tr=0 ts=6a97fb00 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=Y2IxJ9c9Rs8Kov3niI8_:22 a=wIrnhtCp3JY1rtXp-aMA:9
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDA5MyBTYWx0ZWRfX8iTEXFZscKkR
+ kIkKEkJMZngIAhms74H5lH/fNyihQwT5HSi4U25Hrgq5+OqGnfE6YEns0UEHJxh7UtIfUUHResR
+ hmGtNv2U5wIazgl8MDM4Mg0JaYQp2f4=
+X-Proofpoint-ORIG-GUID: plITP7sjoaAWtiCHUIdxTesiJbPK8AeD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-02_02,2026-09-01_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 malwarescore=0 suspectscore=0 clxscore=1015 phishscore=0
+ spamscore=0 malwarescore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ adultscore=0 impostorscore=0 phishscore=0 clxscore=1015 priorityscore=1501
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020082
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020093
 
-> diff --git a/drivers/tee/qcomtee/qcomtee_msg.h b/drivers/tee/qcomtee/qcomtee_msg.h
-> index ecaf8db67d45..888611b801c8 100644
-> --- a/drivers/tee/qcomtee/qcomtee_msg.h
-> +++ b/drivers/tee/qcomtee/qcomtee_msg.h
-> @@ -106,6 +106,8 @@ union qcomtee_msg_arg {
->  #define QTEE_VERSION_GET_PATCH(x) ((x) >> 0 & 0xfffU)
->  
->  #define QCOMTEE_UEFI_SEC_UID            413
-> +#define QCOMTEE_TPM_UID			489
-There's discussion ongoing in QTEE side on keeping idl with uid 81 and
-not a new idl(uid 489).
+struct trusted_key_options contains fields that are specific to the TPM
+trusted source, resulting in the accumulation backend-specific fields in
+the generic options structure.
 
-I'll update if needed in my next patch.
+Move the TPM-specific fields into a new struct trusted_key_tpm and store a
+pointer to it in the private member of struct trusted_key_options.
+
+As a preparatory change, return immediately after a TPM unseal failure to
+prevent pcrlock() from overwriting the unseal error.
+
+Changelog:
+
+ v6:
+ - Add a preparatory fix to return immediately after a TPM unseal failure
+ - Replace explicit cleanup with __free(kfree_sensitive) in the TPM seal
+   and unseal paths, as suggested by Jarkko
+
+ v5:
+  - Rename struct trusted_tpm_options to struct trusted_key_tpm, as
+    suggestedby Jarkko.
+
+ v4:
+  - Rebased onto mainline after tpm-buf memory-safe allocation changes were
+    merged
+  - Resolved the resulting merge conflicts
+
+ v3:
+  - Exclude the preparatory clean up patch as the problem has been
+    addressed in commit
+    9ec4175a30eb ("KEYS: trusted: Debugging as a feature")
+
+ v2:
+  - Exclude the bug-fix patch as it has already been applied to 6.19-rc7
+  - Rename instances of trusted_tpm_options from tpm_opts to private
+  - Use pr_debug and KERN_DEBUG for logging debug messages (preparatory
+    clean up patch)
+  - Address other minor comments from Jarkko
+
+Srish Srinivasan (2):
+  keys/trusted_keys: return immediately after TPM unseal failure
+  keys/trusted_keys: move TPM-specific fields into struct
+    trusted_key_tpm
+
+ include/keys/trusted-type.h               |  11 --
+ include/keys/trusted_tpm.h                |  14 +++
+ security/keys/trusted-keys/trusted_tpm1.c | 125 ++++++++++++----------
+ security/keys/trusted-keys/trusted_tpm2.c |  50 +++++----
+ 4 files changed, 113 insertions(+), 87 deletions(-)
 
 -- 
-Regards
-Kuldeep
+2.53.0
 
