@@ -1,187 +1,156 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78326472530
-	for <linux-integrity@vger.kernel.org>; Tue,  1 Sep 2026 22:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85BA3176EE;
+	Wed,  2 Sep 2026 00:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788303356; cv=none; b=s4ABjxk3mNipoXhV+EmraYMB3/X1vbJ0FyDHfuDeRnRkaiZ8YGjZIKlJygW8z+n+hxJnPLxs5IFORg3RCi96yC61QBJV6Q0WK+vkFipqXnPU5AR94fN9rw+x8Qyv4r1cVSe3FyzNMrKexAUHEAWqGkxiApWrUG4jJ8Gie8El7ws=
+	t=1788310509; cv=none; b=PYDnXrugmMMgOs7DQwXauGoXmHMj+I2I095qUdiapYLUvvcfBeif5DdNgFqV+wtTpJouKo3d0SCn7EHmnjcvvkfoPcf6aY9OgCVBNzxAf4xCAT6yd+6+ERk7+M2MYcO4PKg88gdf6wOpTH8g1B4aOy7x5jqyj+/lqyZUtP25sHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788303356; c=relaxed/simple;
-	bh=8yMAkfd6O9FSo4wk5et7dzDMhpvYCNnjRQlef9xglNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQcAXBCEt6XhVyf0enL5CI58R9ER5Dbqkk1V2QcnFsg7rU+Tg40tULLOfqU+V2rs4R2jp/iaWiOEGeYIHYNM+LDSDU1Ptls4swiEpV6z4nRsrwcIvCdzasX+Be+qaIJSLYl+oUCu0cPQ4cyAml15F0o98VtmuzgFa8COOx5sraU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhH1Hv2i; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788310509; c=relaxed/simple;
+	bh=rQQWXROtXEPolbL3+WmQ76ec5bRrNQnToMx7O28pmXE=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=PFES8+czhYu/bPYecAH3YwoA20HSoPkhe/7ZkvOl8lWajVGB53yt/OArz/a/AT7EpfLuQ6PHbqqhWccA1BTnVIvcfIbG21rC8scGVfDIVVZYyTTwKsKHasdidnusYIb0h1S/8R+EQNTofzcHcCukh3GsI087qBXpyhwsYJS6YPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S+VOXujc; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhH1Hv2i"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8233B1F000E9;
-	Tue,  1 Sep 2026 22:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788303355;
-	bh=SXwQ0YELhoEd2akMVBcSYla+uQBOWnYMZkPlJcLVTeA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DhH1Hv2idsugNRIgtL3ty90HtVnqfqULLOm0dREqAPsbJjn9c6F0cSeGm9y+sv09N
-	 3CUQvWm0SQjMgjpWzwBIdnjUkA9AjN3IrIP2KR1u21kJraFmfDLzqfWGNJ7RTuuDFE
-	 aQSxNWoFY6reHmpLlpupaIzFvI0gHlE5oL2rwhMag0MWRlQzr1JGeQtz7q3/ojSGq3
-	 HNsNGL+EqugA7CMJVe3vvVIrnkJcgy3xf3zfcJq/VMzZxycgJNQ7XTOups2Aurb5Hq
-	 QOXAc2jYqbszymma3bR5kKbyB/PQ1IjuwCrNyaQSRLeXc/RwRZL4AMrtmc9UPbOMUf
-	 3/pOjT0PJniVA==
-Date: Wed, 2 Sep 2026 01:55:51 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3] tpm: Call cmd_ready/go_idle for each command
- transmission
-Message-ID: <apdX965qlXd3M-5i@kernel.org>
-References: <20260901213723.3017371-1-mario.limonciello@amd.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S+VOXujc"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 681KWWT9354836;
+	Wed, 2 Sep 2026 00:54:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BCSQKB
+	VO5LU27JLC1hpqQFvXR9CV1TehM4jZhukoXTA=; b=S+VOXujcw9DjXIc9CAiBPf
+	IfF0KfmbS6ZheS5sfxd/prbi6ggjZb2Jwet/pRd/BGAV0MnDY/77OdKw1d0km2HQ
+	c8PFbso4YYgkAWDxctyzNsKU4wQenjo/HV5RhEMQbaOxm9qc79+6cLy4jENZ8yop
+	wDpEr/NlGojpIxWlEyzEWUFqZzkYNKA2YjKS2w67lbsYgbIKg8qXKik7p7lsihup
+	zeN1FTBv/+T+xT2ZvSdu13KZJKvBKcIAyRDIADbist7Mgacw9T+QIRZ34DGlIYI+
+	VpazB2rLROhHvdnMn3nHzPxUOUX4wonIxzrOHc09RXMZAOBnsjgMT/moGVezvcvw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gbq3rbdmg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 00:54:49 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 6820QKSK026824;
+	Wed, 2 Sep 2026 00:54:48 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gca4w6yhp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 00:54:48 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6820sloR13042200
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Sep 2026 00:54:47 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2F4C958050;
+	Wed,  2 Sep 2026 00:54:47 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3974658045;
+	Wed,  2 Sep 2026 00:54:46 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.87.106])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Sep 2026 00:54:46 +0000 (GMT)
+Message-ID: <35ae5c9fd60874127d15f5fedb84c0a90e56eca4.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: allow users to specify the pcr index with
+ IMA_MEASURE_PCR_IDX
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Julian Braha <julianbraha@gmail.com>, roberto.sassu@huawei.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc: eric.snowberg@oracle.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260824162215.1572367-1-julianbraha@gmail.com>
+References: <20260824162215.1572367-1-julianbraha@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 01 Sep 2026 20:54:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260901213723.3017371-1-mario.limonciello@amd.com>
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=EIc2FVZC c=1 sm=1 tr=0 ts=6a9773d9 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
+ a=pGLkceISAAAA:8 a=cuzdW0VFpDOfPp0CwCYA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDAwMyBTYWx0ZWRfX6bhuzGfolJq0
+ /RB2Syow7w1TDWIorthN3CY73kKLPhQ59eNxVDx3WpMVk+eh+yfIauhnBA60W7gvbyAp4gmjp3i
+ BlrDLvlz6KhvEnC1o2hv/5FGwNqh0jg6ynqH7f/+JTV4FB+BpLFiRhTosYB7xivjclug8FsdWdD
+ W/YyWAAIclPUcaFHjVQEIe8hCi8Z38rRsY7GJtqFIwVxaJk43vC8tjaf3+XPMrA11EOUEB9pwGF
+ xI1hY+E9Ka2PvwMNH+k/nLpis131PSpamDE9MZakqMnVMM3nzukbJd1xslWPDKcXJrLoWjXqoDv
+ rXm3zZxDPKf8orwBILw/Q7WWhGXmCnqcJF1ChCizQKGXzB7l6fdmmLX9NRbkErssjf3GuMV/7D8
+ zFqdzPIZkf2JpC+DZawffbtcY37aDcLI8ESWG4nfUQxh/3cz7l70XT0FDX7GLG73Pa+TAFZnoN7
+ hyAfOR9iuvg6V+bMGTA==
+X-Proofpoint-GUID: sny8BGHa00BGvO7ry_uvDL7XDYIGxeaR
+X-Proofpoint-ORIG-GUID: btMsHG92T1r6fmUTgAshUvsd9mkuXLeg
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDAwMyBTYWx0ZWRfX1F4uml2URZOk
+ 49a+Nq5KxupP07u8QYD0iyjelfJjjBuPNAn0yMvdtJpxQPpYkL2c8FxbmleUj1t2+iG+Ppe58pt
+ zoXeOGFFH20uqPJRPbETwWJ3ZM6mqLE=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-01_06,2026-09-01_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020003
 
-On Tue, Sep 01, 2026 at 04:37:22PM -0500, Mario Limonciello wrote:
-> Some TPM implementations, particularly fTPM using the CRB interface,
-> require the TPM to transition through idle and ready states for each
-> command rather than once per session.
-> 
-> The current implementation calls cmd_ready once during tpm_chip_start()
-> and go_idle once during tpm_chip_stop(). For fTPM, when multiple commands
-> are sent without per-command idle transitions, subsequent commands timeout
-> as the TPM is waiting for the transition.
-> 
-> Fix this by calling cmd_ready before each command and go_idle on all exit
-> paths in tpm_try_transmit(). For TPM implementations that don't require
-> per-command transitions, the callbacks return immediately based on the
-> start method.
-> 
-> Remove the now-redundant per-session calls from tpm_chip_start() and
-> tpm_chip_stop() along with their helpers.
-> 
-> This resolves timeout errors during TPM initialization on systems where
-> BIOS has already performed TPM startup.
-> 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On Mon, 2026-08-24 at 17:22 +0100, Julian Braha wrote:
+> The IMA_MEASURE_PCR_IDX option is currently not visible in the kconfig
+> frontend, so it always uses its default, 10. This means that the
+> 'range 8 14' is dead code, and users are unable to specify the pcr index
+> value.
+>=20
+> In a previous discussion, Mimi explained that users should be able to use
+> this config option to specify the pcr index. [1]
+>=20
+> Let's add a prompt for users to specify the pcr index, when EXPERT is
+> enabled.
+>=20
+> This dead range was found by kconfirm, a static analysis tool for Kconfig=
+.
+>=20
+> Signed-off-by: Julian Braha <julianbraha@gmail.com>
 > ---
-> v3:
->  * Use __free() to clean up
-> v2:
->  * Drop redundant calls
->  * Update commit message
+> Link: https://lore.kernel.org/all/1feff118-4afa-4b9c-86f1-271a7a88208f@gm=
+ail.com/T/#mc4efa2491b4937eb7c9e532c29ffba516a70e662 [1]
 > ---
->  drivers/char/tpm/tpm-chip.c      | 24 ------------------------
->  drivers/char/tpm/tpm-interface.c | 21 +++++++++++++++++++++
->  2 files changed, 21 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 12b7394b34bdc..0be5dbfaa72eb 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -66,22 +66,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip)
->  	chip->locality = -1;
->  }
->  
-> -static int tpm_cmd_ready(struct tpm_chip *chip)
-> -{
-> -	if (!chip->ops->cmd_ready)
-> -		return 0;
-> -
-> -	return chip->ops->cmd_ready(chip);
-> -}
-> -
-> -static int tpm_go_idle(struct tpm_chip *chip)
-> -{
-> -	if (!chip->ops->go_idle)
-> -		return 0;
-> -
-> -	return chip->ops->go_idle(chip);
-> -}
-> -
->  static void tpm_clk_enable(struct tpm_chip *chip)
->  {
->  	if (chip->ops->clk_enable)
-> @@ -116,13 +100,6 @@ int tpm_chip_start(struct tpm_chip *chip)
->  		}
->  	}
->  
-> -	ret = tpm_cmd_ready(chip);
-> -	if (ret) {
-> -		tpm_relinquish_locality(chip);
-> -		tpm_clk_disable(chip);
-> -		return ret;
-> -	}
-> -
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(tpm_chip_start);
-> @@ -137,7 +114,6 @@ EXPORT_SYMBOL_GPL(tpm_chip_start);
->   */
->  void tpm_chip_stop(struct tpm_chip *chip)
->  {
-> -	tpm_go_idle(chip);
->  	tpm_relinquish_locality(chip);
->  	tpm_clk_disable(chip);
->  }
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index f745a098908b3..8d434d7fa5bab 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -19,6 +19,7 @@
->   * calls to msleep.
->   */
->  
-> +#include <linux/cleanup.h>
->  #include <linux/poll.h>
->  #include <linux/slab.h>
->  #include <linux/mutex.h>
-> @@ -89,8 +90,16 @@ static bool tpm_transmit_completed(u8 status, struct tpm_chip *chip)
->  	return status_masked == chip->ops->req_complete_val;
->  }
->  
-> +static void tpm_go_idle(struct tpm_chip *chip)
-> +{
-> +	if (chip->ops->go_idle)
-> +		chip->ops->go_idle(chip);
-> +}
-> +DEFINE_FREE(tpm_go_idle, struct tpm_chip *, if (_T) tpm_go_idle(_T))
-> +
->  static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
->  {
-> +	struct tpm_chip *chip_idle __free(tpm_go_idle) = NULL;
->  	struct tpm_header *header = buf;
->  	int rc;
->  	ssize_t len = 0;
-> @@ -113,6 +122,18 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
->  		return -E2BIG;
->  	}
->  
-> +	if (chip->ops->cmd_ready) {
-> +		rc = chip->ops->cmd_ready(chip);
-> +		if (rc) {
-> +			dev_err(&chip->dev,
-> +				"%s: cmd_ready(): error %d\n", __func__, rc);
-> +			return rc;
-> +		}
-> +	}
-> +
-> +	/* Ensure go_idle() is called on every exit path from here on. */
-> +	chip_idle = chip;
-> +
->  	rc = chip->ops->send(chip, buf, bufsiz, count);
->  	if (rc < 0) {
->  		if (rc != -EPIPE)
-> -- 
-> 2.43.0
-> 
+>  security/integrity/ima/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kcon=
+fig
+> index b3a9f86809b0..2d5bb19ea6ac 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -46,6 +46,7 @@ config IMA_KEXEC
+> =20
+>  config IMA_MEASURE_PCR_IDX
+>  	int
+> +	prompt "PCR Index for Aggregate" if EXPERT
+>  	range 8 14
+>  	default 10
+>  	help
 
-This is now much better as it addition adds better guarantees that
-resources always get released after use no matter how this function
-is modified later on.
+Thanks, Julian.  The existing Help says, "If unsure, use the default 10."  =
+Could
+we make this recommendation stronger?  AI suggested:
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+	  IMA_MEASURE_PCR_IDX determines the TPM PCR register index
+	  that IMA uses to maintain the integrity aggregate of the
+	  measurement list. Most attestation tooling expects PCR 10.
 
-BR, Jarkko
+	  The default is almost always what you want. Only change
+	  this if you know what you are doing.
+
+Thanks,
+
+Mimi
