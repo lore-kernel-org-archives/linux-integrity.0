@@ -1,146 +1,143 @@
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63E13A2E3F
-	for <linux-integrity@vger.kernel.org>; Wed,  2 Sep 2026 19:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE284ADD90;
+	Wed,  2 Sep 2026 22:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788377711; cv=none; b=jvj+mZpIiKnkmHezMmiN53GJXSg7v25W9A62siwfF9/08IkNXFG7gm34bJt4dg/6IKfpxnl77r1y0yJ0BWzovlT6NNHtV/DqSUQXq5nWYJOjIi4vrswUy60EtYhTdsE2yRa0LSZ0lqlmtBM11ldZ3qCc9vMqYGtl+07Bg7HV6bM=
+	t=1788387895; cv=none; b=gGJnHI/xwl7BL2Mlcu337jbrSXXX0hIl1tAX6XE0q/K3DpuCkiZB8ISIX6PyfSSYw5/uDVppTEQ4dc3Nf+5gdXpzAKxD5+FolxCDLwB9YxaRhq5LzjmiCITbG2MlzWxSunHbLKkYvxkYtMXsaADaJQeZh5KmPDCx4W9C5wis3BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788377711; c=relaxed/simple;
-	bh=9YDoT9jwp8RfcqmUzmkrtAhWc+TIQ8qBkmrmT7QKAu0=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=XzcdZk33GXfjtN++Ysi5fT75pdJqj6BWCkLPz/Xtn2LUhgoP4xX3onEmCUn1sJ18Xhgc73gqN0zqSTeAg28ks67uYnHeVL1+MYV3n82n/8NXI8uJqVt77uRM7CIlWWvVphycrAzuZSL2WmmljRMZu4/suVtA/QfEDmgHJJi/HsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dnAgmBub; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1788387895; c=relaxed/simple;
+	bh=D6bkpoIpcIYOnZZyO6lK4ItdOwuknHRlO1Z8sHXjL6M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AP8epyQOCcV0rZwrGYow22L6YGfSBiBaoH8j5Eo7HuCwjLSmTMtqDw2O8Ub65Qi2o4ywXAqvYRFR2ABUvhhg/vdp7RpsHkJ1aDzkEB8tLsy3wacZZ7+MuscMp8iAccZg351L8Tofazu6Ef0HG+/kJz8g02OzVyJtLuTQO/NFAm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=X4Vu2QtD; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dnAgmBub"
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-92ea24a2dbfso189674285a.0
-        for <linux-integrity@vger.kernel.org>; Wed, 02 Sep 2026 12:34:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1788377694; x=1788982494; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-type:mime-version:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GmC/3FuDYcsm/y4BEp+cIEvZVzU1YcpC+9hZf0Nce20=;
-        b=dnAgmBubzItCWoW33zQ/cr6kWmF4Rk2Mzkb8dOowwzfxGpXFGMBwxM65QfZSd821Ap
-         7ttC25x9+D/mO6vn5MkIV24PbKTo9Vt6kIPas1lPB1pEzgdWSlwBAd3+bdxaApR/U71l
-         rtZ6t1XtkEXjp95KW9kdMSF2hgvloIQ2NalxBCIQesnwQOuIPnLnmtlMiKyodYHWYLV6
-         b+L33zYO1RuwM6ia6I1kEDT88db9HPsVKBEezsg2uLw/hyT0mU7Okca6f/iovh/Ra1Nt
-         qBq5iOngSjEQhLoApD/73uQwexipUWiOf1fXu/zQVcMCkpXGymML66jn94RfN/dR2xV6
-         K1mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788377694; x=1788982494;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-type:mime-version:message-id:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=GmC/3FuDYcsm/y4BEp+cIEvZVzU1YcpC+9hZf0Nce20=;
-        b=IRaZwmnICpAwCfOAexGdI1vAjOFIl7Df6IoPt7obacRpKA3W8s6kPi5cF9ESvERInQ
-         uBPIxB4/nhSI1uy9Ld7cCYwOK4ae6E5Ot9z94Q9hvutBLHEWdUzP/m3nUVFKLTHytFDn
-         c48fSHcsVWybU1jN4424Z1lBbXmjg/YPABqP9GJLldMh5LMAwPDvomQQn7KsiEvE1cIh
-         0DIsizcUVbBIE/zbIrd/vvjwYPsy2lTFzdwIEUVZKcC9m5UpM683LWsloVbRQECrRlIC
-         PaEZCmXCGSksOV9oOrfCeYGj0ChdH33QbZeVq51WABt4O7r4/7PyMJzTvcKpDM715jiM
-         u+Kg==
-X-Forwarded-Encrypted: i=1; AKwUvBysoF3LXw3EKXZiMlOcYF4PpwjzWfsanetMEahtxJRMpg4hkEwYgQJy3yRcCtpmn1Dxj0/DuYp71ga3CbfMXDU=@vger.kernel.org
-X-Gm-Message-State: AFuF++m7ZtqIIIRykGHv5Di25ksxz6Avtu4qouFdj4giTleQfnh/d+uK
-	1ypJDgDsQNVpg0Arl0rW/Q8LYDrRZoE4NZPNxfEPL+fjX58i3W9yw+SkGT4nX4xarg==
-X-Gm-Gg: AYBFou1yAYuh7x3dnh0IOzB0VIwput7PLYbn9HokP0A+P4hDsYVxtubCJ0zgo2sMUis
-	k4TPRtNNU0OvogbqbUZgPcvb9CfyRT4s6Ghc/Rx5efjJDg2sZxtmlZ0FrrRIrzgtb3Cx4iyj0lt
-	wntL8oFD9Id9lMoB5AGkRy8VH/cJhGfaZt2BjGw6RreukM5mDq5nkaEH5+OL3KH4J+Wc/lVq8Lr
-	H4fShMA3RhiPMMkOkzl/GQojBw9MsklwzFEVRHLxhcgifCyQTW0KqOrc64qWDWz6n0ChWf3esoa
-	AQYt84wrhcOOk7voF69kyTknvWyn4sWxZ8MZXsI+TXt1MOyxqpO0ee7JIRbzF0jTJ9UO031Jpjs
-	3KV4y6CdIGlc+/SJGFHAPZ/3bn7551WyZIKGuoeo0d1Fr2nWZW32BCuOBtW7ScKKy9DugOSZVHV
-	AZzO9YcSV4nYdzWgpFBI1H34wrnj8udtLaNjQRMrOS98a2ygiDSepJYJDjuMyW/oL9DQy4Sdc28
-	esnZt6Q1IaLdxRDdcpALoq4hTb+zwgDBQ==
-X-Received: by 2002:a05:620a:172a:b0:936:dbd7:fcb3 with SMTP id af79cd13be357-93960f15d45mr864484285a.21.1788377693773;
-        Wed, 02 Sep 2026 12:34:53 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9395f3b3c2dsm291721585a.41.2026.09.02.12.34.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2026 12:34:52 -0700 (PDT)
-Date: Wed, 02 Sep 2026 15:34:52 -0400
-Message-ID: <0e3057eefea20157b73a9e454a501961@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="X4Vu2QtD"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 682KVV4u3367009;
+	Wed, 2 Sep 2026 22:24:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=jxIqqe
+	Ksku6ms7BZZ9tYTyFuKkIPq5UjiX6SWrdx6hk=; b=X4Vu2QtDEpA7K9cWhaKhY4
+	Z6PJzwo+j71oQttr8O2b7fuY4p/1nLwsaHCreY/M1XGAxiWFROOsAg/gEVPDZRA0
+	g2NmOFvu7v+shALYBhI9RuOYD8fRPkez/SZqYJp0gN6ZJM0tqfpDuR7jhM3Feywx
+	wrfePnmWoR2IU6H2doo6kPT0IEQmgQh0AX+zrObeOjDChW0CYr4EmYXLkWP3yWDm
+	dYxg0mQAZHPs9PKv3EraJUDRU57AaCDaCeNTiNIsan8B4OGL8QxQ7YAQBI8i+4Do
+	VzJm4tyxy11j1GJcYhsmurc1vThUbsfWLB4Z7BMlCw4IQ5OQwYUKPCoXjGy5pe3Q
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gbq3rhua9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 22:24:44 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 682LuY4W030585;
+	Wed, 2 Sep 2026 22:24:43 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gecjan46x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 22:24:43 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 682MOgwR19989100
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Sep 2026 22:24:42 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 630A758056;
+	Wed,  2 Sep 2026 22:24:42 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9959E58063;
+	Wed,  2 Sep 2026 22:24:39 +0000 (GMT)
+Received: from [9.67.98.186] (unknown [9.67.98.186])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Sep 2026 22:24:39 +0000 (GMT)
+Message-ID: <b2d390dd-3ba0-4faf-967b-d1188da12e62@linux.ibm.com>
+Date: Thu, 3 Sep 2026 03:54:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20260902_1319/pstg-lib:20260901_1604/pstg-pwork:20260902_1319
-From: Paul Moore <paul@paul-moore.com>
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, Seth Forshee <sforshee@kernel.org>, linux-security-module@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org, Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, "Christian Brauner (Amutable)" <brauner@kernel.org>
-Subject: Re: [PATCH 18/27] fs: port ->mknod() to pass const mnt_idmap
-References: <20260901-work-idmap-const-v1-18-54ccd48e100b@kernel.org>
-In-Reply-To: <20260901-work-idmap-const-v1-18-54ccd48e100b@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] keys/trusted_keys: return immediately after TPM
+ unseal failure
+To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+        zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
+        rnsastry@linux.ibm.com
+References: <20260902103120.222326-1-ssrish@linux.ibm.com>
+ <20260902103120.222326-2-ssrish@linux.ibm.com>
+Content-Language: en-US
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+In-Reply-To: <20260902103120.222326-2-ssrish@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=EIc2FVZC c=1 sm=1 tr=0 ts=6a98a22d cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
+ a=VnNF1IyMAAAA:8 a=Y-y2Im-bRa9duunfRGsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDE5NSBTYWx0ZWRfX3PxBAJMX5NU1
+ YKCe2YMNrQeY54PsYfBlvCKv28mWayPk8iRBmEnM1baoCAtPfuvoXn30rYRGAK7fQ7QD4mLJCeD
+ SB8H6xRe3NCmJjFH2jslQUVos+NNZ4EtxiRTg8aj/Pbq9DnCHUDFJtifPovPeZ/GLAeXom2j15t
+ grt9Xs9iWn8rp47FzBwCFIv43r1KqFJe+HugzZ/vKlA6e3HKrg3E1WvMwmEIUQ8gnKXEpRSK4Eb
+ upVIaxDHUpi9Mg9elYidDWX5CgqBFBw4iG/X+L3rMYhSW961l2W+I/LEOahO6Oqbxi9BFNEkp7Y
+ fda7IYZ4B+1G5ok039CmzVSjne7puMG4yHJDoHFvL97xAulwXVKvnJSvNsgr07Gk/ojvbHYpI5Y
+ Lh66xFuN2aXm3Oy3r4nmWILRWfMam07vXrtRsG4lQoMLZXrMGnbrPEym3ad67+aqWpYxEZfBA3/
+ 6I9MmMoTvcu5s8NafGg==
+X-Proofpoint-GUID: a4VYTaxDfaTffOkljByhbbMBZnHapPtp
+X-Proofpoint-ORIG-GUID: a4VYTaxDfaTffOkljByhbbMBZnHapPtp
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDE5NSBTYWx0ZWRfXzGkBGzAc61jh
+ MEFbVliPiV+D965upWYoi/s6Ena9FYRLqig6LuTdPpAYENTmWUfBDAqM2oAxi0MxNkhfcFX6wX1
+ 6JkTIRUlsONS7vN8VAoJehHVt3vKjaY=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-02_05,2026-09-02_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020195
 
-On Sep  1, 2026 Christian Brauner <brauner@kernel.org> wrote:
-> 
-> Convert to const struct mnt_idmap.
-> 
-> A mount's idmapping is immutable. The only thing that is allowed to be
-> modified afterwards is the reference count and that is hidden behind
-> mnt_idmap_get() and mnt_idmap_put(). Everything else only ever reads
-> from the idmapping. This is the same model that struct cred uses and the
-> idmapping is also rather sensitive.
-> 
-> So make the idmap argument const wherever we can. The conversion is done
-> from the bottom up so callers can continue to pass a non-const pointer
-> to a const parameter until the conversion is finished.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> Reviewed-by: Jan Kara <jack@suse.cz>
+
+On 9/2/26 4:01 PM, Srish Srinivasan wrote:
+> trusted_tpm_unseal() proceeds to pcrlock() when the TPM unseal operation
+> fails. If pcrlock() succeeds, its return value overwrites the unseal error,
+> causing key instantiation to succeed.
+>
+> Return immediately when unseal fails to preserve the original error.
+>
+> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
 > ---
->  Documentation/filesystems/locking.rst | 2 +-
->  Documentation/filesystems/vfs.rst     | 2 +-
->  fs/9p/vfs_inode.c                     | 2 +-
->  fs/9p/vfs_inode_dotl.c                | 4 ++--
->  fs/bad_inode.c                        | 2 +-
->  fs/btrfs/inode.c                      | 2 +-
->  fs/ceph/dir.c                         | 2 +-
->  fs/ecryptfs/inode.c                   | 2 +-
->  fs/ext2/namei.c                       | 2 +-
->  fs/ext4/namei.c                       | 2 +-
->  fs/f2fs/namei.c                       | 2 +-
->  fs/fuse/dir.c                         | 4 ++--
->  fs/gfs2/inode.c                       | 2 +-
->  fs/hfsplus/dir.c                      | 2 +-
->  fs/hostfs/hostfs_kern.c               | 2 +-
->  fs/hpfs/namei.c                       | 2 +-
->  fs/hugetlbfs/inode.c                  | 2 +-
->  fs/jffs2/dir.c                        | 4 ++--
->  fs/jfs/namei.c                        | 2 +-
->  fs/minix/namei.c                      | 2 +-
->  fs/nfs/dir.c                          | 2 +-
->  fs/nfs/internal.h                     | 2 +-
->  fs/nilfs2/namei.c                     | 2 +-
->  fs/ntfs/namei.c                       | 2 +-
->  fs/ntfs3/namei.c                      | 2 +-
->  fs/ocfs2/namei.c                      | 2 +-
->  fs/overlayfs/dir.c                    | 2 +-
->  fs/ramfs/inode.c                      | 2 +-
->  fs/smb/client/cifsfs.h                | 2 +-
->  fs/smb/client/dir.c                   | 2 +-
->  fs/ubifs/dir.c                        | 2 +-
->  fs/udf/namei.c                        | 2 +-
->  fs/ufs/namei.c                        | 2 +-
->  fs/xfs/xfs_iops.c                     | 2 +-
->  include/linux/fs.h                    | 2 +-
->  include/linux/lsm_hook_defs.h         | 2 +-
->  include/linux/security.h              | 4 ++--
->  mm/shmem.c                            | 4 ++--
->  security/integrity/evm/evm_main.c     | 2 +-
->  security/integrity/ima/ima_main.c     | 2 +-
->  security/security.c                   | 2 +-
->  41 files changed, 46 insertions(+), 46 deletions(-)
+>   security/keys/trusted-keys/trusted_tpm1.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+> index bf0bf7f36970..1168ca235205 100644
+> --- a/security/keys/trusted-keys/trusted_tpm1.c
+> +++ b/security/keys/trusted-keys/trusted_tpm1.c
+> @@ -923,8 +923,10 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
+>   		ret = tpm2_unseal_trusted(chip, p, options);
+>   	else
+>   		ret = key_unseal(p, options);
+> -	if (ret < 0)
+> +	if (ret < 0) {
+>   		pr_info("key_unseal failed (%d)\n", ret);
+> +		return ret;
 
-Acked-by: Paul Moore <paul@paul-moore.com> (LSM)
 
---
-paul-moore.com
+This should be "goto out;"
+will fix this in my next version
+
+
+> +	}
+>   
+>   	if (options->pcrlock) {
+>   		ret = pcrlock(options->pcrlock);
