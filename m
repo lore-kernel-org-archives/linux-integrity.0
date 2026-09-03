@@ -1,127 +1,247 @@
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A97640096C
-	for <linux-integrity@vger.kernel.org>; Thu,  3 Sep 2026 07:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788419728; cv=pass; b=YLS48KQD5sntevlUk5qtWiqflsVo4jqZfgWa0Q+EuRxhalSnHp3lKCD+onY9ElU8lIRW4xIRVDWuhYTjyuk8eo5c59Jfhet4qLT544voKkZqaIGxb4VkB4t7qB51SBAB8FPfPEYY5C5b9Dg7tH7rRpRTyXQPcE8YUqK3KNgEDqU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788419728; c=relaxed/simple;
-	bh=BDxUrAidUvmdE4UU9/YWqxyp9t94nH6PJ+zSqrwq3lY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sz+O4VDQbXcg+O3j5FbVNB9wo0SvEQAL+dMeckJ2ejAsEXJPAOiJboAVcsormf+miQxS17ljYybB7rqUmQfm4iyTv9Ag0YgpiYheVDmzR9BoW+14ShJ/QDnkOM+dUrvKKVCB8TutDLSLRBNhryNvs496W+L52i2Hs+k8dHsHk20=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20251104.gappssmtp.com header.i=@thegoodpenguin-co-uk.20251104.gappssmtp.com header.b=A842VfL5; arc=pass smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20251104.gappssmtp.com header.i=@thegoodpenguin-co-uk.20251104.gappssmtp.com header.b="A842VfL5"
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-52d7a3defe8so20741761cf.0
-        for <linux-integrity@vger.kernel.org>; Thu, 03 Sep 2026 00:15:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788419723; cv=none;
-        d=google.com; s=arc-20260327;
-        b=VGybyM3rUTquMJxz4ufAzeFYGcIBmA8NiCYMwB7x+RgSjsplR6ikynbo4r/BAZ2c0K
-         ohT/QZopwoBokK3JpGH+rO5kI19pDnKQIbzD7vnYyPIFo2yOyon2kSEkL+xD014Mxqai
-         n3olbw4fDTlZps9M05buYFRZlfsZRHi0iE8cHiWU4KrTtO4tCPu5kU+Kz6GslIXOfQaP
-         Q+nDIP1/YDXROd69FYKyHHBV0BDuxuFX58ZHgKgA51PBLoLF5ZP56iUGoPVD0Bs6KHIu
-         UxFTq9ri3VWTmHp9e50VHoQ9gHyTWUKNWGAs4lc2Y6fFfRC8t38c+PLKts64DwUNGZgd
-         vQSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=/3ZaVDaa28jmLpu92uijSHs8QLly3pVgpirsXkJfs5Q=;
-        fh=I/i6DqUFedKtHngbqrwLtY/HSQVKLHYyCcYwJoZEiA4=;
-        b=iTwFqAvHQxnzyhKvPT2tAlLbCy+ZNczg+5ZugcB/WOrDyBcb6pVcS152cKlq2666yw
-         8J1BN5pf4i0AKa1cQopSDpb5luHiG5EmHWdai1w+Dgif5o5wTMxoRKgcIHmgxgw+m5wy
-         4F5UvyULSyPxU5xhOz9gfwj34huZF6B3cP8MG+xSgq9dJoCdJghG/bbp2xyPnsz2p/Lz
-         cIAOEFlH6YJvU/gOux42S+y6WX29BhRZ/RTjtCg+3dgBK05KiN1AeIgdfrghDjR5Cxnn
-         cy+ZB2VJgpwJprVh9NNPsUjfR+O2ec89AcRx+i6rtaT+UeaCuQepLALpzJlK52ZvQuuK
-         3CnQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20251104.gappssmtp.com; s=20251104; t=1788419723; x=1789024523; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/3ZaVDaa28jmLpu92uijSHs8QLly3pVgpirsXkJfs5Q=;
-        b=A842VfL5K0OpzSSxxjPNkNV5MiR59ugdH6e1GHMuyaa4pG/yubkJabr9X4Y/U+Jal5
-         szQ17bcOR3Lx4dZxqbmD1f90D2Rd1GjBLqWZ+WVc/JIuSJZUqMwoJYDU9ZlA4g6waLkK
-         UFfG/IMy3RCUCu5+4tx1PLshY26VwN7Lr32sdnt/LgVophkd3DFDKFRQMXMBfGa9JCpk
-         75NVcrntErd2puJZ13YamB2hYuYcXBnBRzKLporwO2iseEfGVgfUFzo2DuIMsBWMEK3l
-         d39Z3MTnRmVZTYYUwNIjfMNFadD5+AT1Iz7vDT5Jsr4NoaRwnAcAmOiZz0rwLErkRMdQ
-         fE9A==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A693B42FC
+	for <linux-integrity@vger.kernel.org>; Thu,  3 Sep 2026 08:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788422678; cv=none; b=cR38cFXLo4zquoTFp/tzxEH+9LFikS23uDz4qb99xcGONX+CWoUED19WUbjgTCKKcRyuF/n40aGO/UUekTbdJZupzL+qKMGf7sMUNgdMN9wxtpPxOuLCkg74DS4i+rm869GiJYnymlWdqZ7iErq0MayKQCMSCb1NmH91TNBLe48=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788422678; c=relaxed/simple;
+	bh=/cU/rXoqPmij/0icEQ/WL6PzuBlibn1NvZix5YNhZnM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OCGM/wJWkg7l/tQ2E1Bi3BkcPGje/1nIyxShuiuvnxPji8w/eRmHX+u1DSxBDOobOkomFAxmgQfFX653Y4EXh+7Wh131rxLHBRIM5594S702n92GMSGI85J6IJwSfCTRMjRyHz7f1iI6/JqmGkV7Y6EUIk0AWWnenivS64ZET5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-485ebc5706cso859612b6e.0
+        for <linux-integrity@vger.kernel.org>; Thu, 03 Sep 2026 01:04:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788419723; x=1789024523;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=/3ZaVDaa28jmLpu92uijSHs8QLly3pVgpirsXkJfs5Q=;
-        b=UF9DFXkRfwgmAff+yCooW94MErQrNEOJNLAbOVwlH6lAcrwhmmCiCysbq8oa60O3+J
-         OmRkluKuH/+Ls6BXozHGraH4DmE6Qpf+p/ooRMIc9Yek/WUKkzMXxvfWsE2xVrP1wu6x
-         Jbhtj8mAyiezB99+tq/5VM0gTWMOr+zwV4Z6eN8NoNybCC1WMkrx9STx0nk2MADMe/ci
-         BChL09t2uaK67o8arfgZzw+HxWZzk1WstoJlOJisY8+jT6RPCijIe2/fGBeNXOAUXQP5
-         LYNL2Zq5Q95EuKc3qEHnP40ca7OoebqoeMnf8AVoGrT7rXrwTV2zoO81R7zuywGgFjqU
-         Q8FQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwkKOfFNmnW5WP2Kq2msRXA/wkT16eycVVR+kBzCnHTmC7Eo+RcreiQgjLb2MY84GMKB/+5fZFTUgSbss9NWTk=@vger.kernel.org
-X-Gm-Message-State: AFuF++m1MM3QXrLPs2azS+myicPrUl0NZreYqcuicVXVYdyztJ6HgByC
-	KLFqAD3EOIlKjbHDNmJje/7BIij3KZcqV+Odf/skHMDq+/lkRP5ypRMko85lhU8N1amIYBgXHFX
-	dP1YuzBHaPdxp+1Lzx+43qjfVwmRpK6ueH1LC748mQQ==
-X-Gm-Gg: AYBFou30UttLwVMbAnNcXZ+wUOM5+tiJEW1NAgLs9oZVjKBuBk+bn+fFbKqUQtfjR/T
-	dvYcqRssszefuKovMWskzwetpH3YFul8Y72KPrWaYCUh+7tQXkqrxwIBrP/ILA8DNXLD/0vOmqx
-	exHb/50iWrszJJ6nc99YbKCDh9bFr8JSdx4w1H9Z+Px2Pwr28kRLQeK2JrNKdtiD1likwHNOkyl
-	7OM417h6hFDeGjuT722UQ7u+/i0UXfO8LUKSUWVCZjQxEFRglitiiguH230daA5MZBuoLRbeqn2
-	AKXyW/m4JNghgee5oMN6yHuEyQ0uRr2xNIS1g92/Ua9pkUJ22nW1yjnRoO/lmqQSzuAJtSDf+iA
-	p/FU=
-X-Received: by 2002:a05:622a:138f:b0:530:1e1a:fc70 with SMTP id
- d75a77b69052e-53036bc87b3mr104794101cf.1.1788419718250; Thu, 03 Sep 2026
- 00:15:18 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788422675; x=1789027475;
+        h=content-type:to:from:subject:message-id:in-reply-to:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=EdIlJpPWXX+y9INBx3cKuIwPRg7+iB8XVRejihaUQ1A=;
+        b=jUaVe2UKeLoin3XzHJ8Es2UgbY8XXFaGfIiVExGNc2wibi1nnhA5NyRpmAd8NWUuL+
+         6E+8HscGnuSN3mt3ZC7LCjsf7/65dub4hqMrY1makE3ZFH1ju8D2l/U75J+OdXWhHD+U
+         2fOkFW3xV47BEGbgqDj4XPuOTGZHEs69seyB8y5ZQiwqcR7tmVwut/mL+2BVboZEC4RZ
+         +rO2d5KsRIjDo4i+kpZ+A2OPB0Qn/NB9zE1cuHDwxEHw4AkIjV6B3Qg0mgVRKidyNAOW
+         zffqk4EoDYEOlRdg/Fmo/M32iE086Mptja+M5fSaUa5sVET6bUU5TxNNOLt9zeGljC4O
+         +pHQ==
+X-Forwarded-Encrypted: i=1; AKwUvBy9M6eOk+mVEvqWDJVhLb/hAIu0Lp3tmTRONFuBSQPxGpEjyXpx/n7pO+M8dIyn+6xjRvKvYgYxOl4yLk0aa/I=@vger.kernel.org
+X-Gm-Message-State: AFuF++kuQHwM/YHHcgh36jmHjCxQMzTr9izT3AypahOEPvP+jUFlvyZh
+	NDh22RRInS7Zmo7m45v7sYN1LLtMhfFoHtArMQkCiEyQgwvGvaU1gGHx47iVcclckzq5DAkTJVN
+	CAwKpjvvL0FyKzKnWbDKNiTMfUGSTVv6nlm064wlT4AqeL0t8e2Q9sKpxUl0=
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260807-acpi-char-v1-0-742c450254dd@thegoodpenguin.co.uk>
- <20260807-acpi-char-v1-1-742c450254dd@thegoodpenguin.co.uk> <60e25773-b3c6-4aae-a687-92e1ab3b141e@app.fastmail.com>
-In-Reply-To: <60e25773-b3c6-4aae-a687-92e1ab3b141e@app.fastmail.com>
-From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-Date: Thu, 3 Sep 2026 08:15:07 +0100
-X-Gm-Features: AcwNN1WIqW6SG0lDemdV894_p4DFDolE7YAmpidzaCNJPpqblz3q1bAvW3wQFoY
-Message-ID: <CAA6zWZJRpUzbz20daytHO4ygqKosM=YU8UyBcWnm2sUmaEHbnw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] char: use named initializers for acpi_device_id
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Clemens Ladisch <clemens@ladisch.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Mattia Dongili <malattia@linux.it>, Weili Qian <qianweili@huawei.com>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Corey Minyard <corey@minyard.net>, Peter Huewe <peterhuewe@gmx.de>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	openipmi-developer@lists.sourceforge.net, linux-integrity@vger.kernel.org
+X-Received: by 2002:a4a:e90a:0:b0:6b4:117e:53a with SMTP id
+ 006d021491bc7-6b58679127dmr2800558eaf.20.1788422675173; Thu, 03 Sep 2026
+ 01:04:35 -0700 (PDT)
+Date: Thu, 03 Sep 2026 01:04:35 -0700
+In-Reply-To: <6a698f41.d9e86bb5.297b12.0052.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a992a13.f03f19fe.169578.0004.GAE@google.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in configfs_read_iter
+From: syzbot <syzbot+d2085ac2d653b9e383e2@syzkaller.appspotmail.com>
+To: a.hindborg@kernel.org, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	jmorris@namei.org, leitao@debian.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	zohar@linux.ibm.com
 Content-Type: text/plain; charset="UTF-8"
 
-> I don't think this is the right approach: I see around 1500 instances
-> of acpi_device_id data with plain initializers and only about 50
-> with named ones.  Converting all of them seems like a lot of
-> extra work, and I'm fairly sure you can just change the
-> driver_data to an anonymous union without this.
+syzbot has found a reproducer for the following issue on:
 
-Sorry for the late reply, I was away.
+HEAD commit:    940de590b839 Merge tag 'hardening-v7.3-rc2' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164270f9580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5c3949d762a91f
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2085ac2d653b9e383e2
+compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e850f9580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=114270f9580000
 
-You can change it to an anonymous union and the kernel modules can
-build and then you can go over the code and set the designator only
-for all of the entries that will make use of the driver_data_ptr field
-(which is the union's second named member). However, you will still
-get -Wmissing-braces in your build log for all other initializer
-entries that still rely on positioning and resolve to the first union
-member by default (the kernel_ulong_t). Adding an exception for this
-warning seems like a bad practice. On x86_64 all warnings are promoted
-to an actual hard build error via the defconfig. The other option is
-to use more brackets instead of designated initializers for the items
-that resolve to the kernel_ulong_t but that would arguably make the
-code worse, inconsistent, less readable and require the same amount of
-churn. Therefore, converting the tables first and using designated
-initializers everywhere to begin with, before adding the union - as
-proposed here - is the most sane and clean way forward, at least in my
-opinion. Perhaps I should add this extra explanation and information
-to the cover letters. Unless you meant something else.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-940de590.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/64f87fb4f049/vmlinux-940de590.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/917bd28bbd2d/bzImage-940de590.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d2085ac2d653b9e383e2@syzkaller.appspotmail.com
+
+nvmet: adding nsid 1 to subsystem testsubsys
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.0.17/5927 is trying to acquire lock:
+ffff88802cf0e080 (&buffer->mutex){+.+.}-{4:4}, at: configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
+
+but task is already holding lock:
+ffff88802405fe48 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x5ab/0x2350 security/integrity/ima/ima_main.c:319
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}:
+       lock_acquire kernel/locking/lockdep.c:5908 [inline]
+       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+       process_measurement+0x5ab/0x2350 security/integrity/ima/ima_main.c:319
+       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xc4/0x210 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x5cd/0x2440 fs/namei.c:5000
+       do_file_open+0x20e/0x430 fs/namei.c:5029
+       file_open_name+0x1c3/0x3e0 fs/open.c:1375
+       filp_open+0x2e/0x50 fs/open.c:1392
+       nvmet_file_ns_enable+0x95/0x420 drivers/nvme/target/io-cmd-file.c:41
+       nvmet_ns_enable+0x35f/0x5d0 drivers/nvme/target/core.c:596
+       nvmet_ns_enable_store+0x11e/0x160 drivers/nvme/target/configfs.c:737
+       flush_write_buffer fs/configfs/file.c:207 [inline]
+       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x6af/0x1050 fs/read_write.c:687
+       ksys_write+0x12a/0x250 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&subsys->lock){+.+.}-{4:4}:
+       lock_acquire kernel/locking/lockdep.c:5908 [inline]
+       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+       nvmet_ns_device_path_store+0x57/0x1c0 drivers/nvme/target/configfs.c:538
+       flush_write_buffer fs/configfs/file.c:207 [inline]
+       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x6af/0x1050 fs/read_write.c:687
+       ksys_write+0x12a/0x250 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&p->frag_sem){.+.+}-{4:4}:
+       lock_acquire kernel/locking/lockdep.c:5908 [inline]
+       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+       down_read+0x99/0x4c0 kernel/locking/rwsem.c:1574
+       flush_write_buffer fs/configfs/file.c:205 [inline]
+       configfs_write_iter+0x218/0x4e0 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x6af/0x1050 fs/read_write.c:687
+       ksys_write+0x12a/0x250 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&buffer->mutex){+.+.}-{4:4}:
+       check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3181
+       check_prevs_add kernel/locking/lockdep.c:3300 [inline]
+       validate_chain kernel/locking/lockdep.c:3924 [inline]
+       __lock_acquire+0x1492/0x1ec0 kernel/locking/lockdep.c:5254
+       lock_acquire kernel/locking/lockdep.c:5908 [inline]
+       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+       configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
+       __kernel_read+0x397/0xad0 fs/read_write.c:532
+       integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
+       ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
+       process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xc4/0x210 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x5cd/0x2440 fs/namei.c:5000
+       do_file_open+0x20e/0x430 fs/namei.c:5029
+       do_sys_openat2+0x10f/0x1e0 fs/open.c:1417
+       do_sys_open fs/open.c:1423 [inline]
+       __do_sys_openat fs/open.c:1439 [inline]
+       __se_sys_openat fs/open.c:1434 [inline]
+       __x64_sys_openat+0x12d/0x210 fs/open.c:1434
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &buffer->mutex --> &subsys->lock --> &ima_iint_mutex_key[depth]
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ima_iint_mutex_key[depth]);
+                               lock(&subsys->lock);
+                               lock(&ima_iint_mutex_key[depth]);
+  lock(&buffer->mutex);
+
+ *** DEADLOCK ***
+
+locks held by syz.0.17/5927: 1, last CPU#3:
+ #0: ffff88802405fe48 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x5ab/0x2350 security/integrity/ima/ima_main.c:319
+
+stack backtrace:
+CPU: 3 UID: 0 PID: 5927 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x100/0x190 lib/dump_stack.c:120
+ print_circular_bug.cold+0x178/0x1be kernel/locking/lockdep.c:2059
+ check_noncircular+0x146/0x160 kernel/locking/lockdep.c:2191
+ check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3181
+ check_prevs_add kernel/locking/lockdep.c:3300 [inline]
+ validate_chain kernel/locking/lockdep.c:3924 [inline]
+ __lock_acquire+0x1492/0x1ec0 kernel/locking/lockdep.c:5254
+ lock_acquire kernel/locking/lockdep.c:5908 [inline]
+ lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+ __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+ __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+ configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
+ __kernel_read+0x397/0xad0 fs/read_write.c:532
+ integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
+ ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
+ ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
+ process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
+ ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
+ security_file_post_open+0xc4/0x210 security/security.c:2755
+ do_open fs/namei.c:4839 [inline]
+ path_openat+0x5cd/0x2440 fs/namei.c:5000
+ do_file_open+0x20e/0x430 fs/namei.c:5029
+ do_sys_openat2+0x10f/0x1e0 fs/open.c:1417
+ do_sys_open fs/open.c:1423 [inline]
+ __do_sys_openat fs/open.c:1439 [inline]
+ __se_sys_openat fs/open.c:1434 [inline]
+ __x64_sys_openat+0x12d/0x210 fs/open.c:1434
+ do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+ do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f57f139e159
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd81407e38 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f57f1625fa0 RCX: 00007f57f139e159
+RDX: 0000000000000002 RSI: 0000200000000240 RDI: ffffffffffffff9c
+RBP: 00007f57f1435024 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f57f1625fac R14: 00007f57f1625fa0 R15: 00007f57f1625fa0
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
