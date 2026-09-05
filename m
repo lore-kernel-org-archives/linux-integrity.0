@@ -1,63 +1,267 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo2-f4.google.com (mail-oo2-f4.google.com [74.125.231.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28262D5408;
-	Sat,  5 Sep 2026 02:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AD83E92BB
+	for <linux-integrity@vger.kernel.org>; Sat,  5 Sep 2026 10:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788577176; cv=none; b=rv1TfwET3VilBwuYcyU99UCL8Yvg1sTWC/Avch6f0rQIUnJcH2/GRdZO1P+4ZiEsiKQKY2miA0h/inc1np0Q5L5SE/jJ6VuSFvt4F0q+sQOg8YqOJY99+eUN0WY3HO85AzGVufgj4fFkG80KmFTXuMs2p9/Yxh5i97A3yuxr77I=
+	t=1788604235; cv=none; b=UXOEHrzs67kaKQ/7alnM4aSwpZ/5f/rL0dFH3bY5VfBMOUMklhjb2rgcUiaG/naAvjPZuNfGTylVFr+EJnOnojwhgBnaJoCAZlL03JCjwm8OvRnZKV72YzMQMskNiubhi2u24yQE0y0OiqDiD7ywyX0PqRIN+u4xL5EeMtuAccE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788577176; c=relaxed/simple;
-	bh=ThM7HHQClN3UQHyyg5RgpWRI46U8h7OCqXr8gssM2ps=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=usoXPx6x++UX0z/8lFHQrh2Pc1fcHN3WdQJBvRUTkegkpKoTc/FNOT9JWmdc49mz34Crvzs4mIbM5ss+uBYiPjHmo9V6SKrmlQmQHx4TcT0tF2HH8j+wk1jTvdSha52GyjVwwVk3t/wppPTiNsPtjPfuqDHouY3d0qp3rqNQOgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=genWiFrZ; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="genWiFrZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9078E1F00A3D;
-	Sat,  5 Sep 2026 02:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788577175;
-	bh=7fTc3VCot3QEmP1gvRpPCvEUVEUcYIZmA9d6BHXI6Ww=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=genWiFrZtVbn266zSE9L8UkNqUGNCTuU5ADtDT6IFPa2v2zyWd8OgFddu5apu+Sta
-	 bS71H4U/rG1JiS7LtFndPQcqYJJ5xQUXzPZVEuM/YXC6mJh8WtsfQwFRSJyMunEYQd
-	 1iAAdTyA006d7ADvHtJYXAjgHranbpFvPxqZYD4Im1xw7dl8UH9tKHwve1kMCtVLqu
-	 6S8/mXu/QFujx0WmDyQQ622WwvhdKsRb/Cmz2kO5Zr9N3C1GxAUXyzIl9WqsCbf8in
-	 5j0KrR51x0DGTsO3dLZ1dwrp0izMW0j+jHVBEHJF1Pcx4XpFOiK9OZChGnQqmMLlk5
-	 Hv0/iqAdugTcA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 56A4B3924FC0;
-	Sat,  5 Sep 2026 02:58:37 +0000 (UTC)
-Subject: Re: [GIT PULL] integrity: subsystem fixes for v7.3-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <0e98c262ca18fb67d9a9a4556010378b332882e7.camel@linux.ibm.com>
-References: <0e98c262ca18fb67d9a9a4556010378b332882e7.camel@linux.ibm.com>
-X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
-X-PR-Tracked-Message-Id: <0e98c262ca18fb67d9a9a4556010378b332882e7.camel@linux.ibm.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/ tags/integrity-v7.3-rc2
-X-PR-Tracked-Commit-Id: 6903878d4654bdef4e08e38cdf1ae306ce7de5f9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4d7d9486c04d917265f64c55bd23b2cc4fe7749c
-Message-Id: <178857711591.1069514.4637826044773286659.pr-tracker-bot@kernel.org>
-Date: Sat, 05 Sep 2026 02:58:35 +0000
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-integrity <linux-integrity@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Roberto Sassu <roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1788604235; c=relaxed/simple;
+	bh=KnT7J76VOs0JF4MkaqyU7PKqA4YcPl9vPwF1cPE55wM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bqd36QT/x1ESBL5oXs+EIA6vs9ho0O5k9BkEE0R+JV/A642Hmi0iBmtkE45KNSLmPpcXTanxK4yFKkLpcuQs6U1sLW42vM1qhnQhGlZlxTLNXgpWZ7EvI+eUPSJuYARV9hE1hxF8DeG2pf0JjHdHhjBOZcC5yqciEbm+n+SH9Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=74.125.231.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo2-f4.google.com with SMTP id 46e09a7af769-7f4e2118db8so632629a34.1
+        for <linux-integrity@vger.kernel.org>; Sat, 05 Sep 2026 03:30:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788604232; x=1789209032;
+        h=content-type:to:from:subject:message-id:in-reply-to:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=2ikTUDMvgbs6Pvx2tv73p+QKcEhBgflCF3gftTATyaI=;
+        b=qDGjqINviBTWHdHhnQ0Z19qERo0Qkqes2hf5jrvOtz4ZjFAlKhzUliEGBAc/KBp1zd
+         0jA9WabvwlonyJQYbClMjTZ5D8HR0QpDvhwrgYKwcnl7ulSxv8rf3LwaxAa4vSfsdTZ1
+         dqsJKhx7OeuAwnCqbNYey0J9c55OM7VZZqcNy5Ar9nKGY0TP8K6uorQ0fNy92vbcYV2g
+         4Uhxpy3xlJbMueFyWi0YA8pTP9c22V50xWjJgCRUaULxWH3hzEiSS4tw+PmGRioI+rRI
+         LvHd0hc2ydVAngIzG2I9dg85thAEkPEkPdGt1yeME7PGjJzWqs1SodidyqA7jcaDQ4QL
+         o2HQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwBv3iO4uYajUFeff5RFEUr0tHk32TbHYPqn/5b7zIOODqS5K90pjfUvnqySQS9zHiKo9nR2m9xexJ384gmxwE=@vger.kernel.org
+X-Gm-Message-State: AFuF++m2bCakwN8q/ijyWbQ7MUDGOqEVScDH1G39O5fhJybCHwPg3KSB
+	PY2D7BsNqBu0Hij/LyTpBow0UTr0EXQxCu/uZtQzfWR9eZ4N/TGbEQtZhd20rGTSBx36aclsE4W
+	v743i5i9deH4aiejqu1YFWWLlhefceITZGig9Dw5JFzoL9MGB8iIFhOnNofc=
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6820:2019:b0:6b1:7251:41d5 with SMTP id
+ 006d021491bc7-6b6fabe1b66mr11573347eaf.3.1788604231940; Sat, 05 Sep 2026
+ 03:30:31 -0700 (PDT)
+Date: Sat, 05 Sep 2026 03:30:31 -0700
+In-Reply-To: <6a6a9895.7eebbf3c.214d51.000d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a9bef47.37659fcc.e790.0002.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] possible deadlock in process_measurement (6)
+From: syzbot <syzbot+c0bfa7a9a227036e8454@syzkaller.appspotmail.com>
+To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	gregkh@linuxfoundation.org, jmorris@namei.org, linux-ext4@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-usb@vger.kernel.org, 
+	paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-The pull request you sent on Fri, 04 Sep 2026 16:47:47 -0400:
+syzbot has found a reproducer for the following issue on:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/ tags/integrity-v7.3-rc2
+HEAD commit:    654ae5d73c05 Merge tag 'drm-fixes-2026-09-05' of https://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14c568f9580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b454dc6b1b7acd30
+dashboard link: https://syzkaller.appspot.com/bug?extid=c0bfa7a9a227036e8454
+compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c568f9580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17cc6b49580000
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4d7d9486c04d917265f64c55bd23b2cc4fe7749c
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/49c1a99f815b/disk-654ae5d7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6fcecf1b8c8d/vmlinux-654ae5d7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fa54b23691ca/bzImage-654ae5d7.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7be96c47c44b/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=12041125580000)
 
-Thank you!
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c0bfa7a9a227036e8454@syzkaller.appspotmail.com
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor428/5602 is trying to acquire lock:
+ffff88803f38b458 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x7e0/0x1c20 security/integrity/ima/ima_main.c:319
+
+but task is already holding lock:
+ffff888038eee198 (&common->filesem){++++}-{4:4}, at: fsg_store_file+0x163/0x400 drivers/usb/gadget/function/storage_common.c:452
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&common->filesem){++++}-{4:4}:
+       down_read+0x97/0x200 kernel/locking/rwsem.c:1574
+       fsg_show_file+0x2d/0x140 drivers/usb/gadget/function/storage_common.c:339
+       fill_read_buffer fs/configfs/file.c:68 [inline]
+       configfs_read_iter+0x2ba/0x620 fs/configfs/file.c:88
+       __kernel_read+0x4d3/0x970 fs/read_write.c:532
+       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
+       ima_calc_file_hash+0x45d/0x8a0 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x521/0xa10 security/integrity/ima/ima_api.c:300
+       process_measurement+0x1282/0x1c20 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xb3/0x260 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x148a/0x1d60 fs/namei.c:5000
+       do_file_open+0x23e/0x4a0 fs/namei.c:5029
+       do_sys_openat2+0x115/0x200 fs/open.c:1417
+       do_sys_open fs/open.c:1423 [inline]
+       __do_sys_openat fs/open.c:1439 [inline]
+       __se_sys_openat fs/open.c:1434 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1434
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&p->frag_sem){.+.+}-{4:4}:
+       down_read+0x97/0x200 kernel/locking/rwsem.c:1574
+       fill_read_buffer fs/configfs/file.c:66 [inline]
+       configfs_read_iter+0x1cf/0x620 fs/configfs/file.c:88
+       __kernel_read+0x4d3/0x970 fs/read_write.c:532
+       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
+       ima_calc_file_hash+0x45d/0x8a0 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x521/0xa10 security/integrity/ima/ima_api.c:300
+       process_measurement+0x1282/0x1c20 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xb3/0x260 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x148a/0x1d60 fs/namei.c:5000
+       do_file_open+0x23e/0x4a0 fs/namei.c:5029
+       do_sys_openat2+0x115/0x200 fs/open.c:1417
+       do_sys_open fs/open.c:1423 [inline]
+       __do_sys_openat fs/open.c:1439 [inline]
+       __se_sys_openat fs/open.c:1434 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1434
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&buffer->mutex){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/rtmutex_api.c:559 [inline]
+       mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:578
+       configfs_read_iter+0x73/0x620 fs/configfs/file.c:86
+       __kernel_read+0x4d3/0x970 fs/read_write.c:532
+       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
+       ima_calc_file_hash+0x45d/0x8a0 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x521/0xa10 security/integrity/ima/ima_api.c:300
+       process_measurement+0x1282/0x1c20 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xb3/0x260 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x148a/0x1d60 fs/namei.c:5000
+       do_file_open+0x23e/0x4a0 fs/namei.c:5029
+       do_sys_openat2+0x115/0x200 fs/open.c:1417
+       do_sys_open fs/open.c:1423 [inline]
+       __do_sys_openat fs/open.c:1439 [inline]
+       __se_sys_openat fs/open.c:1434 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1434
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3181 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3300 [inline]
+       validate_chain kernel/locking/lockdep.c:3924 [inline]
+       __lock_acquire+0x15ff/0x2e40 kernel/locking/lockdep.c:5254
+       lock_acquire+0x115/0x350 kernel/locking/lockdep.c:5908
+       __mutex_lock_common kernel/locking/rtmutex_api.c:559 [inline]
+       mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:578
+       process_measurement+0x7e0/0x1c20 security/integrity/ima/ima_main.c:319
+       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xb3/0x260 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x148a/0x1d60 fs/namei.c:5000
+       do_file_open+0x23e/0x4a0 fs/namei.c:5029
+       file_open_name fs/open.c:1375 [inline]
+       filp_open+0x16d/0x1d0 fs/open.c:1392
+       fsg_lun_open+0x6c/0xe00 drivers/usb/gadget/function/storage_common.c:194
+       fsg_store_file+0x19e/0x400 drivers/usb/gadget/function/storage_common.c:455
+       flush_write_buffer fs/configfs/file.c:207 [inline]
+       configfs_write_iter+0x33a/0x430 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x61e/0xbb0 fs/read_write.c:687
+       ksys_write+0x156/0x270 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &ima_iint_mutex_key[depth] --> &p->frag_sem --> &common->filesem
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&common->filesem);
+                               lock(&p->frag_sem);
+                               lock(&common->filesem);
+  lock(&ima_iint_mutex_key[depth]);
+
+ *** DEADLOCK ***
+
+locks held by syz-executor428/5602: 4, last CPU#0:
+ #0: ffff88801d734510 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2753 [inline]
+ #0: ffff88801d734510 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x231/0xbb0 fs/read_write.c:683
+ #1: ffff888028b16678 (&buffer->mutex){+.+.}-{4:4}, at: configfs_write_iter+0x81/0x430 fs/configfs/file.c:226
+ #2: ffff888025f30b68 (&p->frag_sem){.+.+}-{4:4}, at: flush_write_buffer fs/configfs/file.c:205 [inline]
+ #2: ffff888025f30b68 (&p->frag_sem){.+.+}-{4:4}, at: configfs_write_iter+0x23b/0x430 fs/configfs/file.c:229
+ #3: ffff888038eee198 (&common->filesem){++++}-{4:4}, at: fsg_store_file+0x163/0x400 drivers/usb/gadget/function/storage_common.c:452
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5602 Comm: syz-executor428 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/24/2026
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+ print_circular_bug+0x2e2/0x300 kernel/locking/lockdep.c:2059
+ check_noncircular+0x12f/0x150 kernel/locking/lockdep.c:2191
+ check_prev_add kernel/locking/lockdep.c:3181 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3300 [inline]
+ validate_chain kernel/locking/lockdep.c:3924 [inline]
+ __lock_acquire+0x15ff/0x2e40 kernel/locking/lockdep.c:5254
+ lock_acquire+0x115/0x350 kernel/locking/lockdep.c:5908
+ __mutex_lock_common kernel/locking/rtmutex_api.c:559 [inline]
+ mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:578
+ process_measurement+0x7e0/0x1c20 security/integrity/ima/ima_main.c:319
+ ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+ security_file_post_open+0xb3/0x260 security/security.c:2755
+ do_open fs/namei.c:4839 [inline]
+ path_openat+0x148a/0x1d60 fs/namei.c:5000
+ do_file_open+0x23e/0x4a0 fs/namei.c:5029
+ file_open_name fs/open.c:1375 [inline]
+ filp_open+0x16d/0x1d0 fs/open.c:1392
+ fsg_lun_open+0x6c/0xe00 drivers/usb/gadget/function/storage_common.c:194
+ fsg_store_file+0x19e/0x400 drivers/usb/gadget/function/storage_common.c:455
+ flush_write_buffer fs/configfs/file.c:207 [inline]
+ configfs_write_iter+0x33a/0x430 fs/configfs/file.c:229
+ new_sync_write fs/read_write.c:595 [inline]
+ vfs_write+0x61e/0xbb0 fs/read_write.c:687
+ ksys_write+0x156/0x270 fs/read_write.c:739
+ do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+ do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f29897e19a9
+Code: c0 79 93 eb d5 48 8d 7c 1d 00 eb 99 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 d8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe566936c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00002000000002c0 RCX: 00007f29897e19a9
+RDX: 0000000000000005 RSI: 00002000000003c0 RDI: 0000000000000005
+RBP: 0000200000000200 R08: 00005555573c7560 R09: 00005555573c7560
+R10: 00005555573c7560 R11: 0000000000000246 R12: 6769666e6f632f2e
+R13: 0000000000000002 R14: 431bde82d7b634db R15: 00007f298984104b
+ </TASK>
+mass_storage.0/lun.0: file too small: file0
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
