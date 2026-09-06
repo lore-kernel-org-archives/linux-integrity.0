@@ -1,267 +1,188 @@
-Received: from mail-oo2-f4.google.com (mail-oo2-f4.google.com [74.125.231.132])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AD83E92BB
-	for <linux-integrity@vger.kernel.org>; Sat,  5 Sep 2026 10:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.132
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788604235; cv=none; b=UXOEHrzs67kaKQ/7alnM4aSwpZ/5f/rL0dFH3bY5VfBMOUMklhjb2rgcUiaG/naAvjPZuNfGTylVFr+EJnOnojwhgBnaJoCAZlL03JCjwm8OvRnZKV72YzMQMskNiubhi2u24yQE0y0OiqDiD7ywyX0PqRIN+u4xL5EeMtuAccE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788604235; c=relaxed/simple;
-	bh=KnT7J76VOs0JF4MkaqyU7PKqA4YcPl9vPwF1cPE55wM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bqd36QT/x1ESBL5oXs+EIA6vs9ho0O5k9BkEE0R+JV/A642Hmi0iBmtkE45KNSLmPpcXTanxK4yFKkLpcuQs6U1sLW42vM1qhnQhGlZlxTLNXgpWZ7EvI+eUPSJuYARV9hE1hxF8DeG2pf0JjHdHhjBOZcC5yqciEbm+n+SH9Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=74.125.231.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo2-f4.google.com with SMTP id 46e09a7af769-7f4e2118db8so632629a34.1
-        for <linux-integrity@vger.kernel.org>; Sat, 05 Sep 2026 03:30:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09089340401
+	for <linux-integrity@vger.kernel.org>; Sun,  6 Sep 2026 18:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788719511; cv=pass; b=B9jPImMN0HNrMZJgC3dtBz5EqOSKENKLryOxM6P+B9jdlJJ0rHexhfqibCMvVWZ1khNRFYZeh5DkWb/D/t35bxKf3c4hMLW8sAEcsgLTLOBBRsBPRvxTmr8OGjY676f8/zqvoTEHH2USHya6xgk3mW56QPH1QHXaYXovbnJymbo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788719511; c=relaxed/simple;
+	bh=pvvJqd7Euafnh/j2/YsbTiW/PcrYqSgdLGzLkgxVrCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=edlaATZfoywp0MxO7EdGyO8lrqYbR9WIUciEvYtiHhZCQniyw1ZZaF9okTqZ5D/lJN6G4NbziCC9Ak58fKbp5DIaxV3HeWd2xdwEQU//2z+5n+IgXOytDkIgiyNrW8Q+snifm863wCctWQMJijZcncHlNeiHWjLZTKW76R79NUs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Evd1MPP2; arc=pass smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Evd1MPP2"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-864cd11a932so36017637b3.0
+        for <linux-integrity@vger.kernel.org>; Sun, 06 Sep 2026 11:31:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788719509; cv=none;
+        d=google.com; s=arc-20260327;
+        b=XVVc4CtKkAfZdmDVfOEvjCu7WOq7qAUJIgbvEqHlvreVH81baZUyLwbbGJUQYowmyY
+         PQDU2yMjyaWvZDz2z6FXqOiZad89PyfuvqdyiTfDEjO3xS5xcy85hoUlwHjdz7/dimQx
+         /wEpm+dkNwbg8QJdUWdgFG/EH3LWEz0MSJnuSjCgkhcd3SY/rQAOUKj66RxxmjkPRtk8
+         bdu7YK859kyg6TixMTngwWJ8aZLZupvxW9jQNNX/RrXPK/yom8EaHSR4YHSTrs7GBuar
+         N7U70pfEdg/MeXQIbRUqMijrNf9xU6LX/vczv02rDEr0Gfdgu0MItYZUPnjdgtrJMuyr
+         +oFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=TQkeSwtedLp1iDq5m8KD8XHS3VYT5RaCWuCgQNld12s=;
+        fh=26LXIURsD8V5Xn0gVOAOz4IAZmFc+ExMVz5d9IUlozs=;
+        b=bjSe/8cpPkn0bFd5ui9mSJwl5/K65QF2KueneR7cHy577QbKeuZ88rsmAVE77WR74a
+         HS8hOqPLXuYMoK4kisH/ByEWz+w6N2FPyf2lIU+Eb7/46nF0jUZZAz+AsZra8QQUTh07
+         nlp2TuVav4XIL31xxiOiVFolFHXE7rRi+xcftejRc53ix3PZolGtfukInxFGZG0XWP65
+         rcdLYrd0te5wIUcafey2n28w8FLUBaqpFWmpPZ07yJWBpX8Zuv/F+yiDgflhT6XaO964
+         MTeihc8SgvvHxRqlvYnVdSq1PfjJEEEnk+0Up5SJOrvDceRoFDKfn1CUDI3vADlDy0Ei
+         T7DQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788719509; x=1789324309; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=TQkeSwtedLp1iDq5m8KD8XHS3VYT5RaCWuCgQNld12s=;
+        b=Evd1MPP2ae9RI8xQA/e4mGF7AG0IOTfrpmqWKNKTPZCFpMP1iagR2rLpyDykWRpdL1
+         0BXcOJRac/vAIRNq4hYL95a/jACbSDRyza/flWGaM0PjaCpXOSTBjBZKQxDihp2TabKn
+         9pTMrKSFHnuiYFB21Z7jC9HpHkVjKSrkc9pyGLNb2y7Q3emyER7+gY/AbNB5jo2OeCzT
+         9JZK1xhUryo2gELVDELa+x9KwW4SDD1wcA9Nej2R9kNMG2h5bzFJp1AUpnDnTF7mM7Ma
+         x4zbMLCa7qADhqMxxMLXeKSUyYfcfWpLlEucO2lfmwN8KS3GVxugpLZPYBYgOAg63TjR
+         rQtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788604232; x=1789209032;
-        h=content-type:to:from:subject:message-id:in-reply-to:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=2ikTUDMvgbs6Pvx2tv73p+QKcEhBgflCF3gftTATyaI=;
-        b=qDGjqINviBTWHdHhnQ0Z19qERo0Qkqes2hf5jrvOtz4ZjFAlKhzUliEGBAc/KBp1zd
-         0jA9WabvwlonyJQYbClMjTZ5D8HR0QpDvhwrgYKwcnl7ulSxv8rf3LwaxAa4vSfsdTZ1
-         dqsJKhx7OeuAwnCqbNYey0J9c55OM7VZZqcNy5Ar9nKGY0TP8K6uorQ0fNy92vbcYV2g
-         4Uhxpy3xlJbMueFyWi0YA8pTP9c22V50xWjJgCRUaULxWH3hzEiSS4tw+PmGRioI+rRI
-         LvHd0hc2ydVAngIzG2I9dg85thAEkPEkPdGt1yeME7PGjJzWqs1SodidyqA7jcaDQ4QL
-         o2HQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwBv3iO4uYajUFeff5RFEUr0tHk32TbHYPqn/5b7zIOODqS5K90pjfUvnqySQS9zHiKo9nR2m9xexJ384gmxwE=@vger.kernel.org
-X-Gm-Message-State: AFuF++m2bCakwN8q/ijyWbQ7MUDGOqEVScDH1G39O5fhJybCHwPg3KSB
-	PY2D7BsNqBu0Hij/LyTpBow0UTr0EXQxCu/uZtQzfWR9eZ4N/TGbEQtZhd20rGTSBx36aclsE4W
-	v743i5i9deH4aiejqu1YFWWLlhefceITZGig9Dw5JFzoL9MGB8iIFhOnNofc=
+        d=1e100.net; s=20251104; t=1788719509; x=1789324309;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=TQkeSwtedLp1iDq5m8KD8XHS3VYT5RaCWuCgQNld12s=;
+        b=qLIEV9zNjpcNxg2tnxQ/4WoLkg8nigYsf/jRfNFygOjGnULMQIZyqWGMemsIdhFFAP
+         GLRXkIWtiQxHCVSIcp6UwrTr37uuMYY+OXEolfMse11rULBAbVBii3dBVsc1T+oQ84GK
+         Can+tc8pQGuJem1WHK+ev+g30+OiD43Y+zO1e66RoxKvrF47tCnBtOmkABqwJQimprkW
+         hlaKnK8ukndOPon3N+ChJOL8nUGQSGB8TRNPuqTZlejjx9PZqrHMiwROzFunlxSJ+U9X
+         bFhDUEgLPX7kU8SMZ2x8QdY1sVl4L5uxhKhqrpn0iZyHlc2L/kBfH+f05omXCctNEcIV
+         eyZg==
+X-Forwarded-Encrypted: i=1; AKwUvBxLR9LCSdKNkStYkrmND35iHiFtlkyIbg2srYL0wDzdFylEaYANs+sAwp1TvLSYSKf5SEOUDWe5qfLQ+luxnyU=@vger.kernel.org
+X-Gm-Message-State: AFuF++mMxkY+a8wadyscUyMH2vQ2fUxYZfpHnXLUo89ONI9BdyDlAlog
+	fqo//5Ob81sOPK9G2K5aXJnkm9fuPeuQ5fT3kRFQppgcbPuUT+JcBYn+wIxjWu53RAPk54mJPSM
+	OvlwRgo0gPTh6+Y6lGEo8aSkLXbOGtpQ=
+X-Gm-Gg: AYBFou3M4lzkiWaP62/O8i5z8eiSR+bINlSMqrmOJCaGRGLCA1FI1rBxEwfVlCUQD9o
+	DxO3+Rk+16A7iUv7d/RPGwwv6FnFIZd3/tKsicIoS/IoU7gw4qq6xZCf0QfeueUbdkLcJy2p5Fv
+	Sit+XaziKmxMT9Mn7m1HU7d4DJazBKnVhAZopxNtmfoql0WshnCXPRfnlUBmAMrEAjQ3j2a3bNP
+	HB+ehPvU3+9YYClW9s09D5H4qimDFeTt2qaJDpQUPT3BQzqjxGoVTJ5Xhf1uNg/9j8SK9gC/VMe
+	3RvfvMqYMiZjKpBXQauQRnHFm87wZs0oj6UAi0UT0aqAlCBSb8sNtPA+/TfWngKmqkVIC5h4vBz
+	ON8I=
+X-Received: by 2002:a05:690e:43cd:b0:66f:c1bc:403a with SMTP id
+ 956f58d0204a3-66fc1bc490emr1136508d50.27.1788719508881; Sun, 06 Sep 2026
+ 11:31:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:2019:b0:6b1:7251:41d5 with SMTP id
- 006d021491bc7-6b6fabe1b66mr11573347eaf.3.1788604231940; Sat, 05 Sep 2026
- 03:30:31 -0700 (PDT)
-Date: Sat, 05 Sep 2026 03:30:31 -0700
-In-Reply-To: <6a6a9895.7eebbf3c.214d51.000d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a9bef47.37659fcc.e790.0002.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] possible deadlock in process_measurement (6)
-From: syzbot <syzbot+c0bfa7a9a227036e8454@syzkaller.appspotmail.com>
-To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
-	gregkh@linuxfoundation.org, jmorris@namei.org, linux-ext4@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-usb@vger.kernel.org, 
-	paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+References: <12955564.O9o76ZdvQC@rafael.j.wysocki> <CAJOGg3x4nMtSJeiLa2nsBFFuG4GRyvj7MbErcdOgxyuXCkr_og@mail.gmail.com>
+ <apbPV_tsyYVzvEVt@kernel.org>
+In-Reply-To: <apbPV_tsyYVzvEVt@kernel.org>
+From: Julien <julien82453@gmail.com>
+Date: Sun, 6 Sep 2026 20:31:38 +0200
+X-Gm-Features: AcwNN1XY9sFlhyINrgcYqoQq92RQCKR2qxwUOv8SXLhPuRgwGnTe1uxZUxAdUfE
+Message-ID: <CAJOGg3z22-G_+izney69i3AhesqwX-u0Coj74zXSjb-RzSCdvw@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: scan: Do not combine resources that overlap completely
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, linux-integrity@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Sep 1, 2026 at 3:12=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org> =
+wrote:
+>
+> On Sat, Aug 29, 2026 at 12:43:30AM +0200, Julien wrote:
+> > On Thu, Aug 20, 2026 at 9:11=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
+l.org> wrote:
+> > >
+> > > From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> > >
+> > > Commit f234fdaae1ca ("ACPI: scan: Avoid registering platform devices
+> > > with resource overlaps") attempted to avoid platform device registrat=
+ion
+> > > errors due to overlaps of resources of the same type returned by the
+> > > same _CRS object in the ACPI tables.  It did that by combining two or
+> > > more overlapping resources into one, but it went too far and also
+> > > caused resources that overlap completely to be combined which broke
+> > > the arm-cmn driver that expects two MMIO resources to be present for
+> > > each device it binds to and it expects those two resources to overlap
+> > > completely.
+> > >
+> > > Address this issue by adding checks for completely overlapping
+> > > resources to acpi_platform_adjust_resources() and add a comment
+> > > explaining what is done there.
+> > >
+> > > Fixes: f234fdaae1ca ("ACPI: scan: Avoid registering platform devices =
+with resource overlaps")
+> > > Reported-by: Nathan Chancellor <nathan@kernel.org>
+> > > Tested-by: Nathan Chancellor <nathan@kernel.org>
+> > > Closes: https://lore.kernel.org/linux-acpi/20260819003752.GA3063251@a=
+x162/
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > >
+> > > v1 -> v2:
+> > >    * It is better to check for complete overlaps both ways as suggest=
+ed
+> > >      by Sashiko.
+> > >
+> > > @Julien: I would appreciate testing this on the machine that needed
+> > > commit f234fdaae1ca.
+> > >
+> > > ---
+> > >  drivers/acpi/acpi_platform.c |    8 +++++++-
+> > >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > >
+> > > --- a/drivers/acpi/acpi_platform.c
+> > > +++ b/drivers/acpi/acpi_platform.c
+> > > @@ -85,7 +85,13 @@ static unsigned int acpi_platform_adjust
+> > >         for (i =3D 0; i < count; ) {
+> > >                 struct resource *res =3D &resources[i];
+> > >
+> > > -               if (resource_type(new_res) !=3D resource_type(res) ||
+> > > +               /*
+> > > +                * Look for overlaps of resources of the same type th=
+at would
+> > > +                * cause resource insertion to fail down the road.
+> > > +                */
+> > > +               if (__resource_contains_unbound(res, new_res) ||
+> > > +                   __resource_contains_unbound(new_res, res) ||
+> > > +                   resource_type(new_res) !=3D resource_type(res) ||
+> > >                     !resource_union(new_res, res, new_res)) {
+> > >                         i++;
+> > >                         continue;
+> > >
+> > >
+> > >
+> >
+> > I have tested this on commit 1b78070aaef6. It seems the patch is
+> > already included in it.
+> >
+> > TPM device still works. Here are the logs.
+> > acpi MSFT0101:00: [mem 0xfed40000-0xfed4103f] expanded due to overlap
+> > tpm_crb_acpi MSFT0101:00: [Firmware Bug]: Bad ACPI memory layout
+> >
+> > If in the future if I need to make tests again, should I do them on
+> > the Linus Torvalds' branch?
+>
+> What was the hardware where this happens?
+>
+> Sorry, if I've ignored it (if it was mentioned previously).
+>
+> BR, Jarkko
 
-HEAD commit:    654ae5d73c05 Merge tag 'drm-fixes-2026-09-05' of https://g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14c568f9580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b454dc6b1b7acd30
-dashboard link: https://syzkaller.appspot.com/bug?extid=c0bfa7a9a227036e8454
-compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c568f9580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17cc6b49580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/49c1a99f815b/disk-654ae5d7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6fcecf1b8c8d/vmlinux-654ae5d7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fa54b23691ca/bzImage-654ae5d7.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7be96c47c44b/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=12041125580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c0bfa7a9a227036e8454@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor428/5602 is trying to acquire lock:
-ffff88803f38b458 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x7e0/0x1c20 security/integrity/ima/ima_main.c:319
-
-but task is already holding lock:
-ffff888038eee198 (&common->filesem){++++}-{4:4}, at: fsg_store_file+0x163/0x400 drivers/usb/gadget/function/storage_common.c:452
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&common->filesem){++++}-{4:4}:
-       down_read+0x97/0x200 kernel/locking/rwsem.c:1574
-       fsg_show_file+0x2d/0x140 drivers/usb/gadget/function/storage_common.c:339
-       fill_read_buffer fs/configfs/file.c:68 [inline]
-       configfs_read_iter+0x2ba/0x620 fs/configfs/file.c:88
-       __kernel_read+0x4d3/0x970 fs/read_write.c:532
-       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
-       ima_calc_file_hash+0x45d/0x8a0 security/integrity/ima/ima_crypto.c:280
-       ima_collect_measurement+0x521/0xa10 security/integrity/ima/ima_api.c:300
-       process_measurement+0x1282/0x1c20 security/integrity/ima/ima_main.c:425
-       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
-       security_file_post_open+0xb3/0x260 security/security.c:2755
-       do_open fs/namei.c:4839 [inline]
-       path_openat+0x148a/0x1d60 fs/namei.c:5000
-       do_file_open+0x23e/0x4a0 fs/namei.c:5029
-       do_sys_openat2+0x115/0x200 fs/open.c:1417
-       do_sys_open fs/open.c:1423 [inline]
-       __do_sys_openat fs/open.c:1439 [inline]
-       __se_sys_openat fs/open.c:1434 [inline]
-       __x64_sys_openat+0x138/0x170 fs/open.c:1434
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&p->frag_sem){.+.+}-{4:4}:
-       down_read+0x97/0x200 kernel/locking/rwsem.c:1574
-       fill_read_buffer fs/configfs/file.c:66 [inline]
-       configfs_read_iter+0x1cf/0x620 fs/configfs/file.c:88
-       __kernel_read+0x4d3/0x970 fs/read_write.c:532
-       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
-       ima_calc_file_hash+0x45d/0x8a0 security/integrity/ima/ima_crypto.c:280
-       ima_collect_measurement+0x521/0xa10 security/integrity/ima/ima_api.c:300
-       process_measurement+0x1282/0x1c20 security/integrity/ima/ima_main.c:425
-       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
-       security_file_post_open+0xb3/0x260 security/security.c:2755
-       do_open fs/namei.c:4839 [inline]
-       path_openat+0x148a/0x1d60 fs/namei.c:5000
-       do_file_open+0x23e/0x4a0 fs/namei.c:5029
-       do_sys_openat2+0x115/0x200 fs/open.c:1417
-       do_sys_open fs/open.c:1423 [inline]
-       __do_sys_openat fs/open.c:1439 [inline]
-       __se_sys_openat fs/open.c:1434 [inline]
-       __x64_sys_openat+0x138/0x170 fs/open.c:1434
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&buffer->mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/rtmutex_api.c:559 [inline]
-       mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:578
-       configfs_read_iter+0x73/0x620 fs/configfs/file.c:86
-       __kernel_read+0x4d3/0x970 fs/read_write.c:532
-       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
-       ima_calc_file_hash+0x45d/0x8a0 security/integrity/ima/ima_crypto.c:280
-       ima_collect_measurement+0x521/0xa10 security/integrity/ima/ima_api.c:300
-       process_measurement+0x1282/0x1c20 security/integrity/ima/ima_main.c:425
-       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
-       security_file_post_open+0xb3/0x260 security/security.c:2755
-       do_open fs/namei.c:4839 [inline]
-       path_openat+0x148a/0x1d60 fs/namei.c:5000
-       do_file_open+0x23e/0x4a0 fs/namei.c:5029
-       do_sys_openat2+0x115/0x200 fs/open.c:1417
-       do_sys_open fs/open.c:1423 [inline]
-       __do_sys_openat fs/open.c:1439 [inline]
-       __se_sys_openat fs/open.c:1434 [inline]
-       __x64_sys_openat+0x138/0x170 fs/open.c:1434
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3181 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3300 [inline]
-       validate_chain kernel/locking/lockdep.c:3924 [inline]
-       __lock_acquire+0x15ff/0x2e40 kernel/locking/lockdep.c:5254
-       lock_acquire+0x115/0x350 kernel/locking/lockdep.c:5908
-       __mutex_lock_common kernel/locking/rtmutex_api.c:559 [inline]
-       mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:578
-       process_measurement+0x7e0/0x1c20 security/integrity/ima/ima_main.c:319
-       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
-       security_file_post_open+0xb3/0x260 security/security.c:2755
-       do_open fs/namei.c:4839 [inline]
-       path_openat+0x148a/0x1d60 fs/namei.c:5000
-       do_file_open+0x23e/0x4a0 fs/namei.c:5029
-       file_open_name fs/open.c:1375 [inline]
-       filp_open+0x16d/0x1d0 fs/open.c:1392
-       fsg_lun_open+0x6c/0xe00 drivers/usb/gadget/function/storage_common.c:194
-       fsg_store_file+0x19e/0x400 drivers/usb/gadget/function/storage_common.c:455
-       flush_write_buffer fs/configfs/file.c:207 [inline]
-       configfs_write_iter+0x33a/0x430 fs/configfs/file.c:229
-       new_sync_write fs/read_write.c:595 [inline]
-       vfs_write+0x61e/0xbb0 fs/read_write.c:687
-       ksys_write+0x156/0x270 fs/read_write.c:739
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ima_iint_mutex_key[depth] --> &p->frag_sem --> &common->filesem
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&common->filesem);
-                               lock(&p->frag_sem);
-                               lock(&common->filesem);
-  lock(&ima_iint_mutex_key[depth]);
-
- *** DEADLOCK ***
-
-locks held by syz-executor428/5602: 4, last CPU#0:
- #0: ffff88801d734510 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2753 [inline]
- #0: ffff88801d734510 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x231/0xbb0 fs/read_write.c:683
- #1: ffff888028b16678 (&buffer->mutex){+.+.}-{4:4}, at: configfs_write_iter+0x81/0x430 fs/configfs/file.c:226
- #2: ffff888025f30b68 (&p->frag_sem){.+.+}-{4:4}, at: flush_write_buffer fs/configfs/file.c:205 [inline]
- #2: ffff888025f30b68 (&p->frag_sem){.+.+}-{4:4}, at: configfs_write_iter+0x23b/0x430 fs/configfs/file.c:229
- #3: ffff888038eee198 (&common->filesem){++++}-{4:4}, at: fsg_store_file+0x163/0x400 drivers/usb/gadget/function/storage_common.c:452
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5602 Comm: syz-executor428 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/24/2026
-Call Trace:
- <TASK>
- dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
- print_circular_bug+0x2e2/0x300 kernel/locking/lockdep.c:2059
- check_noncircular+0x12f/0x150 kernel/locking/lockdep.c:2191
- check_prev_add kernel/locking/lockdep.c:3181 [inline]
- check_prevs_add kernel/locking/lockdep.c:3300 [inline]
- validate_chain kernel/locking/lockdep.c:3924 [inline]
- __lock_acquire+0x15ff/0x2e40 kernel/locking/lockdep.c:5254
- lock_acquire+0x115/0x350 kernel/locking/lockdep.c:5908
- __mutex_lock_common kernel/locking/rtmutex_api.c:559 [inline]
- mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:578
- process_measurement+0x7e0/0x1c20 security/integrity/ima/ima_main.c:319
- ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
- security_file_post_open+0xb3/0x260 security/security.c:2755
- do_open fs/namei.c:4839 [inline]
- path_openat+0x148a/0x1d60 fs/namei.c:5000
- do_file_open+0x23e/0x4a0 fs/namei.c:5029
- file_open_name fs/open.c:1375 [inline]
- filp_open+0x16d/0x1d0 fs/open.c:1392
- fsg_lun_open+0x6c/0xe00 drivers/usb/gadget/function/storage_common.c:194
- fsg_store_file+0x19e/0x400 drivers/usb/gadget/function/storage_common.c:455
- flush_write_buffer fs/configfs/file.c:207 [inline]
- configfs_write_iter+0x33a/0x430 fs/configfs/file.c:229
- new_sync_write fs/read_write.c:595 [inline]
- vfs_write+0x61e/0xbb0 fs/read_write.c:687
- ksys_write+0x156/0x270 fs/read_write.c:739
- do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
- do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f29897e19a9
-Code: c0 79 93 eb d5 48 8d 7c 1d 00 eb 99 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 d8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe566936c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00002000000002c0 RCX: 00007f29897e19a9
-RDX: 0000000000000005 RSI: 00002000000003c0 RDI: 0000000000000005
-RBP: 0000200000000200 R08: 00005555573c7560 R09: 00005555573c7560
-R10: 00005555573c7560 R11: 0000000000000246 R12: 6769666e6f632f2e
-R13: 0000000000000002 R14: 431bde82d7b634db R15: 00007f298984104b
- </TASK>
-mass_storage.0/lun.0: file too small: file0
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+It is the Acer Aspire ES1-572. I reported it here
+https://lore.kernel.org/linux-integrity/CAJOGg3z6LJPDsdPNBxajgy8_wQxfhYBRxe=
+4EiurZf3kPU5A5Bw@mail.gmail.com/.
