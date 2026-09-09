@@ -1,41 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7504825A0;
-	Wed,  9 Sep 2026 22:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0663493D2D;
+	Wed,  9 Sep 2026 22:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788993627; cv=none; b=W7mnIYNVCYXjIlScihmYmMmJWJsRpcLGJPv3Si/MXu2arL6oPoEVARQq4sxvgjGmGyJu8jfnq1ha6xKUs2ZCAVUwoB9BRbOvqVF1wqIwandYHPP5QFOB/A7ycdaudHLHOHsCj9/R940lFvJ3lj62g9xuLvaMXO5hS1ZdK71+9mo=
+	t=1788994326; cv=none; b=tww9trRqEiaNO3sexeafcUmlB79vAK6me7oD7ErinPkG055wSE45bpMK4KKNKHkH/JfFKF8eJnZn4WgTGBHxbrvwAntuzWHxahbxu5tXgV4dX+XAmI8BeM0vUWlVw4U/UFHQaKBjprWJ45+yGkCVYrB13KGfUaRgKVdCWRbzCHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788993627; c=relaxed/simple;
-	bh=2woDYYmqyLDmG6WZhX/y6RAT7b2JBzjj5L8L+GW7rcA=;
+	s=arc-20240116; t=1788994326; c=relaxed/simple;
+	bh=teFGMqveRiOY8/qlv1aplNyGrG5WT8rKfzR8zDz/2LI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZH3nem5Cq2P5+5WeFv+mW534Zr6R2OKSOhovuLyxScBMzyXIQ4eRL5CtWJhOVzSOKEEHR6jy881AA3529M4Yu9cK4xmUqQzSj3ySelwBcx9lcJBHj66YLnxIm34e4iZs+LfZpiLuUK87gRFvSFc5tI3H6z59VjGSf4yTIcRk0K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfDICusj; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=RvZluazRe9dyX3me/FsUfx4P16AI5UBtjghhAl98P6AEuGSv5OSvRhxbk2TopYtaEh/DRdM+nxflDI8il0UX3ZBYhCckG2XJCJFrjMRTyY7UvnBsLxACCc8VGAqOaJ1RbW7p8vwCU8ygnhWKaGOSn/N0doaxrS5G5W7ylwF9pdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFxrLIsu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfDICusj"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id C5D141F000FF;
-	Wed,  9 Sep 2026 22:40:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFxrLIsu"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2DC411F00899;
+	Wed,  9 Sep 2026 22:51:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788993618;
-	bh=4wym2Ay+ABh3JkqnlJQRx+Kvb/QLEFiuk5lup2Jk0bg=;
+	s=k20260515; t=1788994320;
+	bh=SJqBu6VvjN1UBTNuwydo4Tp3hZHR+5dvmbAV7cYHE3k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZfDICusj2b6iCI+ynglqOYENV1qEufTbbJQY0hQJH4UhxcbaAkR/jKV3DBDIdOJOw
-	 MSwPjK2gIIrD6iZUjw/Ahb8mECI9+I7rerYdPM2w3XPSN3xZdxp26mOZ2AO9/u7kE+
-	 64pU7bmk2//JTH2Bn59fvXcaLKDyAZUAkagogvYCJxtHy1Joc7X+/jdMadqGBWj2ht
-	 9ZSEZGVblpwq0t67139zwUcgEYesEGrXjFtvFWH4upPrStNeZdd/DPpU6/oE5/FpLP
-	 FvVkZI2hyBqxQ2ODTtSZ5yf//qgUZVASXs5PTGJw8AuTzy6e3cjrcU+0rXV/dmkvI/
-	 zsjWzbAc5SN1g==
-Date: Thu, 10 Sep 2026 01:40:14 +0300
+	b=kFxrLIsujOwH4UfBEh5Tw/9nRHbUt0OjNnUrmmM9l+qGYq485YMBQwkMhtvi7ewbU
+	 bFDCqOx/x1QUbUTiHRKXC/7xN+tWM2/WD3rzck1cAX7Tt5WphXG4SuNhIMsdV3WeVP
+	 XuagMZkx7KMDB5jmKV+PG6SfnqHGhBqaFfdF1BvuGYLrMi7hwMzRFFSU9bLHJAqB4T
+	 6vedc/gT2wFF6s73vt6iUVz8EqVw9jRd5Wil6GjAHVIWVSeTguflScwSJr9zTb4zDr
+	 wJUq4dq5yxhGe1RHL+MPnZaCrELD9grNBXn8Nt+TgB+QTl4kHuG4F+NIdG+J9/OzQY
+	 /dDtOxg1gxG+w==
+Date: Thu, 10 Sep 2026 01:51:56 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jiangshan Yi <yijiangshan@kylinos.cn>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, James.Bottomley@hansenpartnership.com,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	13667453960@163.com, Sashiko <sashiko-bot@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] tpm: fix off-by-four bounds check in tpm2_get_random()
-Message-ID: <aqHgTqQQDQhUFFno@kernel.org>
-References: <20260903035837.219284-1-yijiangshan@kylinos.cn>
+To: Richard Lyu <richard.lyu@suse.com>
+Cc: peterhuewe@gmx.de, jgg@ziepe.ca, fourier.thomas@gmail.com,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: Remove ineffective wmb() from tpm_pm_resume()
+Message-ID: <aqHjDClIsaboPBSh@kernel.org>
+References: <20260908095748.78967-1-richard.lyu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -44,46 +42,52 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260903035837.219284-1-yijiangshan@kylinos.cn>
+In-Reply-To: <20260908095748.78967-1-richard.lyu@suse.com>
 
-On Thu, Sep 03, 2026 at 11:58:37AM +0800, Jiangshan Yi wrote:
-> When the response carries the TPM2_ST_SESSIONS tag, tpm2_get_random()
-> skips the 4-byte parameter size field before locating the random data,
-> but the bounds check still validates the response length against
-> TPM_HEADER_SIZE.  A truncated response can pass the check and make
-> memcpy() read up to 4 bytes past the response end, so stale buffer
-> contents end up in the caller's random bytes.
+On Tue, Sep 08, 2026 at 05:58:02PM +0800, Richard Lyu wrote:
+> The comment above the wmb() in tpm_pm_resume() states that the barrier
+> guarantees TPM_CHIP_FLAG_SUSPENDED is written last, so that hwrng does
+> not activate before the chip has been fully resumed.  It cannot do so:
+> it is placed after the store that clears the flag, and therefore does
+> not order the preceding resume work before that store.  It also has
+> nothing to pair with, as tpm_try_get_ops() contains no matching read
+> barrier.
 > 
-> Fix this by checking the response length against 'offset', which
-> already includes the skipped parameter size field.
+> Drop the barrier along with the comment rather than leave a no-op
+> behind.  Should such ordering turn out to be needed, it would require
+> paired barriers or locking.
 > 
-> Fixes: 1b6d7f9eb150 ("tpm: add session encryption protection to tpm2_get_random()")
-> Reported-by: Sashiko <sashiko-bot@kernel.org>
-> Closes: https://sashiko.dev/#/patchset/20260902074839.417419-1-yijiangshan%40kylinos.cn
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jiangshan Yi <yijiangshan@kylinos.cn>
+> Fixes: 99d464506255 ("tpm: Prevent hwrng from activating during resume")
+> Link: https://lore.kernel.org/all/a62fc816-259a-4d28-a265-e425bc17ed50@gmail.com/
+> Signed-off-by: Richard Lyu <richard.lyu@suse.com>
+
+I agree that wmb() is necessary but what is the bug here?
+
+Agree with the change but I'm not convinced about fixes tag here.
+
 > ---
->  drivers/char/tpm/tpm2-cmd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/char/tpm/tpm-interface.c | 6 ------
+>  1 file changed, 6 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 48cec39995fe..d74df7808a3f 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -305,7 +305,7 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
->  		out = (struct tpm2_get_random_out *)&buf->data[offset];
->  		recd = min_t(u32, be16_to_cpu(out->size), num_bytes);
->  		if (tpm_buf_length(buf) <
-> -		    TPM_HEADER_SIZE +
-> +		    offset +
->  		    offsetof(struct tpm2_get_random_out, buffer) +
->  		    recd) {
->  			tpm2_end_auth_session(chip);
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index b4e749e70b02..0bab78c8767c 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -497,12 +497,6 @@ int tpm_pm_resume(struct device *dev)
+>  
+>  	chip->flags &= ~TPM_CHIP_FLAG_SUSPENDED;
+>  
+> -	/*
+> -	 * Guarantee that SUSPENDED is written last, so that hwrng does not
+> -	 * activate before the chip has been fully resumed.
+> -	 */
+> -	wmb();
+> -
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(tpm_pm_resume);
 > -- 
-> 2.25.1
+> 2.51.0
 > 
-
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
