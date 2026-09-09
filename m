@@ -1,141 +1,86 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E66A5650ED;
-	Wed,  9 Sep 2026 15:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BCD57F724;
+	Wed,  9 Sep 2026 15:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788968096; cv=none; b=kn27wm4VHLhv0M9UJzy4JXoDjNwBnrrMw0poGDvrVwh8d3yo+A0pkTOojb6jPYN27y2DQwPP6J3LTUKOZAFVAKQbKfPp0SQ581zbJ7miPHYdjvgRDOguwSR1zGYPovIEVorILbYyJQcYXFpVpjJRE6fdbMhfUgMPBzDPChhXxRU=
+	t=1788969467; cv=none; b=HS+t/S+BVGuHqtFgi5tM/JneBska2jwRAmuCZoStbos8Lv/krmmtyCuhqLhbl8EZ5kvilfWQdbebhsQUVdyATgT3pKorFst66NJSH/N76AE6umqnltK6J9/D21o77kDtu2qLhukxVFchxLRCS4jHTouuVe8MBH2z9JNEMsie2NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788968096; c=relaxed/simple;
-	bh=jT/6qnvM4oWKTmyPgJEH4m3bosIGhZyi2XddKFBfyHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gXHA4pVSsmMVrfIfTaB8ybnvC96sp3P1HDP/oH1o7aLLPxr+hynAo8y1LyojaOkp1FdkdBN3AyujifezoNK3SNbmoCavguJklyRE2/uBiPkwZKyVAymXxyQgYRRTt/EtJ61C0RuOpWy1FvD7MoNQL6clOIFe0WUDRkTrVzZrkVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hfbBBrrP; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1788969467; c=relaxed/simple;
+	bh=UsacJRO0IBOW9sLjrzVfAphSQbsb3cBIkkc+0EyhgYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwNBlduRx5+0Jnz0x6e4//73Ji0FUtF1rilyYYYVEAMwDBYDNcpe/8CiFVbn79dkaQDwnVFjw/mXqDyFRly29i+UNFZ15Hn4LQQfcHf3wwVmwLl8mgDABQKwd6yJHm+BicanL6R0wh6gtrQRQ1J+FNTSdEijP7e22AngrzBj3ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LzJQr+nC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hfbBBrrP"
-Received: from localhost.localdomain (unknown [4.194.122.170])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 8ECCD20B712B;
-	Wed,  9 Sep 2026 08:34:02 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8ECCD20B712B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1788968053;
-	bh=jkyd3viOhcP/SUiBsKXxAPjfzXvVxxIT/POrqkoVbf0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hfbBBrrPi77CTw1i4sjs5KAuGhQqQAaEPyK+N+Xd3mMjZxM+TbtOuyJ/ga+gXKPGJ
-	 OIS5f+ycs4X+bHlDfjatM6cwDFuBrkrm3Evn+DMINubroOTAVnUwh+lxPD4CIvr9hw
-	 fk/IUsnO/SRHYZRyPjcNAP0sxuZ/Az5u2luI2MaE=
-From: Cen Zhang <cenzhang@linux.microsoft.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Roberto Sassu <roberto.sassu@polito.it>,
-	David Safford <safford@watson.ibm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>,
-	Francis Perron <francis@akrites.dev>,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Akrites SIRT <sirt@akrites.dev>,
-	AutonomousCodeSecurity@microsoft.com,
-	tgopinath@linux.microsoft.com,
-	kys@microsoft.com
-Subject: [PATCH v3] KEYS: encrypted: fix integer overflow of datablob_len
-Date: Wed,  9 Sep 2026 11:34:33 -0400
-Message-ID: <20260909153433.83117-1-cenzhang@linux.microsoft.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LzJQr+nC"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 253A41F00A3A;
+	Wed,  9 Sep 2026 15:57:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788969466;
+	bh=M9SJYyQzXEllRJjMf5EQlh0KIDDZNzKZkAIQnq79Cj0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=LzJQr+nCyPi33SJReLNL8c80/99/Buxzle2qTznrBj9VPeh+cMg4cQkqIClrX4Arg
+	 PJknStCgoBaf7vcD4RKLx8tvQuTZUmmLCPjbqYNI4FbeFtlVywYVrupXjaAMRIKuFo
+	 aEcjTXN12I/Zr+IwGZSVgCN+NtncoqeldQoBRj1U07XC96pCDOS1slSlCrNBLSfE7T
+	 c/I2o2H5Ly/UrU8A3ryfL09UdBonOYJ9Rdg0jXzqme4vlHzl2U9B5+7aEGPLWQYHK8
+	 QL0ox84t5PlOOHjo9LAvwwTy8rA+b1/h8CXGMTqE1iylDFAX3WGXiB0dikfX61V20J
+	 0z7f5NKArp9Uw==
+Date: Wed, 9 Sep 2026 18:57:42 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jiangshan Yi <yijiangshan@kylinos.cn>
+Cc: peterhuewe@gmx.de, jgg@ziepe.ca, ross.philipson@oracle.com,
+	stefanb@linux.ibm.com, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, 13667453960@163.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] tpm: Fix auth session leak in tpm2_get_random() error
+ path
+Message-ID: <aqGB9gxUv5IThT_q@kernel.org>
+References: <20260902074839.417419-1-yijiangshan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260902074839.417419-1-yijiangshan@kylinos.cn>
 
-encrypted_key_alloc() stores datablob_len in a u16. It is computed from
-multiple string and payload lengths. If the result exceeds U16_MAX, the
-assignment truncates the allocation size. KASAN reports a 32760-byte
-slab-out-of-bounds write when __ekey_init() copies the master key
-description into the undersized buffer.
+On Wed, Sep 02, 2026 at 03:48:39PM +0800, Jiangshan Yi wrote:
+> When tpm_buf_fill_hmac_session() fails in tpm2_get_random(), the error
+> path returns without calling tpm2_end_auth_session(), leaking the auth
+> session. All other error paths in the function handle this correctly.
+> 
+> Fixes: 3d9e043dab0a ("tpm-buf: Memory-safe allocations")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jiangshan Yi <yijiangshan@kylinos.cn>
+> ---
+>  drivers/char/tpm/tpm2-cmd.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 48cec39995fe..96e0e06bbbf0 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -281,8 +281,10 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+>  		}
+>  		tpm_buf_append_u16(buf, num_bytes);
+>  		err = tpm_buf_fill_hmac_session(chip, buf);
+> -		if (err)
+> +		if (err) {
+> +			tpm2_end_auth_session(chip);
+>  			return err;
+> +		}
+>  
+>  		err = tpm_transmit_cmd(chip, buf,
+>  				       offsetof(struct tpm2_get_random_out,
+> -- 
+> 2.25.1
+> 
 
-The total payload length stored in key->datalen is also a u16. Use
-check_add_overflow() to reject values that do not fit either destination,
-and use kzalloc_flex() for the flexible-array allocation.
+Thanks for the fix.
 
-Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/keyrings/20260826154456.85974-1-blbllhy@gmail.com/
-Assisted-by: GitHub-Copilot:claude-opus-4.6
-Signed-off-by: Cen Zhang <cenzhang@linux.microsoft.com>
-Signed-off-by: Francis Perron <francis@akrites.dev>
----
-Changes in v3:
-- Describe the bounds using u16 and U16_MAX and simplify the commit
-  message.
-- Include the KASAN-reported write size.
-- Remove organization names from the author and sign-off identities.
-- Remove the unnecessary off-list discussion note.
-- Use cenzhang@linux.microsoft.com.
-- No code changes.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
- security/keys/encrypted-keys/encrypted.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index 59cb77b237b3..e07092ea301a 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -19,6 +19,7 @@
- #include <linux/parser.h>
- #include <linux/string.h>
- #include <linux/err.h>
-+#include <linux/overflow.h>
- #include <keys/user-type.h>
- #include <keys/trusted-type.h>
- #include <keys/encrypted-type.h>
-@@ -579,6 +580,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
- {
- 	struct encrypted_key_payload *epayload = NULL;
- 	unsigned short datablob_len;
-+	unsigned short payload_totallen;
- 	unsigned short decrypted_datalen;
- 	unsigned short payload_datalen;
- 	unsigned int encrypted_datalen;
-@@ -632,16 +634,22 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
- 
- 	encrypted_datalen = roundup(decrypted_datalen, blksize);
- 
--	datablob_len = format_len + 1 + strlen(master_desc) + 1
--	    + strlen(datalen) + 1 + ivsize + 1 + encrypted_datalen;
-+	if (check_add_overflow(format_len + 1 + strlen(master_desc) + 1
-+			       + strlen(datalen) + 1 + ivsize + 1,
-+			       encrypted_datalen, &datablob_len))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (check_add_overflow(datablob_len,
-+			       payload_datalen + HASH_SIZE + 1,
-+			       &payload_totallen))
-+		return ERR_PTR(-EINVAL);
- 
--	ret = key_payload_reserve(key, payload_datalen + datablob_len
--				  + HASH_SIZE + 1);
-+	ret = key_payload_reserve(key, payload_totallen);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
--	epayload = kzalloc(sizeof(*epayload) + payload_datalen +
--			   datablob_len + HASH_SIZE + 1, GFP_KERNEL);
-+	epayload = kzalloc_flex(*epayload, payload_data, payload_totallen,
-+				GFP_KERNEL);
- 	if (!epayload)
- 		return ERR_PTR(-ENOMEM);
- 
-
-base-commit: 893e11787f78e43b534e252249ac3fff4d1333f8
--- 
-2.55.0
+BR, Jarkko
