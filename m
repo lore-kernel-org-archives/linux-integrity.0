@@ -1,74 +1,56 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EEC52B1FF
-	for <linux-integrity@vger.kernel.org>; Wed,  9 Sep 2026 11:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44075650F4;
+	Wed,  9 Sep 2026 15:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788954953; cv=none; b=a0SGBKE8YKTxxx+DYAlH97p+NFwOYD1KpsVctFxpdCVqxAwW2wv3vmyLbcfzzjRHAeto3Q70NtlrfpQFGKEMXVl4eOS3kpwl9ELl0bqf6PRZRKp/d6RvzAKXmJoYof+cLOHzjBM8kHpllsk29foouOTluekIVFWba76e0HzLsJs=
+	t=1788967858; cv=none; b=aXwRhRFSxxa4I3pTf1Nox7wwn3ER83qVJl663aqOjRp0k8mGMQ2xefvvDBo3eTAb/267REti032sDH/XuuZFtmJeiot9UllcDzbrtVze5w3EXP7lHQkXLMrL3JaHh7FkdAAZO7DkeGD726EQ6Nf6ARYlKawxk0SaYFnNTsSFaCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788954953; c=relaxed/simple;
-	bh=YA+a6CCA1zWdQPcieNEuLQ0mIwRn0Ck7WsDOY4ql94Y=;
+	s=arc-20240116; t=1788967858; c=relaxed/simple;
+	bh=Xv7eeAykvmt32wxIiWTboD9W4gMckrkTtY+onFUhf3I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EGJ27JzlMVrZe2bAxBnM0kuvGauszIk2OCqq8KrXuf12VO9BY1dUUDzu1hbRjXRB25b8XmkRyvQXPtP/b/Y/xfcSMsU5LVkZbOc722LbKqMegM/uAcr278PWfIElWuXWNBW1cPnzDTJcuWsyvQooPnWXNUbH0FRZa1QmI6mR0Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e+jFvZta; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 MIME-Version; b=srFVevdbd0zFIyUwNi1S/+6cPNdk0TkcnmR5rjJvN/AfyxJLt6lDKUymTgeFdtLPpwXVG8HxMCLUZNwizrWlAC3z0UCkoGz+GDEuXwVW3qpdHvFm9g5NA7XsmxPnAl2EfRFLy0rX+VZr8sV9S8ao92wGSPBCzj2SXjrK3p2rv74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=cNeKP4bV; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e+jFvZta"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788954951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FeWcXK9/x+ZPPaC++IgCQ9jS/VWtgj79RgI0CVq94cU=;
-	b=e+jFvZtaXjEKd4bRzwRtCsJtd2piOzBIaPHrHKlJcrSYJVRuIgk2fnFRxhIW4T4+2VroGZ
-	GrXknkzCC2xnCEWupdK+4K4wv6lCMw+W/AlOkQxYpCJx0VzBHXqF0CQepJI/j6c91UUG+A
-	YMhY5SboXuoLSXWPf1JpLA5C0AeNp1c=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-416-XppBFvCKMm-g7oxw0FdvVQ-1; Wed,
- 09 Sep 2026 07:55:47 -0400
-X-MC-Unique: XppBFvCKMm-g7oxw0FdvVQ-1
-X-Mimecast-MFC-AGG-ID: XppBFvCKMm-g7oxw0FdvVQ_1788954944
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EEFA519541AC;
-	Wed,  9 Sep 2026 11:55:43 +0000 (UTC)
-Received: from thuth-p1g4.redhat.corp (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B5571195608D;
-	Wed,  9 Sep 2026 11:55:37 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	linux-integrity@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="cNeKP4bV"
+Received: from localhost.localdomain (unknown [4.194.122.162])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3792820B7135;
+	Wed,  9 Sep 2026 08:30:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3792820B7135
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1788967816;
+	bh=Xv7eeAykvmt32wxIiWTboD9W4gMckrkTtY+onFUhf3I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cNeKP4bVyrue/ljPnhxmPPjmv6so3GBOFW3UcBtmKWT3Ys01Gy1wMUR0ZAU4CUERe
+	 +pqP06zw06io4m2aLS8eNnVALakBoU2r1XyF8QXj70TQt5s1MfCOY0yF7d4PoPS1KP
+	 THl6d3VQAqwoQEaQ8If0PX3zOxvX6z8fzVmTZIuo=
+From: "Cen Zhang (Microsoft Security FORGE Labs)" <cenzhang@linux.microsoft.com>
+To: jarkko@kernel.org
+Cc: AutonomousCodeSecurity@microsoft.com,
+	blbllhy@gmail.com,
+	cenzhang@microsoft.com,
+	dhowells@redhat.com,
+	francis@akrites.dev,
+	gregkh@linuxfoundation.org,
+	jmorris@namei.org,
+	kees@kernel.org,
 	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v2 09/13] security: keys: trusted: always clear the hmac_sha1_ctx before returning
-Date: Wed,  9 Sep 2026 13:54:45 +0200
-Message-ID: <20260909115455.157093-10-thuth@redhat.com>
-In-Reply-To: <20260909115455.157093-1-thuth@redhat.com>
-References: <20260909115455.157093-1-thuth@redhat.com>
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	paul@paul-moore.com,
+	roberto.sassu@polito.it,
+	safford@watson.ibm.com,
+	serge@hallyn.com,
+	sirt@akrites.dev,
+	zohar@linux.ibm.com
+Subject: Re: [PATCH v2] KEYS: encrypted: fix integer overflow of datablob_len
+Date: Wed,  9 Sep 2026 11:30:32 -0400
+Message-ID: <20260909153032.82355-1-cenzhang@linux.microsoft.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <apDrfyDB883Nl5Sd@kernel.org>
+References: <apDrfyDB883Nl5Sd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -76,31 +58,12 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Clear the hmac_sha1_ctx structure via __cleanup(hmac_sha1_zeroize_ctx)
-to make sure that the function does not leak sensitive data on the stack
-when returning without calling hmac_sha1_final().
+Hi Jarkko,
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- security/keys/trusted-keys/trusted_tpm1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the review. I'll simplify the description using u16 and
+U16_MAX, remove the organization names and the off-list note, and send
+v3 shortly.
 
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index bf0bf7f369705..e5a904b5c1946 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -101,7 +101,7 @@ static inline void dump_tpm_buf(unsigned char *buf)
- static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
- 		       unsigned int keylen, ...)
- {
--	struct hmac_sha1_ctx hmac_ctx;
-+	struct hmac_sha1_ctx hmac_ctx __cleanup(hmac_sha1_zeroize_ctx);
- 	va_list argp;
- 	unsigned int dlen;
- 	unsigned char *data;
--- 
-2.55.0
-
+Thanks,
+Cen
