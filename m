@@ -1,60 +1,87 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF59B355048;
-	Thu, 10 Sep 2026 07:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD523BBFB6
+	for <linux-integrity@vger.kernel.org>; Thu, 10 Sep 2026 08:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789027109; cv=none; b=Czal5kaNv2VNavWNb4TV8oHdtyU1LiThsLXQ/r4uKpOzLSroxooUrT3bYA1rmzphaD0E60z9H+IFBJ4jPw2aKvJbh7RnhjtYWSrDAQ+jS6TJM/ZKQW7yqpcg4nGegDwkmvKN24tXfYmuvGaMdzxONadOdmmlDAXKlwoi040KIiU=
+	t=1789029298; cv=none; b=Q8iZa9/rQr2okqdAfkBCK+7pTHx9F0a8Bh3jSnN7scLRlsdy1Br7uKGxFyhgcSmnLCBwYsYHGJbHB7CIvhuL3Exv1POPZOgw95gUGBuu7P6HOuhU7x70rdv9GEtb3rGcpLT/MlzrMNm+S4kobekIHDo2+SXVtKEar1Lx9MgNpVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789027109; c=relaxed/simple;
-	bh=zQij38x8Gr6PSfKZrv2646dDAIeMPC1xF2jZHUrQF40=;
+	s=arc-20240116; t=1789029298; c=relaxed/simple;
+	bh=1VG49kK4fNZl7JgRGZ2R0lXCv5A3AAINFdkFYWuVzrg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DjrGdL8KtJd2d3gqh09icuMJMl8rFtSmYQnmdLscdBi5LwLIi80Y0STKtxWpTKCR7Xkc+/lPIdSG2cQ0MgWeK1aE4Zxnj+qN8E/eNd0RKkXQ24GUZcbszWwPsLge9ACxBdn0hbBoqnKIX1g9Sj8t+qVs2Dhb8Lfod42vY6SduCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hf86JdSL; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	 In-Reply-To:Content-Type; b=GLnjdEX+xFEv27ZrUV9BdWg+B6K80pqy/v/lhCxGzdxlXl8pJ6PHYv7veQepZL+xbdI+JRrz231p7391jXXz4QuPl08LNHjvThCyvJ7HKs5/JiB5E8epW+iOxUsFiQJqJ87tvSTBXzzDg4EJAFScQa0UuN/KpScnf2aCoF6y8qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=j+EgQV9N; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=OGrvcbFb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hf86JdSL"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68A5VRC21996969;
-	Thu, 10 Sep 2026 07:58:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=4wU3kk
-	0+swCWLpvgHo+/2f07jyIZvoPRKiL/lPRPhqg=; b=hf86JdSLtkMJrJqVYpUOHq
-	jmkw9Va5iBaCzf2OjmXWo13uR8XRK3xwUt3hpEDRxzym8+/iFdZHYQ7OzGcgmw6q
-	612cdEQAuwNdDkOWBHxXhJePtQ5TvzuNALyqQpsGp6jHrFYrIAht0tTBs6pbLS5R
-	e6wCy0YfpyM/gk3LAeHnvGx3e4kej9XNy3XxJ69kiCdzVANBTNcHol7Ypfz+hll2
-	b2vJaPNpLUHXVRXb6gR+6WpxMDIfplXBaRFVEd7R6fU3GO2jLT6j+d/5B67Yk53i
-	h06T6j/DVBQPXct+gm/vh7krdudlD0MUIU48PNdb3dpo6GSyqIe5xHHmizNuEGjg
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gkd8qk5ss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Sep 2026 07:58:24 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 68A7uFb0032035;
-	Thu, 10 Sep 2026 07:58:24 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4gkcr3b721-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Sep 2026 07:58:23 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68A7wLEc26083844
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Sep 2026 07:58:21 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7BE4658051;
-	Thu, 10 Sep 2026 07:58:21 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A6B8B5805C;
-	Thu, 10 Sep 2026 07:58:18 +0000 (GMT)
-Received: from [9.123.14.23] (unknown [9.123.14.23])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 10 Sep 2026 07:58:18 +0000 (GMT)
-Message-ID: <46f1c7c2-0bde-447d-a92c-c30b623a5a4e@linux.ibm.com>
-Date: Thu, 10 Sep 2026 13:28:17 +0530
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="j+EgQV9N";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="OGrvcbFb"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68A5GXiD4187798
+	for <linux-integrity@vger.kernel.org>; Thu, 10 Sep 2026 08:34:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZDtD7s+88cPFkDJa10PZ92cfoS/KlLMFXDnVCuSEkiw=; b=j+EgQV9Nr/E6JoKp
+	V7juIRxiQ/FGbc4XOkpjrhmPem8YQAfkfFj5y08XCxsW82OGEdjLTycIKS59/oL3
+	JaYlvBYdgO+IofwTSv8lul5Ii/GkQ2hXP4jYu9le79S5kU8BOE1NZt0p7OgFpPDA
+	SxI4bs9F8LrVkAk2Y/t4nOyt3gD5fiLgNohIiiyRRhpD3YD433UURPftyhwcyb30
+	EATMWh08rciW8CXfQK5z/9nbltTZMIhVzHX0uO99L2k9Q/AikSJ6D26klrliopXE
+	5R9mof55HSj4hXGokrYpPICw8N4g6PkJNIn9fUV/2uM8Fh7XZrKN66N4FEqYoEah
+	eZvbhQ==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gkcygtw33-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-integrity@vger.kernel.org>; Thu, 10 Sep 2026 08:34:55 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-8663802b58fso3909834b3a.2
+        for <linux-integrity@vger.kernel.org>; Thu, 10 Sep 2026 01:34:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1789029295; x=1789634095; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ZDtD7s+88cPFkDJa10PZ92cfoS/KlLMFXDnVCuSEkiw=;
+        b=OGrvcbFbnYdVdOx82uWgj5DcTcLuONp58GHgIzDuWYAiVUu8pTYWq4LNbWNkgK83OK
+         Qd7814deOKVRZfW87nKOfLS6b2pPd0+GzXm31GLW9lZYArW+vGTEbu4M6Bioj5F1zSJL
+         dnLS761ACK2QWVGhWbfl31oBoBCB48LRP54IGpqc0JaZdjZpf7ckFAwgb2F0aslBJLk/
+         x4wRpMJuQd+KczT0CHPMLVSLeQMe//jsVsjVcSeDMBmKwtTJm2kyRp5wvIpWwvCRE9Yf
+         i31ABl7p/iQCQPupM6TSlPw+iGXRwmS8TM602Hdh90ZHCv0cHkbrEZwB3d/gwexJTOJq
+         vHHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789029295; x=1789634095;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ZDtD7s+88cPFkDJa10PZ92cfoS/KlLMFXDnVCuSEkiw=;
+        b=L32g0WhMlb9euc8F6eUnntUZGMPJ8KEjUVoNwF8c2JR8mQcHwxEWbicqECjLHvI6yL
+         b76oEPsinn9wKFXCMKPbp7bqK/7TUlIwgBkeQyS2fMn12XxHajASYPfClpcSIsdQFCKg
+         XqSfXlyweLqD2MKOm2mPjHCdQZ+RVanOkHUrtKRx2xZWDf6+UO8IwtYApz8kBsL6Jw84
+         x4HN0vwS7/VT4zJECo6pyG3sGmhs6WPo/EhXuRhnS/VRxjoeOz61934XzBSlMvV79Z7d
+         iXwga5+EbiTv7RAYZmHPfK2WSZ2SptHGkuxHrehQ3+q9G45wNgznAF4lb3D0gOAbEEYR
+         kd+g==
+X-Forwarded-Encrypted: i=1; AKwUvBwIy7ZlQTaJeI2JJyYvmLBLvASZj9hx7y/B+khi1IwK6ah64w6pDsonkjobVVWz76JsDGsNk6ENNfLng6wBCmg=@vger.kernel.org
+X-Gm-Message-State: AFuF++kc/BVO+aaZDpRmPnkiRSGFB+/PxCPcLU1cgy66YuOC+pyrLgs5
+	BhKCTj9G8lApi9Z2Kxef60+ofI1qScNp4upIp0wBLw9AW8zzoeo+RClbyw+IG8jt2o0XfLpETeS
+	GLfqIJM4/AtxQW+WN9Mmpwb/ws40JEbIuTZ5J70KNQf7XGRkbWAMAz0nJQ6gzjll+TQy+lsY=
+X-Gm-Gg: AYBFou0vwtRtscVJ9uI7teWPN0/rVM5WkgaEMBKbQV1FeJFi8aS3TilDnTTKcOxou3/
+	j+XenQrUiZmo6i3US/dCCYocp6dfzbKh1l1FmYKeqiDgdVKVx0veFfbdSQ/qx7XP25ddPMZL4zM
+	ryRvy4udtPYIkw/ho1xawNOHnasq7XyuZaLz3raH9A8ww5bWgoGkjAJa3Z8uQsSjr/9aAAf9rmd
+	U+qREaoK1ysZzRxCZd1V89Yv9+1xrU2kT+p80MBovovKjOrNyCjJbu4XlrXx6uJON8mtyerDj51
+	mNl+V+Q0HqD3KC98bBugGyT6baSaf04LkpKs1ErX7oxfhVE5xdz75/AOh+Nnx2oYZqCdUuv2O3s
+	gyxMPLK7Z4QaDuROVJpC7dJFNVR/FMmI=
+X-Received: by 2002:a05:6a21:6e8d:b0:3d3:af44:ee12 with SMTP id adf61e73a8af0-3dacbf4c52bmr12033304637.27.1789029294865;
+        Thu, 10 Sep 2026 01:34:54 -0700 (PDT)
+X-Received: by 2002:a05:6a21:6e8d:b0:3d3:af44:ee12 with SMTP id adf61e73a8af0-3dacbf4c52bmr12033198637.27.1789029294111;
+        Thu, 10 Sep 2026 01:34:54 -0700 (PDT)
+Received: from [10.218.31.125] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-339770f0489sm20481499eec.8.2026.09.10.01.34.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Sep 2026 01:34:53 -0700 (PDT)
+Message-ID: <f39b118b-b100-4063-bc4c-ded1f9ce0233@oss.qualcomm.com>
+Date: Thu, 10 Sep 2026 14:04:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -62,181 +89,89 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] keys/trusted/tpm2: Validate TPM2_Create object sizes
- separately
+Subject: Re: [PATCH 2/2] firmware: tpm: Introduce tpm-qcom driver
 To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        nayna@linux.ibm.com, rnsastry@linux.ibm.com
-References: <20260902114340.268698-1-ssrish@linux.ibm.com>
- <aqHLkyUewMrTr1wB@kernel.org>
+Cc: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
+        Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+References: <20260831-tpm_qcom_driver-v1-0-6f16fa6924fa@oss.qualcomm.com>
+ <20260831-tpm_qcom_driver-v1-2-6f16fa6924fa@oss.qualcomm.com>
+ <apbXKZrjFdK1vrny@kernel.org>
+ <38984608-4b5c-4355-ad85-8c5a1fb78cb2@oss.qualcomm.com>
+ <aqGDL2qZ0sZNMG0f@kernel.org>
 Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <aqHLkyUewMrTr1wB@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
+In-Reply-To: <aqGDL2qZ0sZNMG0f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=SpUFe/O0 c=1 sm=1 tr=0 ts=6aa26320 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=VnNF1IyMAAAA:8
- a=mDX-_44H_j9oIHSpGQEA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: M-6sk-3_lXk8LU-0sLmzIsxVpwMEWv-U
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTEwMDA4MSBTYWx0ZWRfX/iCe73HFRnTC
- UDIZ7l0F/9ZYOubVEKrONB3W5bMjiy1EqmvZLArNwlQqWU8arS3rw+xSZN6QsblXTTvq/3lFrHu
- CsCwx4ODOMpTURtS4pjNa8apQ5XAMlZDZYqcU8OOPsTHp7qA+i4dkAEYiFHiJY/Ffijg2uPgxjy
- +iK5B2reEm560RYoTvWtJ4yEhwLDAIF8q8Q4dBj6larw51jcIeSu+h0TjfpOtS0SaXDcpmLYPhT
- F5TJu42tH9a5RDoAyT23dkfLlDVPp5IJVU5W15FiRXrANA0yR1KvAyiSIdLYo8g6OjhCcbaqWNI
- 0B5KXRSTIqi2oBqVwIM1zErhLK2FlsxCcvM0DoZbwOVnSrL09nU+VoAJhbQpEhlZx2vaEhER2ND
- jMAi83hQqpeklPgJXP+BubH+JSLOrnGnbnbp3aOMwshOPZ3VbNiXLRiq5d5Siu0LcIC/sh0CMvV
- EYuSwUEtqIunNV6VBRw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTEwMDA4MSBTYWx0ZWRfX4JHQm3e+g7ZA
- c7XfNAQojjIUzTRWNHeoWGbqR0ME5kRrHjGYo2IMFQJqym6x7yCjL3d9I5WF11oV+Dfub57e1Y6
- rR+Sy5UPNbAsrKaKLeJdmfrVSYXmOk4=
-X-Proofpoint-GUID: M-6sk-3_lXk8LU-0sLmzIsxVpwMEWv-U
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTEwMDA5NSBTYWx0ZWRfX+n8xuIPlxySU
+ kwJYziMxvg5GemjxZtv18+TRJ7CbDiHgsv76JEMoFMPv3ulomCHrhYY2mOqZd3IH5C8zg0eK6Fz
+ qimt5P7Hmv3SttFTfj9PQLTUUjuNBMTcebO974UL/G3D5W1+zHO1oj+chJSDkPA3gLMyy3DALvl
+ w90Ox5uoGxlHRkOeJTTnkQ7J82kFMZNR5Gh6irsd/NajCDQ0SDgoHSiM28mZWR6UcdocbTTML/l
+ tqBzoMpAATZww2EAUgAtzXC6JqTDdFs1rprV3b3OVsi9JnpO3iqWCeQWgW4xDEMvzrpmhk13l0R
+ E3xhE7jvTohUBn74twXXLk5XKrkv0fNiF33tqiZu4iSDVePDWxBUrUzYaqu/AYuHh9dx0kQSPUg
+ JpnYKknOD9GAypT1ZCDkRMLCRjZqDLd/QkNCKRq4i0K3tOE+zdlSRj+X7kIcBVHhY5hP3ssxD60
+ TVHyZ31VItE/FZk3uaA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTEwMDA5NSBTYWx0ZWRfXzXSFvYSZFC1M
+ UObvupMRGl01kA4P+6h5k2kBc5z03PbJXAgaDCRUSp7YKSiVBlwYmtVArYV+NbTVUnz4WsNw+up
+ SJnJorzur/LLfbUMAKWvNDXT2q2peWI=
+X-Proofpoint-ORIG-GUID: kYOeQIK0MhDDX2jPD-Wy2yE6zyR6RKo6
+X-Authority-Analysis: v=2.4 cv=VONIDNPX c=1 sm=1 tr=0 ts=6aa26baf cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=pUs6DziAekBCN6WXSR0A:9 a=QEXdDO2ut3YA:10
+ a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-GUID: kYOeQIK0MhDDX2jPD-Wy2yE6zyR6RKo6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-10_02,2026-09-09_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- clxscore=1015 phishscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ impostorscore=0 adultscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ clxscore=1015 suspectscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609100081
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609100095
 
-Hi Jarkko,
+On 09-09-2026 21:32, Jarkko Sakkinen wrote:
+> On Wed, Sep 02, 2026 at 02:52:17PM +0530, Kuldeep Singh wrote:
+>> On 01-09-2026 19:16, Jarkko Sakkinen wrote:
+>>> Short summary has a different driver name that is implemented i.e.,
+>>> it should has "tpm_qcom", not "tpm-qcom".
+>>
+>> True, let me make more generic like "Introduce Qualcomm TPM driver"
+>> instead of having driver filename in commit title for any confusion.
+>>
+>>>>  MAINTAINERS                 |   7 +
+>>>>  drivers/char/tpm/Kconfig    |   9 ++
+>>>>  drivers/char/tpm/Makefile   |   1 +
+>>>>  drivers/char/tpm/tpm_qcom.c | 371 ++++++++++++++++++++++++++++++++++++++++++++
+>>>>  drivers/char/tpm/tpm_qcom.h |  82 ++++++++++
+>>>
+>>> Rename it as tpm_qcom_tee just to be aligned on how Microsoft's fTPM
+>>> driver is named.
+>>
+>> I'd say firstly microsoft ftpm driver should be renamed.
+>> For example, MS ftpm is based on optee(session based context) whereas
+>> Qcom tpm driver is based on qcomtee(part of same TEE subsystem but uses
+>> completely different mink-ipc based sharing mechanism).
+>> So, it's completely different driver compared to MS.
+>>
+>> My suggestions:
+>>  - Rename MS driver i.e tpm_ftpm_tee.c -> tpm_microsoft.c
+>>  - Rename Qcom driver i.e tpm_qcom.c -> tpm_qcom.c
+> 
+> This goes for argument using tpm_qcom.c but we don't rename ko's in
+> normal circumstances (unfortunately so).
 
-On 9/10/26 2:41 AM, Jarkko Sakkinen wrote:
-> On Wed, Sep 02, 2026 at 05:13:40PM +0530, Srish Srinivasan wrote:
->> TPM2_Create returns outPrivate, outPublic, creationData, creationHash and
->> creationTicket in its response parameter area. However, only outPrivate and
->> outPublic are included in the trusted key blob. The size of the blob is
->> therefore not determined by the size of the complete response parameter
->> area.
->>
->> tpm2_seal_trusted() currently compares the size of the complete response
->> parameter area against MAX_BLOB_SIZE. This can reject a valid response
->> when the remaining response outputs cause the entire response parameter
->> area to exceed MAX_BLOB_SIZE, even though the outPrivate and outPublic
->> TPM2B structures consumed by tpm2_key_encode() remain small enough to be
->> encoded in the key blob.
->>
->> This is observed when creating larger trusted keys using an swtpm TPM 2.0
->> emulator backed by libtpms.
->>
->> For example, requesting a 113-byte key succeeds, 114 fails.
->>
->> ~$ keyctl add trusted trusted_key1 "new 113 keyhandle=0x81000001" @u
->> 520504613
->> ~$ keyctl add trusted trusted_key2 "new 114 keyhandle=0x81000001" @u
->> add_key: Argument list too long
->> ~$
->>
->> Remove the MAX_BLOB_SIZE check on the complete response parameter area.
->> Instead, use the response length passed to tpm2_key_encode() to validate
->> that the outPrivate and outPublic TPM2B structures are fully contained
->> in the response before accessing them.
->>
->> Previously, a response parameter area larger than MAX_BLOB_SIZE was
->> rejected with -E2BIG before ASN.1 encoding. With this change, if the
->> resulting encoded blob does not fit in payload->blob, the error returned by
->> asn1_encode_sequence() is propagated instead.
->>
->> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
->> ---
->>   security/keys/trusted-keys/trusted_tpm2.c | 47 +++++++++++++++++++----
->>   1 file changed, 39 insertions(+), 8 deletions(-)
->>
->> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
->> index 67225dd562a9..efb016a6d4b8 100644
->> --- a/security/keys/trusted-keys/trusted_tpm2.c
->> +++ b/security/keys/trusted-keys/trusted_tpm2.c
->> @@ -24,24 +24,54 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
->>   			   u8 *src, u32 len)
->>   {
->>   	const int SCRATCH_SIZE = PAGE_SIZE;
->> -	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
->> -	u8 *work = scratch, *work1;
->> -	u8 *end_work = scratch + SCRATCH_SIZE;
->> +	u8 *scratch;
->> +	u8 *work, *work1;
->> +	u8 *end_work;
->>   	u8 *priv, *pub;
->> -	u16 priv_len, pub_len;
->> +	u32 priv_len, pub_len;
->>   	int ret;
->>   
->> -	priv_len = get_unaligned_be16(src) + 2;
->> +	/*
->> +	 * TPM2_Create Response Parameters:
->> +	 *
->> +	 * outPrivate
->> +	 * outPublic
->> +	 * creationData
->> +	 * creationHash
->> +	 * creationTicket
->> +	 *
->> +	 * Validate outPrivate and outPublic against the response parameter
->> +	 * length before accessing them.
->> +	 */
-> Please remove this comment. It is only an annoyance.
+Sure, we can keep tpm_qcom.c then and don't update tpm_ftpm_tee.c
+I hope I understand you correctly.
 
+Kindly check v2 posted after addressing comments for latest.
+https://lore.kernel.org/lkml/20260907-tpm_qcom_driver-v2-0-71a6b1752da8@oss.qualcomm.com/
 
-Sure, will get rid of it and post v2.
+-- 
+Regards
+Kuldeep
 
-Thanks,
-Srish.
-
-
->
->> +	if (len < sizeof(__be16))
->> +		return -EFAULT;
->> +
->> +	priv_len = get_unaligned_be16(src);
->> +	if (priv_len > len - sizeof(__be16))
->> +		return -EFAULT;
->> +
->> +	priv_len += sizeof(__be16);
->>   	priv = src;
->>   
->> +	if (len - priv_len < sizeof(__be16))
->> +		return -EFAULT;
->> +
->>   	src += priv_len;
->>   
->> -	pub_len = get_unaligned_be16(src) + 2;
->> +	pub_len = get_unaligned_be16(src);
->> +	if (pub_len > len - priv_len - sizeof(__be16))
->> +		return -EFAULT;
->> +
->> +	pub_len += sizeof(__be16);
->>   	pub = src;
->>   
->> +	scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
->>   	if (!scratch)
->>   		return -ENOMEM;
->>   
->> +	work = scratch;
->> +	end_work = scratch + SCRATCH_SIZE;
->> +
->>   	work = asn1_encode_oid(work, end_work, tpm2key_oid,
->>   			       asn1_oid_len(tpm2key_oid));
->>   
->> @@ -335,10 +365,11 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
->>   		goto out;
->>   
->>   	blob_len = tpm_buf_read_u32(buf, &offset);
->> -	if (blob_len > MAX_BLOB_SIZE || buf->flags & TPM_BUF_INVALID) {
->> -		rc = -E2BIG;
->> +	if (buf->flags & TPM_BUF_INVALID) {
->> +		rc = -EFAULT;
->>   		goto out;
->>   	}
->> +
->>   	if (buf->length - offset < blob_len) {
->>   		rc = -EFAULT;
->>   		goto out;
->> -- 
->> 2.53.0
->>
-> BR, Jarkko
