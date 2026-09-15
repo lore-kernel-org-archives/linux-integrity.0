@@ -1,88 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa2-f12.google.com (mail-oa2-f12.google.com [74.125.231.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B74432A3FF;
-	Tue, 15 Sep 2026 20:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683C5282F10
+	for <linux-integrity@vger.kernel.org>; Tue, 15 Sep 2026 21:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789503191; cv=none; b=kkc91RAlfJKEXIJWJYvYesCz2XT5J3KzIY3bsu4WLL6X/g+9BaFMHiW+RL70f+Yve28Cc+NOWDlwIkxM34gk+mbte7+iMVQwsEiULMFih5ScCJ4/iqDzDq27oBfRKmlsSXmR80TYhJ5cSpxgPb4NXPLy49wHmLq31qnGJA+qvI0=
+	t=1789506510; cv=none; b=Osyzem6eTgBRXo1hQR4LxquKknsHKYk1H3gxE8W8bPQl1Mr44fUrbxEC5CCmwNvgNfizdWOpYSQNYstfrSC1zFf8G68MHv6X1ixTC/9ySu+0QSmdj1o3jEaAyJ+/rftDf1Q94yHLCuZGnq+zJMR6cWFaNbh4M0FjZ8VpdsLzfDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789503191; c=relaxed/simple;
-	bh=uc/8NnONKrKUxjve2rABJEqCKHCs3y+XO7Ks/uWOquU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EIutUuoMgYfnmgBRAKsvZ8yaIE0QnRp1fknq5Wh9bez1/I2yv7HqXEsjuysK3TUONbNrzHesoL+pgWfjud6zoIsf4LLpqaw348I41McvE0rrmQL2dR0fTx6YxmPe5XwqD3hR5hH1kLoMVYs73UJBwvh7FCPutmJsio6bibIJWDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPyYroCp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789506510; c=relaxed/simple;
+	bh=OVt7rF2uYXd5FqrcxZJpOUDanDLfPylOQanuOssiHlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dt8qmNC8JLvTSq1t0lTYv13EVCh/1ZaEE5fND72DhgVo+pvqL0CK3wr11BvzQpudXdX/FRbEKUHuc3R7jXvxVoxKNpyK/YSJHf6Eet6cjp+JK6QkgeP2AMsDYmRNVI2Xf5IlvLfgJTjffhdfTTpqTYAHaDeKYqBCkBoUGl3W6N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=T+O0YTZv; arc=none smtp.client-ip=74.125.231.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPyYroCp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFA81F000FF;
-	Tue, 15 Sep 2026 20:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789503190;
-	bh=9yc8cUIMaqEfpF7NC+KldhtyOqvSD9yCa8UuuG1fRCw=;
-	h=From:To:Cc:Subject:Date;
-	b=jPyYroCpMliCSAo/PySJxofxeDmBn5LJUHQHDV6jBoKdV7v+Br0Uly1XKyuXHFfbL
-	 jgQe3iMn3nJm7GEOmeb1+KshbSvQcsWojvqfODJJMb2ZjneLwmBBk9YnO4dVJODe5/
-	 RqHKBV6BdJChEZwVXwirSCwO3maO7vu7ZBlYGSpcvjeIp9KdAGCV0DDL+rSyT1jVqL
-	 fW6D2gKux5xGc07es5tdKwAtoZil488CvhAtFu2bItRO//b0Ceof9jdwjZEpZPjE8a
-	 5f3yTm+JKlOXtmgpEoGT7lVPznJysEV7TJOV7Jhq4QW9YtumH7jtjjFjLn1OoP65vg
-	 Dp+IIT5ooCitA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Li Jun <lijun01@kylinos.cn>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: remove extraneous #ifdef
-Date: Tue, 15 Sep 2026 22:12:58 +0200
-Message-ID: <20260915201305.3529682-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="T+O0YTZv"
+Received: by mail-oa2-f12.google.com with SMTP id 586e51a60fabf-466cc9b2f02so65095fac.1
+        for <linux-integrity@vger.kernel.org>; Tue, 15 Sep 2026 14:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1789506508; x=1790111308; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=0ZAGGN3eayfShEQqBKliqu7mRVw6xYFjSDe0eN2CZjA=;
+        b=T+O0YTZv/scLmh99eR7Qpp2zdQv83w8txdifPfjRGkSBLYbD+P7eDNE6aOMuYDkLtL
+         ZOjzOWftGiF7Aiu4zdADCezcUGPKD3sxfD0BoFhPGqSB2y51h8PJL/xj0Ry77lisCZVH
+         XEHR2J1nt0dslheQPFK1q2A79VnxXvl/pGesnFpPlimkj3cPpcxHaVY/wrmT+8AifDBP
+         DQXb4TnZ9nLWnRxfgFjWPYCFBPd/uBvMUUaSD7/aTW8JkGtD8+mZz+4vjTB6E7TCy85i
+         ychwv7G2lLL4Af1ivG0zt4PlKKrheiMi66NY4TLSFeiF1OtlZ5nW9cJsaJYaTlvQ0U3v
+         LduA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789506508; x=1790111308;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=0ZAGGN3eayfShEQqBKliqu7mRVw6xYFjSDe0eN2CZjA=;
+        b=kFJjcnT9T20zKbWiVrua/KzS3AB4NUBUlekp+Q8y4AytvcNOzZBNSYp1wZwxIlUBEn
+         /oOjukTev5msZO0F4nnTPfVFJdr72rdmTh2+LOIiNKsMD1cpUPqdUEEI8tJopFzcV3NT
+         DLDE003tmwYpKYFaTBjSEV0q9XZQ/3eyJkM756Y44m7Jz6tz0IXhKGIfIbG6rJDhGjFi
+         gAriObgw9spjQMfNybIK/snQCKbkyB18il/GGxnf1TKftPbe5yq9eVjKsaO9rbbUgUbh
+         Wz4OQaEx3p9w/mD9S9KmYCD+8xlFGKoHYap0Ro/9wwasEt3JPtRrbO8dhtTeM43GiuWO
+         IOWg==
+X-Forwarded-Encrypted: i=1; AKwUvBzeFN52kSwCtPastuRlCSol1Qp2aMmPJBO5Gfu2hFnod0NLA1cjv4dPPmN+gkVwLZ9FgSRiwCHCHDaV8IVC8Zw=@vger.kernel.org
+X-Gm-Message-State: AFuF++nIFZzl9fnKQPj99gVCeAIPNiHggPp07ox0dOJ0U8M/MQRQ5hus
+	iLnb/0jLgv0KR9sZ5uDKl7HC+v5zF2svRP5vA50gSRXq0y/UocV30c0+YC67+KbJBF8=
+X-Gm-Gg: AYBFou088zE3cpnZjyXYp+9YawXWxPcpeRnG/qWWxRQo0juT4fZQr3mk4gl/+jApXhC
+	+4JT8vAghPrYdIGJ/hTXOxvVKJwR6t5QJIA8Y+ybWS4LGTXiH3G6v2wGGq9vfx6z70W8k2/+voL
+	mhlu154rHYbBKSWd8prCDmh5C1CdxMNxonjtVKyNNJ3kRMCfPFkOvQ/gKwuYVBjQHXgoVoLvpks
+	hfMrZKjJ9+epoHXQWgMCxcXig7wFSKNw/B1kYxa0JGzDUAtwa5VScnpwN7ML7sFYeKjyV/I1oVK
+	NNNYUCciQ39ONFY45MybR3a4hJNlakQLWe3xwjPCQJFvSKaOsRbVQESn0imXgoM1mtFt+OrMpp4
+	huqbduH8jppwclvttky/GCkCPmftA5YiAuy9tSxc6E0Qr3rSRZRKH/xnUYK5TKmTVsQcLGL9iJi
+	DSRfphmHuhcV+pJKXKTr7ZrdYhrBwgYo79L7yalcGR1dEtsdv0kj+z
+X-Received: by 2002:a05:6870:e0c7:b0:470:e96b:43e3 with SMTP id 586e51a60fabf-482e56fb3d1mr3685772fac.15.1789506508396;
+        Tue, 15 Sep 2026 14:08:28 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac6:947f:1800::264:ac])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-48429a91b9asm997942fac.6.2026.09.15.14.08.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Sep 2026 14:08:27 -0700 (PDT)
+Date: Tue, 15 Sep 2026 16:08:23 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH v2 1/3] integrity: Replace all uses of
+ integrity_audit_msg() with integrity_audit_message()
+Message-ID: <ykq6awewbz2f4ckgwrwnubcprlta2trm24by6bw3z2q6u6mr43@gn6ajl46tc6r>
+References: <20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com>
+ <20260727-report-hash-error-v2-1-30e394f524fc@cloudflare.com>
+ <1214eed319ccb441ba0cd26ce168a0383a3e41c6.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1214eed319ccb441ba0cd26ce168a0383a3e41c6.camel@linux.ibm.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Mimi,
 
-Changing to DEFINE_SIMPLE_DEV_PM_OPS() broke here because the
-tpm_inf_resume() function is hidden in an #ifdef:
+On Tue, Sep 15, 2026 at 04:00:34PM -0400, Mimi Zohar wrote:
+> On Mon, 2026-07-27 at 17:21 -0500, Frederick Lawler wrote:
+> > integrity_audit_msg() wraps integrity_audit_message() such that
+> > error codes are hidden by passing an additional parameter to
+> > integrity_audit_message(). Since this is a wrapper, we can replace
+> > this function with integrity_audit_message() introduced in commit
+> > 2f845882ecd2 ("integrity: Add errno field in audit message")
+> > 
+> > No functional change intended.
+> 
+> There's an unintentional change in ima_write_policy(), which replaces the
+> existing '1' with result.
 
-drivers/char/tpm/tpm_infineon.c:615:61: error: 'tpm_inf_resume' undeclared here (not in a function); did you mean 'tpm_pm_resume'?
-  615 | static DEFINE_SIMPLE_DEV_PM_OPS(tpm_inf_pm, tpm_pm_suspend, tpm_inf_resume);
-      |                                                             ^~~~~~~~~~~~~~
+Oof. Good catch. That was intended for the later patch.
 
-Remove the #ifdef check.
+> 
+> > 
+> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> 
+> Is renaming integrity_audit_msg() to integrity_audit_message() actually the
+> right approach here?  integrity_audit_message() currently has only 2 callers vs.
+> ~20+ for integrity_audit_msg(), and the rename forces re-wrapping of every
+> multi-line call site since integrity_audit_message is 4 chars longer, bloating
+> the first patch.
+> 
+> Why not simply add errno to the integrity_audit_msg() definition and callers.  
+> 
 
-Fixes: 2249200ee420 ("tpm: use DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/char/tpm/tpm_infineon.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I can switch that around. I assumed we'd want to keep _message() since
+that was wrapped by _msg(). And not dealing with the line-wrapping is
+better.
 
-diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
-index 84a0d3e5f679..d6edd2ca39a5 100644
---- a/drivers/char/tpm/tpm_infineon.c
-+++ b/drivers/char/tpm/tpm_infineon.c
-@@ -594,7 +594,6 @@ static void tpm_inf_pnp_remove(struct pnp_dev *dev)
- 	}
- }
- 
--#ifdef CONFIG_PM_SLEEP
- static int tpm_inf_resume(struct device *dev)
- {
- 	/* Re-configure TPM after suspending */
-@@ -611,7 +610,7 @@ static int tpm_inf_resume(struct device *dev)
- 	tpm_data_out(RESET_LP_IRQC_DISABLE, CMD);
- 	return tpm_pm_resume(dev);
- }
--#endif
-+
- static DEFINE_SIMPLE_DEV_PM_OPS(tpm_inf_pm, tpm_pm_suspend, tpm_inf_resume);
- 
- static struct pnp_driver tpm_inf_pnp_driver = {
--- 
-2.53.0
-
+Best,
+Fred
