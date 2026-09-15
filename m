@@ -1,342 +1,176 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713CF36403D
-	for <linux-integrity@vger.kernel.org>; Tue, 15 Sep 2026 01:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D4839021A;
+	Tue, 15 Sep 2026 20:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789436589; cv=none; b=AfSuQl5ufgjFfmTIodMP+7+z2sDQ0XCcebcFt7ysGQ4tpmPJyaE+krl4pfMbg72+Dj8TTzj/BXaRVoscDWzu/6QlPJ657yXK/XvznQHt1rcAr8V8+mC8noH8KuNLNYMmeSzajUB6NZzrXxC/RF0ezh/BTo0wPVYERSVJRu2deO4=
+	t=1789502458; cv=none; b=KgJO/owHMtMrFwZakRpR+w3KziegfAUI7se0Mpnzl2q/9J7HLhQ1v+C8EcTkFM3CIML7Nfc1PVQk473s40wZINQyQR/AT9oErTiu59L5F9Jp4AONhKZLDDf4PhNZwllVMsIhHTRXIeS4Z2mXsr7EDLLT49gLxOl5QttRSY1kF2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789436589; c=relaxed/simple;
-	bh=8zsBJM++x0o20Y/1nxmUGoj72UkoJuMyBcqhJqJ1zhY=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=uoh7NSl+FCjsb/mQrF5vWGTbsSMfQRy+ITQ8pqt0qTQjZYnw2GgAq5gavpCZAob0Xk4kmGmpP0Ul1n+UeetGjNidaX5OpDWw1cFbNbpVgSpr3DSqpd7yw8h3cfF79PFiTFofnpacAm5Th2Mp+/Y+UAVFbwXhhxljX8uTCSvzn8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c7914378b0a611f19a56ed5b684f684d-20260915
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.19,REQID:685f4f89-831d-4475-ad5a-e6b7c0a1b961,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-META: VersionHash:7db8b62,CLOUDID:4a9773c738b425ce11a2e1cd0b89a4b3,BulkI
-	D:nil,BulkQuantity:0,SF:102|850|865|898,TC:nil,Content:0|15|50|99,EDM:5,IP
-	:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
-	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: c7914378b0a611f19a56ed5b684f684d-20260915
-X-User: lijun01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <lijun01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1678421835; Tue, 15 Sep 2026 09:42:58 +0800
-From: Li Jun <lijun01@kylinos.cn>
-To: lijun01@kylinos.cn,
-	peterhuewe@gmx.de,
-	jarkko@kernel.org,
-	jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH v3] tpm: use DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr()
-Date: Tue, 15 Sep 2026 09:42:44 +0800
-Message-Id: <20260915014244.3745961-1-lijun01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1789502458; c=relaxed/simple;
+	bh=CBFhwNPSpRf+qcat7jprHG0IL9YA86IPQndhHX3D9m0=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=aU64xSQrBY84MgNqavlsCf5eEtuqYxKHfVo8aUSW9Vt8rt+iM7oEKUa/r2ZNEGjQK/0rlnCv6FhaUm3nVWkI2S8vJ/iXPeyWoMOvJBvnYvWj0Y3VTUIhcWidQkMSzmc7XjVxAd5I/38uCWTVUiaGfm528Mp3HN8fg8H19Cwy3DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Zrcv5+64; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Zrcv5+64"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68FJ1SHY3959740;
+	Tue, 15 Sep 2026 20:00:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=O2tXJ6
+	oO/ItHf3IBZtqDlhyITKFIyuuNpiQx9tZXvxE=; b=Zrcv5+64ms4O+rbWV702Md
+	LHzA9juUOTyDZafA8QqlmAUtvTApeynhXgAizydfz0cSJUZ66i8mzJKT3xRpE0o0
+	IXsAU+2G+yV4cadekAb3EX0OpvQ+qkqnNEXxDrExaNOJgeoOgkNQCGycjthoTNCz
+	MMjTC20+vyu1J10L+KlcURfYzVDPJIgE7KIGiaXDLQYorOTLFFZ9wIgtF/HqEog3
+	Y72dIhJSBGMkj3H1xUWuh3a8a9ZJCTBd6Wb8Gu6aWezz9OLpe0cBVe0WTDtME2GW
+	hgjOADnif2xwL+blzvjniG+oXFc7jZdF+u0uTXAOEa7fvHjqGwH/ogQQAXcJodYw
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gmxdq959q-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 15 Sep 2026 20:00:37 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 68FJ54TP296490;
+	Tue, 15 Sep 2026 20:00:36 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4gpyweu5uv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Sep 2026 20:00:36 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68FK0a7c918408
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Sep 2026 20:00:36 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 18C5C5805B;
+	Tue, 15 Sep 2026 20:00:36 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2B60D5805C;
+	Tue, 15 Sep 2026 20:00:35 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.104.242])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 15 Sep 2026 20:00:35 +0000 (GMT)
+Message-ID: <1214eed319ccb441ba0cd26ce168a0383a3e41c6.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 1/3] integrity: Replace all uses of
+ integrity_audit_msg() with integrity_audit_message()
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+In-Reply-To: <20260727-report-hash-error-v2-1-30e394f524fc@cloudflare.com>
+References: <20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com>
+	 <20260727-report-hash-error-v2-1-30e394f524fc@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 15 Sep 2026 16:00:34 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE1MDI4NSBTYWx0ZWRfX4alFxgDsxSDC
+ E/2jPynO4YialOgLQYGZ9qWMvQs4X7tKsskV0kBaWIw798kHq2qJFxDl5rK9VqpGM7iaxajgyeC
+ 2JAubEMzG60VXKbDwG4cIiCsVhDj7SkEp57JNIBs2zru3NeXPxFRLt3m/y6oiYIx313QXULamMX
+ Tc4g07WGz8SSfWgq8J93ieqDW/yWP5Hf0Y5siog+1X3eyWrM4sNWg0vRM2NY19VPSC9k3SAMUUX
+ 4+sKfhmdYix4PNvSAY6P1KLlnHH5FCuP8aMPEtNwje3QTKKX046in0wp+3C25rifah+GwHgtupY
+ AA5CKJTws9Yv0PWlDjeRXWDtLd7yW20sEXVCHgwNqhJT3onmK1rHLXDJcBfbCrlRyOXCZbBGw1Q
+ K6/mTVq1jPgVP4D2LOWuXmhJ/jBYPu7ckZcpJEC+OqBJbr51f0v7v1fYe3cDVgyPadTNCGlAAnj
+ 9k53/cQiJBQ4LJzqGPQ==
+X-Proofpoint-GUID: RM_DM6FOZ-obX25xALZGZADgLQpZGd93
+X-Authority-Analysis: v=2.4 cv=DobDa2/+ c=1 sm=1 tr=0 ts=6aa9a3e6 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=EG7W4yiQAAAA:8
+ a=JMpQnried2O94CoTtOIA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: WT5iFc5wGFolQimlXxvyPlPUqGIIvL3x
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE1MDI4NSBTYWx0ZWRfXwb3gYfKt7o95
+ R6sleM8Y+OeAyhSWQsndhG8v8VhBiGSWspQWHzPiUPNc+mkrt0S0OPIJn/NEhMjL1GkKzHfsX9G
+ 20LUzYtCG+sTXyyFqYgmYPR25L5mYVI=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-15_05,2026-09-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ spamscore=0 clxscore=1015 adultscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609150285
 
-Replace the deprecated SIMPLE_DEV_PM_OPS with DEFINE_SIMPLE_DEV_PM_OPS
-and wrap the struct assignment with pm_sleep_ptr(). The old code keeps
-a completely empty dev_pm_ops structure -- all callbacks are NULL --
-as dead code in the object file when CONFIG_PM_SLEEP=n, because
-SET_SYSTEM_SLEEP_PM_OPS() expands to nothing while __maybe_unused on
-the struct only silences the warning without removing the struct.
-Switching to DEFINE_SIMPLE_DEV_PM_OPS() lets pm_sleep_ptr() eliminate
-the callback references at compile time, and wrapping the struct
-assignment with pm_sleep_ptr() drops the entire structure when
-CONFIG_PM_SLEEP is disabled, instead of retaining an empty one.
+On Mon, 2026-07-27 at 17:21 -0500, Frederick Lawler wrote:
+> integrity_audit_msg() wraps integrity_audit_message() such that
+> error codes are hidden by passing an additional parameter to
+> integrity_audit_message(). Since this is a wrapper, we can replace
+> this function with integrity_audit_message() introduced in commit
+> 2f845882ecd2 ("integrity: Add errno field in audit message")
+>=20
+> No functional change intended.
 
-Signed-off-by: Li Jun <lijun01@kylinos.cn>
----
-Changes:
--Fix compile error, remove the PM_CONFIG used for tpm_tis_resume and tpm_inf_resume.
----
- drivers/char/tpm/tpm_atmel.c         | 4 ++--
- drivers/char/tpm/tpm_i2c_atmel.c     | 4 ++--
- drivers/char/tpm/tpm_i2c_infineon.c  | 4 ++--
- drivers/char/tpm/tpm_i2c_nuvoton.c   | 4 ++--
- drivers/char/tpm/tpm_infineon.c      | 6 ++----
- drivers/char/tpm/tpm_nsc.c           | 4 ++--
- drivers/char/tpm/tpm_tis.c           | 4 ++--
- drivers/char/tpm/tpm_tis_core.h      | 2 --
- drivers/char/tpm/tpm_tis_i2c.c       | 4 ++--
- drivers/char/tpm/tpm_tis_i2c_cr50.c  | 4 ++--
- drivers/char/tpm/tpm_tis_spi_main.c  | 4 ++--
- drivers/char/tpm/tpm_tis_synquacer.c | 4 ++--
- 12 files changed, 22 insertions(+), 26 deletions(-)
+There's an unintentional change in ima_write_policy(), which replaces the
+existing '1' with result.
 
-diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tpm_atmel.c
-index f25faf468bba..2c3f6bdd7873 100644
---- a/drivers/char/tpm/tpm_atmel.c
-+++ b/drivers/char/tpm/tpm_atmel.c
-@@ -205,12 +205,12 @@ static void atml_plat_remove(void)
- 	platform_device_unregister(pdev);
- }
- 
--static SIMPLE_DEV_PM_OPS(tpm_atml_pm, tpm_pm_suspend, tpm_pm_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(tpm_atml_pm, tpm_pm_suspend, tpm_pm_resume);
- 
- static struct platform_driver atml_drv = {
- 	.driver = {
- 		.name = "tpm_atmel",
--		.pm		= &tpm_atml_pm,
-+		.pm		= pm_sleep_ptr(&tpm_atml_pm),
- 	},
- };
- 
-diff --git a/drivers/char/tpm/tpm_i2c_atmel.c b/drivers/char/tpm/tpm_i2c_atmel.c
-index 9fd73049821f..dcb91d0497d0 100644
---- a/drivers/char/tpm/tpm_i2c_atmel.c
-+++ b/drivers/char/tpm/tpm_i2c_atmel.c
-@@ -212,7 +212,7 @@ static const struct of_device_id i2c_atmel_of_match[] = {
- MODULE_DEVICE_TABLE(of, i2c_atmel_of_match);
- #endif
- 
--static SIMPLE_DEV_PM_OPS(i2c_atmel_pm_ops, tpm_pm_suspend, tpm_pm_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(i2c_atmel_pm_ops, tpm_pm_suspend, tpm_pm_resume);
- 
- static struct i2c_driver i2c_atmel_driver = {
- 	.id_table = i2c_atmel_id,
-@@ -220,7 +220,7 @@ static struct i2c_driver i2c_atmel_driver = {
- 	.remove = i2c_atmel_remove,
- 	.driver = {
- 		.name = I2C_DRIVER_NAME,
--		.pm = &i2c_atmel_pm_ops,
-+		.pm = pm_sleep_ptr(&i2c_atmel_pm_ops),
- 		.of_match_table = of_match_ptr(i2c_atmel_of_match),
- 	},
- };
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-index 8b7d32de0b2e..fffa235068df 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -682,7 +682,7 @@ static const struct of_device_id tpm_tis_i2c_of_match[] = {
- MODULE_DEVICE_TABLE(of, tpm_tis_i2c_of_match);
- #endif
- 
--static SIMPLE_DEV_PM_OPS(tpm_tis_i2c_ops, tpm_pm_suspend, tpm_pm_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(tpm_tis_i2c_ops, tpm_pm_suspend, tpm_pm_resume);
- 
- static int tpm_tis_i2c_probe(struct i2c_client *client)
- {
-@@ -723,7 +723,7 @@ static struct i2c_driver tpm_tis_i2c_driver = {
- 	.remove = tpm_tis_i2c_remove,
- 	.driver = {
- 		   .name = "tpm_i2c_infineon",
--		   .pm = &tpm_tis_i2c_ops,
-+		   .pm = pm_sleep_ptr(&tpm_tis_i2c_ops),
- 		   .of_match_table = of_match_ptr(tpm_tis_i2c_of_match),
- 		   },
- };
-diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-index c84afb29d548..387661380913 100644
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -640,7 +640,7 @@ static const struct of_device_id i2c_nuvoton_of_match[] = {
- MODULE_DEVICE_TABLE(of, i2c_nuvoton_of_match);
- #endif
- 
--static SIMPLE_DEV_PM_OPS(i2c_nuvoton_pm_ops, tpm_pm_suspend, tpm_pm_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(i2c_nuvoton_pm_ops, tpm_pm_suspend, tpm_pm_resume);
- 
- static struct i2c_driver i2c_nuvoton_driver = {
- 	.id_table = i2c_nuvoton_id,
-@@ -648,7 +648,7 @@ static struct i2c_driver i2c_nuvoton_driver = {
- 	.remove = i2c_nuvoton_remove,
- 	.driver = {
- 		.name = "tpm_i2c_nuvoton",
--		.pm = &i2c_nuvoton_pm_ops,
-+		.pm = pm_sleep_ptr(&i2c_nuvoton_pm_ops),
- 		.of_match_table = of_match_ptr(i2c_nuvoton_of_match),
- 	},
- };
-diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
-index 7638b65b851b..e29869c8f234 100644
---- a/drivers/char/tpm/tpm_infineon.c
-+++ b/drivers/char/tpm/tpm_infineon.c
-@@ -594,7 +594,6 @@ static void tpm_inf_pnp_remove(struct pnp_dev *dev)
- 	}
- }
- 
--#ifdef CONFIG_PM_SLEEP
- static int tpm_inf_resume(struct device *dev)
- {
- 	/* Re-configure TPM after suspending */
-@@ -611,8 +610,7 @@ static int tpm_inf_resume(struct device *dev)
- 	tpm_data_out(RESET_LP_IRQC_DISABLE, CMD);
- 	return tpm_pm_resume(dev);
- }
--#endif
--static SIMPLE_DEV_PM_OPS(tpm_inf_pm, tpm_pm_suspend, tpm_inf_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(tpm_inf_pm, tpm_pm_suspend, tpm_inf_resume);
- 
- static struct pnp_driver tpm_inf_pnp_driver = {
- 	.name = "tpm_inf_pnp",
-@@ -620,7 +618,7 @@ static struct pnp_driver tpm_inf_pnp_driver = {
- 	.probe = tpm_inf_pnp_probe,
- 	.remove = tpm_inf_pnp_remove,
- 	.driver = {
--		.pm = &tpm_inf_pm,
-+		.pm = pm_sleep_ptr(&tpm_inf_pm),
- 	}
- };
- 
-diff --git a/drivers/char/tpm/tpm_nsc.c b/drivers/char/tpm/tpm_nsc.c
-index 879ac88f5783..764038ba82a9 100644
---- a/drivers/char/tpm/tpm_nsc.c
-+++ b/drivers/char/tpm/tpm_nsc.c
-@@ -265,12 +265,12 @@ static void tpm_nsc_remove(struct device *dev)
- 	release_region(priv->base, 2);
- }
- 
--static SIMPLE_DEV_PM_OPS(tpm_nsc_pm, tpm_pm_suspend, tpm_pm_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(tpm_nsc_pm, tpm_pm_suspend, tpm_pm_resume);
- 
- static struct platform_driver nsc_drv = {
- 	.driver          = {
- 		.name    = "tpm_nsc",
--		.pm      = &tpm_nsc_pm,
-+		.pm      = pm_sleep_ptr(&tpm_nsc_pm),
- 	},
- };
- 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index 9aa230a63616..737d0fe4bb61 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -246,7 +246,7 @@ static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
- 				 ACPI_HANDLE(dev));
- }
- 
--static SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
- 
- static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
- 			    const struct pnp_device_id *pnp_id)
-@@ -302,7 +302,7 @@ static struct pnp_driver tis_pnp_driver = {
- 	.probe = tpm_tis_pnp_init,
- 	.remove = tpm_tis_pnp_remove,
- 	.driver	= {
--		.pm = &tpm_tis_pm,
-+		.pm = pm_sleep_ptr(&tpm_tis_pm),
- 	},
- };
- 
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index d737b3d67411..741130056876 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -161,8 +161,6 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		      const struct tpm_tis_phy_ops *phy_ops,
- 		      acpi_handle acpi_dev_handle);
- 
--#ifdef CONFIG_PM_SLEEP
- int tpm_tis_resume(struct device *dev);
--#endif
- 
- #endif
-diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
-index 6cd07dd34507..d55f30fef00a 100644
---- a/drivers/char/tpm/tpm_tis_i2c.c
-+++ b/drivers/char/tpm/tpm_tis_i2c.c
-@@ -319,7 +319,7 @@ static int tpm_tis_i2c_init_guard_time(struct tpm_tis_i2c_phy *phy)
- 	return 0;
- }
- 
--static SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
- 
- static const struct tpm_tis_phy_ops tpm_i2c_phy_ops = {
- 	.read_bytes = tpm_tis_i2c_read_bytes,
-@@ -393,7 +393,7 @@ MODULE_DEVICE_TABLE(of, of_tis_i2c_match);
- static struct i2c_driver tpm_tis_i2c_driver = {
- 	.driver = {
- 		.name = "tpm_tis_i2c",
--		.pm = &tpm_tis_pm,
-+		.pm = pm_sleep_ptr(&tpm_tis_pm),
- 		.of_match_table = of_match_ptr(of_tis_i2c_match),
- 	},
- 	.probe = tpm_tis_i2c_probe,
-diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-index 7f828fae70d3..6c0ea5ca2b92 100644
---- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-+++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-@@ -816,14 +816,14 @@ static void tpm_cr50_i2c_remove(struct i2c_client *client)
- 	tpm_chip_unregister(chip);
- }
- 
--static SIMPLE_DEV_PM_OPS(cr50_i2c_pm, tpm_pm_suspend, tpm_pm_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(cr50_i2c_pm, tpm_pm_suspend, tpm_pm_resume);
- 
- static struct i2c_driver cr50_i2c_driver = {
- 	.probe = tpm_cr50_i2c_probe,
- 	.remove = tpm_cr50_i2c_remove,
- 	.driver = {
- 		.name = "cr50_i2c",
--		.pm = &cr50_i2c_pm,
-+		.pm = pm_sleep_ptr(&cr50_i2c_pm),
- 		.acpi_match_table = ACPI_PTR(cr50_i2c_acpi_id),
- 		.of_match_table = of_match_ptr(of_cr50_i2c_match),
- 	},
-diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-index 61b42c83ced8..727f1c78d6dd 100644
---- a/drivers/char/tpm/tpm_tis_spi_main.c
-+++ b/drivers/char/tpm/tpm_tis_spi_main.c
-@@ -307,7 +307,7 @@ static int tpm_tis_spi_driver_probe(struct spi_device *spi)
- 	return probe_func(spi);
- }
- 
--static SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_spi_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_spi_resume);
- 
- static void tpm_tis_spi_remove(struct spi_device *dev)
- {
-@@ -347,7 +347,7 @@ MODULE_DEVICE_TABLE(acpi, acpi_tis_spi_match);
- static struct spi_driver tpm_tis_spi_driver = {
- 	.driver = {
- 		.name = "tpm_tis_spi",
--		.pm = &tpm_tis_pm,
-+		.pm = pm_sleep_ptr(&tpm_tis_pm),
- 		.of_match_table = of_match_ptr(of_tis_spi_match),
- 		.acpi_match_table = ACPI_PTR(acpi_tis_spi_match),
- 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-diff --git a/drivers/char/tpm/tpm_tis_synquacer.c b/drivers/char/tpm/tpm_tis_synquacer.c
-index 4927714d277a..eac39730a856 100644
---- a/drivers/char/tpm/tpm_tis_synquacer.c
-+++ b/drivers/char/tpm/tpm_tis_synquacer.c
-@@ -107,7 +107,7 @@ static int tpm_tis_synquacer_init(struct device *dev,
- 				 ACPI_HANDLE(dev));
- }
- 
--static SIMPLE_DEV_PM_OPS(tpm_tis_synquacer_pm, tpm_pm_suspend, tpm_tis_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(tpm_tis_synquacer_pm, tpm_pm_suspend, tpm_tis_resume);
- 
- static int tpm_tis_synquacer_probe(struct platform_device *pdev)
- {
-@@ -155,7 +155,7 @@ static struct platform_driver tis_synquacer_drv = {
- 	.remove = tpm_tis_synquacer_remove,
- 	.driver = {
- 		.name		= "tpm_tis_synquacer",
--		.pm		= &tpm_tis_synquacer_pm,
-+		.pm		= pm_sleep_ptr(&tpm_tis_synquacer_pm),
- 		.of_match_table = of_match_ptr(tis_synquacer_of_platform_match),
- 		.acpi_match_table = ACPI_PTR(tpm_synquacer_acpi_tbl),
- 	},
--- 
-2.25.1
+>=20
+> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
 
+Is renaming integrity_audit_msg() to integrity_audit_message() actually the
+right approach here?  integrity_audit_message() currently has only 2 caller=
+s vs.
+~20+ for integrity_audit_msg(), and the rename forces re-wrapping of every
+multi-line call site since integrity_audit_message is 4 chars longer, bloat=
+ing
+the first patch.
+
+Why not simply add errno to the integrity_audit_msg() definition and caller=
+s. =20
+
+Patch 1 =E2=80=94 Add errno param to integrity_audit_msg(); update its ~20+=
+ existing
+call sites with real error values. Purely semantic, needs careful per-site
+review.
+
+Patch 2 =E2=80=94 Convert integrity_audit_message()'s 2 callers to integrit=
+y_audit_msg()
+(now identical signature, trivial rename), then delete integrity_audit_mess=
+age()
+as dead code. Purely mechanical, trivially reviewable, no functional risk.
+
+thanks,
+
+Mimi
+
+> ---
+>=20
+> =20
+> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima=
+_fs.c
+> index 2a0bca5543161912abe2a0236c9fcae7055e62bc..a0c1a6dd6a750220b529cc3f7=
+7c2ae5673188e11 100644
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@ -593,9 +593,10 @@ static ssize_t ima_write_policy(struct file *file, c=
+onst char __user *buf,
+>  		result =3D ima_read_policy(data);
+>  	} else if (ima_appraise & IMA_APPRAISE_POLICY) {
+>  		pr_err("signed policy file (specified as an absolute pathname) require=
+d\n");
+> -		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+> -				    "policy_update", "signed policy required",
+> -				    1, 0);
+> +		integrity_audit_message(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+> +					"policy_update",
+> +					"signed policy required",
+> +					result, 0, 0);
+>  		result =3D -EACCES;
+>  	} else {
+>  		ima_measure_raw_policy(data, datalen);
