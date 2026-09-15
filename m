@@ -1,45 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA6D446075;
-	Tue, 15 Sep 2026 20:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B74432A3FF;
+	Tue, 15 Sep 2026 20:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789503165; cv=none; b=EwlGm7d7NUO9Gq0RpOFk+dINoqzGijstqjagxHrrBcrdRNApOuncHUVIp5bEQy+pUS/sepoc9pX2eSpsMX/w0M4NJLE+ZTZ6Bwx2JYlsBQnrn3O6k1hSq+YNuSA0I6eg1oRm+DMGTJlK8Ocmwj4at4p8GUM+nSZlEYNk0/h8Q5g=
+	t=1789503191; cv=none; b=kkc91RAlfJKEXIJWJYvYesCz2XT5J3KzIY3bsu4WLL6X/g+9BaFMHiW+RL70f+Yve28Cc+NOWDlwIkxM34gk+mbte7+iMVQwsEiULMFih5ScCJ4/iqDzDq27oBfRKmlsSXmR80TYhJ5cSpxgPb4NXPLy49wHmLq31qnGJA+qvI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789503165; c=relaxed/simple;
-	bh=n8kA8z5IAQ2DNDYl9JoppnmxWiw0Te9FFMhhhGZ7x2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MA8H9OG41bYXA/i5NoYd6e68yxAQh5dLCeEe/sCZ2fEzvxnLoU6YN6o4rtI40yLey3yyIXwI/aMz0D+qzzNafACj01sVOqpHhkEPy6Ip46R2Dq8Abyqq4dnuvU+/CHRnUqd3kzEC4bieGZtzWaSs8wwN0KbdNNkntW5W67bVoR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQST8Svb; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789503191; c=relaxed/simple;
+	bh=uc/8NnONKrKUxjve2rABJEqCKHCs3y+XO7Ks/uWOquU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EIutUuoMgYfnmgBRAKsvZ8yaIE0QnRp1fknq5Wh9bez1/I2yv7HqXEsjuysK3TUONbNrzHesoL+pgWfjud6zoIsf4LLpqaw348I41McvE0rrmQL2dR0fTx6YxmPe5XwqD3hR5hH1kLoMVYs73UJBwvh7FCPutmJsio6bibIJWDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPyYroCp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQST8Svb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C301F000FF;
-	Tue, 15 Sep 2026 20:12:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPyYroCp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFA81F000FF;
+	Tue, 15 Sep 2026 20:13:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789503164;
-	bh=HwkSK33A6r89PxbOj+v6/6AqFQUJhWyvWEsw9Um63qY=;
+	s=k20260515; t=1789503190;
+	bh=9yc8cUIMaqEfpF7NC+KldhtyOqvSD9yCa8UuuG1fRCw=;
 	h=From:To:Cc:Subject:Date;
-	b=AQST8Svb3ixrEnBNli0Gy6y+7yjKEr8STeUVD8fpRGi5l19vEdaz81gGnQ/AwkzOa
-	 HWnl20iv/TPjPTckdH8/FxTyCOi8NyagTMYf2j6TWdG1z+PKhH9bATRHoashKJVlg5
-	 LgV5QOs4SN0iM3R4x/dhu7aWhKiubT7c7C12f+oMyAymm2vCMIC+QKzhVhXJ7rRzs2
-	 xYmQT8PbHzMxldiGori6zBJmceuUMI/gil3WK3TuVbD5qVE5LLdjTbBAwAzT4rjjtv
-	 ZR0rnK/rdddHE/nzeebHahOH3g/pfY54t0C65mFptwHX8McczO89n5Ur7Ixl2YSLsT
-	 edXUjtybCOJ0w==
+	b=jPyYroCpMliCSAo/PySJxofxeDmBn5LJUHQHDV6jBoKdV7v+Br0Uly1XKyuXHFfbL
+	 jgQe3iMn3nJm7GEOmeb1+KshbSvQcsWojvqfODJJMb2ZjneLwmBBk9YnO4dVJODe5/
+	 RqHKBV6BdJChEZwVXwirSCwO3maO7vu7ZBlYGSpcvjeIp9KdAGCV0DDL+rSyT1jVqL
+	 fW6D2gKux5xGc07es5tdKwAtoZil488CvhAtFu2bItRO//b0Ceof9jdwjZEpZPjE8a
+	 5f3yTm+JKlOXtmgpEoGT7lVPznJysEV7TJOV7Jhq4QW9YtumH7jtjjFjLn1OoP65vg
+	 Dp+IIT5ooCitA==
 From: Arnd Bergmann <arnd@kernel.org>
 To: Peter Huewe <peterhuewe@gmx.de>,
 	Jarkko Sakkinen <jarkko@kernel.org>,
 	Li Jun <lijun01@kylinos.cn>
 Cc: Arnd Bergmann <arnd@arndb.de>,
 	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jim Broadus <jbroadus@gmail.com>,
-	Alec Brown <alec.r.brown@oracle.com>,
-	"Daniel P. Smith" <dpsmith@apertussolutions.com>,
-	Ross Philipson <ross.philipson@gmail.com>,
 	linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: fix build regression for tpm_tis_resume
-Date: Tue, 15 Sep 2026 22:12:29 +0200
-Message-ID: <20260915201239.3529332-1-arnd@kernel.org>
+Subject: [PATCH] tpm: remove extraneous #ifdef
+Date: Tue, 15 Sep 2026 22:12:58 +0200
+Message-ID: <20260915201305.3529682-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
@@ -51,35 +47,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Using DEFINE_SIMPLE_DEV_PM_OPS means that there is no a code reference
-to the unused tpm_tis_resume, but that fails here since the declaration
-is hidden:
+Changing to DEFINE_SIMPLE_DEV_PM_OPS() broke here because the
+tpm_inf_resume() function is hidden in an #ifdef:
 
-drivers/char/tpm/tpm_tis_i2c.c:322:61: error: 'tpm_tis_resume' undeclared here (not in a function); did you mean 'tpm_tis_remove'?
-  322 | static DEFINE_SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
+drivers/char/tpm/tpm_infineon.c:615:61: error: 'tpm_inf_resume' undeclared here (not in a function); did you mean 'tpm_pm_resume'?
+  615 | static DEFINE_SIMPLE_DEV_PM_OPS(tpm_inf_pm, tpm_pm_suspend, tpm_inf_resume);
       |                                                             ^~~~~~~~~~~~~~
 
-Remove the incorrect #ifdef.
+Remove the #ifdef check.
 
 Fixes: 2249200ee420 ("tpm: use DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr()")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/char/tpm/tpm_tis_core.h | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/char/tpm/tpm_infineon.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index d737b3d67411..741130056876 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -161,8 +161,6 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		      const struct tpm_tis_phy_ops *phy_ops,
- 		      acpi_handle acpi_dev_handle);
+diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
+index 84a0d3e5f679..d6edd2ca39a5 100644
+--- a/drivers/char/tpm/tpm_infineon.c
++++ b/drivers/char/tpm/tpm_infineon.c
+@@ -594,7 +594,6 @@ static void tpm_inf_pnp_remove(struct pnp_dev *dev)
+ 	}
+ }
  
 -#ifdef CONFIG_PM_SLEEP
- int tpm_tis_resume(struct device *dev);
+ static int tpm_inf_resume(struct device *dev)
+ {
+ 	/* Re-configure TPM after suspending */
+@@ -611,7 +610,7 @@ static int tpm_inf_resume(struct device *dev)
+ 	tpm_data_out(RESET_LP_IRQC_DISABLE, CMD);
+ 	return tpm_pm_resume(dev);
+ }
 -#endif
++
+ static DEFINE_SIMPLE_DEV_PM_OPS(tpm_inf_pm, tpm_pm_suspend, tpm_inf_resume);
  
- #endif
+ static struct pnp_driver tpm_inf_pnp_driver = {
 -- 
 2.53.0
 
