@@ -1,73 +1,106 @@
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4741449EC4D;
-	Wed, 16 Sep 2026 09:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E114B512A
+	for <linux-integrity@vger.kernel.org>; Wed, 16 Sep 2026 09:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789550707; cv=none; b=jGogI83LhZ1/iUhdDsyTuSeYA7aZEeQ+LELYskt+7n5dImBnKJi/e39x3b3+oy7lJK7UTIQ2kEpf/EHOf42K2x/O30ZNBopDRO0UG++puLITlls2VhFu7xcQTtofHU/wisXyA3LKuNDwqFEjDan57sDUL0/VsXsuILtposi04PM=
+	t=1789552308; cv=none; b=tzn6rhd8MCks0t/2el6H26oMRiaO2esOv6Tg+DCbLK8p1QFlYgvXNXYMACsIC9u7Wd6RTJ00zesKqIKopOVJvETr4A9j5Rn7u+GwR5DoXhxdrtuHfe8D6S1vcI5SqZZj9O57OMo1DZg2dq3xBYw3plcc4L7BzeFgXftcs0VXyHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789550707; c=relaxed/simple;
-	bh=5IPLzuCK0J+FoZIp8Ta5ucldQLBz6H3kKcCMnvEVBvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BmtCFpGKpT99br3JXAPlb1ytF0J2O/sAbbDcMjpARs1QO2n+c7CXpaAfpWH+5gVL7xBawR6ADrS98UZKMGg+fpUumIUBillriT1+Y655njKQgllLJi5i5vRCpzeZF2im8oudnGo/DeiN2od4vfIesDNV/M5uD3RxAnmys+pPvkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=IsWu8xut; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
+	s=arc-20240116; t=1789552308; c=relaxed/simple;
+	bh=YA+a6CCA1zWdQPcieNEuLQ0mIwRn0Ck7WsDOY4ql94Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oUTWR0jRpiK4Lbn8OFkw2dAs5IoYOPublNTpmF65sN0veyDoWCist9AcDA+r6zR3nraC2GyNLy2+MEJhkCiUXW57fRIe9KSoA2+muAh8RfjezO7xr/Sc+OA/r/k+QOH+lux9DQq8xQqQPdKIo6t4M/KqVuMrh2ypkUjBtT3H2eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c3dSAG8U; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="IsWu8xut"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nU1QJvuM+qB0W/XO8IflWXVEzEt7/smcXVIvtO6Gs3g=; b=IsWu8xuth9IDZQXw3ZmqDX8TTD
-	r1Kv1NAUBeu/J8Ln7dZ1OUZjsggeoK+51TNiZxx3gIL4Kvr+i3oWEHUzZMa5qOPm6EdtnkLTphCHW
-	8lndlv5nzJdBBgakQ0+3Cwh/1/66xg/vjB82L2qMbW/SEK0BL1vw2TWAdvxqdc1iuNOZewkHkxqtT
-	S+VI1Kr0gIcnsFZatn6YF4rvpgU5ieajEpm8jRVlS+wYDfU2UT3CTV3+4apeuLFFyBtdyUep6Qqg/
-	Bc/yQ+kZwb8vRR+U59h5o1dyGXoVa3KPskbanXIgNLP3JZZ2zxmWv67o4BIEmjAE4JJxmYgtKBP3m
-	2Ho7jgtg==;
-Received: from authenticated-user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <leitao@debian.org>)
-	id 1x6lsU-0054HY-1S;
-	Wed, 16 Sep 2026 09:24:30 +0000
-Date: Wed, 16 Sep 2026 02:24:25 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Li Jun <lijun01@kylinos.cn>, Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Jim Broadus <jbroadus@gmail.com>, Alec Brown <alec.r.brown@oracle.com>, 
-	"Daniel P. Smith" <dpsmith@apertussolutions.com>, Ross Philipson <ross.philipson@gmail.com>, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: fix build regression for tpm_tis_resume
-Message-ID: <aqpgPg8D6a_uiGq3@gmail.com>
-References: <20260915201239.3529332-1-arnd@kernel.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c3dSAG8U"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1789552282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FeWcXK9/x+ZPPaC++IgCQ9jS/VWtgj79RgI0CVq94cU=;
+	b=c3dSAG8Ute6ykMsaIpwi3O3zbqmLEujrliUsPuBzntd9ROlz6+jl2dHS3r/Jmnu5GfX7Xw
+	LYIkD96ggNoaq1Z9xyLy6M3XOrVMbw4P+dqr4saIBsLNddTPdX1QZJvbGOkaxbifa9jBRE
+	hYnYmJno4Ko5JdMdudldP907ZpL/UJo=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-490-QFumBAnuPfmT3gOSUAZqmg-1; Wed,
+ 16 Sep 2026 05:51:16 -0400
+X-MC-Unique: QFumBAnuPfmT3gOSUAZqmg-1
+X-Mimecast-MFC-AGG-ID: QFumBAnuPfmT3gOSUAZqmg_1789552274
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 79A9F18011DC;
+	Wed, 16 Sep 2026 09:51:13 +0000 (UTC)
+Received: from thuth-p1g4.redhat.corp (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CD2991800446;
+	Wed, 16 Sep 2026 09:51:06 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: Eric Biggers <ebiggers@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v4 09/13] security: keys: trusted: always clear the hmac_sha1_ctx before returning
+Date: Wed, 16 Sep 2026 11:50:11 +0200
+Message-ID: <20260916095022.604354-10-thuth@redhat.com>
+In-Reply-To: <20260916095022.604354-1-thuth@redhat.com>
+References: <20260916095022.604354-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260915201239.3529332-1-arnd@kernel.org>
-X-Debian-User: leitao
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Sep 15, 2026 at 10:12:29PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Using DEFINE_SIMPLE_DEV_PM_OPS means that there is no a code reference
-> to the unused tpm_tis_resume, but that fails here since the declaration
-> is hidden:
-> 
-> drivers/char/tpm/tpm_tis_i2c.c:322:61: error: 'tpm_tis_resume' undeclared here (not in a function); did you mean 'tpm_tis_remove'?
->   322 | static DEFINE_SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
->       |                                                             ^~~~~~~~~~~~~~
-> 
-> Remove the incorrect #ifdef.
-> 
-> Fixes: 2249200ee420 ("tpm: use DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr()")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Clear the hmac_sha1_ctx structure via __cleanup(hmac_sha1_zeroize_ctx)
+to make sure that the function does not leak sensitive data on the stack
+when returning without calling hmac_sha1_final().
 
-Tested-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ security/keys/trusted-keys/trusted_tpm1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index bf0bf7f369705..e5a904b5c1946 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -101,7 +101,7 @@ static inline void dump_tpm_buf(unsigned char *buf)
+ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
+ 		       unsigned int keylen, ...)
+ {
+-	struct hmac_sha1_ctx hmac_ctx;
++	struct hmac_sha1_ctx hmac_ctx __cleanup(hmac_sha1_zeroize_ctx);
+ 	va_list argp;
+ 	unsigned int dlen;
+ 	unsigned char *data;
+-- 
+2.55.0
+
