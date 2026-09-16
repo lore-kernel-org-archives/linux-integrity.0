@@ -1,67 +1,65 @@
-Received: from mail-oo2-f10.google.com (mail-oo2-f10.google.com [74.125.231.138])
+Received: from mail-oi2-f10.google.com (mail-oi2-f10.google.com [74.125.231.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC86E494835
-	for <linux-integrity@vger.kernel.org>; Wed, 16 Sep 2026 21:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF832488229
+	for <linux-integrity@vger.kernel.org>; Wed, 16 Sep 2026 21:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789594618; cv=none; b=iVL8Iej7GGNh+fmnpCfkRwiPvR5tKwChQN1Wpt5bqBItmbrUde4xw2Vcr4R4lw15FDWGS4jngsxq0xrUje+ZPrvhNGNO7GeWvV51n+tn5j3d0u7geTuBlVzmAzQJfEDD3QRborKJforcamfITh3OGt8a4HtECEU23SBABZBhY3A=
+	t=1789594623; cv=none; b=evGZhOZS2S+YsaW0JYOOzEkO8QND6VL2+b1NdHOF5y0DdOpbIdn/uFwAOUiCyh4TZVtsTSrnRN4NLcda8RE9mN7ZB5V1T+jQmwKpq4aOo6VgMqZZQEvvH+fpm6s1fTgf3KUgRvLAS+Uju4iFjubb6WZ9hjYyeATeGIUaIuDoZcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789594618; c=relaxed/simple;
-	bh=RL6d5yJ4xvBQVtGW2C14rmIuGcHh9YfAg4SyplggSlY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XgKEcVvBh8BktS4lE0H75LrSBS2ld4Sm0zdZSVzqEbni3bot25niR9LNNKWEFGY2Jj3mj4zmdl/WThAZofWRiWY8khNmY+USOxbQ1+Tvj1m1P6hkaJ8SZzRs0gwXPCbwLiAV1R0xQDAGMceggnCjg90PHeIUo6ElRjVrmVX5Ezw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=d5kvQoHc; arc=none smtp.client-ip=74.125.231.138
+	s=arc-20240116; t=1789594623; c=relaxed/simple;
+	bh=IyuajYzPnmD3io9Y6axVM5mE4O2sgF3cAAOwkQSlc8s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uBiJtMHBeTTCEQ8V4A0ebkXB9swr9NUgGHG/PX88OLoAXiKEk4LY72oEZYE0wmYy6gBVDXqlCERUa4LVAoKt6F1n88Hiaz1K3joflEZS34XMmFWsMKuRlgzVxkC2cM3yS5hXtel5Eq0tvHVy/sLosSgY925pArKmvp9Xzh341RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=cpDtbHpE; arc=none smtp.client-ip=74.125.231.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="d5kvQoHc"
-Received: by mail-oo2-f10.google.com with SMTP id 006d021491bc7-6c7150a9098so52153eaf.0
-        for <linux-integrity@vger.kernel.org>; Wed, 16 Sep 2026 14:36:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="cpDtbHpE"
+Received: by mail-oi2-f10.google.com with SMTP id 5614622812f47-4b94bb43008so35209b6e.0
+        for <linux-integrity@vger.kernel.org>; Wed, 16 Sep 2026 14:36:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1789594610; x=1790199410; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=7Ib5zIg2tnxSHGaebhRb862QbIfTb5vHZO64N2/hUdQ=;
-        b=d5kvQoHc9y+uNmyuMPQ3B23qZVj/xl++y1w2nojuHcPLBMIwp93hnWvfZNfs7WhHlV
-         mVL25r9vaqqWld5kaxMTafhn7pmDLNYFyJNSWm5SrfjsIwqpZdlKmdL2kmH3OhMp3etG
-         K5xKfuVHVVTrMVRh3hqZsBYPTpMNIXMnEDcz01pEdUKwoCxJdc+Tu90EDXiCjZF+wRfj
-         gOxj2aCkUP9CRHnKxl+SAnmYNWYDhh2zSbUqqsYNPqf3chYvriOSgnv95F99pDNRSkLG
-         av3y7FNGf0XqkWH/ENXU5xAPpcq0DwVf/vi7chcHAsDkwsXEU81HFdn4FR0NWZHbK3W8
-         whfg==
+        d=cloudflare.com; s=google09082023; t=1789594606; x=1790199406; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=NLbXNfixPvdVNUANDYuEZ718E2/Tpe1XaOhwQtbxwPU=;
+        b=cpDtbHpEJwR7gpRgwVHreVgTdmJBBhBI+wBIZ6sGTepgmt38lQc+imlFToKILs8xMW
+         cyzXl3z7d5ZUgOngTV7fL07Opfw+J3bEl6LcHEiqE59ctzpKSXmibU/lf5dYyayy9Dym
+         HWMngn528aNQL6Z0dJO//8zyyhH0TtKKJEviVnQr0V00AxTs/HYM+pnfhGc9nIaROExP
+         76yxHUaH+G43VuFLJTy8+zvxVYDu/sPKRqweltvwfkW8DK5JsOqgqNPrEEosdd/6Omua
+         ZJApwaa2eIYC+c5i/+p7PlO6OwL01InJ2qu/N+1KW0/QTAYTFiednKlRGpAzJxZwzOVZ
+         Bu6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789594610; x=1790199410;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7Ib5zIg2tnxSHGaebhRb862QbIfTb5vHZO64N2/hUdQ=;
-        b=GqpsamY+6YjcadLyShRYLCdHgyQfJHk+71/Zr6MAAPaqktAPrB76flGzTc2qrLvBWx
-         nMPt9ox/W6Nf1qZ7i0z2MGUso0xGEXbfnU8yvSpy2YGQmVmTxvzUlRRNln0gnaGW6wCf
-         RHVCiE5Fi1UpsMnpps9OnAAEW8nEQG4bWgOe5OUTrDHZSZE6u0vZpAV7oqDj7AER4nQA
-         WqrHgGnl6BXwOIRn4rVXztXGmiNMic89QjFAV8AqEY5VLuBBrq3i21qVeRErIIUWMSv6
-         6OjO30jtYHK6qFToF1CgtRJldUn7h4vxVYdf3v4i0HwBC9cL9DDcSNPkn6zS+v8emlMo
-         x+3A==
-X-Gm-Message-State: AFuF++nKGuaS9Ugt6KAQJGepAFfu7zJmjQ0HClkY1UkpdkTTm1fj9Qa2
-	CwVCXYY9FxxtY8zBU5hTtNbXMs3ZmGusT/DZ/yhnf5nfLgFr++eE2Jgg6frrc7Mid8E=
-X-Gm-Gg: AYBFou1BVTvYDCm8HY173YzJShZ8/RpDeBde0p+Wq2erY6ht56IkWoVQXjt0ESNu9/9
-	gOES16ImnaRaloJYVlnTOMLBH7GkO8L2i79OrGQS8+BE1ZShRfBWpqRYIzEPrNneECJSePbxAIa
-	X00zjSNkLl+wSp5MKTXOCizH/SuA2KHEQX1V+tR3pKiTqN4J0vRPxlzGMZJ1DN/aLLf14xpDdid
-	XXS4Ume0t/WJMuWjEO8bd5j9GP6Tm3lYhhxRfZDLU7WNjgrAUjreYe2slASVCOpd+hDGCvwtglo
-	tbwc/OTV49ENQKgvjep4TWbCeDdRaN65/rvGUb2dZYGFk7vv9Taybd9y7sPoRlt9o2VW4LCxTUL
-	KsBR68Lw7LQynko7v9DxBXpetBEG86kOpxB0gks3YT+CS0e1Z971EceANQTFtzm1yaCso2JvLST
-	s9tp4I+LCSreKDzj+p6SuFBWiPa+MQzYn31t3HBwRLlBOlAJoNRenvHUuPOuVAQ6Ww+6q3
-X-Received: by 2002:a05:6820:4b85:b0:6c2:6f93:389f with SMTP id 006d021491bc7-6c7d3ee590amr4801414eaf.37.1789594610117;
-        Wed, 16 Sep 2026 14:36:50 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1789594606; x=1790199406;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=NLbXNfixPvdVNUANDYuEZ718E2/Tpe1XaOhwQtbxwPU=;
+        b=qLkJFXIOURS32pTHM8h4e8MW1N6IdDd8G6CMGtH6Ts2ECtYqHQtpeg/yr0bbp2HXo2
+         fxh8LoT/EKpN6a3MfKKbJ0YJ6aLcEcIFty5TCK+Sjt88IfDJvhiEc9PaRHwDtcVGxXp/
+         m1HX30pVjVY6j4R8abW4F3BUMT/7gbueiaJ37XhF1ohKIu89Z4qIYfnUdkyr8adycBYG
+         JsHkIJ6DvDNh6/GwlGncSZfVia+q/OluqjH4y0u7wIHpiH41rWjB32f6XS8Wp911hL2H
+         31gfA4nyr17eyoKLGiKKQ9h0fcR8y7T31XBhGHFbLwD9nECzMydgfH+HjLWFkfnZha6K
+         LZuA==
+X-Gm-Message-State: AFuF++kst+Wt1+DfnoHycg5AxIH4jAtuJtd+KWFWt2mwTaKNt14/whVT
+	gkM7NaQb2IwM4VM/ChQfneY9qeGtXS3mHnKdSefFxArOPACND4ltoJldZzx3P1QdHqE=
+X-Gm-Gg: AYBFou30gLI+eiVo616vO6AxW2W1qDVWqoRQ6gnmzfw+O18GHV8B+zwDkG1P3GUCGJ2
+	7kCAszKw7MRut2T3MoCreA22w9mhP0Nf/Cv/mZMSkqt8G0d755whTOLybEJs8/7MX6aYZgduq2n
+	ITizjNyMiwVKLNY+/+h5BZjzdMA3e4mnG4iGBeqgxsD05CCh6gaZOwGz2dUNJkKuPBEcaAElYms
+	vuB4KVNjRCFwwuPQvtM9ZdKKHyWXy8FWa1TlPquxOR3K9kZMCh1qt8mAgM0qzxhjJWLRm3ZUpAp
+	cQaAkIKLRyBGgk57FPHI2uUJcdVmD9xQwxL628solDaUM67P4caL6BrNqaTpelinemaZRVoX5eQ
+	VRFeyeEHo0CtlF86zQDvlBmOCVfoy0w2LE3bov3N36eL3e/L+c8NX/4pPNGQRjnmn9YajylUcqy
+	dSSKSvX6Msgd2TxwxB7wG52c5lv1bftRt0qYSJKIkak+uw8OxDnbQPdlUSSQ7mJjZ4r4VI
+X-Received: by 2002:a05:6870:5ba3:b0:457:4470:96e2 with SMTP id 586e51a60fabf-48475e836bemr4313868fac.12.1789594605928;
+        Wed, 16 Sep 2026 14:36:45 -0700 (PDT)
 Received: from [127.0.1.1] ([2a09:bac6:947f:31f5::4fa:4b])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4842a23e310sm3387557fac.12.2026.09.16.14.36.46
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4842a23e310sm3387557fac.12.2026.09.16.14.36.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 14:36:48 -0700 (PDT)
+        Wed, 16 Sep 2026 14:36:45 -0700 (PDT)
 From: Frederick Lawler <fred@cloudflare.com>
-Date: Wed, 16 Sep 2026 16:36:37 -0500
-Subject: [PATCH v3 1/2] integrity: Report error code in
- integrity_audit_msg() call sites
+Subject: [PATCH v3 0/2] integrity: Return error codes in audit messages
+Date: Wed, 16 Sep 2026 16:36:36 -0500
+Message-Id: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -70,9 +68,11 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-report-hash-error-v3-1-73e5d95e9efe@cloudflare.com>
-References: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
-In-Reply-To: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
+X-B4-Tracking: v=1; b=H4sIAOQLq2oC/33NTQrCMBCG4auUrB3JTPqjrryHuCjpxARqUya1K
+ KV3t+1KUFy+H8wzk0osgZM6ZZMSHkMKsVvC7DJlfd3dGEKztCJNpa6wBOE+ygC+Th5YJAoUpE1
+ TOi45Z7Xc9cIuPDfzcl3ahzREeW0vRlzXf9qIgFBbPNIBEYnzs23jo3FtLby38a5WcqQPhqpfD
+ IEGo9kcc1dQ7uwXM8/zG9kvSCH+AAAA
+X-Change-ID: 20260716-report-hash-error-5203d6fe6e4e
 To: Mimi Zohar <zohar@linux.ibm.com>, 
  Roberto Sassu <roberto.sassu@huawei.com>, 
  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
@@ -82,342 +82,77 @@ Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, 
  Frederick Lawler <fred@cloudflare.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13219; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=RL6d5yJ4xvBQVtGW2C14rmIuGcHh9YfAg4SyplggSlY=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqqwvqu4hysntayZHQPkWEgBw9J7yFxXp6nn6rq
- iCj6kme4fWJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaqsL6gAKCRCrJbR2A5LT
- bfhUEACROyLNm0fsVvUnDVxc07m+lEvRMUb0jcMLxhV/vOwcAWf5+6s/chdh2Wk8crwREtr81FR
- 4vmuUbj8ukf9hUHWpV3LuZ926SQhbAgvudoPU8cG9e9BjQB5qelIZCzTABwXzF30KV4jPIvmyjz
- ivJ2Ce5F+Sl8wPAb3lLuMZD145qAuB20B/1IagG35+GH9y4MxPSkL86d6UeYiNxgjzv85OUswuJ
- JnS9RJOidkCWkUkwDuFeZmmV1fhxpdwcHtPnxo3ri/JdUWaL42+dIz3v2mpvliweM2LDtWOD2o2
- Q5/TCcCCd4y09RW98FO+EnT++2nUmyPZx4pgj7tVXfsPdj92qqOfMFFt1QgdzwnCWWh8fKBsIgV
- SYPSCYgVRDYd7JpBhisKoJhf833eR++rI8YM3xeQ18jq5eAalPra6IdK6W5tBiR8mBttTMrYpOY
- stGr8Vv520mpmVROrszmr+AKOCE0PN5o1GOk8UiqStsH7ghXsqxII1wVkAp/xRBIceUmdkJdh4x
- 2E5rWZgEmYAlRWyIOMF8+95QNWF9nkvTSsZa+jj/A7QwIZUJIEHBHrplzofxkQArJHFaXQlSIMi
- rk9DGCf3Sktk36ohoIAOSX8aeqdkyyyuimpUqh4SitwqPJLMIGUPky51S7HcDGx9N2Fr6V6wavQ
- Pf7m8Tbq20nYC9A==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2513; i=fred@cloudflare.com;
+ h=from:subject:message-id; bh=IyuajYzPnmD3io9Y6axVM5mE4O2sgF3cAAOwkQSlc8s=;
+ b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqqwvq9XE9AKDW+jkDoMPrQsp+EEVhR+0vyyfSE
+ YsH584XbHKJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaqsL6gAKCRCrJbR2A5LT
+ bfd/D/9DyM794xZCuCYiEp8E5G2ZlX/+MtkM8PpZR9/dOjmllI/84wOLM7fbud6MxqB0sFqJ1qc
+ iQfPLsd+8PaifD4msMqMG0phYciWNwaJsRzCafsPv1++FbcNW8UxkY8ToRHztgTlPxbCkmaBC0Z
+ 6pqBl04uIPonxe5C72WGGTLRkz+aXEO7I38ySL9ez+ZyP5Fs7pGKUzIwYZEj+SqbtexLQpcfjXI
+ 91damz+0ON/kswGm1HNvnpy480xhISbK13hxvZoumQfkOwcrp1DfZreUjRjEZ6Cp0LFxLnhr135
+ LrRyY5+UnySsfVyfoWnhZku2sVnzASQLAeDxBW8Yn4w98JI+PNRucWA4J2OGb0Z95uvLtJet/S/
+ +3RklEagyndq4uDeftKt+SZYAgr2Uo2MCM9mvlTNlAntjjxeESypLO/94JlVGYMDl6Lvu+e/oyP
+ crNS9NjS7SMdGFyAMm+L7ud1licAoctohOUa146AKksNJznngrSF6eoYBAQE8x6N1YS3kLUJ3bJ
+ Dro/dhx9K0dyuY32ihvbcOmZ17pxs3CAiHttYSPNzCxLDzV0oIx04ug6CFUkeS2o7+AfMQZDLG2
+ x5Qwm+bHSuH1GkhMQXsM6YOQImjxWAr5PEfIaDfmoD5BUe0IlMaMbNm7QUwEeNo3eZFowa7PMvu
+ F7VT2pXl6cmquMg==
 X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
  fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
 
-integrity_audit_msg() hides error codes by wrapping
-integrity_audit_message() which obfuscates the underlying reason for the
-failure.
+Commit 2f845882ecd2 ("integrity: Add errno field in audit message")
+introduced an audit log function that can take an error code. It is
+wrapped by integrity_audit_msg() that implicitly sets the error code
+argument to zero. The problem is that there are uses of integrity_audit_msg()
+such as ima_collect_measurement() that hide the failure cause for
+the message.
 
-Update integrity_audit_msg() call sites to take an error code and report
-errors the same as integrity_audit_message().
+This series aims to clarify error reasons for failures, and then expose
+error codes based on the following criteria:
+
+    1. The log depends on a result from earlier callee, and/or
+    2. The caller function itself returns with that result
+
+ima_release_policy() is the only caller I thought made sense to keep as
+is. The message doesn't correlate with a return code, nor does it
+depend on a result from an earlier callee in the function.
 
 Signed-off-by: Frederick Lawler <fred@cloudflare.com>
 ---
+Changes in v3:
+- Condense series to two commits.
+- Reduce review churn by adding error code to integrity_audit_msg().
+- ima_write_policy() to report -EINVAL instead of result.
+- Link to v2: https://lore.kernel.org/r/20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com
+
+Changes in v2:
+- Changes from v1 are now reflected in patch 3.
+- Replace all instances of integrity_audit_msg().
+- Convert to patch series.
+- Link to v1: https://lore.kernel.org/r/20260716-report-hash-error-v1-1-ac19281112e4@cloudflare.com
+
+---
+Frederick Lawler (2):
+      integrity: Report error code in integrity_audit_msg() call sites
+      integrity: Replace integrity_audit_message() with integrity_audit_msg()
+
  security/integrity/evm/evm_main.c         |  9 +++++----
  security/integrity/ima/ima_api.c          |  8 ++++----
  security/integrity/ima/ima_appraise.c     |  6 +++---
  security/integrity/ima/ima_fs.c           |  4 ++--
  security/integrity/ima/ima_init.c         |  2 +-
- security/integrity/ima/ima_main.c         |  7 ++++---
+ security/integrity/ima/ima_main.c         | 13 +++++++------
  security/integrity/ima/ima_policy.c       | 11 ++++++-----
  security/integrity/ima/ima_queue.c        |  2 +-
+ security/integrity/ima/ima_queue_keys.c   |  8 ++++----
  security/integrity/ima/ima_template_lib.c |  2 +-
- security/integrity/integrity.h            |  5 +++--
- security/integrity/integrity_audit.c      |  5 +++--
- 11 files changed, 33 insertions(+), 28 deletions(-)
+ security/integrity/integrity.h            | 18 +++---------------
+ security/integrity/integrity_audit.c      | 12 ++----------
+ 12 files changed, 39 insertions(+), 56 deletions(-)
+---
+base-commit: 6903878d4654bdef4e08e38cdf1ae306ce7de5f9
+change-id: 20260716-report-hash-error-5203d6fe6e4e
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index b59e3f121b8a89edb14d811351ec393a69de8ff7..5be9349afcd09b47b78d1126ffc1fe341264ae6e 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -563,7 +563,7 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
- 				    dentry->d_inode, dentry->d_name.name,
- 				    "update_metadata",
- 				    integrity_status_msg[evm_status],
--				    -EPERM, 0);
-+				    -EPERM, 0, -EPERM);
- 	}
- out:
- 	/* Exception if the HMAC is not going to be calculated. */
-@@ -588,7 +588,7 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
- 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
- 				    dentry->d_name.name, "appraise_metadata",
- 				    integrity_status_msg[evm_status],
--				    -EPERM, 0);
-+				    -EPERM, 0, -EPERM);
- 	return evm_status == INTEGRITY_PASS ? 0 : -EPERM;
- }
- 
-@@ -729,7 +729,7 @@ static int evm_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
- 				    dentry->d_name.name, "appraise_metadata",
- 				    integrity_status_msg[evm_status],
--				    -EPERM, 0);
-+				    -EPERM, 0, -EPERM);
- 	return -EPERM;
- }
- 
-@@ -992,7 +992,8 @@ static int evm_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 
- 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
- 			    dentry->d_name.name, "appraise_metadata",
--			    integrity_status_msg[evm_status], -EPERM, 0);
-+			    integrity_status_msg[evm_status], -EPERM, 0,
-+			    -EPERM);
- 	return -EPERM;
- }
- 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 122d127e108dcca8ddae6575c908144859783fb6..f765bfe5db68d0847cfe5b47f81b64018083f65a 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -116,7 +116,7 @@ int ima_store_template(struct ima_template_entry *entry,
- 		if (result < 0) {
- 			integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode,
- 					    template_name, op,
--					    audit_cause, result, 0);
-+					    audit_cause, result, 0, result);
- 			return result;
- 		}
- 	}
-@@ -159,7 +159,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
- 		ima_free_template_entry(entry);
- err_out:
- 	integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode, filename,
--			    op, cause, result, 0);
-+			    op, cause, result, 0, result);
- }
- 
- /**
-@@ -330,7 +330,7 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
- 				    filename.name.name, "collect_data",
--				    audit_cause, result, 0);
-+				    audit_cause, result, 0, result);
- 
- 		release_dentry_name_snapshot(&filename);
- 	}
-@@ -383,7 +383,7 @@ void ima_store_measurement(struct ima_iint_cache *iint, struct file *file,
- 	result = ima_alloc_init_template(&event_data, &entry, template_desc);
- 	if (result < 0) {
- 		integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode, filename,
--				    op, audit_cause, result, 0);
-+				    op, audit_cause, result, 0, result);
- 		return;
- 	}
- 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index b280488e15fcb0b6f8a8a0caaab93c7d511e4a40..6dc712f430f44ee18c3418a6bf4cd4da49758b98 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -564,7 +564,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 		status = INTEGRITY_FAIL;
- 		cause = "unverifiable-signature";
- 		integrity_audit_msg(audit_msgno, inode, filename,
--				    op, cause, rc, 0);
-+				    op, cause, rc, 0, rc);
- 	} else if (status != INTEGRITY_PASS) {
- 		/* Fix mode, but don't replace file signatures. */
- 		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
-@@ -589,7 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 		}
- 
- 		integrity_audit_msg(audit_msgno, inode, filename,
--				    op, cause, rc, 0);
-+				    op, cause, rc, 0, rc);
- 	} else {
- 		ima_cache_flags(iint, func);
- 	}
-@@ -752,7 +752,7 @@ static int validate_hash_algo(struct dentry *dentry,
- 		path = NULL;
- 
- 	integrity_audit_msg(AUDIT_INTEGRITY_DATA, d_inode(dentry), path,
--			    "set_data", errmsg, -EACCES, 0);
-+			    "set_data", errmsg, -EACCES, 0, -EACCES);
- 
- 	kfree(pathbuf);
- 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 2a0bca5543161912abe2a0236c9fcae7055e62bc..6d2ef44b21f8d40b4981a6a441cf7c3d69f94dee 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -595,7 +595,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
- 		pr_err("signed policy file (specified as an absolute pathname) required\n");
- 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
- 				    "policy_update", "signed policy required",
--				    1, 0);
-+				    1, 0, -EINVAL);
- 		result = -EACCES;
- 	} else {
- 		ima_measure_raw_policy(data, datalen);
-@@ -745,7 +745,7 @@ static int ima_release_policy(struct inode *inode, struct file *file)
- 
- 	pr_info("policy update %s\n", cause);
- 	integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
--			    "policy_update", cause, !valid_policy, 0);
-+			    "policy_update", cause, !valid_policy, 0, 0);
- 
- 	if (!valid_policy) {
- 		ima_delete_rules();
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index d53f4d89a53e56d7ebb31950c10b37fc89782753..7a76e2686267482b10bf854a76829c60ef9f1e1b 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -103,7 +103,7 @@ static int __init ima_add_boot_aggregate(void)
- 	return 0;
- err_out:
- 	integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, filename, op,
--			    audit_cause, result, 0);
-+			    audit_cause, result, 0, result);
- 	return result;
- }
- 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index ab1e53b3210d3a4d3f91d65f7db19e6a2a2d401c..9e80f40680d7be08d14d26ba48ed334d4e4ab10c 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -119,7 +119,7 @@ static int mmap_violation_check(enum ima_hooks func, struct file *file,
- 			*pathname = ima_d_path(&file->f_path, pathbuf,
- 					       filename);
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, *pathname,
--				    "mmap_file", "mmapped_writers", rc, 0);
-+				    "mmap_file", "mmapped_writers", rc, 0, rc);
- 	}
- 	return rc;
- }
-@@ -466,7 +466,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, file_inode(file),
- 				    pathname, "collect_data",
--				    "denied-hash-algorithm", rc, 0);
-+				    "denied-hash-algorithm", rc, 0, rc);
- 	}
- out_locked:
- 	if ((mask & MAY_WRITE) && test_bit(IMA_DIGSIG, &iint->atomic_flags) &&
-@@ -579,7 +579,8 @@ static int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
- 	file = vma->vm_file;
- 	pathname = ima_d_path(&file->f_path, &pathbuf, filename);
- 	integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, pathname,
--			    "collect_data", "failed-mprotect", result, 0);
-+			    "collect_data", "failed-mprotect", result, 0,
-+			    result);
- 	if (pathbuf)
- 		__putname(pathbuf);
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 68d9a5e6c232ea0678e9f51f105cebecccccb43e..9013c962dc0bfd6184948230ad6746e71f6e82f5 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1992,7 +1992,8 @@ ssize_t ima_parse_add_rule(char *rule)
- 	entry = kzalloc_obj(*entry);
- 	if (!entry) {
- 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
--				    NULL, op, "-ENOMEM", -ENOMEM, audit_info);
-+				    NULL, op, "-ENOMEM", -ENOMEM, audit_info,
-+				    -ENOMEM);
- 		return -ENOMEM;
- 	}
- 
-@@ -2003,7 +2004,7 @@ ssize_t ima_parse_add_rule(char *rule)
- 		ima_free_rule(entry);
- 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
- 				    NULL, op, "invalid-policy", result,
--				    audit_info);
-+				    audit_info, result);
- 		return result;
- 	}
- 
-@@ -2421,7 +2422,7 @@ void ima_measure_loaded_policy(void)
- 	rule = kmalloc(rule_len, GFP_KERNEL);
- 	if (!rule) {
- 		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, event_name,
--				    op, "ENOMEM", result, 0);
-+				    op, "ENOMEM", result, 0, result);
- 		return;
- 	}
- 
-@@ -2440,7 +2441,7 @@ void ima_measure_loaded_policy(void)
- 			result = -E2BIG;
- 			integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL,
- 					    event_name, op, "rule_length",
--					    result, 0);
-+					    result, 0, result);
- 			rcu_read_unlock();
- 			goto free_rule;
- 		}
-@@ -2454,7 +2455,7 @@ void ima_measure_loaded_policy(void)
- 	file.buf = kmalloc(file_len, GFP_KERNEL);
- 	if (!file.buf) {
- 		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, event_name,
--				    op, "ENOMEM", result, 0);
-+				    op, "ENOMEM", result, 0, result);
- 		goto free_rule;
- 	}
- 
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index f89f0ca3d4edf16a7147b3c23d25fc2cf18044c6..8d3282ff7da4131ae4389bf832442285e500542d 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -292,7 +292,7 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- out:
- 	mutex_unlock(&ima_extend_list_mutex);
- 	integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode, filename,
--			    op, audit_cause, result, audit_info);
-+			    op, audit_cause, result, audit_info, result);
- 	return result;
- }
- 
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 8a89236f926c10af0dd2b2ef08fbe59bd8a78b66..9bd80ca1159a2fe24b3ea3308a118f6beea733cb 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -392,7 +392,7 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 	if (result) {
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
- 				    event_data->filename, "collect_data",
--				    "failed", result, 0);
-+				    "failed", result, 0, result);
- 		return result;
- 	}
- 	cur_digest = hash_hdr->digest;
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 0c581c03c5da72d80e9c352a7adff1fb89628644..2ab6b7e34e7ee2dd29ae03ae1fb45fa26d9c032a 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -218,7 +218,8 @@ static inline void evm_load_x509(void)
- /* declarations */
- void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 			 const unsigned char *fname, const char *op,
--			 const char *cause, int result, int info);
-+			 const char *cause, int result, int info,
-+			 int errno);
- 
- void integrity_audit_message(int audit_msgno, struct inode *inode,
- 			     const unsigned char *fname, const char *op,
-@@ -235,7 +236,7 @@ integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
- static inline void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 				       const unsigned char *fname,
- 				       const char *op, const char *cause,
--				       int result, int info)
-+				       int result, int info, int errno)
- {
- }
- 
-diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
-index d8d9e5ff1cd22b091f462d1e83d28d2d6bd983e9..2dd2d7e3916e7bf35c753450315ff22e2d0292b7 100644
---- a/security/integrity/integrity_audit.c
-+++ b/security/integrity/integrity_audit.c
-@@ -27,10 +27,11 @@ __setup("integrity_audit=", integrity_audit_setup);
- 
- void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 			 const unsigned char *fname, const char *op,
--			 const char *cause, int result, int audit_info)
-+			 const char *cause, int result, int audit_info,
-+			 int errno)
- {
- 	integrity_audit_message(audit_msgno, inode, fname, op, cause,
--				result, audit_info, 0);
-+				result, audit_info, errno);
- }
- 
- void integrity_audit_message(int audit_msgno, struct inode *inode,
-
+Best regards,
 -- 
-2.43.0
+Frederick Lawler <fred@cloudflare.com>
 
