@@ -1,204 +1,132 @@
-Received: from mail-oa2-f12.google.com (mail-oa2-f12.google.com [74.125.231.76])
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68852499F12
-	for <linux-integrity@vger.kernel.org>; Wed, 16 Sep 2026 21:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A983BE15D
+	for <linux-integrity@vger.kernel.org>; Thu, 17 Sep 2026 05:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789594625; cv=none; b=WKWUhxO6eO10n3twMNTxun2yN7FltiRJmd7lOM/wOWJ1ZpMv5p16dBuMgPt2C2vz3tPS40IfemBdfitW/VII1s62p2odidwbFsg3YkSKaBM5C1FRZN93cat6gCML/TFXkr4cI6ndCtaAYO0rzaWtYup2lrGqW7pzbCrcEwboRsg=
+	t=1789624404; cv=none; b=OjruV+QjSrv+FvVFN7is6P3ms2tg91V62AiP5uvEn7Qvr6J5cpVUU/UyqZi3GDca3wudaNaFOETtez78ZVNFESHPJWMFMAxX181O39pHcSwqV7UaBStfM8cHTX6BM/6Apl6Tk0Mhnld+WBwwfqFi8eX8euNeD6AHNugjuZfqJXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789594625; c=relaxed/simple;
-	bh=z2tQHhAwEFt+agCaRWeVzBR9XVTRt1GIp8bQCvmiYuk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=trnd5XdM4IFEnlgee7HG9edyB+021te3PdqCzwO8bNFjqBWmxOdyqka14SAjM/PENn57RN8zqmlEkXIEGzAlj2ApA9hxad74PK0B1mWiyWa8jzmHS73q/YxTHn8i7dSv9T1U+DMt9ZT9u1uaRHeRj96gxPLAyG2vWkOEfe9BgUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=EA81dlCD; arc=none smtp.client-ip=74.125.231.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1789624404; c=relaxed/simple;
+	bh=eu9VvAWL8c0CVMyrD/Xjn/6IGx8pRK+MMjh1QQNDFvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXUKYn9zCaa4aI1gP56UufnEfStn4nL1QaLR+uo57yRMR3EO4+5Nq9LQVwpxh+CpdCy7/I1MEHDr64cZpuXEBNkbRW6ZVIbBIGqmfBdZlQKL5GvIjN1UFS36a56fzOcVtxcVb678TMRb0vvb7c6Yg5ivB72YHhBMpM53Ep7kiGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=lS/0ijBu; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="EA81dlCD"
-Received: by mail-oa2-f12.google.com with SMTP id 586e51a60fabf-466cc88a0d7so55641fac.2
-        for <linux-integrity@vger.kernel.org>; Wed, 16 Sep 2026 14:36:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="lS/0ijBu"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49cd38e0f79so2215935e9.3
+        for <linux-integrity@vger.kernel.org>; Wed, 16 Sep 2026 22:53:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1789594613; x=1790199413; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jhuOR/yTpkseeAWrvSpKFTY7Og9vlkZJ0CujlTEe3/8=;
-        b=EA81dlCDWK8Brg7yFLt12E8nZlqjwrkN0YEPpAojkNirkQk13Y9EBI8WkR5wMuziOn
-         J8PpG7hJn/L8j6WmijRAO6sk+rbNKqmXZtKJBS6VhM4TP9N5WXGrHvRaTGmydE2VgwDS
-         OaeLEKKULlqA19YKFhlEEUdIx2+cUr3TUXyGivcSng8lCnUT6cXJtyg6goStQi8X2chj
-         CzSy953u9/uyHqrpMumPFqGLQgdwU+LxIIiyRVB2WSkT1OwddN//BnZ4o802EtXzjv/S
-         Q3veP9F/7urB38Ozg8Yb6Lhy+2YVoH8NVVytMxhAafS/6CMYAnUBxrnaNaNEXuOrf4Bo
-         mHZg==
+        d=baylibre.com; s=google; t=1789624400; x=1790229200; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=v7VMBV2ocTSSZ91doHV+9Jk99FMhih4t2wlbITjifDc=;
+        b=lS/0ijBumKYdvLM5hVLHu5hjZn6x4b36JUmPGyL1pFQ+vmiikFRfz8kC0834R3nS61
+         w38J/R7Q0XXkxxkaXFs5W0P5NyuAoOM8UGAqGx7Gy0CpgjpiBzXEnjphD9dK58PvkpsV
+         Z4k38sVF4S81aEfH0u97LKjyVIh+6+AXM6TQo0twhIfgjw01A/JyFF4OdFWEjAo9wLGA
+         GHecBgxdhLjmsHvqd7/tpZE6sQKVjVULVsnwJhqHKAcili8fXZiNj3HrHg/Mn+oU/v/o
+         yYQhNqa/2oJH1cAgXGotDfTtqROr7kEZ1/k39AmXnpfrFCnM1Ain9dVjTFNnvTM6JLeU
+         aR8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789594613; x=1790199413;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1789624400; x=1790229200;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=jhuOR/yTpkseeAWrvSpKFTY7Og9vlkZJ0CujlTEe3/8=;
-        b=bqGiQcViAXbZRHTy3uv8vTuk7toQLhNvZKyDZ9bUacb6clZ2zc9W0uB3y1QKs7dsqC
-         2qZVHHQW604EGVYFYhg/op7LDISSnuu9cob6kmVWIkYUlWS4oprq/QUhnaPTe7gu/IhQ
-         x+gcSIxA2w/SdPP9FEBL0V7OCvr2X4XLgOFz29c7155ZmExm8QLLEpjlU/ucrjiU5flP
-         utwyGfQeFssDEgEMTTPReKCSuIwVI1Vam5krgGdTtGW8wVKumq+oQcWXegmVE68lKrim
-         1sSdQ/zyoBpXsF3C+Bei19QPY6aoUzrfVC/5NqAYk5NkoQ7ZAKPt4YyCSFzPSd5KdMQ7
-         w6gw==
-X-Gm-Message-State: AFuF++k0Zh7hkHikVseGl21MxFCcWzHxhhYgS424lw6vBkF5dn/ocehf
-	wO3lVCWcpgm5B6iTIy3kgKR5amxLrybfUwaN6yqXqCKUGkZstvjTsYcVMvDOwCcU0yI=
-X-Gm-Gg: AYBFou3B+NFvp+0b9SChsiGyn27n6u/EvgpuDYdIIQB4z/d5vJUQIfI548Iy4b5WFiy
-	A2LrO0L4POmFsnLABusMZDhCadef1UT6dfX/Tqjb6AxIJhbeJ7Gkz1ZTmZxXdJRJmWvmgS4SnXg
-	ko0tFfYx4HWTnLwk2iCLLqFx3jwl5vNWXuOEcTYSipzpbBdZrgqNHt0B/VYv3QKLt3sn0KFm++J
-	4VMAiplFtBpnOqhvnJ+HniZEw04wjWuA2XsOwQVHPiLPBOjKEIq5y9GIR0nTZleg5Jl5np5XMlL
-	yzfCLcNW4GOHQWFaDMwWWMVbStLN0BbIq7j4yOCNgVcQgNvcHrs3RtzJEZ2Coiwi5E6Q/5rPPD9
-	jPG7d39bluhObagqbXmICtrA6+e6FXy193z8vi4S7YbnM0y/hhPAxQbqM7wYZlO9G5uzSxI4M4y
-	pFHA25m2MZcCwlUgZuKLc4HqIsXHnfcFOQWxPbt5T6QSLcIlim9IUAH2tnYwFcOFBjWtVC
-X-Received: by 2002:a05:6870:b3d4:b0:475:a1ec:9621 with SMTP id 586e51a60fabf-484778f2bd2mr4152184fac.35.1789594613524;
-        Wed, 16 Sep 2026 14:36:53 -0700 (PDT)
-Received: from [127.0.1.1] ([2a09:bac6:947f:31f5::4fa:4b])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4842a23e310sm3387557fac.12.2026.09.16.14.36.50
+        bh=v7VMBV2ocTSSZ91doHV+9Jk99FMhih4t2wlbITjifDc=;
+        b=SxtJLj1GYFDotwvQ1arqceCmNxTBbCzQvDvvQmUbj4AhfxNwRrZPGzXKUW3WQJk+fF
+         ZvwshbvX/3Cb0EIXp1gPjQgbgBVVwbVAtAhG0keSAqlaSSeLhQyfpdsq05jHOZUWjSMd
+         HMmF0KJrq3d3X/MFY1YyzwdkbBGsr8mvR0PzPFIeNeHRJpEwKUewEx1wUzZLYc8rESeo
+         as1SKIliAPEQlG0E8mnvoeBVh6F7Q2QRrgMLbEJn62luFHXFJljfoOVFpE83ZV0Rq3zL
+         aApjapkMNljETf+7iU89JVFdDS2ZknJMNJqGZMoYep9fuA7IN6CctKeP/90BNOac9Xto
+         rd5A==
+X-Forwarded-Encrypted: i=1; AKwUvByGNlkyNWPL3oDw5XCplZpnHtLj2a/SE7yoMFgBURR+VQE4/a52aKeEVeuO1cjyXxgLaQnshKjedSr1Uu/5D3o=@vger.kernel.org
+X-Gm-Message-State: AFuF++nfVOZdhrAOyaUAO8hxzcBAJ6+gNfJ3LIr2/dmaf+LVaOoA6vHO
+	fYSJY2lpeRNLxEy2hSTEkATzXLjkRS7DrIyGjleajjDpvp3Hj45BZB7+SwsRZGhbx+o=
+X-Gm-Gg: AYBFou2RUN9VDWeN16iF7XUmh7iyY6aAJbPepfO/c5PVs61+2ugR9J/17xHQ+sSzsdS
+	d4Bfs/XPni0ec38jUVoH4sSMI+bqmonqOM5+ZGYOCh7zZJSRA5QgbPendLxj1qTnj8hozM+ulS5
+	XqdlJR3xTBb6/RWe64cSjJbdM0d3OHKMJsoMZU7uskCHKB0FknZpUlYpa57KiOABChS5qn/OJ6M
+	0wh+VtFIhl0kqx65UTX0wBDKIEQ8Poe9gMtiTrimQAY96E05vHy+viwptV1TK3BI2YybTx4DNW+
+	BG2Xxdjt26n/BP1yOI7f1EelouGOo2pw+57bOn6kKmeaoX3BIy8BfUC8K1LGLAwwH34j54RkRrL
+	/RHPeKJMJongeD2wZ8KZzbEW0qRuDOdSxi4RDNlc9AUnBE6C2BfmmTugy/qIw+PBSLfDieXmMIv
+	i91WRaVgq8ThMEa7Vnw82fBPf+rq7hX0bOXM6AthL7mHISNIoIVrNlOLZxjULVtFgbJK45oj8x0
+	NyuwyaWCi+AMj0=
+X-Received: by 2002:a05:600c:3b0c:b0:49f:bc28:e8b1 with SMTP id 5b1f17b1804b1-49fbc28e978mr74636685e9.14.1789624399375;
+        Wed, 16 Sep 2026 22:53:19 -0700 (PDT)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49fbf515cfdsm29444615e9.11.2026.09.16.22.53.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 14:36:52 -0700 (PDT)
-From: Frederick Lawler <fred@cloudflare.com>
-Date: Wed, 16 Sep 2026 16:36:38 -0500
-Subject: [PATCH v3 2/2] integrity: Replace integrity_audit_message() with
- integrity_audit_msg()
+        Wed, 16 Sep 2026 22:53:18 -0700 (PDT)
+Date: Thu, 17 Sep 2026 07:53:15 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Li Jun <lijun01@kylinos.cn>, Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: remove extraneous #ifdef
+Message-ID: <aquADl_vIvmCcFpP@monoceros>
+References: <20260915201305.3529682-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-report-hash-error-v3-2-73e5d95e9efe@cloudflare.com>
-References: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
-In-Reply-To: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3985; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=z2tQHhAwEFt+agCaRWeVzBR9XVTRt1GIp8bQCvmiYuk=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqqwvrmVrK7ESQgDOkwOK2VK1kK4+HrtNpxxvea
- iBnILRGMd6JAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaqsL6wAKCRCrJbR2A5LT
- bV/uD/9wvueyIbMy+vcKKZMyE4dXComXFcTtuZRJhDcc5DnG+h+yNYsKK4JLnE1BKm5i3Vog4uP
- DZXGjaJVBZ6dYP6FG5oIKKyE6xe5PQzylgbOhDCQQH1Ogj+kO9bwdc3aliPDrL2nCk8Iq4S/bVF
- EtlxhXPDl9jQjhZUJIa5oaY03bXz05eZehXZhHxG6Pas6SLhZBbgSdmMrtcUDaFagzJT80OL3gq
- jFmJngTlmZJUHZyfwazPDDTx/ltZTzrt/cCxjE98xkFEA04Gq5QkHfgb3dazPMuffaHI9sTGLzr
- JqFqMHc+v1C0FZeYxI8SYGZM5/wwzyYwLsqhg/JadVucvL/64vh/s46S68VpsRUAXFD9jnPCXeD
- 8pvpAQOVW+adIVTCdKVggnu85//0B1fgKXffGaznAde2/zAXwmTEZxb6f/03ygRr0HRrvsrRPEE
- z1pF4piiWMlwVqorNuMn0hPNNHzdjvYyJNAIpRn/1VA/LpBHpw2Q7pyAUgjF0KPQgi+kda7hfaw
- spcyEl7Xl6f4xGZPR8N8yQaFDNFUlPr8mMK5fha85Zutm9aikQE2nx/iwY/JpUEtldK3e/SCI1m
- jxM6ZIvzlDVYF/nvfe37LanXSxyJIq2sloWsd7PGzWyz00BXBjgS2T+CiYMb5DcxBDPtdocdi2H
- 7nBu+Ssj5st78Rw==
-X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
- fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ssrlnq7k6thlujsw"
+Content-Disposition: inline
+In-Reply-To: <20260915201305.3529682-1-arnd@kernel.org>
 
-integrity_audit_msg() wraps integrity_audit_message(). Replace remaining
-call sites with the truncated function name. Then remove it since there
-are no more callers.
 
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
----
- security/integrity/ima/ima_main.c       |  6 +++---
- security/integrity/ima/ima_queue_keys.c |  8 ++++----
- security/integrity/integrity.h          | 13 -------------
- security/integrity/integrity_audit.c    |  9 ---------
- 4 files changed, 7 insertions(+), 29 deletions(-)
+--ssrlnq7k6thlujsw
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] tpm: remove extraneous #ifdef
+MIME-Version: 1.0
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 9e80f40680d7be08d14d26ba48ed334d4e4ab10c..bd9997b01633d6235fc2fcaa9bef1931d6ba7247 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1196,9 +1196,9 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 
- out:
- 	if (ret < 0)
--		integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL, eventname,
--					func_measure_str(func),
--					audit_cause, ret, 0, ret);
-+		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, eventname,
-+				    func_measure_str(func),
-+				    audit_cause, ret, 0, ret);
- 
- 	return ret;
- }
-diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-index b5ed33cbb272fdfaf7f5e945137c56e46e0d7db1..8adc8863ad5a540bf0c047ba47cc4817fcb46e9a 100644
---- a/security/integrity/ima/ima_queue_keys.c
-+++ b/security/integrity/ima/ima_queue_keys.c
-@@ -90,10 +90,10 @@ static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
- 
- out:
- 	if (rc) {
--		integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL,
--					keyring->description,
--					func_measure_str(KEY_CHECK),
--					audit_cause, rc, 0, rc);
-+		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL,
-+				    keyring->description,
-+				    func_measure_str(KEY_CHECK),
-+				    audit_cause, rc, 0, rc);
- 		ima_free_key_entry(entry);
- 		entry = NULL;
- 	}
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 2ab6b7e34e7ee2dd29ae03ae1fb45fa26d9c032a..52c5ec881cca468bde72c885cffa1c564877735e 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -221,11 +221,6 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 			 const char *cause, int result, int info,
- 			 int errno);
- 
--void integrity_audit_message(int audit_msgno, struct inode *inode,
--			     const unsigned char *fname, const char *op,
--			     const char *cause, int result, int info,
--			     int errno);
--
- static inline struct audit_buffer *
- integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
- {
-@@ -240,14 +235,6 @@ static inline void integrity_audit_msg(int audit_msgno, struct inode *inode,
- {
- }
- 
--static inline void integrity_audit_message(int audit_msgno,
--					   struct inode *inode,
--					   const unsigned char *fname,
--					   const char *op, const char *cause,
--					   int result, int info, int errno)
--{
--}
--
- static inline struct audit_buffer *
- integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
- {
-diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
-index 2dd2d7e3916e7bf35c753450315ff22e2d0292b7..22106aaeb0df21fef0990b80611dcd13cba112be 100644
---- a/security/integrity/integrity_audit.c
-+++ b/security/integrity/integrity_audit.c
-@@ -29,15 +29,6 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 			 const unsigned char *fname, const char *op,
- 			 const char *cause, int result, int audit_info,
- 			 int errno)
--{
--	integrity_audit_message(audit_msgno, inode, fname, op, cause,
--				result, audit_info, errno);
--}
--
--void integrity_audit_message(int audit_msgno, struct inode *inode,
--			     const unsigned char *fname, const char *op,
--			     const char *cause, int result, int audit_info,
--			     int errno)
- {
- 	struct audit_buffer *ab;
- 	char name[TASK_COMM_LEN];
+On Tue, Sep 15, 2026 at 10:12:58PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> Changing to DEFINE_SIMPLE_DEV_PM_OPS() broke here because the
+> tpm_inf_resume() function is hidden in an #ifdef:
+>=20
+> drivers/char/tpm/tpm_infineon.c:615:61: error: 'tpm_inf_resume' undeclare=
+d here (not in a function); did you mean 'tpm_pm_resume'?
+>   615 | static DEFINE_SIMPLE_DEV_PM_OPS(tpm_inf_pm, tpm_pm_suspend, tpm_i=
+nf_resume);
+>       |                                                             ^~~~~=
+~~~~~~~~~
+>=20
+> Remove the #ifdef check.
+>=20
+> Fixes: 2249200ee420 ("tpm: use DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr(=
+)")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
--- 
-2.43.0
+I hit the same issue during my build tests. Thanks for your patch.
 
+Tested-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+
+Best regards
+Uwe
+
+--ssrlnq7k6thlujsw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqrgEcACgkQj4D7WH0S
+/k56EAf/SC8iK7FtbpqIrX5WeL5TWPiBRaRsqDhqp2bCUyrpyo05byDWyEHWbVSE
+jNE9waEYf2/y/6JTZEOh7k4+9eFrgbd4TlPvakH4MBCORynmWMxNkXknv9IwHeQ3
+CuC4/qqtxWPGQvwq1IEOSVdniz1SKjoZcVz0gt5qHeT5q7OmbeQSxLzYfqax35iz
+9hkCFqg9AxRUvZDLCxrPSIlZNZyy673mWFmIrah7cMoaTvrRUvsGaFpQFmiAA5ID
+nzafNZVdfW8c7l8S1aadYhfaqhcPjXvlpz1NtMvJYKlyHa3yW1uTCEDgngH9c6in
+GAZPFUtt8tplOLUVnIQ1tr+58xRl4w==
+=o/nl
+-----END PGP SIGNATURE-----
+
+--ssrlnq7k6thlujsw--
