@@ -1,63 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6C94C6D;
-	Fri, 18 Sep 2026 00:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F5A339714;
+	Fri, 18 Sep 2026 00:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789690172; cv=none; b=qjh37jjL3t+E6AB3b6JUtJQ5CumJuwTI8jsYRTV3IaoSgwAJdT5Icult8jSH1qn36YKV5ZQfUR4jvMDiKwTEVS4tZtMynJCZJRdE4HH1B2ALAItFTscNSybw90JWRi/ysiVlh9hR/n8ddwWadYnovtN8MmvQj7D4pDUprrBN/N0=
+	t=1789692920; cv=none; b=SffdP64CeE30sbjz9qWCR/RxiSdwJqn5ofmbSXTG5ptUuiCPJfh/ENJuilQoJkaVol80RAJH2njuBepqKxWR5P7Ar7Hrh2Ya5+A35hmFxghtGMzOnYXK8V9x7F2E/jQBI8+Q6owIXVRI93n46KWQbQr814jLYsoOVya43IS6YeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789690172; c=relaxed/simple;
-	bh=mlyIpGxz8LISSFQMeNxTI24BMtXO3+gZAEhxbwNtMww=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ZZiOskBRawrbgsxYaqE0yJz+KBiGzwzfnv2UJ7UslC+0WjwZo4PcJuLYZboOh88cdbjndeZcAruNK884s5ApzzubLzYErfugyAnQxlbb5+HOmm2j9N+TnxYxqSgnSduJvrvafxnFNNWbNrljPP3cDsIyqNysSc2RuVbDlSww388=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnebO9oB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789692920; c=relaxed/simple;
+	bh=gk4WPqEvTswRxAOCvy6OW+OPESzKuxGZkdL4rI5YR0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iHsR0F3VuyefFPwjK/zM8V9UC5GHWEW8Zr65ngyxQRbvEtb7kEKkUVeQWrcxhT3tiTRiLJogmPd40OGtHKdb0ZyvM7a6vLiurMYSQimnoSMZ98FThmsid0WH/S5OxrUtYCoDbNir2Gh/SwPO+d1Pem95c2of/fnZKQpM+KVmysg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/Jc4Iuy; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnebO9oB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E805B1F00893;
-	Fri, 18 Sep 2026 00:09:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/Jc4Iuy"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8D4DD1F000FF;
+	Fri, 18 Sep 2026 00:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789690170;
-	bh=nIu0KnbDEXKbg55PWXwakDH9/Kn5BbLUJga/9JiR8VA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=lnebO9oBMN+1DKsAHBoPdstyRrZNIL5am434T2Of9WWMb3VuglTU3uivkvBTyLq0z
-	 RbBs7Qew/q0z4rE7ZJsT23j8gisbv46BgBgzVYguua5RC31HSvHa1sNjRSV/dBDArP
-	 VHOVDS13hZirFORXT9fZ455GGNqFFotGtSNQ8MT1dycGp6b2nCc3wNEPI4HMwvhVj2
-	 y4+aD4Ypknq0YthQ5D8zNauF9ieJHRC24y0Jc8G2ze+pbaSdhUd3vTOQylSLURAPc6
-	 jZGcagDkchKE10+ezRiRBG/l0fUOCT7PAqoRC2liGbRa+ZncvyqVR5QHQK7YqtpeTb
-	 HCsUvZVj7uG9A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 93BBB380820D;
-	Fri, 18 Sep 2026 00:08:25 +0000 (UTC)
-Subject: Re: [GIT PULL] KEYS: for-next-keys-v7.3-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aqxjFEZwvSB_7exH@kernel.org>
-References: <aqxjFEZwvSB_7exH@kernel.org>
-X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aqxjFEZwvSB_7exH@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/for-next-keys-v7.3-rc4
-X-PR-Tracked-Commit-Id: 8697c431e297eb0d0ab13dda6bc172b48a34f05c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5dd1818b15d98d4a20806cd00b1b40320b06004f
-Message-Id: <178969010425.190692.2028439215296374658.pr-tracker-bot@kernel.org>
-Date: Fri, 18 Sep 2026 00:08:24 +0000
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org
+	s=k20260515; t=1789692919;
+	bh=s+fzD5Qq5ldl6yAGN4TDRdep8xhWWkgNXR7u1TjX7t4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=P/Jc4IuyAmXx0zoF4J3fvmHirQuBwbhn/RmDJuhH8lyxjKe47mJ+HsMIRqHILAU6T
+	 3Yx9bARciI2tlNUlxEm7YME/B3Da4pzL9lF0nW32C20/wJQZnK0maBARUrn/dtbVid
+	 4RgJlZWTNnK352RQn0VjGO29FGNKWQG7FAPjats7Fxg9AB1IkGR6T/JcX9gAIdD3iE
+	 r0IBKYperch64A5xbDggSRQPba1mcrd5Ueuq191PucXkAoCX0CptyuOa594xNHSyyk
+	 JoDL+b+L8xySIzN8fLJWcdIS1c1ug9TR2o59vbN7cLEMI1H4S0WJp6AmXbi+wJxQlK
+	 rCuewfI6LwbPw==
+Date: Fri, 18 Sep 2026 03:55:15 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Richard Lyu <richard.lyu@suse.com>
+Cc: fourier.thomas@gmail.com, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, peterhuewe@gmx.de
+Subject: Re: [PATCH v2] tpm: Remove ineffective wmb() from tpm_pm_resume()
+Message-ID: <aqyL87YNcLrAZ0fV@kernel.org>
+References: <aqIVn0cDBvIYKggE@r1chard>
+ <20260910024430.40418-1-richard.lyu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260910024430.40418-1-richard.lyu@suse.com>
 
-The pull request you sent on Fri, 18 Sep 2026 01:00:52 +0300:
+On Thu, Sep 10, 2026 at 10:44:31AM +0800, Richard Lyu wrote:
+> The comment above the wmb() in tpm_pm_resume() states that the barrier
+> guarantees TPM_CHIP_FLAG_SUSPENDED is written last, so that hwrng does
+> not activate before the chip has been fully resumed.  It cannot do so:
+> it is placed after the store that clears the flag, and therefore does
+> not order the preceding resume work before that store.  It also has
+> nothing to pair with, as tpm_try_get_ops() contains no matching read
+> barrier.
+> 
+> Drop the barrier along with the comment rather than leave a no-op
+> behind.  Should such ordering turn out to be needed, it would require
+> paired barriers or locking.
+> 
+> Link: https://lore.kernel.org/all/a62fc816-259a-4d28-a265-e425bc17ed50@gmail.com/
+> Signed-off-by: Richard Lyu <richard.lyu@suse.com>
+> 
+> ---
+> v2:
+> - Drop the Fixes tag: this is a cleanup, not a bug fix.
+> - Link to v1: https://lore.kernel.org/all/aqIVn0cDBvIYKggE@r1chard/
+> ---
+>  drivers/char/tpm/tpm-interface.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index b4e749e70b02..0bab78c8767c 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -497,12 +497,6 @@ int tpm_pm_resume(struct device *dev)
+>  
+>  	chip->flags &= ~TPM_CHIP_FLAG_SUSPENDED;
+>  
+> -	/*
+> -	 * Guarantee that SUSPENDED is written last, so that hwrng does not
+> -	 * activate before the chip has been fully resumed.
+> -	 */
+> -	wmb();
+> -
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(tpm_pm_resume);
+> -- 
+> 2.51.0
+> 
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/for-next-keys-v7.3-rc4
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5dd1818b15d98d4a20806cd00b1b40320b06004f
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Thank you!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+BR, Jarkko
+
+
