@@ -1,60 +1,30 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from mail2.g24.pair.com (mail2.g24.pair.com [216.92.166.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02703939C8;
-	Mon, 21 Sep 2026 19:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D0141A571;
+	Tue, 22 Sep 2026 08:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.92.166.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790018819; cv=none; b=l/c3JqM0m6/B1U9Xp8Uw1IGVhmtDG0A+s8rjEbat/TW6PBLjQIFFm4go/eDGabtbT+hWmrL4WgBQVfm0oBvaO2mhiY/RwQx6g+mplN2IQw81D4tpZRwWTAcWodsU57Cd4Y/5M+ZxQkjew4e/dvTe2yxqbB3vU20YVnasNAfUoUQ=
+	t=1790067022; cv=none; b=k37pwQfVtc0OYU20f70+5cK+Uly9x2NcxYoJkjBlZlFAqdny4eDCIjA2/x3MR+2KUgCVh+3uCyqpTLxOOTL7NpFS+RkZbTR3Ilk3/B3I6cbsVIirPBeg3rH9KoIVMD3sXAen7+Gz1veJkwo6A5GULpZm1drebpkLRNNIVxv5Hvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790018819; c=relaxed/simple;
-	bh=ctwPX9nemqH7LKSpr4W2687hkOMPT3OWSAC22HXosvE=;
+	s=arc-20240116; t=1790067022; c=relaxed/simple;
+	bh=wpvmLOaXYHQPVaAlU4cnQEsqRgkfN+9BTYHawKmnlJc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rXZ75kSMWcf0Z/opPrhtM5HRaFiytYTlIko25i6bfdHxCs0pG8r0CyS+6y4WmKOKMmxpv/sVV7AHDzkzQa3uazht++YZ4S3J7ZV8pws0m3HPqbDAG378/DhXPiPZ67eP976ys5W/lnqklWQXGFOa6wP/H1CoORmIyHnjJeBpx9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZRkeCLwh; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZRkeCLwh"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68LF8YLw703559;
-	Mon, 21 Sep 2026 19:26:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cbHkgC
-	fr3twGPLqRav4nUuRjrvrvOvewHchIn5Azz6k=; b=ZRkeCLwh1vpXSMfO4kwFkf
-	xoep/7i1SYNmBg1hc0twmw11+YdKuBHj7TP00MFSp86a6TfuXw6lT+rrRPiB6yu8
-	dCcCBnfGCFwKmHslskN8ZRJ/6OVy+NKWpZwVWrqIJGj1470Q99fBHrMejcNUrZjU
-	Ew99Wsksg8gaZmM5yq0NZ/Lfgk7OdbTJY7xEKrIzTgxwF66QVpz/74ERVEVDGgFp
-	Kb0aezFPxlh31CcWK3OxVmzLAdY8lGm/2sSUzPHRDol9a9rrYUOZW2gnp4uLVzT2
-	w3qnnlVXJwpMiNHms/Czv8fwfg3QvjXOJsr206jV2Ya9RNWRzRlAftD0oiE2FW4Q
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gskgqa4fa-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 21 Sep 2026 19:26:37 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 68LJEmeL1431683;
-	Mon, 21 Sep 2026 19:26:37 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gt53veuw6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Sep 2026 19:26:37 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68LJQZpf31457804
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Sep 2026 19:26:36 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D259258059;
-	Mon, 21 Sep 2026 19:26:35 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CF4755805D;
-	Mon, 21 Sep 2026 19:26:30 +0000 (GMT)
-Received: from [9.67.77.117] (unknown [9.67.77.117])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 21 Sep 2026 19:26:30 +0000 (GMT)
-Message-ID: <bcd5e2e9-5000-44a8-9e7d-ebb4cc3e02d9@linux.ibm.com>
-Date: Tue, 22 Sep 2026 00:56:29 +0530
+	 In-Reply-To:Content-Type; b=J8seuYyAFPd9WFIY+0yrUBL8Zj6tuJIzyJ7hxIqut3LueQTQoXCSBBTq1k8w4V3DCdVLlz5AE0cX+9BIUPqKwgBdvvvIoOKMXYcZoPOYEu/sopc1++/YzKbjF8GpZ+rzZLEnDUPsMNfUUPo8IX14K5T5+ucMhZWf/MJSbbU427Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unspacy.com; spf=pass smtp.mailfrom=unspacy.com; arc=none smtp.client-ip=216.92.166.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unspacy.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unspacy.com
+Received: from mail2.g24.pair.com (localhost [127.0.0.1])
+	by mail2.g24.pair.com (Postfix) with ESMTP id 1028A160226;
+	Tue, 22 Sep 2026 04:42:49 -0400 (EDT)
+Received: from [192.168.0.71] (1969776-static.lxtnkyaa.metronetinc.net [217.180.199.234])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail2.g24.pair.com (Postfix) with ESMTPSA id A45371601FA;
+	Tue, 22 Sep 2026 04:42:48 -0400 (EDT)
+Message-ID: <54425edf-3ca1-4f99-9166-40f9cc3dfff6@unspacy.com>
+Date: Tue, 22 Sep 2026 04:42:47 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -62,98 +32,144 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/10] Extend PKWM to support user-created wrapping
- keys
-To: nayna <nayna@imap.linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com, mpe@ellerman.id.au,
-        npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        James.Bottomley@hansenpartnership.com, jarkko@kernel.org,
-        zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
-        rnsastry@linux.ibm.com
-References: <20260831111738.334857-1-ssrish@linux.ibm.com>
- <b133937fab3f5cd7203d8b48824a6e0e@imap.linux.ibm.com>
+Subject: Re: [BUG] tpm_crb/Intel PTT: Late S3/S5/Reboot ACPI power management
+ deadlock
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+ rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org
+References: <bf3a9544-6e49-4d5d-a01a-f1912b717d08@unspacy.com>
+ <aqyTpzk3jcarEMVS@kernel.org>
 Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <b133937fab3f5cd7203d8b48824a6e0e@imap.linux.ibm.com>
+From: Sean Meadows <Hellfire@unspacy.com>
+In-Reply-To: <aqyTpzk3jcarEMVS@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=G+OJgNk5 c=1 sm=1 tr=0 ts=6ab184ee cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=Xgi9pjjPtvcisj4yZHwA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIxMDI3OSBTYWx0ZWRfXxzEg00pP+D7x
- 54LNJrh5IpFh2l0uaAJ4Tohcy2b/ROiFKd97LFT3KQSWlbMe2WLMm8vpN0gjQ4T0Kyj+F5aN9ux
- ooMekuK+5Hsm81WE1ewo2S9GMD07RLH0ELUfv/ufa7K/pCYXRRaOkJHae5nFMQJ8CQOZ77twP4U
- XQW3iGy54NaBpUXRBKBAo0Mg+V6GtoYEundsL+7zocFA4VCSHZqapxILrrrKAPlSBOt+nmUCIlX
- 8U+YdueeXJobhS2pGSyPLfKnPeB1/P8cr2QT9YcWE6NF77jxePb3XWH1Nkb+Fug2YzR2BT7QR4a
- uaRVWa2UumOAjwkjXRhWVkm6d5/KMdLKbwxO1XgT+FtOX8jNVwKEgob4lVJBQJFi0Kwiwql6trE
- Ezeg8T9WNkZ43xpwDYJN0IcwinAjoxYtYvgXvCgdgsrPrs1q5zJ+FsXDZf+ACzn+oPl4NGv7sAE
- FdTnVJUO7LKtOnNU94g==
-X-Proofpoint-ORIG-GUID: a8PxXmDplA7WdE98ZVMAbjuus_uvxCue
-X-Proofpoint-GUID: l18ZMeXMEawAD3hhx_qESs7ofoIhuFxq
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIxMDI3OSBTYWx0ZWRfX9bWlZlIGHVUw
- Nr+lU6TdUFAKtT993OVxSA0zCynC71dg6lSzDEEd8vQvAtP8OoX7pdFPuZH7c9dr2G+1X/+iiwa
- 2qlhOtgWjaVLDriiMBPNSXAu8Pgj508=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-21_05,2026-09-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
- bulkscore=0 priorityscore=1501 clxscore=1015 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609210279
+X-Scanned-By: mailmunge 3.10 on 216.92.166.58
 
-Hi Nayna,
-
-On 9/21/26 7:09 PM, nayna wrote:
-> On 2026-08-31 07:17, Srish Srinivasan wrote:
->> The PKWM trusted source currently uses a single default wrapping key per
->> LPAR. This key is created during trusted source initialization, and all
->> trusted keys backed by PKWM are sealed and unsealed using it.
+On 9/17/26 21:28, Jarkko Sakkinen wrote:
+> On Thu, Sep 10, 2026 at 02:45:43AM -0400, Sean Meadows wrote:
+>> Hello,
 >>
->> Recent versions of PKWM allow users to create and manage their own 
->> wrapping
->> keys through a set of lifecycle operations. This patch series brings 
->> these
->> PKWM capabilities into the kernel, allowing users to create, manage, and
->> select wrapping keys for sealing and unsealing their trusted keys, 
->> rather
->> than requiring all trusted keys to use the default wrapping key.
+>> I am writing to report a reproducible power management bug where the
+>> system permanently hangs late in the ACPI S3 (sleep), S5 (shutdown), and
+>> soft reboot cycle.
 >>
->> This series adds support for user-created wrapping keys to PLPKS and 
->> PKWM.
->> It begins with seven preparatory cleanup and bug-fix patches that 
->> improve
->> error handling and type consistency, clarify macro naming, prevent
->> unsupported capabilities from being exposed through sysfs, and update 
->> the
->> documentation and MAINTAINERS entry.
+>> The deadlock occurs at the absolute end of the platform teardown
+>> sequence; after the kernel has completely unmounted all local storage.
+>> Motherboard power rails remain fully active and fans spin continuously,
+>> requiring a physical power button reset. Because this happens post
+>> unmount and after the video terminates, standard runtime logs (pstore/
+>> dmesg) remain entirely empty.
 >>
->> The final three patches add the required hcalls, enable wrapping key
->> selection by label for PKWM-backed trusted keys, and provide a sysfs
->> interface for managing wrapping keys from userspace.
->
-> Thanks Srish for your work.
->
-> It would be cleaner to split these into two separate series: one for 
-> the cleanups and one for the user-created wrapping keys management 
-> feature. This makes each series easier to review and test. Also, this 
-> allows cleanup patches to be accepted even if the wrapping key 
-> management feature is still under review.
+>> While sleep and shutdown hang forever, the soft reboot path has multiple
+>> severe failure modes: hanging indefinitely, stalling for several minutes
+>> before completing, or forcing a hard reset that corrupts the subsequent POST
+>> phase. Standard kernel parameters like reboot=EFI, reboot=PCI, or cold boot
+>> do not mitigate the issue.
+>>
+>> The deadlock does not happen immediately after a recent cold boot or
+>> reboot. The system must run for a number of hours before the condition
+>> occurs.
+>>
+>> 1. Reproduction
+>> The failure state can be made consistently repeatable via kernel
+>> initialization parameters and modprobe.d blacklist:
+>>
+>> - Test A (Fail State): Booting with standard parameters. Triggering an
+>> S3 sleep, S5 shutdown, or reboot results in a guaranteed, hardware freeze.
+>>
+>> - Test B (Pass State): Booting with the command line parameter:
+>> ‘modprobe.blacklist=tpm_crb’ and modprobe.d conf with ‘blacklist tpm_crb’
+>> When the tpm_crb driver is completely prevented from initializing, the
+>> system executes S3 suspend, S5 shutdown, and reboot sequences flawlessly
+>> 100% of the time.
+>>
+>> - Other end users suffering from this problem have found a repeatable
+>> fix by going into the UEFI and disabling the PTT. My particular system
+>> lacks that option.
+>>
+>> 2. Supporting Data
+>> This bug appears to be unique to the Intel PTT controllers powering the
+>> 6th through 10th Generation Intel CPU families (Skylake through Comet
+>> Lake), spanning mobile, desktop, and HEDT platforms. The bulk of the
+>> data also implies that this isn’t isolated to a specific OEM.
+>>
+>> - Bugzilla #217890:
+>>    chriscjsus: MSI GS40 6QE | Intel i7-6700HQ
+>>    mahasler: Intel NUC7i3BNB | Intel Core i3-7100U
+>>    Boris Carvajal: MSI Z370 Tomahawk | Intel i5-8400
+>>    Serhii Tsynailo: Intel i5-8250u laptop
+>>    Sergio: ASUS ZenBook UX310UQK | Intel i7-7500U
+>>    My System: ASUS ROG GL703VM | HM175 Chipset | Intel i7-7700HQ | MEI FW
+>> v11.9.1.3010 | Running Arch Linux vanilla stable kernel 7.2.4 (stock
+>> package)
+>>
+>> - Community Threads:
+>>    Arch Forum (ID: 303082): Solved exclusively by disabling Intel PTT in
+>> BIOS (Gigabyte B460 | Intel 10th Gen)
+>>    Reddit (r/archlinux): Widespread tracking detailing identical S3/S5
+>> deadlocks (X299/Z370)
+>>
+>> 3. Additional Details
+>> An unmerged diagnostic patch submitted by another user (Adam Alves,
+>> Patchwork ID: 20240307000331.14848-2-adamoa@gmail.com) previously
+>> presumed that this late freeze on certain motherboards occurs because
+>> the driver leaves the fTPM/PTT hardware interface in an unreleased, non-
+>> zero locality state upon teardown. The author suggested that the
+>> platform firmware's pre-OS and ACPI transition environments expect the
+>> TPM to be sitting strictly in Locality 0, causing the firmware to enter
+>> an infinite timeout wait-state when control is passed back to it.
+>>
+>> I am not qualified to audit the driver. Whether this belongs in the DMI,
+>> is a mistake in the driver logic, or is a bug in the PTT I can’t answer.
+>> I can only point to the unfailing success of a growing number of public
+>> end users who can instantly fix the problem by disabling the PTT in
+>> firmware or blacklisting the TPM driver. I have included the ACPI
+>> team in this e-mail in the hopes that they can provide additional clarity.
+>>
+>> I have never compiled a custom kernel before, but I am set up to
+>> reproduce this and am entirely willing to act as a tester for any
+>> diagnostic patches the maintainers would like to provide.
+>>
+>> Thank you for your time and patience,
+>> Sean
+> 
+> Has this appeared within some timeframe or has been like this "forever"?
+> 
+> BR, Jarkko
 
+Hi Jarkko,
 
-Sure, that makes sense.
-Will split them up into two separate series.
+Regarding whether this has been a bug forever, I suspect the answer is
+yes, though with a few caveats. My pacman.log shows I made the shift
+from Windows to Arch Linux in August 2022. Vaguely I recall reboots, S3,
+and S5 working initially, but I am an unreliable narrator after dealing
+with this issue for years - and the various technical threads I
+referenced do note regressions cropping up across the 6.x kernel series.
 
+I also need to update my previous notes regarding blacklisting tpm_crb.
+It is not a complete fix; rather, it extends the timeframe of the
+failure from hours to days, but the deadlock will eventually happen
+anyway. That leaves the only foolproof fixes as running Windows or
+having a UEFI that allows disabling the PTT.
 
->
-> Thanks & Regards,
->    - Nayna
+My working hypothesis is that these older PTT implementations require a
+specific state cleanup during OS teardown. Since the issue occurs even
+without the driver loaded, the problem isn't isolated to driver
+teardown; rather, it implies that background ACPI firmware routines
+interact with the PTT, gradually desynchronizing the hardware state 
+until the final power-down handoff traps it.
 
-Thanks,
-Srish.
+My testing hasn't stopped. I am currently trying to modify my UEFI to
+force-disable the PTT, though customizing the ROM and flashing it with a
+CH341A programmer and micrograbbers is slow, tedious work. I am also
+hampered by the Asus UEFI being very fragile and the hidden TPM options
+tested so far turning out to be dead entries.
+
+As I noted before, I am fully prepared to test patches or gather
+hardware data, though I suspect this laptop lacks any accessible serial
+debugging headers to catch logs post-unmount.
+
+Thank you for your time and patience,
+
+Sean
