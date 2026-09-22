@@ -1,30 +1,69 @@
-Received: from mail2.g24.pair.com (mail2.g24.pair.com [216.92.166.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D0141A571;
-	Tue, 22 Sep 2026 08:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.92.166.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2DA4F7CAB
+	for <linux-integrity@vger.kernel.org>; Tue, 22 Sep 2026 10:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790067022; cv=none; b=k37pwQfVtc0OYU20f70+5cK+Uly9x2NcxYoJkjBlZlFAqdny4eDCIjA2/x3MR+2KUgCVh+3uCyqpTLxOOTL7NpFS+RkZbTR3Ilk3/B3I6cbsVIirPBeg3rH9KoIVMD3sXAen7+Gz1veJkwo6A5GULpZm1drebpkLRNNIVxv5Hvw=
+	t=1790071808; cv=none; b=V5FrbX5gr63RyP60bRnKIvfRDEOkvlqfNLylc0i35reHN0AbGa19aFftFUJaTrbcwz7LH5iv6LEZdQblrwP3hGRkn7VRLWcHcAEeLJWmDnM7yR9pMtT1GK0xsjXMJ2gSoe1H2L3HnpAW52++Ln1/M0k1h59PiV3lbC5h2kv/hvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790067022; c=relaxed/simple;
-	bh=wpvmLOaXYHQPVaAlU4cnQEsqRgkfN+9BTYHawKmnlJc=;
+	s=arc-20240116; t=1790071808; c=relaxed/simple;
+	bh=sggFhUneseUUxNVvYfEFQBkjkldLvBabYngF3pTDj9Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J8seuYyAFPd9WFIY+0yrUBL8Zj6tuJIzyJ7hxIqut3LueQTQoXCSBBTq1k8w4V3DCdVLlz5AE0cX+9BIUPqKwgBdvvvIoOKMXYcZoPOYEu/sopc1++/YzKbjF8GpZ+rzZLEnDUPsMNfUUPo8IX14K5T5+ucMhZWf/MJSbbU427Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unspacy.com; spf=pass smtp.mailfrom=unspacy.com; arc=none smtp.client-ip=216.92.166.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unspacy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unspacy.com
-Received: from mail2.g24.pair.com (localhost [127.0.0.1])
-	by mail2.g24.pair.com (Postfix) with ESMTP id 1028A160226;
-	Tue, 22 Sep 2026 04:42:49 -0400 (EDT)
-Received: from [192.168.0.71] (1969776-static.lxtnkyaa.metronetinc.net [217.180.199.234])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail2.g24.pair.com (Postfix) with ESMTPSA id A45371601FA;
-	Tue, 22 Sep 2026 04:42:48 -0400 (EDT)
-Message-ID: <54425edf-3ca1-4f99-9166-40f9cc3dfff6@unspacy.com>
-Date: Tue, 22 Sep 2026 04:42:47 -0400
+	 In-Reply-To:Content-Type; b=ZiqefIOlxwakA9KwGk5C7+oEAahpL8r3GjKqDyHLLO8+nA/eD+gKTMyc8SiFkD1DMfymVApzR2t4FZIMAKAMj7y9qWSoaEu5Za3mVWP6qfOQcgLocLnWX80Y6UHdHYUSTT4oRmnJoYwIHutPPMmOlcVBXCMBLuLwLTTDuxWi3Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MiORHtDJ; arc=none smtp.client-ip=74.125.225.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MiORHtDJ"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4843c2790ccso2428331f8f.1
+        for <linux-integrity@vger.kernel.org>; Tue, 22 Sep 2026 03:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1790071804; x=1790676604; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=govxJP7/xHDPoXMa1qqKKxuu4w8EfasM3Ldya35nIg4=;
+        b=MiORHtDJcyVHrLaAk0FsgsDRuRtB9VBuLVQdJ9R8wZzL2AW1eGRbFQO7DAZNEZXuC6
+         SwtgG6irwKW8FSv/3lZ8fUO3ypK9dUjWY7VvebEXmaYVBey7hnh111u/jQZqIarWPW9J
+         IJ7KiqBFNkgpQky3rZJzuwv5i7XgGOyDmzYcGPR+sElVOLjnh3Kmn5sJg8aFGCQ0t8Ns
+         AlHT9owOoxFe7PkONwWxaEofi7fAWDOF5AFg9gBLFhkBT//lX5hAkKXnBdKpXe0wiRLv
+         zBtnz0xvFjq2XMZANd4Zi15/ILegqqiHUdS8f6mXsPvl6emkZaezZFu4fQpQSTloe6uH
+         TvFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790071804; x=1790676604;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=govxJP7/xHDPoXMa1qqKKxuu4w8EfasM3Ldya35nIg4=;
+        b=eNc3v3fWhO2oPbmW6Xcs15cb0NI7jSVqrmNdJ8I5I+H3K67GOu9cFjxYvrxLgMFY/Y
+         tOZeYpNV94+f43bfLzeu0AGkdccVeiD6DPdTmusBS3uAZQkEHqdHbVvX0jMnEEOlK7WT
+         4881vN/bF2Yd1CXHQ+Dq4rTXXwxHVT/EsfEXbPqMa514p/WnywWpnV4vchX3gGMW1ED6
+         f3TzcT46TAcAbiEC6SRpm1d3t2v/sDLbm0lA3pjjo+hZzbPddsjtv0UTidSVgeQmye60
+         mPTT8xFy115yEXmK8xJsc04oJK6Cfewi7dP1ehAPHhaR9I9dAaTM0XC9SmuQ6n2q82Kn
+         09KA==
+X-Forwarded-Encrypted: i=1; AKwUvBz45e45I1oYO+6ZeMKgNu+hn1Y0IGlgv0f8dU9+UGq3ePzmQOj+KZkGE/le3IJJSNRp646/B+Imbn1RQQtfYQE=@vger.kernel.org
+X-Gm-Message-State: AFuF++ldEKd21CNWoC9g7oHpVR4Vak+3/TW6iW2T9qjoSdxSaKVDwLvc
+	VbKJYyublFi/WSQce2FW1yJyHAnlXNfDO9+QZ3hXkoqCM4nMgo1fX62p6wTYap94kKw=
+X-Gm-Gg: AYBFou2fJMWBqFlxc411WS4fkIlXVQ+95dtmtym5kurihQ/1rh5Im1064LnJgcEeauI
+	YZN2ld4IliHffmqRuD0UroEzVqAWblO0jOEJ00Fjhlw+sPwGn7MPIZt+QpjIAdYI6JiY1EFiKFK
+	Q0CDTp0vbHxQ6aijGUIy5a/OBLYT5P7KBtd8gkxV/EtJ1SsgdmZJLfs4SNzpO3Dh7DkWi3iXXtO
+	IPFH9Cf6DIqrQXJ/hHDNVwPN2mMDp1SABkfDJASnuq3273Rxkz8MJZLt7Tv/L/+I6SN1+6h5jYZ
+	nds+Tb0sLpN1VUM4/y7WoqBOGXMiMdr4gfSDrSH9pTb5kSZvY1cfhpq09fc65lIVmc9SOTXDJ8D
+	sTuxeYkSZVPTm2s3rmzdq4NX2aqQUR+Z7cE98AZMy9zIm31CyOyf5w8nswTpj+FNhBkL6JlTwKD
+	ZXb60Nnq1VoW/nc9sxk4GRvOacj0Li85qv4mPlmfQh2jTOW8USkNWaOM2YzI9yunwiAcc/gl5/v
+	77qYbC0F7H6Di7CPBqs/ov+6cXEBXBIk6uCjXBMZTGrrbmyjzKImvgvNq3HqTYGk83nfHjutL1G
+	p+CGCyMRboS8z1z6F8eb+/TaE1MABB4C6Z9RZBAcLg==
+X-Received: by 2002:a5d:5848:0:b0:487:27f6:a4dc with SMTP id ffacd0b85a97d-48727f6a6bdmr12398341f8f.44.1790071803547;
+        Tue, 22 Sep 2026 03:10:03 -0700 (PDT)
+Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48862785a4fsm4002024f8f.24.2026.09.22.03.10.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Sep 2026 03:10:03 -0700 (PDT)
+Message-ID: <90812e76-fc01-409e-8156-ef958717218f@suse.com>
+Date: Tue, 22 Sep 2026 12:10:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -32,144 +71,57 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] tpm_crb/Intel PTT: Late S3/S5/Reboot ACPI power management
- deadlock
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
- rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org
-References: <bf3a9544-6e49-4d5d-a01a-f1912b717d08@unspacy.com>
- <aqyTpzk3jcarEMVS@kernel.org>
+Subject: Re: [PATCH v2 0/6] module: Limit ELF includes in linux/module.h to
+ uapi/linux/elf.h
+To: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>
+Cc: Xin Li <xin@zytor.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Andy Lutomirski <luto@kernel.org>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ David Hildenbrand <david@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Aaron Tomlin <atomlin@atomlin.com>, linux-s390@vger.kernel.org,
+ kvm@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260911-module-include-elf-v2-0-954c732975fb@suse.com>
 Content-Language: en-US
-From: Sean Meadows <Hellfire@unspacy.com>
-In-Reply-To: <aqyTpzk3jcarEMVS@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: mailmunge 3.10 on 216.92.166.58
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20260911-module-include-elf-v2-0-954c732975fb@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 9/17/26 21:28, Jarkko Sakkinen wrote:
-> On Thu, Sep 10, 2026 at 02:45:43AM -0400, Sean Meadows wrote:
->> Hello,
->>
->> I am writing to report a reproducible power management bug where the
->> system permanently hangs late in the ACPI S3 (sleep), S5 (shutdown), and
->> soft reboot cycle.
->>
->> The deadlock occurs at the absolute end of the platform teardown
->> sequence; after the kernel has completely unmounted all local storage.
->> Motherboard power rails remain fully active and fans spin continuously,
->> requiring a physical power button reset. Because this happens post
->> unmount and after the video terminates, standard runtime logs (pstore/
->> dmesg) remain entirely empty.
->>
->> While sleep and shutdown hang forever, the soft reboot path has multiple
->> severe failure modes: hanging indefinitely, stalling for several minutes
->> before completing, or forcing a hard reset that corrupts the subsequent POST
->> phase. Standard kernel parameters like reboot=EFI, reboot=PCI, or cold boot
->> do not mitigate the issue.
->>
->> The deadlock does not happen immediately after a recent cold boot or
->> reboot. The system must run for a number of hours before the condition
->> occurs.
->>
->> 1. Reproduction
->> The failure state can be made consistently repeatable via kernel
->> initialization parameters and modprobe.d blacklist:
->>
->> - Test A (Fail State): Booting with standard parameters. Triggering an
->> S3 sleep, S5 shutdown, or reboot results in a guaranteed, hardware freeze.
->>
->> - Test B (Pass State): Booting with the command line parameter:
->> ‘modprobe.blacklist=tpm_crb’ and modprobe.d conf with ‘blacklist tpm_crb’
->> When the tpm_crb driver is completely prevented from initializing, the
->> system executes S3 suspend, S5 shutdown, and reboot sequences flawlessly
->> 100% of the time.
->>
->> - Other end users suffering from this problem have found a repeatable
->> fix by going into the UEFI and disabling the PTT. My particular system
->> lacks that option.
->>
->> 2. Supporting Data
->> This bug appears to be unique to the Intel PTT controllers powering the
->> 6th through 10th Generation Intel CPU families (Skylake through Comet
->> Lake), spanning mobile, desktop, and HEDT platforms. The bulk of the
->> data also implies that this isn’t isolated to a specific OEM.
->>
->> - Bugzilla #217890:
->>    chriscjsus: MSI GS40 6QE | Intel i7-6700HQ
->>    mahasler: Intel NUC7i3BNB | Intel Core i3-7100U
->>    Boris Carvajal: MSI Z370 Tomahawk | Intel i5-8400
->>    Serhii Tsynailo: Intel i5-8250u laptop
->>    Sergio: ASUS ZenBook UX310UQK | Intel i7-7500U
->>    My System: ASUS ROG GL703VM | HM175 Chipset | Intel i7-7700HQ | MEI FW
->> v11.9.1.3010 | Running Arch Linux vanilla stable kernel 7.2.4 (stock
->> package)
->>
->> - Community Threads:
->>    Arch Forum (ID: 303082): Solved exclusively by disabling Intel PTT in
->> BIOS (Gigabyte B460 | Intel 10th Gen)
->>    Reddit (r/archlinux): Widespread tracking detailing identical S3/S5
->> deadlocks (X299/Z370)
->>
->> 3. Additional Details
->> An unmerged diagnostic patch submitted by another user (Adam Alves,
->> Patchwork ID: 20240307000331.14848-2-adamoa@gmail.com) previously
->> presumed that this late freeze on certain motherboards occurs because
->> the driver leaves the fTPM/PTT hardware interface in an unreleased, non-
->> zero locality state upon teardown. The author suggested that the
->> platform firmware's pre-OS and ACPI transition environments expect the
->> TPM to be sitting strictly in Locality 0, causing the firmware to enter
->> an infinite timeout wait-state when control is passed back to it.
->>
->> I am not qualified to audit the driver. Whether this belongs in the DMI,
->> is a mistake in the driver logic, or is a bug in the PTT I can’t answer.
->> I can only point to the unfailing success of a growing number of public
->> end users who can instantly fix the problem by disabling the PTT in
->> firmware or blacklisting the TPM driver. I have included the ACPI
->> team in this e-mail in the hopes that they can provide additional clarity.
->>
->> I have never compiled a custom kernel before, but I am set up to
->> reproduce this and am entirely willing to act as a tester for any
->> diagnostic patches the maintainers would like to provide.
->>
->> Thank you for your time and patience,
->> Sean
+On 9/11/26 4:40 PM, Petr Pavlu wrote:
+> linux/module.h appears in roughly 15k #include directives across the
+> kernel. This makes it a "hot" header, so it should avoid pulling in
+> unnecessary definitions.
 > 
-> Has this appeared within some timeframe or has been like this "forever"?
+> The header currently includes linux/elf.h but this is largely unnecessary
+> because it requires only the base ELF structures, such as Elf_Ehdr and
+> Elf_Sym, which are declared in uapi/linux/elf.h.
 > 
-> BR, Jarkko
+> Replace the linux/elf.h include with uapi/linux/elf.h. On x86_64_defconfig,
+> including linux/module.h alone results in 2.2 MB of preprocessed data. This
+> change reduces that to 1.5 MB.
+> 
+> The first five patches are cleanups to avoid relying on declarations being
+> indirectly provided through linux/module.h -> linux/elf.h. These patches
+> are mostly independent and can go through their respective trees if
+> preferred, except for the cpufeature patch, which depends on the preceding
+> s390 cleanup. The final module patch depends on all of these changes.
+> 
+> It is hard to identify all files that indirectly reference something only
+> through linux/module.h -> linux/elf.h. The changes were build-tested with
+> allmodconfig on arm, arm64, m68k, mips, powerpc64, riscv, s390, x86_64.
 
-Hi Jarkko,
+I plan to pick up this series on modules-next by the end of the week.
+Acked-by tags from the relevant maintainers would be appreciated.
 
-Regarding whether this has been a bug forever, I suspect the answer is
-yes, though with a few caveats. My pacman.log shows I made the shift
-from Windows to Arch Linux in August 2022. Vaguely I recall reboots, S3,
-and S5 working initially, but I am an unreliable narrator after dealing
-with this issue for years - and the various technical threads I
-referenced do note regressions cropping up across the 6.x kernel series.
-
-I also need to update my previous notes regarding blacklisting tpm_crb.
-It is not a complete fix; rather, it extends the timeframe of the
-failure from hours to days, but the deadlock will eventually happen
-anyway. That leaves the only foolproof fixes as running Windows or
-having a UEFI that allows disabling the PTT.
-
-My working hypothesis is that these older PTT implementations require a
-specific state cleanup during OS teardown. Since the issue occurs even
-without the driver loaded, the problem isn't isolated to driver
-teardown; rather, it implies that background ACPI firmware routines
-interact with the PTT, gradually desynchronizing the hardware state 
-until the final power-down handoff traps it.
-
-My testing hasn't stopped. I am currently trying to modify my UEFI to
-force-disable the PTT, though customizing the ROM and flashing it with a
-CH341A programmer and micrograbbers is slow, tedious work. I am also
-hampered by the Asus UEFI being very fragile and the hidden TPM options
-tested so far turning out to be dead entries.
-
-As I noted before, I am fully prepared to test patches or gather
-hardware data, though I suspect this laptop lacks any accessible serial
-debugging headers to catch logs post-unmount.
-
-Thank you for your time and patience,
-
-Sean
+-- 
+Thanks,
+Petr
