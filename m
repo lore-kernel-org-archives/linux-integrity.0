@@ -1,156 +1,118 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618FB1A682F
-	for <linux-integrity@vger.kernel.org>; Tue, 22 Sep 2026 17:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51720489FA1;
+	Tue, 22 Sep 2026 18:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790097754; cv=none; b=bVJFHoxFYMX2vUGYcqOQ/9nT+LpipdK3wwlLBw7D2e3wXNur+5IeMzy7PXfXyCilWA+qcleeBKJP1u2Mp7Trp3XRTqtV84QrI5TJr66UCOtOVcVG2/Mm+Rb4wTEkPZsz/taeihd9sZjerENyMVILuHdEcG7MUzfwOibOLr49NgY=
+	t=1790101275; cv=none; b=qKgNx8yawaBs20aaoMBGspuRdnR1VaUjWxd7JPjXbWiR/SeoArCzweuv7oEUP4LeNEXWMzGrou2LdHqAccb+5OOIJcl5ymtgO55233rgfZ1vkVzJ2fIGNbdylK7Z77F/cVC7p1M1skfNwPkdD8/1nrXD8g9mO6MIOvgbRX/hleA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790097754; c=relaxed/simple;
-	bh=g7SuTP3fubW3jzbw1+Tft2IbFV6PeGO8apkfVO0N0r8=;
+	s=arc-20240116; t=1790101275; c=relaxed/simple;
+	bh=Q3Jq6AE38hPWyaC8PxBDHclNOm3GiucU6dy5HxDiIMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SuiA555q45ICqGUjuboUl2xVwZSEM78PprHtAfgUfFahc8yYuGbW1iChsvzOxj4nWpD3xWz7WY6pYzwBv7+x/a38U/ga6ckMecvZDv6Nbe6TI6ggy3jBeDucvuWaQSFwHez4eOc5oH0AnU//wnr7WUh6n7KZ8ywDtKZm4bB8Szs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tlpB+QgG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C8kwtYom; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ckEWcOKq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dLyu+gEE; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7CAbleV+GvSXd4cPKWojjSXvX8mP7hU+36e5cfFwdKNJ4d6DocJboPBDmDMVP8InD9Rl0m1AqY90wKOB2UpFvym7CHjKugZ1ZhiN/j7gjCj/sBslT/sDvdIw1b9usk8mIfZcGxl0NZGGNF6Rbgdu5lUp1jpaXu4FJ49lkUHe1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QbV58KhP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tlpB+QgG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C8kwtYom";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ckEWcOKq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dLyu+gEE"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QbV58KhP"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EC94C40E01C9;
+	Tue, 22 Sep 2026 18:21:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id hws8afuNhZVG; Tue, 22 Sep 2026 18:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1790101251; bh=wnm2vVrHQlGco2ec6VPqWb7bpCBXERRnc2z2yPnMu4o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QbV58KhPfBVno6B2ArSJUhoSDLAQ4Hsf6Dk72/CpFNt6mZ+6+S1L18CuGaogLzaqZ
+	 H3uX7aBWCoZhg13pIdi057ptLtwXUoaJJ3HywCGhlDHEQIpFKnWYlgSFipzy15hhLd
+	 hE43IncmcBX7EKM0kvR5LNpyAhjG6BrWs5Q3MhlIpCgr0O1cO0CUxfc7k23U7+6RR8
+	 3pGcYnWwlJOQ3wfqEVFKCl9nNaS9RKn+257MdnQR1waZGqG9p6ktKIVcAEtz3RwpnI
+	 dgPft8Z3A2f0JQ/eQPzu7euTFDQ1bRJomhb15ikY5m9EajJngUNRXzi7HFd1v3lxPW
+	 m/PecNbYJCsjEfzeo7AoB4cDgbuPDUjoYzQwgWYlH8jlIraFhutf/9wzfVfvvWP9JS
+	 wgvL87caUEU3qauAkYvKztkcEb/rlzQavUbb/WtUfzT6Z/+vl2Vg9EMWDPOh12AjBh
+	 ZgjaiIKFQnw/Y/1xQNYF/vUQvxAxzwMfCDW9BRT+MwZTZwayfaDbYD1znHp54yaRHL
+	 XpewZPye+CeXiNijEyCz5LsD+PNqSthE0R3+dg2Dqf96Y4oKC0Ovjg04LfNX1yPNM3
+	 XApzx8xgGwzN5wAtHIQAXryDJSKgRM53xzH8BP+cZz94XmahSUzXuL9snfgN0OtKBi
+	 zoMm4dxnzhYwg8dgViCun/z4=
+Received: from stx.tnic (unknown [IPv6:2600:1700:38ca:c00::a])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E4B971F769;
-	Tue, 22 Sep 2026 17:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1790097747;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cOOz84Wxtq3lvai+00OLRzaumKaZUFaGN6yqK6agtLc=;
-	b=tlpB+QgGsf6XCl+MnTIcEXwRJzisqqCMv77fUXH4LOvDtXXKBR4BWpjoFRAV+/8oLKif2+
-	uZbXSTpt9+7vZ2a3Z10LpQ1NKS4PiqekzicR4rw0hyStoA0LXecNuarpVnTJV1wyDsqKD2
-	t8DiH+KqMEMe+QKGNWUKwDsMnjTLFqs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1790097747;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cOOz84Wxtq3lvai+00OLRzaumKaZUFaGN6yqK6agtLc=;
-	b=C8kwtYom2NdmzGWDFNSlNJrjfMFlZCY/KkcbhWdrFp+oW+26lDvY0siGM2rINg3SZp1jo5
-	N2R597P6HHKywvAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ckEWcOKq;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=dLyu+gEE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1790097742;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cOOz84Wxtq3lvai+00OLRzaumKaZUFaGN6yqK6agtLc=;
-	b=ckEWcOKqJCXg+CC+jZLbgmPHDlYxcRSy9G6hXgj/nN8KSc+mKljBW16zm6LfqBil7kDSP6
-	YzGpZ1amKQxMqXldKvwm9cvtUDYeulUITr6F8SeDbzA3afr2jwQiaw4dNx8pf6T+9r7068
-	EtPDnu2OEqVXizPeI7eoHtnjtm4W+oI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1790097742;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cOOz84Wxtq3lvai+00OLRzaumKaZUFaGN6yqK6agtLc=;
-	b=dLyu+gEE/A/1ojPlreh3y1buihfJbFZxGYc7jMpxa5+DcmDeBdesX0KYsGZXgkofkQiujE
-	8EJrs8fxoqxY5iBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 87B2E132D3;
-	Tue, 22 Sep 2026 17:22:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7sa2EE65smqucwAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 22 Sep 2026 17:22:22 +0000
-Date: Tue, 22 Sep 2026 19:22:13 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-	ltp@lists.linux.it
-Cc: Cyril Hrubis <chrubis@suse.cz>
-Subject: Re: [LTP] [PATCH 1/1] ima_setup.sh: Use tst_umount()
-Message-ID: <20260922172213.GB2287170@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20260813112524.1849695-1-pvorel@suse.cz>
- <b901f8d94a9d6e3faf26a5e359ad8ec7e306c931.camel@linux.ibm.com>
- <20260814060102.GC261864@pevik>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DBDA540E00E5;
+	Tue, 22 Sep 2026 18:20:22 +0000 (UTC)
+Date: Tue, 22 Sep 2026 11:20:19 -0700
+From: Borislav Petkov <bp@alien8.de>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>, Xin Li <xin@zytor.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Aaron Tomlin <atomlin@atomlin.com>,
+	linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] x86: Avoid indirect includes through
+ linux/module.h -> linux/elf.h
+Message-ID: <20260922182019.GAarLG4zWMoNNZJVZK@fat_crate.local>
+References: <20260911-module-include-elf-v2-0-954c732975fb@suse.com>
+ <20260911-module-include-elf-v2-1-954c732975fb@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260814060102.GC261864@pevik>
-X-Spam-Score: -3.71
-X-Rspamd-Queue-Id: E4B971F769
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.71 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	REPLYTO_EQ_FROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:replyto];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
+In-Reply-To: <20260911-module-include-elf-v2-1-954c732975fb@suse.com>
 
-Hi Mimi,
+On Fri, Sep 11, 2026 at 04:40:31PM +0200, Petr Pavlu wrote:
+> Several x86 files use ELF-related declarations and currently rely on them
+> being provided indirectly through linux/module.h -> linux/elf.h:
+> 
+> * arch/x86/entry/entry_fred.c: ia32_enabled() -> asm/ia32.h,
+> * arch/x86/entry/syscall_32.c: vdso32_image -> asm/vdso.h,
+> * arch/x86/kernel/cpu/intel.c: ELF_HWCAP2 -> asm/elf.h,
+> * arch/x86/kernel/fpu/xstate.c: elf_coredump_extra_notes_write(),
+>   elf_coredump_extra_notes_size(), NT_X86_XSAVE_LAYOUT, elf_note ->
+>   linux/elf.h,
+> * arch/x86/kernel/process.c: mmap_is_ia32() -> asm/elf.h,
+> * arch/x86/kernel/signal.c: get_sigframe_size() -> asm/elf.h.
+> 
+> Add the missing includes to these files in preparation for removing the
+> linux/elf.h include from linux/module.h.
+> 
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> ---
+>  arch/x86/entry/entry_fred.c  | 1 +
+>  arch/x86/entry/syscall_32.c  | 1 +
+>  arch/x86/kernel/cpu/intel.c  | 1 +
+>  arch/x86/kernel/fpu/xstate.c | 2 +-
+>  arch/x86/kernel/process.c    | 1 +
+>  arch/x86/kernel/signal.c     | 1 +
+>  6 files changed, 6 insertions(+), 1 deletion(-)
 
-FYI I dared to merge following old proposal as
-https://github.com/linux-test-project/ltp/commit/fc4c633f627121564e61c7cb3412976946c71562
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-to follow the approach used in other LTP tests (FYI we use the same approach
-also for C based tests, see lib/tst_device.c). We can further improve the
-function if needed (reduce number of loops or suggest another daemon).
-Or finally remove it if it's really not needed.
+-- 
+Regards/Gruss,
+    Boris.
 
-Kind regards,
-Petr
-
-> > > ---
-> > >  testcases/kernel/security/integrity/ima/tests/ima_setup.sh | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-
-> > > diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> > > index 19f00532b1..054ab28611 100644
-> > > --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> > > +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> > > @@ -313,7 +313,7 @@ ima_cleanup()
-> > >  	[ -n "$TST_CLEANUP_CALLER" ] && $TST_CLEANUP_CALLER
-
-> > >  	for dir in $UMOUNT; do
-> > > -		umount $dir
-> > > +		tst_umount $dir
-> > >  	done
-
-> > >  	if [ "$IMA_POLICY_LOADED" = 1 ]; then
+https://people.kernel.org/tglx/notes-about-netiquette
