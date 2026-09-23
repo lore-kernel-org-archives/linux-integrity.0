@@ -1,118 +1,110 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from pdx-out-006.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-006.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.26.1.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51720489FA1;
-	Tue, 22 Sep 2026 18:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA9B48EC6C;
+	Wed, 23 Sep 2026 14:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.26.1.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790101275; cv=none; b=qKgNx8yawaBs20aaoMBGspuRdnR1VaUjWxd7JPjXbWiR/SeoArCzweuv7oEUP4LeNEXWMzGrou2LdHqAccb+5OOIJcl5ymtgO55233rgfZ1vkVzJ2fIGNbdylK7Z77F/cVC7p1M1skfNwPkdD8/1nrXD8g9mO6MIOvgbRX/hleA=
+	t=1790173728; cv=none; b=sFlh3EafnJlPUZuzeUhi5MtQVd1rE10eK+ioR9GAQrvep8L4xmwuPY1xibNyVODW06FAg88at/PdZmtyR9O+VIULYXe8L6rmM+PCiucTsUuKKvJsmoWj60av2sNv/jfKB1Xjzz2P07ATg7AuskhVJoMSZfxaxg03MdW+ykUQUig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790101275; c=relaxed/simple;
-	bh=Q3Jq6AE38hPWyaC8PxBDHclNOm3GiucU6dy5HxDiIMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7CAbleV+GvSXd4cPKWojjSXvX8mP7hU+36e5cfFwdKNJ4d6DocJboPBDmDMVP8InD9Rl0m1AqY90wKOB2UpFvym7CHjKugZ1ZhiN/j7gjCj/sBslT/sDvdIw1b9usk8mIfZcGxl0NZGGNF6Rbgdu5lUp1jpaXu4FJ49lkUHe1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QbV58KhP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1790173728; c=relaxed/simple;
+	bh=eci8dyvvlwBca8yQA89QiLvNcNEuLtl1TVtHyeLoY30=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uo87lJjrthyXVuChbGNFRuH8RzN6fr9p3/O7WUE+yum45qNXhLxjra2FI78dLPRviUK3OTqoMx9jJrLxt89R0K6nPSVsTOuoBiHD3rJX0c6HO7LUXIhI4ISZpXfKLZAY08B3DxqlLC1/xfrnyWTg1TN0SRupNsVobaulwflvPTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=es5+tkq0; arc=none smtp.client-ip=52.26.1.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QbV58KhP"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EC94C40E01C9;
-	Tue, 22 Sep 2026 18:21:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id hws8afuNhZVG; Tue, 22 Sep 2026 18:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1790101251; bh=wnm2vVrHQlGco2ec6VPqWb7bpCBXERRnc2z2yPnMu4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QbV58KhPfBVno6B2ArSJUhoSDLAQ4Hsf6Dk72/CpFNt6mZ+6+S1L18CuGaogLzaqZ
-	 H3uX7aBWCoZhg13pIdi057ptLtwXUoaJJ3HywCGhlDHEQIpFKnWYlgSFipzy15hhLd
-	 hE43IncmcBX7EKM0kvR5LNpyAhjG6BrWs5Q3MhlIpCgr0O1cO0CUxfc7k23U7+6RR8
-	 3pGcYnWwlJOQ3wfqEVFKCl9nNaS9RKn+257MdnQR1waZGqG9p6ktKIVcAEtz3RwpnI
-	 dgPft8Z3A2f0JQ/eQPzu7euTFDQ1bRJomhb15ikY5m9EajJngUNRXzi7HFd1v3lxPW
-	 m/PecNbYJCsjEfzeo7AoB4cDgbuPDUjoYzQwgWYlH8jlIraFhutf/9wzfVfvvWP9JS
-	 wgvL87caUEU3qauAkYvKztkcEb/rlzQavUbb/WtUfzT6Z/+vl2Vg9EMWDPOh12AjBh
-	 ZgjaiIKFQnw/Y/1xQNYF/vUQvxAxzwMfCDW9BRT+MwZTZwayfaDbYD1znHp54yaRHL
-	 XpewZPye+CeXiNijEyCz5LsD+PNqSthE0R3+dg2Dqf96Y4oKC0Ovjg04LfNX1yPNM3
-	 XApzx8xgGwzN5wAtHIQAXryDJSKgRM53xzH8BP+cZz94XmahSUzXuL9snfgN0OtKBi
-	 zoMm4dxnzhYwg8dgViCun/z4=
-Received: from stx.tnic (unknown [IPv6:2600:1700:38ca:c00::a])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DBDA540E00E5;
-	Tue, 22 Sep 2026 18:20:22 +0000 (UTC)
-Date: Tue, 22 Sep 2026 11:20:19 -0700
-From: Borislav Petkov <bp@alien8.de>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>, Xin Li <xin@zytor.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Aaron Tomlin <atomlin@atomlin.com>,
-	linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] x86: Avoid indirect includes through
- linux/module.h -> linux/elf.h
-Message-ID: <20260922182019.GAarLG4zWMoNNZJVZK@fat_crate.local>
-References: <20260911-module-include-elf-v2-0-954c732975fb@suse.com>
- <20260911-module-include-elf-v2-1-954c732975fb@suse.com>
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="es5+tkq0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1790173727; x=1821709727;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4W8U9nBIjABZ5uxHFzuxiVmKfyl0eOs4QLcZj8RuIZg=;
+  b=es5+tkq0dAf5raCvrgD/SOXOCcS5yQ08rQKWoHd5Y6NNfNygdfZ52cGE
+   YPrligd1rE+WunS2pW5MkIpyoDWB54aRfKliETa9Fe/Zic3xiPFdiCPje
+   Lf38hF1yUGxpET/1Z3Y/uiE1AFAT8jk+2TYZHzPc9FLVfD5IU/uSQxPDB
+   SmQItvHBImTATLVCapenOdWGoiZsjsUISeLgSPMNhZ+Efq1mpclANr8ZV
+   oI+KsfPE4+cdPCR3C1UjJ4SKXqZMAlLzNol4A3Hd4apdgvNtqTInXPLM0
+   LN16Q3xl5JnFwcSQ3sdXzDB26d4CM3ustrt/H5vbg9tiSnvLNRK0yA+zv
+   A==;
+X-CSE-ConnectionGUID: YR1Hay4gSrmnCPkQPGtn8Q==
+X-CSE-MsgGUID: 2FX6rAbEQhquPyYok8Mbzw==
+X-IronPort-AV: E=Sophos;i="6.27,118,1787011200"; 
+   d="scan'208";a="29481539"
+Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
+  by internal-pdx-out-006.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2026 14:28:44 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:17018]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.15.186:2525] with esmtp (Farcaster)
+ id f3e6d472-e10f-420b-93fb-de4796cce8f4; Wed, 23 Sep 2026 14:28:44 +0000 (UTC)
+X-Farcaster-Flow-ID: f3e6d472-e10f-420b-93fb-de4796cce8f4
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
+ Wed, 23 Sep 2026 14:28:43 +0000
+Received: from dev-dsk-surenkj-2b-416930d2.us-west-2.amazon.com (10.169.26.94)
+ by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
+ Wed, 23 Sep 2026 14:28:43 +0000
+From: Surendran Kanagaraj <surenkj@amazon.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+CC: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nh-open-source@amazon.com>, Alexander Graf <graf@amazon.de>, "Gunnar
+ Kudrjavets" <gunnarku@amazon.com>, Josh Levinson <joshlev@amazon.com>
+Subject: [PATCH 0/2] tpm: Handle transient NitroTPM unavailability
+Date: Wed, 23 Sep 2026 14:28:32 +0000
+Message-ID: <20260923142834.16786-1-surenkj@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260911-module-include-elf-v2-1-954c732975fb@suse.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWB003.ant.amazon.com (10.13.138.85) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Fri, Sep 11, 2026 at 04:40:31PM +0200, Petr Pavlu wrote:
-> Several x86 files use ELF-related declarations and currently rely on them
-> being provided indirectly through linux/module.h -> linux/elf.h:
-> 
-> * arch/x86/entry/entry_fred.c: ia32_enabled() -> asm/ia32.h,
-> * arch/x86/entry/syscall_32.c: vdso32_image -> asm/vdso.h,
-> * arch/x86/kernel/cpu/intel.c: ELF_HWCAP2 -> asm/elf.h,
-> * arch/x86/kernel/fpu/xstate.c: elf_coredump_extra_notes_write(),
->   elf_coredump_extra_notes_size(), NT_X86_XSAVE_LAYOUT, elf_note ->
->   linux/elf.h,
-> * arch/x86/kernel/process.c: mmap_is_ia32() -> asm/elf.h,
-> * arch/x86/kernel/signal.c: get_sigframe_size() -> asm/elf.h.
-> 
-> Add the missing includes to these files in preparation for removing the
-> linux/elf.h include from linux/module.h.
-> 
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-> ---
->  arch/x86/entry/entry_fred.c  | 1 +
->  arch/x86/entry/syscall_32.c  | 1 +
->  arch/x86/kernel/cpu/intel.c  | 1 +
->  arch/x86/kernel/fpu/xstate.c | 2 +-
->  arch/x86/kernel/process.c    | 1 +
->  arch/x86/kernel/signal.c     | 1 +
->  6 files changed, 6 insertions(+), 1 deletion(-)
+TPM commands need to complete within the duration defined in the
+TPM2 spec or keep answering TPM2_RC_RETRY for at most TPM2_DURATION_LONG
+(2s).
 
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Devices that have different timeout requirements than the TPM2 spec
+can either exhaust the retry budget or delay the command completion.
+NitroTPM can very rarely enter a mode where it either sends
+TPM2_RC_RETRY for more than 2s or completes the command late.
 
+When this happens in tpm2_load_null() during auth session start, the
+driver sets TPM_CHIP_FLAG_DISABLE and fails all subsequent TPM requests.
+
+    tpm tpm0: in retry loop
+    tpm tpm0: tpm2_load_context: failed with a TPM error 0x0922
+
+Add chip->busy_timeout_ms to support devices that have this
+unavailability window (patch 1). It raises the TPM2_RC_RETRY budget and
+the per command duration to at least that value. The CRB driver reads
+the vendor ID from the interface ID register and sets 30s for
+NitroTPM (patch 2)
+
+Tested on an EC2 instance with NitroTPM by inducing unavailability
+windows under HMAC session workloads, and in QEMU with swtpm by holding
+the TPM in TPM2_RC_RETRY and stalling command completion past 2s.
+
+Surendran Kanagaraj (2):
+  tpm: Add per-chip timeout for transient unavailability
+  tpm_crb: Raise timeouts for Amazon NitroTPM
+
+ drivers/char/tpm/tpm-interface.c | 11 +++++--
+ drivers/char/tpm/tpm.h           |  2 +-
+ drivers/char/tpm/tpm2-cmd.c      | 17 +++++++---
+ drivers/char/tpm/tpm_crb.c       | 54 ++++++++++++++++++++++++++++++++
+ include/linux/tpm.h              |  7 +++++
+ 5 files changed, 82 insertions(+), 9 deletions(-)
+
+
+base-commit: ab411db3c3b1fd0c70a36fb32c96b2c60175210b
 -- 
-Regards/Gruss,
-    Boris.
+2.47.3
 
-https://people.kernel.org/tglx/notes-about-netiquette
