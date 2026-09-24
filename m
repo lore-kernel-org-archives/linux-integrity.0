@@ -1,141 +1,199 @@
-Received: from mail-pz2-f40.google.com (mail-pz2-f40.google.com [74.125.228.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013070.outbound.protection.outlook.com [40.93.196.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4588130DEA3
-	for <linux-integrity@vger.kernel.org>; Thu, 24 Sep 2026 23:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B2241A92A;
+	Thu, 24 Sep 2026 23:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.70
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790292884; cv=pass; b=APySx6If9opSAlNZIpVmzwBjolGcsdtBfOENIEy5FKVkMCWYNU6KyLIlc650rp+LR9ImV3Rb+I0CvIs7HNZVPx3f82E251JekgAnCXKYKzW8cP5J8GZ25WWxeea8zyQdUVvpCEMP6OQfkCd0DqHi10E49hpXItlp50HacJt3NTs=
+	t=1790293509; cv=fail; b=mOLS9R5Eu+nuiXxuHFDNQzP3YTGcrC61FxlL7VPG7NJYU5yhUeJbmJ1nw1SwV+mKXpzkXlbzvruSpops3IpwRH+cZKmAGM05MCwFw4FXxeGydaXCOX+J2pft4X1ztUI6wYaJjjAFHGDGWneNk5z1QKSgJzrFeteIQfW3aQtUyNg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790292884; c=relaxed/simple;
-	bh=hIIWOe8rGZOqxD01lrJKJbEvMRQfqkzsLVgYpmbDrBk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=th5VEsCj/Z3n8vmIDLR57lBzq2+kZwkMUettc5h7NaxPv35uLzkzhwcKqYuaIjEN7ejYg1hg+L450QEYHkw6dtjaoHokI1kjTYfXtuqFlcJ85YPH4ErBwOXISHMxNxUo6cCySs9E+SCtHBSgKp/mltoO6a2nMFlcNki10HbuCzM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=UscAw3cu; arc=pass smtp.client-ip=74.125.228.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+	s=arc-20240116; t=1790293509; c=relaxed/simple;
+	bh=22DgX4VmtSMie25D5Z1jWlLd5cbP/gcLoW4Xyzbw+s4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uCOK6JsASeft5NPuNTVSNrWHCnBnqos65h9iM67gTarY1Ellq8+2zuXJLmGVZSVG4omvcOGhDs3R2Lb+UYQmjQDBsavLuScyNyDuX7tY/KDBWbvniSundMeuxTLbC/VJLP4UL2OH034g0EhClu8oC2f+E34e+PmHGMa+7npsx+E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WC/qhUAe; arc=fail smtp.client-ip=40.93.196.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="UscAw3cu"
-Received: by mail-pz2-f40.google.com with SMTP id d2e1a72fcca58-87c90648f99so327143b3a.0
-        for <linux-integrity@vger.kernel.org>; Thu, 24 Sep 2026 16:34:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790292881; cv=none;
-        d=google.com; s=arc-20260327;
-        b=at5CmaFa9VMc1BuHm1MT6jWBawq5YcH8Zl+IatRiHeNX8j2YB5mKPZh0opkDZCSr82
-         JoBg/9b3s+KKyqWuy+yASy+g0rKV73PVOe5QTNwHpAcjZERKs7KHYx9N9UPUtt3VGdDm
-         BlhrT6fbreF9d7RAx59h0H+iLoUFQETZTaj92lE5+2YFPkru4wEim2jmgxJ35WbKu9aR
-         SNy1AspEqJZS16EltaLqxrwkmqoVNSMYwA2PFaXjp9dTbU2GvF3pZ6qGzYGsM8RjUmX7
-         rTb4FKuGrXSanf51KfplH8mVca8s8W9TxBO+cyJk2smnkkmTNV+eBb2sQDAtImWyiHA2
-         AaIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:dkim-signature;
-        bh=hIIWOe8rGZOqxD01lrJKJbEvMRQfqkzsLVgYpmbDrBk=;
-        fh=1W12/XV21Zuw873JI6il9CydE13+i9BfTl6Afs4PL5g=;
-        b=jBmL9M7cW5LqS5pNzswu5O6rgZMZAkBAqPmKhUUo+YKAEx/ORNZV00qHkBXA3JK/f3
-         oPzncE90W19TPkbDTlfMcbCKpUqsRURcGCplZbRQk+jCjaNfCjtjYTQNmSbappapRkNc
-         u+BogAJkXX6TBzj7risE+67yhP/TANC1pQRuSEKdvDueF9qPB2PJBbDdx9pEU358f2/B
-         MHBKMLmdCYkVVq2UsTBUOZGlFMcJoijcrUCPqYjjmVxeB24tfUdsX8/dmePVEeXTR52Q
-         FIJPYv9O+7fZlLdzklXJsNS58Dc0I3mW/L/lmkgsRZyCiYHU3A+MmiSAneH6SDkgsHw7
-         XNeA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1790292881; x=1790897681; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=hIIWOe8rGZOqxD01lrJKJbEvMRQfqkzsLVgYpmbDrBk=;
-        b=UscAw3cuNt2P0HhHDjZImTfQGlrGXGyCV+GxA5/DTxdv1UL3vMfTQiH+wi/YPSUeaw
-         kXyAn/MstceHwa4zfTpNsYk4hrQfpIACde3GVIgXUz9SE0ZncuHvWQVomKYEpvqCqe1l
-         o/4LLssCvuKGhqw2fzsxg0Vfp/73uhSUxKe8JTaiDHzyBFqqavvNFLryVwrg5pn3Mgwl
-         menBOAm5iGqgH9KAUzJVelt4RjrbNqV44wBekiblC3EiMuplPU1YrLtk5XiaAW4isvdD
-         3KNJBVWBJBbTROazHwqfVq/6BSckTkdjm4gTYsGUo0NGWAXHLUnZuqr8hnIYEj3LLgZM
-         Tdsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790292881; x=1790897681;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=hIIWOe8rGZOqxD01lrJKJbEvMRQfqkzsLVgYpmbDrBk=;
-        b=jB3n/qUGZaPgLZbONsRrBLCa2t7Gyy4hXkM/nlBdLTOQwGCuf6XxjUYmNGCgR1gQQJ
-         HD8od68tDx8pkhxG5Yt4DLVEzeiONDakoUt+/wHIl9j2H5eH3nYKVyLlPwo/3bV8YxiQ
-         tkYix2cHTfa3hux5839gK5S7bh14RJC2B05GpWfabeK9lsPJ+Lm9UaSq9j4Oci9ErebX
-         viJnkk6B4CW1sWcnGpjAdLcBhxWrEcLJKRMQzCFH2W+zpZBl6a+JDWedX8/hfrzUzcMV
-         UMgmUDXcha/OVNX2DGk6aWqnrILEgRMRQGsUWpBryTfEpTW6IDe8MsoqPJczRnoZ8F7Y
-         FYoQ==
-X-Gm-Message-State: AFuF++krpFnXNDztBFKEue1g3o0N/PUR03zSoqfcSkb8qx+OfkZfJu3E
-	IMf+ai/IhEiAdUxi31ghfF18++DiuLc/E8FoxsnAr6raw/gjpEvR2xecWLgVqqs3OIJJb68PHDm
-	hNIVlIZcCwttXM+LH2i+NROKgBwje30HAkL0R7WTcY0Qh21SH3jchKg==
-X-Gm-Gg: AYBFou3A5bREu0KPQidRwlSyjde5O12HYiI8UotbO9Lhdcze6V2shzfpBW5dIMCa3Ot
-	PHHk9rgt0x3uWnSK/0I15fgpaRMmo3Ho9PjVJVU0aY30X/DYQFITFD6hvREJswIIbRvGAkxB/LQ
-	E4aVkeV34l2p97jGdc0J6y7JTJlLlcf5peMC6MS+zaah5vO20/INgbrm0DsZoD509Xmlrr7MhZy
-	vqYODDnLiG3niOydE25VxtfpkEeTS3aDoEXhR2hNDWKmVg3DohGRB8pdDGGVZWqAl3TxSy6J8Kn
-	Q97hJlRRFqjg8Sb7e0Y8Pzz40HznHRFUYuFMwVhogwXlxMRpRxYdCvO+5zDgthx46ju+ANjAUoO
-	/kGV5xtkJNRU=
-X-Received: by 2002:a05:6a00:981:b0:87d:d4e5:c56b with SMTP id
- d2e1a72fcca58-87e9f631f8cmr3621751b3a.55.1790292881447; Thu, 24 Sep 2026
- 16:34:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WC/qhUAe"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kQHKU9aKnyR79094OA/45vQvp3qHboDkabsF6TTBJzxEADX2PNE9TGkwusu4hOJayypBVPCsfGqzKF5kmwNbPrmZxINPBT6yIeU4iolCJ5NidSAKJ+Cll/LSysgfpyPOgFiQUL/C2aXe0QN5gBHEGlvBkYj0OGaT1gddc5bE+jwc11ZfmwlNcik3MWE9Ev81n0xGH+WQK5ZvurPBtPMDX7lxv6Ifs3AUgCylRfqcmS+ozoaZNxVp3b/WBx5roLOHvF9MyQl0qbhFZ4gb5mAyRPyJKySTTmfCqv1UJumEQOZrFVUdG/nPCJZ9+kHjHYKn/hgIxNtWycJSRnenGT0dLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zaUI6T+DlcXrBhQVMPTTfZX5DUPSsfm8m5KwoTkD+vs=;
+ b=WhxIf4ltQDYtMHaZ4rlyrUCKENypb1StPSTe0IHIre2lBUpxAvT68xqXwczA/g8j7KRbdk0sFBax7mHWDI13dt+1piHkhlmBzhZ/V2+XllvyOAeeDhdTNFsiPG5x1RJEgtM97XmpBXzzpFspYmjl7PfcgKrpxTQFjFUDB4wlX54NpiBHlenM5mCGTevvZZAohrLqE7u3Nl7GkgIuSS6OsW7IX+WRfyLqlMWsdXFm3+5Nck67AymyaBbTk4cmlegKisksSKEPiJ8adXXn50EMs51LCqitawMO+7pLCpYZ8EUX5aDOrKHkXV1P7l4halWZaV6SvNK073x/aFVM2sj8Ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zaUI6T+DlcXrBhQVMPTTfZX5DUPSsfm8m5KwoTkD+vs=;
+ b=WC/qhUAeP4TPL/Y2bwblrsoScX6yHGqrFGAUOUygblw+1nzWEJWuYpB9Dv9bRbI3C3KAkihfzVZAQNRUjPmo3r+wQjfYon/etxMlYUuv0M8ZX85Hvrj7SSpuRlW5XnbzFerQhIdOxo/+r8wRZwSoq5vdic2JS/B6u5n18gU89TgJ0q06Cj9kMayV+KCIYXEu0/JB0fJKGFndm1nvOIfs3Uh2OP1LMv8+6yJQw7+WWeuzYskGLb6H+kF8AJNpo54VGCZiMGw2eTANyhctXFZ0TpZuOJFFv2QsaOHkRQt9MtXTXYV3LKh4hPl8lwt5gQJRD6oCa+cIKyTWlcI0247LaA==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CHBPR12MB731189.namprd12.prod.outlook.com
+ (2603:10b6:610:33d::12) by DM4PR12MB8557.namprd12.prod.outlook.com
+ (2603:10b6:8:18b::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Thu, 24 Sep
+ 2026 23:45:00 +0000
+Received: from CHBPR12MB731189.namprd12.prod.outlook.com
+ ([fe80::b0e5:123d:fe06:e10d]) by CHBPR12MB731189.namprd12.prod.outlook.com
+ ([fe80::b0e5:123d:fe06:e10d%6]) with mapi id 15.21.0451.014; Thu, 24 Sep 2026
+ 23:45:00 +0000
+Date: Thu, 24 Sep 2026 20:44:57 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, David Sterba <dsterba@suse.com>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Simon Glass <sjg@chromium.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Nick Terrell <terrelln@fb.com>, Will Deacon <will@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-integrity@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>, patches@lists.linux.dev,
+	Ross Philipson <ross.philipson@gmail.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Song Shuai <songshuaishuai@tinylab.org>
+Subject: Re: [PATCH 01/16] efi/libstub: Fix error unwind freeing fdt in
+ allocate_new_fdt_and_exit_boot()
+Message-ID: <20260924234457.GD9354@nvidia.com>
+References: <0-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
+ <1-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
+ <20260924154227.00001cbe@oss.qualcomm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260924154227.00001cbe@oss.qualcomm.com>
+X-ClientProxiedBy: SA9PR03CA0030.namprd03.prod.outlook.com
+ (2603:10b6:806:20::35) To CHBPR12MB731189.namprd12.prod.outlook.com
+ (2603:10b6:610:33d::12)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Danny Hu <dannyhu@arista.com>
-Date: Thu, 24 Sep 2026 16:34:29 -0700
-X-Gm-Features: AclHuK9IkDBuzSPncqsk5CphrlCAAZAelouVeBwEYz1gKsUxlITqtZndT1dk6g4
-Message-ID: <CAFn2k5AwOoHesnqB42kpfAGx0Wf-CtQbpU3px7LMj8PeiACvZg@mail.gmail.com>
-Subject: [QUESTION] IMA: kexec appraisal and the unauthenticated target
- command line
-To: linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>, roberto.sassu@huawei.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
-	Pierre De Abreu <pierre@arista.com>, Julien Gomes <julien@arista.com>, 
-	Kunal Bharathi <kbharathi@arista.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CHBPR12MB731189:EE_|DM4PR12MB8557:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d87f676-dd23-47a7-f43c-08df1a95d8c2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|23010399003|7416014|376014|1800799024|4143699003|56012099006|11063799006|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	+GHYFjzfFhtiVupEtlEKlxObjMKptfk9wmE0azv3SRGH4JAKTbb2TVg5IBfpcz046QLZbClGE2KDKJvgEouV5NEH47ZchHohJIPBs5/9Zjlx6x9KrWF7u1RzXnK2k/ozrFhbDebQkksMKIZu5QPWAaIee9lO2ulABQkOfzv41y4itPoekVGEbU+dRjhIZlm9gTtHRmZIKBhPgBOaXjC7Btiut/1bjrb+Se/xOPUa7mlKVnpQm6REwqMKU/HbJ1CamcABH+igNVPWUoh7d33l4hXtWKMquwHhtEKxskyoccJc5L97zX2sXa8Vc/VRuZmEmLeegSLd4lR2DLJG71a0iX0MHMi3a7fSZKk7yKYLXtlJGdzLfmprX6dPYcRJ7QNerQEPUYC3hW01HSoIcB8xsqOwguA19avnzPtBmzD8DEWVNlFt7GEM9414RnWa4SmT++ZCuf0WsnLidW1RSxqZsdFHGAPf2Fwd4Duz7EAptpqgGuhckFSQ0U3D80qW2osyF1Y8SJZmds/44KFNiVYLZxFYt2f/mI8cmIbEVwDsaDp9pF6AbcZAVs/qRfwk8MZJmyauCugG4Iy9qnDRlTYskaEx9lbs6vwuTe/D2ZnBAKwiqwmhNFl9YZmDdkNPisE9YoX7kIpOnqTJxOXDCS3TfmyeuyrAF2SEau9m7YNxwSQ=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CHBPR12MB731189.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(7416014)(376014)(1800799024)(4143699003)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GiP4uo81wIEbgVQyRjhtYHGFZOl5PkwNCbV9+UzlfLOUy1p71iC9poMQ+6yG?=
+ =?us-ascii?Q?XEE6UQspoKJ/ZW1QSputOLGZPnZb6c19iN06FvcuDLLg8jHpa4+7/Jk3MPUG?=
+ =?us-ascii?Q?Fjs8SRgEp0C56jqXrDAyw5EKtr91+e435UF0E1FJ4t5i5Padl0IczNqr54HB?=
+ =?us-ascii?Q?+nMHpUM730vJ0NnegeuPRSRtBmOh/XEajPGXOUBu3zt8SUOevJs1DNcpgjh5?=
+ =?us-ascii?Q?8yjFsdrrY2uiRCMr/S7HjAuNQ7eqv5jgsZ1hbNRP9B9mcPIm2RMfdLZI6NVx?=
+ =?us-ascii?Q?7cwpsWqj5a9eDCUBJmb9b1LsHvbXUI94BzysPyeLgxp3Pwi6tqdwVm0OaU0l?=
+ =?us-ascii?Q?7zeE8CI2XpM7U6WA5zYi+atObgg0+TYUCor0BfkpiOsQUmd9o20ntsMWMTYj?=
+ =?us-ascii?Q?hWMSl/hF8MmIUevAnNsjBzvLTeN00VjoKLzvKKJOywRHFj0lqPiWZPVjZr9M?=
+ =?us-ascii?Q?hTG8D/mI6FMBDLofCk3ACKiKbI1PJPjp/Bb9QCjaamxGQNG+RXN8DpLtBMgl?=
+ =?us-ascii?Q?apwFLbeaHGsITE5K8Yd4IvtoN3AYWAhQ22v8WYfJm7xvgEYw+Sv2nLhJwV5d?=
+ =?us-ascii?Q?JXjTTpqhaD6yC39rtm3/bGT7yiDYkdycfFUmJE4aeSOzIwpcDxhp3EXmLsdZ?=
+ =?us-ascii?Q?VL1tL/5i8GIWwF+doHM0z4AeK7fAMzkm/veOOVwuEEEONGY8hYljhNeSmYUh?=
+ =?us-ascii?Q?g47yg35lprz6+k5K1IrKianmnwIZQF0CS1HBGx9n4uqJC7cdWM13LAiLazzV?=
+ =?us-ascii?Q?nN0+YbSJn250Fo1GXui63GfL2dv4YtH9i4ts/nYyvWBU+f6ziaRp5FZA0s4M?=
+ =?us-ascii?Q?dOq/kCMPJPHYPCo94n1ENpmm6o64mx8FC2orx6yCZXG7BRVjXabBImVeJ2kd?=
+ =?us-ascii?Q?9bMa6CorxgPsUFM4HI2O/pKnPbjVD7VurS8+0Z62lyYj9t/qK7RmtXsauzv5?=
+ =?us-ascii?Q?QMBqKt8VEq521AP7br2w5ndi9cINwfGADGGaZNO6pZXKwCZpKac3nfxGuqTp?=
+ =?us-ascii?Q?QfQYArMJjmVSwYvkFaUygDN0LyJt3E/5TsXIm6jsohbgC0le9z8/HEHJxll+?=
+ =?us-ascii?Q?QhaYIdzk4ot5f6vm44XmNY8jn1CJ4UQgWwqLN2txNLiExrrlUgUK52Pqy7AP?=
+ =?us-ascii?Q?kvl1A7/nQvOv1ZpDQN24W/sjaFiAhrTPuTS9tvDezA82O4jr+M6fTnIEJp3n?=
+ =?us-ascii?Q?3arsT+YKHAWUjKuRO+cxl/fTdA9gbk7aIMttRS2qMy9OkSutDbZBchROovxY?=
+ =?us-ascii?Q?hpRjGNEmBxqsYSxpO6IDCGypu8mtvsof97VqeVDXgrR3+SiHVkNbhRaZKY9v?=
+ =?us-ascii?Q?p44HD3l4Kp6AR7ew74afzl8difle2VJa0dYf9+CsV4cbCrK6BJIJfT74v0nX?=
+ =?us-ascii?Q?2wtz6914TaBoMktcui4C9GTOUlgz3qgTO8grLrJcwB2+aeYzLDvw6Ko90d86?=
+ =?us-ascii?Q?UcWkdlsvI2rEA8PNQ8kKPaWOZi+BAWgj1k4y+oZ5jsvSw6yuVmm2fw/eiy/F?=
+ =?us-ascii?Q?1hX9zildEzqiLETUiksNYujaMbOWnCrcS21ydTDy8E0SrvSh0U9roMivIhae?=
+ =?us-ascii?Q?5fqkJRz+F/Zb8mIdS02Tj84o8KoEon+I7tkz30WjVb0y3rM2vcYFB6DZXD9B?=
+ =?us-ascii?Q?UZ8ltObvbiAc4tB5t21ixAmxn35g4JT9F9Se/3F9Cvr6AK5yfEiQgXpzRYR4?=
+ =?us-ascii?Q?DmzZ9iK1T7bBcTh195T51onNhTvgXilhIZ8HwpTx3r5mqlZ6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d87f676-dd23-47a7-f43c-08df1a95d8c2
+X-MS-Exchange-CrossTenant-AuthSource: CHBPR12MB731189.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 23:44:59.9834
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JzVv/eVfIheAONuPkNxn53OpwoCe8k5gRLLSEGzil7al9xnB4UJBX8eqMFKerW/K
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8557
 
-Hello,
+On Thu, Sep 24, 2026 at 03:42:27PM -0700, Jonathan Cameron wrote:
+> On Thu, 24 Sep 2026 10:53:04 -0300
+> Jason Gunthorpe <jgg@nvidia.com> wrote:
+> 
+> > Sashiko says fdt_addr can point to either an allocated fdt or the fdt from
+> > get_fdt() which is memory owned by FW.
+> > 
+> > Only the allocated fdt should be freed on the error unwind path. Use a
+> > dedicated variable for the allocation's size so that the free does not get
+> > confused.
+> > 
+> > Fixes: 4fc8e738ff3e ("efi: libstub: remove DT dependency from generic stub")
+> > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> > ---
+> >  drivers/firmware/efi/libstub/fdt.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
+> > index 23b3543d3041b0..5b2dd709d7b151 100644
+> > --- a/drivers/firmware/efi/libstub/fdt.c
+> > +++ b/drivers/firmware/efi/libstub/fdt.c
+> > @@ -229,6 +229,7 @@ efi_status_t allocate_new_fdt_and_exit_boot(void *handle,
+> >  	u32 desc_ver;
+> >  	efi_status_t status;
+> >  	struct exit_boot_struct priv;
+> > +	unsigned long fdt_size_allocated = 0;
+> >  	unsigned long fdt_addr = 0;
+> >  	unsigned long fdt_size = 0;
+> >  
+> > @@ -257,6 +258,7 @@ efi_status_t allocate_new_fdt_and_exit_boot(void *handle,
+> >  			efi_err("Failed to load device tree!\n");
+> >  			goto fail;
+> >  		}
+> > +		fdt_size_allocated = fdt_size;
+> Hmm. I argued with myself for a while on this.  Which one of fdt_size and fdt_size_allocate
+> is the appropriate one to pass to the call?  In the end I didn't get a good answer so
+> oh I guess this is as good as the other way around.
 
-I have a question about the intended security properties of IMA
-appraisal across kexec_file_load(). I am trying to understand why IMA
-supports appraisal of the kexec kernel and initramfs through
-KEXEC_KERNEL_CHECK and KEXEC_INITRAMFS_CHECK, while KEXEC_CMDLINE is
-measurement-only and cannot reject an unauthorized target command
-line. Requiring a signer-approved kernel implies that CAP_SYS_BOOT
-alone is not sufficient authority to boot a target kernel. Then why
-are command-line parameters capable of weakening the target kernel=E2=80=99=
-s
-enforcement state not similarly bound to the signer=E2=80=99s approval?
+Huh. Functionally it does not matter, but looking at it again I will
+change it to pass fdt_size_allocated since that chases down to the
+actual allocation. Makes more sense to me like that.
 
-This appears to leave a gap when IMA is the mechanism enforcing kexec
-integrity. A caller permitted to perform kexec could use the signed
-kernel as a downgrade trampoline:
+@@ -253,13 +253,13 @@ efi_status_t allocate_new_fdt_and_exit_boot(void *handle,
+                if (strstr(cmdline_ptr, "dtb="))
+                        efi_err("Ignoring DTB from command line.\n");
+        } else {
+-               status = efi_load_dtb(image, &fdt_addr, &fdt_size);
++               status = efi_load_dtb(image, &fdt_addr, &fdt_size_allocated);
+ 
+                if (status != EFI_SUCCESS && status != EFI_NOT_READY) {
+                        efi_err("Failed to load device tree!\n");
+                        goto fail;
+                }
+-               fdt_size_allocated = fdt_size;
++               fdt_size = fdt_size_allocated;
+        }
 
-1. Supply an approved, signed kernel and initramfs.
-2. Supply an unauthenticated command line that prevents IMA
-enforcement in the target kernel. An example of such is through
-=E2=80=9Cinitcall_blacklist=3Dinit_ima=E2=80=9D.
-3. Boot into the approved kernel without effective IMA enforcement.
-4. An attacker is then free to execute unsigned code or kexec into any
-other unsigned kernel.
-
-A few questions for the IMA maintainers:
-
-- Is the lack of KEXEC_CMDLINE appraisal simply an architectural
-constraint of IMA=E2=80=99s inode-based appraisal model, or an intentional
-part of the security model?
-- Is command-line integrity expected to be provided by another subsystem?
-- Have there been any discussions around a concept of =E2=80=9CIMA continui=
-ty=E2=80=9D
-across kexec? By continuity, I mean preserving the appraisal invariant
-across the transition so that every accepted target kernel
-re-establishes equivalent enforcement.
-- If policy continuity was not intended, what threat model gives
-appraisal of the kernel and initramfs its intended security value when
-their execution environment can be weakened through an unauthenticated
-command line?
-
-Thank you for any historical context or guidance on the intended design!
-
-Thanks again,
-Danny
+Thanks,
+Jason
