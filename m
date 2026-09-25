@@ -1,93 +1,137 @@
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f39.google.com (mail-pz2-f39.google.com [74.125.228.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA915479870;
-	Fri, 25 Sep 2026 09:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483B747DFA8
+	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 09:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790327072; cv=none; b=jtObOaAxXINi/2HKbagHsflXqiMGEmElWOUn6VFZ7BGppJkInVkd53jdw9rQ0Ch2jijQ3ktHXhLl+BNn/92mbgJ3Ne0DLr8M4PBeNqw0TK5nwEBlBDil2uRNOyJx6lGn0yNbtse8IyfJc1aps4Bn5spa9JLhBjFDy/bnGUkzLTo=
+	t=1790330005; cv=none; b=aeDDoV99LDOl0VgAffClvuSJkcNwdUVb+oMQcJTYskbjGxJiIxT3N1E0F/X5SDFbdo2S6/1GX461w4jNrwdNvCXJ4VvYY3jFjEad9Z5nwwC+QjFS+tEdcDStxnS+pGP0nz+gwHgIXd8ssNg2jet1wnv91GGk/DMzUQfYYiYgrGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790327072; c=relaxed/simple;
-	bh=/ziPnqu1H4E0CuBH4wml/LZRn7O1jowDghjO3sZzJQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UpGKie1gBPl17glpeGnp7Bks5hI8B7KDh5JlbXnZcKQjcRefB3/H1xlCvUjOMTa/05QnxZMD9LrFRnMH0AU9Vhi85/ip08kJ4lvmp/HZwcN0oV2Nb/TFmP8V9TFNugQUe2ZE6vUECcuUzMpAnaYyOOwUnTFlTqxMVLo/6thnMro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=K3vS/br4; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
+	s=arc-20240116; t=1790330005; c=relaxed/simple;
+	bh=6GRmHPLR3TCBKfBWB4SA0tOdNi5yoK35GggbLziGW1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J40iKey9EJFj1nT7x+otfi0m+zLRMPZF3h/WnXdk8wsjAvbByl5osuIlLPqg7znK2WqKDlXCHjYWHwUpCn7kZ4gZXKWfsNtQw46NbHOZYqxW+b86wgXsGoTkYef/cadvTjOLyroN80DBCInEHF4czhqqNOTxjRW9VQh6egjZ0BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A17fV1CN; arc=none smtp.client-ip=74.125.228.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="K3vS/br4"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MvTRbaXru2O74ZwFiMWvfQTvdbBiOWYcp54wMU1JIlA=; b=K3vS/br4fDSRbWWrqh/f02O09P
-	RuONxZp64kmPLPTmsFlfdPeX8TZhqD5FZYpyFSC0SIxt6jDg20AxinjDe3l4DR/52JConAy/+6tl2
-	YdsuIKOSG7p2OMjqL/KFcczRR21RiXQzcdK+HabIZ9OuvewZ4FC9/3/2Y8KVuWtipL33x/Ozs32jN
-	B7QFyWD3Pn908WrTdlI6LWlVkM1t67Z+xq8kCNmM7x4DvV61aDf5XVav4aK8pExp/3bzrPIo8VXun
-	qMBKvry/E17fZN9mxbQSEs0TpiCTbQhGeyFx4FSpOkf3SCzKEpBFzrV9fQgUfz4lP6OyL6//f6Z+/
-	+gvUgItQ==;
-Received: from authenticated-user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <leitao@debian.org>)
-	id 1xA1qy-005BzG-2i;
-	Fri, 25 Sep 2026 09:04:25 +0000
-Date: Fri, 25 Sep 2026 02:04:19 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Surendran Kanagaraj <surenkj@amazon.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nh-open-source@amazon.com, Alexander Graf <graf@amazon.de>, 
-	Gunnar Kudrjavets <gunnarku@amazon.com>, Josh Levinson <joshlev@amazon.com>
-Subject: Re: [PATCH 1/2] tpm: Add per-chip timeout for transient
- unavailability
-Message-ID: <arY2qHhjv97W7WvK@gmail.com>
-References: <20260923142834.16786-1-surenkj@amazon.com>
- <20260923142834.16786-2-surenkj@amazon.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A17fV1CN"
+Received: by mail-pz2-f39.google.com with SMTP id 41be03b00d2f7-cc7901f7971so83028a12.0
+        for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 02:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790330003; x=1790934803; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=UGO9gkMm/hjzd0yK8CgZnet7IwsFNqJtn1zmuKbVxic=;
+        b=A17fV1CNmzpX8DYQKR5KtWko7KWDsPPZcJU4zFxVkAQYBNz1vvUjfD4vSL7GrA/5/m
+         HDXY6JCeMEp8y+k/KTFxj6J4vTvI/Mom7Bcl46NdwfuLNvFTMFwmNj51bGImrkNPZX2J
+         yqtVxMtUtpfnkLpmi/KsO4GZv8V5MlmKgBFK2MfHqRACiJAtbEs2ElFjjxejbEl2xCxy
+         /p7I1bhaKeBz7UvWxWWGZPO3DgNepS3AcoTMHVxcTBxEMB6+ILqUk1E4Qv0sEUd86y2y
+         xL+8ucnmNiVwHQbO272R4Ett0IY0vBBWAyfVlHBigqfzxYFDPr9OLJs9rxkM6r+OckRZ
+         mJ0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790330003; x=1790934803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=UGO9gkMm/hjzd0yK8CgZnet7IwsFNqJtn1zmuKbVxic=;
+        b=V05o2/ad1FaiJkiZrgmrbGqPVH2T83MoBKwg4YXFY+gcG4z0BnnFVbaNTaytQYIZ3D
+         rIVuvdhyGd13fpkdPVpopIO0YxI2TWL9U2qwic3Br4npnbGiYEjWnprFgKMFYKNUPX5J
+         WIyTqFghVLV/acEA1RPwxeXX5a/Zz/IXqw6L5lOmrq10kfggDRq9mn12TcAWdkjcy9vM
+         BWzgfL99hGemzwy61K1v1ZSSGhePs1thZaZ8XjvW3YwfypN7wB5tKVLBHrsBBwyhcdB1
+         wGnnbMz1vKOswxmmaGpWuhAGGvtDI2XHpEnjn8Xi5IEfDq29vS/qQWD90YnMBEraXoq5
+         LKIQ==
+X-Gm-Message-State: AFuF++kdcC4OQzD4Q2wXwAxi5fGSpd8NJN8txKzU1ku3a74VHxAlu2BZ
+	nnmmTjZkksh25vRFIwuU1CCRDuZfqau/Ngf141x2XU7Eq/KGQ/9aNbW+UOKpZPLM
+X-Gm-Gg: AYBFou2HCx5b/wYkmNrTBYLUYU5XNAp2zEZ0e98aoQTHSnfBHJarrjl568zQaO+Ahaz
+	8uyRkjzkKHPKLOAuDUGblwm1NGrUNs4Tcdp09nSU7BQlSDZuj6uDOPk7U9YBNP6YQoK6QdYpbFu
+	YBnJ7gT/f6CiIdj+aCTJocTWBeL/we+NZikhlcQI7+L6tIBnjhLzby3OZINNAGSTXzis2P9o1b2
+	yYlEpyhaQDrJ0TqKII1jf2R3BsJ9ljFUmOYIvyw8Unt68rVWK6xUEVsiXk8KTkdO82KBR77TtNR
+	NTzZDrwEj/yx8DtACmpfAdQW65cOsPmoqaMKserBwzJjRCuHs2NLS4lihXw9qFZO/8UdSQBSgak
+	GHaN11uJXymnAacqFzRcgKEkOyu/V4Ed4BPV8nikOsaDbuuJOpP1gTS0jBCPqWHKVBImbaheccq
+	dUh0tn3xIA9+hD695PJ4eMOi1AebFXZ4uAMw/Lrw35yygN5ifiKFS9vt7modyDu0xTA+OL6nd5r
+	7+yRPq5LY6E
+X-Received: by 2002:a05:6a20:3d20:b0:3db:3d0b:31fd with SMTP id adf61e73a8af0-3de0e703d8dmr5190620637.1.1790330003117;
+        Fri, 25 Sep 2026 02:53:23 -0700 (PDT)
+Received: from ancienth-X870E-Nova-WiFi ([125.186.72.2])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cc78796cf39sm924154a12.32.2026.09.25.02.53.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Sep 2026 02:53:22 -0700 (PDT)
+From: Daehyeon Ko <4ncienth@gmail.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KEYS: trusted: Reject short TPM2 public areas
+Date: Fri, 25 Sep 2026 18:53:08 +0900
+Message-ID: <20260925095308.3248297-1-4ncienth@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260923142834.16786-2-surenkj@amazon.com>
-X-Debian-User: leitao
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 23, 2026 at 02:28:33PM +0000, Surendran Kanagaraj wrote:
-> Devices that have different timeout requirements than the TPM2 spec
+tpm2_load_cmd() reads TPMA_OBJECT with get_unaligned_be32(pub + 4), but
+does not require public_len to cover that field.
 
-Can you help us understand why this device doesn't follow the spec,
-and why the quirk belongs in the kernel rather than being fixed in
-the TPM2 itself?
+A new-format blob with public_len zero makes the read begin at the end of
+the B + 4-byte decoded allocation, causing a four-byte heap out-of-bounds
+read before the TPM command is transmitted. This is reachable from an
+unprivileged add_key() call when TPM trusted keys and a TPM2 device are
+available.
 
-Is NitroTPM a virtual TPM? If so, could the virtualization software
-be fixed instead to follow the spec?
+This affects v5.13-rc1 and later kernels built with CONFIG_TRUSTED_KEYS=y
+and CONFIG_TRUSTED_KEYS_TPM=y when a TPM2 device is present. A KASAN run
+as UID 1000 with no effective capabilities reported:
 
-> @@ -241,6 +243,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
->  	 */
->  	memcpy(save, buf, save_size);
->
-> +	if (chip->busy_timeout_ms > max_delay_msec)
-> +		max_delay_msec = chip->busy_timeout_ms;
+BUG: KASAN: slab-out-of-bounds in tpm2_unseal_trusted
+Read of size 4 at addr ffff888106273b48 by task exploit/160
+CPU: 1 UID: 1000 PID: 160 Comm: exploit
+The buggy address belongs to the object at ffff888106273b40
+ which belongs to the cache kmalloc-8 of size 8
+The buggy address is located 0 bytes to the right of
+ allocated 8-byte region [ffff888106273b40, ffff888106273b48)
 
-nit: this could use max() instead:
-	max_delay_msec = max(chip->busy_timeout_ms, max_delay_msec).
+TPMT_PUBLIC starts with the two-byte type, two-byte nameAlg and four-byte
+objectAttributes fields. Require public_len to cover all eight bytes before
+reading the attributes.
 
-Also, should there be an upper bound?
+The exact input produced the KASAN read in 3/3 fresh boots. The fixed build
+rejected it with -E2BIG and no KASAN report in 3/3 boots; valid new- and
+old-format trusted-key loads continued to succeed.
 
-> +	if (duration < chip->busy_timeout_ms)
-> +		duration = chip->busy_timeout_ms;
->
-> -	return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-> +	return msecs_to_jiffies(duration);
+Fixes: e5fb5d2c5a03 ("security: keys: trusted: Make sealed key properly interoperable")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Signed-off-by: Daehyeon Ko <4ncienth@gmail.com>
+---
+Tested with QEMU tpm-tis and swtpm: vulnerable 3/3 KASAN reports,
+fixed 3/3 clean -E2BIG rejections, with public_len 7/8 and new/old-format
+controls passing. Stable 5.15+ requires 114f00d738f1 first; both patches
+apply cleanly in that order.
 
+The source reproducer and full logs are available privately on request.
 
-What about something like this instead?
+ security/keys/trusted-keys/trusted_tpm2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-      return msecs_to_jiffies(max_t(unsigned long, duration,
-                                    chip->busy_timeout_ms));
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index c2a69bcf381d7..b3109e0a924f5 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -418,6 +418,8 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	public_len = get_unaligned_be16(blob + 2 + private_len);
+ 	if (private_len + 2 + public_len + 2 > blob_len)
+ 		return -E2BIG;
++	if (public_len < 8)
++		return -E2BIG;
+ 
+ 	pub = blob + 2 + private_len + 2;
+ 	/* key attributes are always at offset 4 */
 
-Thanks,
---breno
+base-commit: 27d14d3b15d5691bcbf0683883a2ea12469edbea
