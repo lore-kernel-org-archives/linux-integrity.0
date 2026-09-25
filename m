@@ -1,274 +1,478 @@
-Received: from mail-yx2-f40.google.com (mail-yx2-f40.google.com [74.125.224.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC004B1CE5
-	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 18:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B6C40DB3F
+	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 18:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790359420; cv=none; b=mSri5pNyzx10ZjHqdW/a7KOz9RHHGg9AFgdtWw7kwEmdSzMcOvTv0Q+W8aJ+JTKvo7hHy0R/gEWZwQ/MDMu3bxkChhrbR2WlzWz3wtlglalre8wCPMH5iWWbaQYeolCEwkxkPyQbnMbHdNkZ9/MzRdGOjoIn2tPSXjT6eb1gkEk=
+	t=1790361445; cv=none; b=BwcBhxoqwCNLR6/IJ1EN9f+ltTvmLx8ycHU2+/6Mf6BeW4bEntX+dPJQys+RvyBQcOYUPWxgjLc1EnGVoRpQk0HKdNzVj+c65zHlpUjfWZ4cbO7t2h6fVXAjc81MB00lu0RbzNgLXj9MgtO6YLqnykuiCyKShCqs8Q0EV6QGsFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790359420; c=relaxed/simple;
-	bh=9WMHF+OHSITVcxou8oXsCNs7bqvndQmUaAq4mexKulc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=odWgIOJPdUeWzk9Nz9CR0KSEo1FrVhpxhQW45jKY7BDg1C9OUF40IMyRs6oWrEQEOUVf7n1es+O/M70losZ4U+oiO7kql1/iIprDOZViBcU7nHZ80VOI5qqNKf/XPcXwGL6r8a9uXMhsxec8omGw827xKggZQO1X/0NeJgVb/TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IYdRQgvf; arc=none smtp.client-ip=74.125.224.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790361445; c=relaxed/simple;
+	bh=Zz/8bIE4/JjIRagR4VS2gdwCyA+iHhw/k/7LSkO28R0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i/IqgR25RjiJvrr0suoeCrvx2cgdOekErYL/4gTBNaTIcYjRKpmQ5K6g10FLrtsFTsFV3VgJjKOlfzqdFITqW77n8I78GSeQHGBJ6H1ahJmHmLyWgxp9Rmb7ypCJI3cnMgLVB/K4wJJsu/ogzo85p6uN9U8x7+gBK8dSa9G9NHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LDJZtO9N; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Fikg24FS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYdRQgvf"
-Received: by mail-yx2-f40.google.com with SMTP id 956f58d0204a3-674138cbe59so703280d50.2
-        for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 11:03:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LDJZtO9N";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Fikg24FS"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68PGsipm2083185
+	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 18:37:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qU9jfIhz1O12zDKLeEbU8SmuONKTAC52riWnQ1m5YyY=; b=LDJZtO9NqW208Kqd
+	3VP1kfzgKaoXRi4TUkLtkZP//Cc0v+0CjPyv+Wd93Z2/Z3rdo/t/yhX63zxsUEvT
+	qt6/16w/9/Kt8YdMzJsJdJNzG6QOzrgoBuTbaeRRpQJMXqGnDVHTlM31/yfCSUdR
+	ecbNvirWlqSUL3gNn0pjC+BUnml42AR6fUykbAbpjdAEIV7lNTjlgcW39dhoziCn
+	WwWHu4dtMr/H0QWiDSybuZoD+Lni+KjTZXnQj+heQ8BJLhF1YnuUELyYgqIKhnYF
+	hfDwDQZ25P0pfoBHdtfZgWvboFW6c+n6PArKrWbfpqRc63PjfO31OC/I3sv5RkhB
+	SUCSWw==
+Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gwvw1gdrg-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 18:37:22 +0000 (GMT)
+Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-342138eeff2so2139039eec.0
+        for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 11:37:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790359417; x=1790964217; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=jQMqDoXS5hmMS94pm40dP6RGo8yiKpCUOJDdJtjp2gs=;
-        b=IYdRQgvfuMeOmvrkILgOhtEo6bJ4/rNTSPyK2vFOFc+eWWD20PR/TxxHTIMAgFjqZ5
-         ZswjzX8qhzMQ9dqrYHN7aWth4+pVDOF0inBoV9wO5pXUsNph5NLHgW9MVVONT+PfMmVR
-         qP7AbGgH9kFISF/uqhCeicA9DSDBrkJZBztEZhoambxx5GMT8tPkPSli+AHJFgR5mh/n
-         rWHa7ys7w2biFz0DRcMahrpaJ6uUMCHJaKo68fmXy8nuA6/jBjawu/zESfEo8AznwC8Y
-         x94hCmJKvqhUQawNt8MHWKikOeGO6n9fa61x+LfMC4xoFiQ5G4Zirmy6agu/rJJLjTjA
-         cMOg==
+        d=oss.qualcomm.com; s=google; t=1790361441; x=1790966241; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:organization
+         :references:in-reply-to:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=qU9jfIhz1O12zDKLeEbU8SmuONKTAC52riWnQ1m5YyY=;
+        b=Fikg24FS3Q16rDa/mZJeAfsHTfb1X8Ea15+KmdxRSiIRNoYiX6rDJTla2CXtAGLTfj
+         ABCybSr9dJxnsmjc+vY62VpFdSnX7yAfkUg0n88ipTmvqSZm1pYVNFiB1mxiV/ip39Va
+         jDxpm7Z6g5NmjiyDJeLgEILRvpgWWUiXaF5Tcz2B6vQLMtpHTcYuLZR9LPZgv+cqDIzD
+         Uuc1tZhpIEM+25Hx0WbJqO8lDRBLbJ7Y/HjxiJwJVSi2Z2IjLxuSrWhQIoOkg/ktdwJq
+         kVwAU84jeooonz1vCMsJoLJLUyEyoDF34DJk7RikdoUD2qvp4LtiXqhNYaL9rohdMIIs
+         HAvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790359417; x=1790964217;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1790361441; x=1790966241;
+        h=content-transfer-encoding:content-type:mime-version:organization
+         :references:in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=jQMqDoXS5hmMS94pm40dP6RGo8yiKpCUOJDdJtjp2gs=;
-        b=ieuOU9pWFaC2ddAFBP1xfmslKPZ7yiLgXkVWRHO988ftwwVU76fql8aW6Bh/QEp20L
-         7akr+Q9ewtMjQJ1DRiGMCDW0Sn5lPtC1bVMjNzqzOHaReIODrXzTgKizq//s+zrKqmZl
-         48gG3ZX9CGZAYdkopFKT5jNh/s7N+xb5hgAoK9b4jVWAq08ELn04tfBna2H4gSMLhBZ+
-         m0QebXMJYoquR6tQDNYfg8c3bwKSSHV8uOR6VlrXHkCpPGtOkYqjnSSAvmHXgW86ju2Y
-         uBzZw45fpXAJmRcRti+v/NNtca7JwLVY5E7EMnWKt+/Lozl7xVzYj7e1t5sEdq1uWfwO
-         6zTQ==
-X-Forwarded-Encrypted: i=1; AKwUvByJwM4d5BeDjU2f8f/118sPjs3bNCHW99+KnAV2k7wqELqTmNEk7Z+7kJurdybRBQICGI7vZidaBvgJ9hg9hY0=@vger.kernel.org
-X-Gm-Message-State: AFuF++lgVeD9KUKfkiN922gsAnbLvY/JN8W+KTTyNBIrjzLmcylqTZA7
-	HhErrA3v2Do+X+MUw6wMOBpMv5y7vRaTRhWHWZRuWpTxSSgHjBxfHZNB
-X-Gm-Gg: AYBFou0WrmDxUbLqrcjdIslm+wO6YU7CPfIv9myNDDjj/r+xwgUdQC74cRZvTJQNcUE
-	8/JsZtg48te4JyqUsFBz6rjjjfKc9KRU7BdXk1Q/GNrb58CdZaesePokouCHFnnvWLrAiz7Ft8R
-	h3h/KOLZt+li9BYaDw57KGPwgXau+SlUUlkJ/z3a86BXpnZs/3xqn+npZZKDoGvvpxYhSZ19pVw
-	T4xZiEeHjB7Cl5uuQu8aVI/r19Pg6xAoiykjpCuNt4RhUJDPAoRr/QwoBWehsb95Ql0Mr1s/uiN
-	5FecA05n6JEP9FSDXLxNLWUL2+NoX5XEeXx80X3HEmB0CRS14epZMUqbT4+uLY7Gm/GZg6eVQH1
-	6hoNqdOYzexUI/u9UTx7GEsmZYCL0MFa2WGP4QBcacbuG6st5IWds71CzU2iNXNGYN+SZ8+aeyZ
-	DGggFStOeRWU4uzb3GFAirWuHGKXqh3E6X21dG4LcMM8lTKsSIa80LjhxYUOrA7LIjvin9LwIdZ
-	Ns=
-X-Received: by 2002:a05:690e:b4b:b0:672:a678:da59 with SMTP id 956f58d0204a3-6740c2a76c3mr1631246d50.108.1790359416590;
-        Fri, 25 Sep 2026 11:03:36 -0700 (PDT)
-Received: from suesslenovo ([71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6740efb13fasm1359157d50.18.2026.09.25.11.03.35
+        bh=qU9jfIhz1O12zDKLeEbU8SmuONKTAC52riWnQ1m5YyY=;
+        b=SzDPEK9pYdbMxj/hLjbh9UUSG6O3biVj08hWn6DmkFtv0P5Bp5U1gtHPDUhs54KSKK
+         +ElRkUvHG/PkYsFbaUAs52hmqGCMwr9YUfHbC+ytZaWwTMjtEqTy7NNWk0Gj6Z8s7+2U
+         4WlSXVkbv82158RLmmVxRoTDiDxdYRcoIOFJDdgqgx1821bVeO3nkwlPT4fFUWv91Nmc
+         Mlq9bbbXOrE5RAzREyx2kovR/l7c8oNDt5UsJM3AYi6GzklH+GRA20OZRUpBrqFbrDp5
+         BfTmJscujE7HFJZ8qzFSvYQ3HCP5qlNKvOm9RrBdBLegDUh4Ni1kNQNw58Tlnb3j1fQX
+         4uVw==
+X-Forwarded-Encrypted: i=1; AKwUvBxRoKn9F3xm3yomGgkHblrL0MXgJ2m4JkVoHOv3ju4qgpb/hDdQfa0CisrpQ2OOn4uaNsHHYyHSzKzMrC9zt1A=@vger.kernel.org
+X-Gm-Message-State: AFuF++kjLko+ZGOKWCOiGre7CqGF8Ds3mk2czWN6KGd/JIx7odg1a+jJ
+	Vs6OBZw1cDZVcD+JGQKK0kn81Ap1j7yUKQ0+aYw7jW/4TYfbsGwB6JpHKD7J29fTybdbvpkZvc0
+	ChQCvKQSnVPwUhklM7mSojYLiCBrByY0uoGOTF2jWsRW1v5K4LQsepqpLEOXpeXQtKQ7uEY8=
+X-Gm-Gg: AYBFou2PJgBROe18q6cbR+72SlPTN45kYcGottumURYSnIBd5KXS8MJBcSYpp5T2EZd
+	6NWpM2dkrZyjuARjmjFbbeMll6gzI8N/97YjeEoKRqEXvzLfd0OXFpEjDeb2MuiKqGwAMmFw025
+	aavS6rZzliIMD8m0hFzJFaqLLkjF+v2gdgoLU2M03I8QuvEM2877I1cqTKKiInmHb7esjxrRzJ7
+	ynGeH3jwOEvCCllm0UCpOA/GLgowbNayKqQNuAP8qdwK+cQ8CA2GrJboFr8GgUSANnuWjqdRAog
+	lTE8iYWo/Wxe/ho62po11e+PTh3F6XF4SF3wOx22r87euzqXfPKA7uNyUKPTW392LSH53VgOlGW
+	bLj7wPcFUZXPGnVcmGKhyffpM4BcbDAF3SU7ICKLYwDoGofvZjnuP8g==
+X-Received: by 2002:a05:7301:4d0b:b0:331:89d6:80e7 with SMTP id 5a478bee46e88-342703c0860mr981568eec.13.1790361440800;
+        Fri, 25 Sep 2026 11:37:20 -0700 (PDT)
+X-Received: by 2002:a05:7301:4d0b:b0:331:89d6:80e7 with SMTP id 5a478bee46e88-342703c0860mr981521eec.13.1790361439446;
+        Fri, 25 Sep 2026 11:37:19 -0700 (PDT)
+Received: from localhost (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3414407c548sm7322093eec.8.2026.09.25.11.37.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Sep 2026 11:03:36 -0700 (PDT)
-Date: Fri, 25 Sep 2026 14:03:05 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: Cai Xinchen <caixinchen1@huawei.com>
-Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, corbet@lwn.net, skhan@linuxfoundation.org, 
-	rdunlap@infradead.org, gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
-	dlemoal@kernel.org, hch@lst.de, axboe@kernel.dk, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, dhowells@redhat.com, code@tyhicks.com, 
-	linkinjeon@kernel.org, sj1557.seo@samsung.com, yuezhang.mo@sony.com, 
-	hirofumi@mail.parknet.co.jp, cel@kernel.org, jlayton@kernel.org, neil@brown.name, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, miklos@szeredi.hu, 
-	amir73il@gmail.com, senozhatsky@chromium.org, chenxiaosong@chenxiaosong.com, 
-	zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, stephen.smalley.work@gmail.com, omosnacek@gmail.com, 
-	casey@schaufler-ca.com, nanx95726@gmail.com, djwong@kernel.org, daniel@iogearbox.net, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, exfat@lists.linux.dev, 
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	xiujianfeng@huawei.com, lujialin4@huawei.com
-Subject: Re: [PATCH RFC -next 00/12] landlock: Add READ_METADATA and
- WRITE_METADATA access rights
-Message-ID: <araxO4ze0KZBz756@suesslenovo>
-References: <20260924104831.1081137-1-caixinchen1@huawei.com>
+        Fri, 25 Sep 2026 11:37:18 -0700 (PDT)
+Date: Fri, 25 Sep 2026 11:37:09 -0700
+From: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
+        Ard
+ Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin
+ Marinas <catalin.marinas@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>, David
+ Sterba <dsterba@suse.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+        Randy
+ Dunlap <rdunlap@infradead.org>, Simon Glass <sjg@chromium.org>,
+        Shuah Khan
+ <skhan@linuxfoundation.org>,
+        Nick Terrell <terrelln@fb.com>, Will Deacon
+ <will@kernel.org>,
+        Alexandre Ghiti <alexghiti@rivosinc.com>,
+        Conor Dooley
+ <conor.dooley@microchip.com>,
+        linux-integrity@vger.kernel.org, Palmer
+ Dabbelt <palmer@rivosinc.com>,
+        patches@lists.linux.dev, Ross Philipson
+ <ross.philipson@gmail.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Song
+ Shuai <songshuaishuai@tinylab.org>
+Subject: Re: [PATCH 16/16] efi/arm64: Implement ARM64 DRTM in the stub
+Message-ID: <20260925113709.00005cd1@oss.qualcomm.com>
+In-Reply-To: <16-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
+References: <0-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
+	<16-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
+Organization: Qualcomm
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260924104831.1081137-1-caixinchen1@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: CS_cKPnHzSWLRWPnuqs9SUD_5xwzI6e1
+X-Authority-Analysis: v=2.4 cv=YqCa1IYX c=1 sm=1 tr=0 ts=6ab6bf62 cx=c_pps
+ a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=Ikd4Dj_1AAAA:8 a=jWgNheo0oZ5oaBA2q4oA:9 a=CjuIK1q_8ugA:10
+ a=6Ab_bkdmUrQuMsNx7PHu:22
+X-Proofpoint-ORIG-GUID: CS_cKPnHzSWLRWPnuqs9SUD_5xwzI6e1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI1MDA3NCBTYWx0ZWRfX37K0gF+oxz38
+ gy7Ki1hne8gvmbFXBzLSCN4FBWfl2bOIma3vYN6CqAIOHYkeeJXq8xjD0hoDwd4yxnVzQA43IOl
+ g+NOPjWLNeZR2qIR4hw3FaTfhGCejEofsEWNGelEQsh/hNpELfLikn06gQ6hN/dQfG3xD/psqVc
+ OxiQoVzlcle54m+4VF1ozlvdchVU+OAUlh6ZgfdoZzm6X1YvjPDzknulLfXbseP8fIw4gasZORu
+ rQJp5HzeifJkSJVN+XyBDzmw+RVpiysJEI0O6xF0xYQ/FKlvt3HzPN9PKgoRq6Grwjz4pzQ5pEF
+ IfZO/UWAXi5EQ5kOLTj6uN/WgDSG7DS/7ehbD12+eHOwpnV4qtLPPQPum2u4wHWYhyCLrCtEyeR
+ xXL5lOBGRE1OqRuoSnBN8wOdBXnpMkw15QgnLELsTvG0lWW+rPOyA/K7e+GsMoqREwqcTQPT8On
+ r04/GWJBiaGwjLTxYbg==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI1MDA3NCBTYWx0ZWRfX31Moi4o5YCGv
+ HqDeFBVow53fWrE21JWCySBUTUvJFG4jeb824jILFCrxJM9vqQlXp7Ndob8r6wfKKBfnv63s3at
+ mG+xuUhP1BMqqtPdZj5bZhktrMem/r4=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-25_03,2026-09-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 priorityscore=1501 phishscore=0 clxscore=1015
+ malwarescore=0 impostorscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609250074
 
-On Thu, Sep 24, 2026 at 06:48:19PM +0800, Cai Xinchen wrote:
-> This series adds two new Landlock filesystem access rights,
-> LANDLOCK_ACCESS_FS_READ_METADATA and LANDLOCK_ACCESS_FS_WRITE_METADATA,
-> which control access to file and directory metadata such as inode
-> attributes (mode, ownership, timestamps), extended attributes and POSIX
-> ACLs.  It picks up the work from the "landlock: add chmod and chown
-> support" series [1] and follows the coarse-grained grouping discussed in
-> that thread [2]: instead of separate chmod/chown rights, metadata
-> operations are grouped into one read and one write right.
-> 
-> Landlock evaluates access rights on a per-path basis, but the metadata
-> related LSM hooks (inode_getattr, inode_setattr, inode_setxattr,
-> inode_getxattr, inode_listxattr, inode_removexattr, inode_set_acl,
-> inode_get_acl, inode_remove_acl) only receive the dentry of the accessed
-> object.  Patches 1-7 therefore first pass struct path instead of dentry
-> through the metadata-related VFS helpers and LSM hooks.  This is a pure
-> refactoring with no behavior change, split so that every patch builds
-> and works on its own:
->
-I like these patches, but is the ability to read metadata already
-sorta controlled by LANDLOCK_ACCESS_FS_READ_DIR on the parent
-directory?
+On Thu, 24 Sep 2026 10:53:19 -0300
+Jason Gunthorpe <jgg@nvidia.com> wrote:
 
-The one case I see this being different is:
+> Provide an implementation of the CONFIG_EFI_STUB_DRTM protocol for ARM64
+> DEN0113 >= v1.1.
+> 
+> First, it queries the FW for support and collects all the
+> information. This is needed to compute the extra_size, which comes
+> from FW reporting how much memory it needs during the launch for the
+> DLME Data and DCE-owned data. The generic stub ensures there is
+> trailing memory after Image for this.
+> 
+> Then the DRTM_PARAMETERS launch structure is computed using the
+> offsets in the efi_info.
+> 
+> Finally, the stub does ExitBootServices and calls the actual launch.
+ARM_DRTM_FEATURE_DMA_PROTECTION> 
+> The feature discovery process is deliberately fairly verbose to help
+> debug any FW weirdness in the field. Enable it with efi=debug
+> 
+> It looks something like:
+> 
+>  EFI stub: DRTM: interface version 1.4
+>  EFI stub: DEBUG: DRTM: TPM algorithm 0xc, TPM hashing unavailable, PCR schemas 0x1
+>  EFI stub: DEBUG: DRTM: minimum DLME data 73728 bytes, Normal-world DCE 0 bytes
+>  EFI stub: Decompressing Linux Kernel...
+>  EFI stub: Generating empty DTB
+>  EFI stub: Exiting boot services...
+>  EFI stub: DEBUG: DRTM: will launch, selected launch features 0x0
+>  [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x000f0510]
+> 
+> Eventually the launch'd kernel is going to require built in crypto
+> libraries that match what the FW is using so it can validate some of the
+> information left behind during early boot. Refuse to launch if these are
+> not built in and build in the most common ones from the ARM64_DRTM
+> kconfig.
+> 
+> One nit, if the platform does not support SMC then using drtm=auto may
+> crash on the SMC op. As far as I can tell there is no way to discover SMC
+> support through EFI. Learning it from the ACPI FADT is doable and costs
+> about 250 lines of code.
+> 
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+First read though only found some superficial stuff.
 
-1. if you wanted to grant read access to the file, but not metadata
-read access, but I can't think of any usecase for being able to read
-the contents of a file, but not the metadata. (see below)
+Generally looks fine to me.
 
-2. If you had the absolute path already and didn't need READ_DIR.
+Jonathan
 
-I see introducing this READ_METADATA as causing potential
-hard-to-diagnose issues.
+> diff --git a/drivers/firmware/efi/libstub/arm64-drtm.c b/drivers/firmware/efi/libstub/arm64-drtm.c
+> new file mode 100644
+> index 00000000000000..12ddf7c2dd056a
+> --- /dev/null
+> +++ b/drivers/firmware/efi/libstub/arm64-drtm.c
 
-Say you handle READ_METADATA and READ_FILE, but only grant READ_FILE.
 
-The program can technically open the file with the READ_FILE permission,
-but it may error out because the stat() on it beforehand failed.
-It's pretty common for programs to do that kind of thing (stat before
-open), like for checking for config files (strace bash and you see it
-stat .profile, /etc/profile)
 
-There may be other bugs, because being able to set permissions to read
-a file *but not read it's metadata* isn't possible currently in posix
-acl and userspace may not work well if that assumption no longer holds.
+> +
+> +static bool efi_drtm_probe_memory(void)
+> +{
+> +	u64 value;
+> +
+> +	if (!efi_drtm_query_feature(ARM_DRTM_FEATURE_MIN_MEMORY, &value))
+> +		return false;
+> +
+> +	drtm_cfg.dlme_data_size =
+> +		FIELD_GET(ARM_DRTM_DLME_DATA_PAGES_MASK, value) *
 
-So maybe WRITE_METADATA is good enough?
+> +		ARM_DRTM_PAGE_SIZE;
+> +	drtm_cfg.nw_dce_size = FIELD_GET(ARM_DRTM_NW_DCE_PAGES_MASK, value) *
+> +			       ARM_DRTM_PAGE_SIZE;
+> +
+> +	efi_debug(
+> +		"DRTM: minimum DLME data %lu bytes, Normal-world DCE %lu bytes\n",
 
-Interested in your thoughts,
-Justin
->   1: notify_change() and its callers
->   2: inode_setsecctx hook (must come before 3: the SELinux and Smack
->      implementations call __vfs_setxattr_locked internally)
->   3: xattr helpers, which also drops a redundant EVM xattr size sanity
->      check whose vfs_getxattr() call only has a dentry and therefore
->      cannot be migrated to the new path-based signature
->   4: POSIX ACL helpers
->   5: inode_setattr hook
->   6: inode xattr hooks
->   7: inode POSIX ACL hooks
-> 
-> Two deliberate scoping decisions for this refactor:
-> 
-> - The hooks consistently take struct path rather than struct file.  The
->   VFS call sites involved (chmod(2), chown(2), utimensat(2), xattr(2)
->   and ACL syscalls) operate on paths, and several of them (lstat(2),
->   lchown(2), llistxattr(2), ...) have no struct file to begin with.
-> 
-> - struct inode_operations->setattr still receives (idmap, dentry, attr).
->   Only the VFS boundary (notify_change()) and the LSM hook layer see the
->   path, which keeps the refactor contained to fs/attr.c and the LSM
->   infrastructure instead of touching every filesystem.
-> 
-> Patches 8-12 then implement the new rights, their tests, the sandboxer
-> sample and the documentation.  Semantics:
-> 
-> - READ_METADATA covers stat(2) and friends, getxattr(2) and friends,
->   listxattr(2) and friends, and POSIX ACL reads.
-> - WRITE_METADATA covers chmod(2), chown(2), utimensat(2), setxattr(2),
->   removexattr(2) and friends, and POSIX ACL set and remove.
-> - Only explicit metadata changes requested by user space are restricted.
->   Implicit changes performed by the kernel (e.g. timestamp updates on
->   write(2), size changes on truncate(2)) are not, and neither are
->   chmod(2)/chown(2) calls that change nothing (e.g. chown(2) with
->   (-1, -1), which never reaches the hook), matching the SELinux
->   inode_setattr behavior.
-> - Kernel-internal accesses performed with override_creds() (e.g.
->   overlayfs, cachefiles) and kernel threads without a Landlock domain
->   (e.g. nfsd, ksmbd) are not restricted.
-> 
-> The Landlock ABI version is incremented from 11 to 12.
-> 
-> The series is based on linux-next commit 5c4d4169604b ("Add linux-next
-> specific files for 20260921").
-> 
-> Testing: each patch has been built for aarch64 (gcc, -Werror) and the
-> landlock selftests (445 tests, including the new ones) pass in QEMU on
-> aarch64; base_test reports ABI v12.
-> 
-> [1] https://lore.kernel.org/all/20220827111215.131442-1-xiujianfeng@huawei.com/
-> [2] https://lore.kernel.org/all/abc960a1-e66e-792e-6869-cfd201c29dbe@digikod.net/
-> 
-> Assisted-by: opencode: glm-5.3
-> 
-> Cai Xinchen (12):
->   fs: pass struct path to notify_change()
->   LSM: pass struct path to the inode_setsecctx hook
->   fs: pass struct path to xattr helpers
->   fs: pass struct path to POSIX ACL helpers
->   LSM: pass struct path to the inode_setattr hook
->   LSM: pass struct path to the inode xattr hooks
->   LSM: pass struct path to the inode posix acl hooks
->   landlock: Add READ_METADATA and WRITE_METADATA access rights
->   landlock: Implement metadata access hooks
->   selftests/landlock: Add tests for metadata access rights
->   samples/landlock: Add metadata rights to sandboxer
->   Documentation: Update landlock doc for metadata rights
-> 
->  Documentation/userspace-api/landlock.rst     |  11 +-
->  drivers/base/devtmpfs.c                      |   6 +-
->  drivers/block/zloop.c                        |   4 +-
->  fs/attr.c                                    |  20 +-
->  fs/cachefiles/interface.c                    |   6 +-
->  fs/cachefiles/xattr.c                        |  32 +-
->  fs/coredump.c                                |   2 +-
->  fs/ecryptfs/inode.c                          |  34 +-
->  fs/exfat/file.c                              |   3 +-
->  fs/fat/file.c                                |   3 +-
->  fs/inode.c                                   |   7 +-
->  fs/internal.h                                |  17 +-
->  fs/namei.c                                   |   7 +-
->  fs/nfsd/nfs4ctl.h                            |   4 +-
->  fs/nfsd/nfs4state.c                          |  14 +-
->  fs/nfsd/nfs4xdr.c                            |   2 +-
->  fs/nfsd/state.h                              |   2 +-
->  fs/nfsd/vfs.c                                |  73 +++--
->  fs/open.c                                    |  18 +-
->  fs/overlayfs/copy_up.c                       |   4 +-
->  fs/overlayfs/inode.c                         |   4 +-
->  fs/overlayfs/overlayfs.h                     |  39 ++-
->  fs/overlayfs/xattrs.c                        |  13 +-
->  fs/posix_acl.c                               |  46 +--
->  fs/smb/server/smb2pdu.c                      |  77 ++---
->  fs/smb/server/smb_common.c                   |   2 -
->  fs/smb/server/smbacl.c                       |  21 +-
->  fs/smb/server/tests/smbacl_kunit.c           |   6 +-
->  fs/smb/server/vfs.c                          | 111 +++----
->  fs/smb/server/vfs.h                          |  39 +--
->  fs/smb/server/vfs_cache.c                    |   3 +-
->  fs/utimes.c                                  |   3 +-
->  fs/xattr.c                                   |  96 +++---
->  include/linux/fs.h                           |   6 +-
->  include/linux/landlock.h                     |   4 +-
->  include/linux/lsm_hook_defs.h                |  29 +-
->  include/linux/posix_acl.h                    |  21 +-
->  include/linux/security.h                     |  65 ++--
->  include/linux/xattr.h                        |  22 +-
->  include/uapi/linux/landlock.h                |  26 +-
->  samples/landlock/sandboxer.c                 |  17 +-
->  security/commoncap.c                         |  22 +-
->  security/integrity/evm/evm_crypto.c          |   8 +-
->  security/integrity/evm/evm_main.c            |  36 ++-
->  security/integrity/ima/ima_appraise.c        |  17 +-
->  security/landlock/fs.c                       |  86 ++++++
->  security/landlock/limits.h                   |   2 +-
->  security/landlock/syscalls.c                 |   2 +-
->  security/security.c                          |  99 +++---
->  security/selinux/hooks.c                     |  49 +--
->  security/smack/smack_lsm.c                   |  62 ++--
->  tools/testing/selftests/landlock/base_test.c |   2 +-
->  tools/testing/selftests/landlock/fs_test.c   | 309 ++++++++++++++++++-
->  53 files changed, 999 insertions(+), 614 deletions(-)
-> 
-> -- 
-> 2.18.0.huawei.25
-> 
-> 
+That code formatter loves the silly.  This is definitely not more readable
+than a slightly longer line!
+I'm reading upwards and got bored now - will assume you'll take a look and tidy
+up other such silliness.
+
+
+> +		drtm_cfg.dlme_data_size, drtm_cfg.nw_dce_size);
+> +	return true;
+> +}
+
+> +
+> +static void efi_drtm_report_previous_error(void)
+> +{
+> +	s64 error_code;
+> +	s64 status;
+> +
+> +	status = arm_drtm_features(ARM_DRTM_SMC_GET_ERROR, NULL);
+> +	if (status != ARM_DRTM_SUCCESS) {
+> +		efi_debug("DRTM: GET_ERROR is unavailable (x0=%lld)\n", status);
+> +		return;
+> +	}
+> +
+> +	status = arm_drtm_get_error(&error_code);
+> +	if (status != ARM_DRTM_SUCCESS) {
+> +		efi_warn("DRTM: failed to read previous error (x0=%lld)\n",
+> +			 status);
+> +		return;
+> +	}
+> +
+> +	if (error_code) {
+> +		efi_warn(
+> +			"DRTM: firmware reports previous launch error 0x%llx\n",
+
+That code formatter is being silly again.
+
+> +			error_code);
+> +		if (efi_drtm_policy != EFI_DRTM_ENFORCE)
+> +			efi_drtm_policy = EFI_DRTM_OFF;
+> +	}
+> +}
+
+> +
+> +efi_status_t efi_drtm_prepare(void)
+> +{
+> +	s64 feature_status;
+> +	u16 major, minor;
+> +	s32 status;
+> +
+> +	if (efi_drtm_policy == EFI_DRTM_OFF)
+> +		return EFI_SUCCESS;
+> +
+> +	if (!efi_arm64_psci_smccc_compatible())
+> +		return efi_drtm_failure();
+> +
+> +	/* VERSION must be the first DRTM call. */
+
+Words like 'must' should be backed by a specific spec reference.
+I couldn't immediately fine one other than common sense suggesting it should
+be called to check we have a version we understand ho to talk to.
+
+> +	status = arm_drtm_version(&major, &minor);
+> +	if (status != ARM_DRTM_SUCCESS) {
+> +		efi_err("DRTM: failed to read interface version (x0=%d)\n",
+> +			status);
+> +		return efi_drtm_failure();
+> +	}
+> +	if (major != ARM_DRTM_VERSION_MAJOR ||
+> +	    minor < ARM_DRTM_VERSION_MIN_MINOR) {
+> +		efi_err("DRTM: unsupported interface version %u.%u\n", major,
+> +			minor);
+> +		return efi_drtm_failure();
+> +	}
+> +	efi_info("DRTM: interface version %u.%u\n", major, minor);
+> +
+> +	efi_drtm_report_previous_error();
+> +	if (efi_drtm_policy == EFI_DRTM_OFF)
+> +		return EFI_SUCCESS;
+> +
+> +	feature_status = arm_drtm_features(ARM_DRTM_SMC_DYNAMIC_LAUNCH, NULL);
+> +	if (feature_status != ARM_DRTM_SUCCESS) {
+> +		efi_err("DRTM: dynamic launch is unavailable (x0=%lld)\n",
+> +			feature_status);
+> +		return efi_drtm_failure();
+> +	}
+> +
+> +	if (!efi_drtm_probe_tpm() || !efi_drtm_probe_memory() ||
+> +	    !efi_drtm_probe_dma() || !efi_drtm_probe_boot_pe())
+> +		return efi_drtm_failure();
+> +
+> +	drtm_cfg.launch_features =
+> +		ARM_DRTM_LAUNCH_HASH_FIRMWARE | ARM_DRTM_LAUNCH_PCR_DEFAULT |
+> +		ARM_DRTM_LAUNCH_DMA_COMPLETE | ARM_DRTM_LAUNCH_NO_AUTH |
+> +		ARM_DRTM_LAUNCH_KEEP_SECURE_IRQS;
+> +
+> +	return EFI_SUCCESS;
+> +}
+> +
+> +unsigned long efi_drtm_get_extra_size(void)
+> +{
+> +	/*
+> +	 * DEN0113 Table 6, feature 0x2 reports both minimum sizes in 4 KiB
+> +	 * pages.  The linker places the DLME data at the 4 KiB-aligned end of
+> +	 * the static Image as required by R314030.  The DLME region must
+> +	 * include all of that data (R45200), and an optional Normal-world DCE
+> +	 * follows it at another 4 KiB-aligned address as required by R312080.
+> +	 * A final page holds the 4 KiB-aligned DRTM_PARAMETERS required by
+> +	 * R312010.  Only the first area is part of the DLME region.
+> +	 */
+> +	if (efi_drtm_policy == EFI_DRTM_OFF)
+> +		return 0;
+> +	return drtm_cfg.dlme_data_size + drtm_cfg.nw_dce_size +
+> +	       ARM_DRTM_PAGE_SIZE;
+> +}
+> +
+> +efi_status_t efi_drtm_prepare_launch(unsigned long image_base,
+> +				     unsigned long fdt_addr)
+> +{
+> +	const struct arm64_image_header *header = (const void *)image_base;
+> +	const struct efi_image_info *info = efi_get_image_info(image_base);
+> +	struct arm64_drtm_handoff *handoff =
+> +		efi_get_image_symbol(image_base, arm64_drtm_handoff);
+> +	struct arm_drtm_parameters *params;
+> +	unsigned long measured_offset;
+> +	unsigned long measured_size;
+> +	unsigned long image_size;
+> +	unsigned long dlme_start;
+> +	unsigned long dlme_end;
+> +	unsigned long dce_end;
+> +	unsigned long entry;
+> +
+> +	if (efi_drtm_policy == EFI_DRTM_OFF)
+> +		return EFI_SUCCESS;
+> +
+> +	image_size = le64_to_cpu(header->image_size);
+> +	measured_offset = le64_to_cpu(info->drtm_measured_start);
+> +	measured_size = le64_to_cpu(info->dlme_measured_size);
+> +	entry = le64_to_cpu(info->drtm_entry);
+> +	dlme_start = image_base + image_size;
+> +	dlme_end = dlme_start + drtm_cfg.dlme_data_size;
+> +	dce_end = dlme_end + drtm_cfg.nw_dce_size;
+> +
+> +	/* Quick checks something didn't go wrong during image construction */
+> +	if (entry < measured_offset ||
+> +	    entry - measured_offset >= measured_size ||
+> +	    !IS_ALIGNED(image_base, ARM_DRTM_PAGE_SIZE) ||
+> +	    !IS_ALIGNED(image_size, ARM_DRTM_PAGE_SIZE) ||
+> +	    !IS_ALIGNED(measured_offset, ARM_DRTM_PAGE_SIZE) ||
+> +	    !IS_ALIGNED(dlme_start, ARM_DRTM_PAGE_SIZE) ||
+> +	    !IS_ALIGNED(dlme_end, ARM_DRTM_PAGE_SIZE) ||
+> +	    !IS_ALIGNED(dce_end, ARM_DRTM_PAGE_SIZE)) {
+> +		efi_err("DRTM: final Image layout is invalid\n");
+> +		return efi_drtm_failure();
+> +	}
+> +
+> +	/*
+> +	 * See arch/arm64/kernel/vmlinux.lds.S for the DRTM Memory layout. After
+> +	 * the DLME we choose to place the Normal World DCE region followed by
+> +	 * the aligned DRTM_PARAMETERS structure.
+> +	 */
+> +	memset((void *)dlme_start, 0, efi_drtm_get_extra_size());
+
+Is that efi_drtm_get_extra_size() adding much?  It is a little irritating to
+have to go look in there to figure out that this memset actually covers
+the params. If you were to just have the sum visible here that would be
+more obvious and align with the comment immediately above the memset.
+
+Maybe it is worth keeping for the big comment in there, but it does
+feel like that and what we have here could be combined.
+
+> +	params = (void *)dce_end;
+> +	params->revision = cpu_to_le16(ARM_DRTM_PARAMETERS_REVISION);
+> +	params->launch_features = cpu_to_le32(drtm_cfg.launch_features);
+> +	params->dlme_region_address = cpu_to_le64(image_base);
+> +	params->dlme_region_size = cpu_to_le64(dlme_end - image_base);
+> +	params->dlme_image_start = cpu_to_le64(measured_offset);
+> +	params->dlme_entry_point_offset = cpu_to_le64(entry - measured_offset);
+> +	params->dlme_image_size = cpu_to_le64(measured_size);
+> +	params->dlme_data_offset = cpu_to_le64(image_size);
+> +	if (drtm_cfg.nw_dce_size) {
+> +		params->nw_dce_region_address = cpu_to_le64(dlme_end);
+> +		params->nw_dce_region_size = cpu_to_le64(drtm_cfg.nw_dce_size);
+> +	}
+> +
+> +	/*
+> +	 * The DLME Data contains its own size in a trusted header, so the
+> +	 * handoff doesn't need to include extra_size. The DCE Data is only
+> +	 * temporary so the kernel also does not need to know about it.
+> +	*/
+> +	handoff->fdt_addr = cpu_to_le64(fdt_addr);
+> +	handoff->drtm_enabled = 1;
+> +
+> +	efi_debug("DRTM: will launch, selected launch features 0x%x\n",
+> +		  drtm_cfg.launch_features);
+> +
+> +	drtm_cfg.params_addr = params;
+> +	return EFI_SUCCESS;
+> +}
+> +
+> +static void efi_drtm_fallback(void)
+> +{
+> +	struct arm_drtm_parameters *params = drtm_cfg.params_addr;
+> +	unsigned long image_base = le64_to_cpu(params->dlme_region_address);
+> +	struct arm64_drtm_handoff *handoff =
+> +		efi_get_image_symbol(image_base, arm64_drtm_handoff);
+> +
+> +	handoff->drtm_enabled = 0;
+> +}
+> +
+> +void efi_drtm_launch(void)
+> +{
+> +
+
+I love trivial. Pointless blank line.
+
+> +	if (efi_drtm_policy == EFI_DRTM_OFF)
+> +		return;
+> +
+> +	/*
+> +	 * No cache maintenance is required before the launch. DEN0113 R42130
+> +	 * requires the DRTM_PARAMETERS to be accessible as Normal Write-Back
+> +	 * Cacheable, Inner Shareable memory, so the DCE reads them coherently
+> +	 * with the writes made above.  R45220 then has the DCE clean and
+> +	 * invalidate the whole DLME region to the Point of Coherency before it
+> +	 * measures the DLME image, which covers both the Image itself and the
+> +	 * handoff struct placed in the DLME region. Thus once we jump into the
+> +	 * kernel with MMU and caches off the CPU will see everything the stub
+> +	 * wrote.
+> +	 */
+> +	arm_drtm_dynamic_launch(drtm_cfg.params_addr);
+> +
+> +	/*
+> +	 * DEN0113 section 3.4 returns from DYNAMIC_LAUNCH only on error. Boot
+
+I'd use a spec version for references + ideally title of section.
+As much as folk may try, sometimes these things move around.
+
+Also tweak the wording.  Failure sure the section doesn't return from anything :)
+
+> +	 * services and their diagnostics are no longer available, so hang.
+> +	 */
+> +	if (efi_drtm_policy == EFI_DRTM_ENFORCE) {
+> +		for (;;)
+> +			asm volatile("wfe");
+> +	}
+> +
+> +	efi_drtm_fallback();
+> +}
+
