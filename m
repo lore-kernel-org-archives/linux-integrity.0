@@ -1,478 +1,517 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11023127.outbound.protection.outlook.com [52.101.72.127])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B6C40DB3F
-	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 18:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790361445; cv=none; b=BwcBhxoqwCNLR6/IJ1EN9f+ltTvmLx8ycHU2+/6Mf6BeW4bEntX+dPJQys+RvyBQcOYUPWxgjLc1EnGVoRpQk0HKdNzVj+c65zHlpUjfWZ4cbO7t2h6fVXAjc81MB00lu0RbzNgLXj9MgtO6YLqnykuiCyKShCqs8Q0EV6QGsFE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790361445; c=relaxed/simple;
-	bh=Zz/8bIE4/JjIRagR4VS2gdwCyA+iHhw/k/7LSkO28R0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i/IqgR25RjiJvrr0suoeCrvx2cgdOekErYL/4gTBNaTIcYjRKpmQ5K6g10FLrtsFTsFV3VgJjKOlfzqdFITqW77n8I78GSeQHGBJ6H1ahJmHmLyWgxp9Rmb7ypCJI3cnMgLVB/K4wJJsu/ogzo85p6uN9U8x7+gBK8dSa9G9NHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LDJZtO9N; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Fikg24FS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9389A199947;
+	Fri, 25 Sep 2026 20:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.127
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790368553; cv=fail; b=hwPcwY8MVHEhZSQeVHt9uXJmi6mXb88Wn7olPZr3pZCYzRXftxzGyRE3g1Lqmcm7W+OB3bxNb2IuY2+AVM15skaztLLyswCHxIKxX5j0WJUep9zwWn/kf2ZlAbLhCyivqE3SXGENiamEvcTRv+k0MZw8rvsByNfZT8vw2TpAqOw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790368553; c=relaxed/simple;
+	bh=PL3fqLZ4rNvvGX67u+Vuf664pJwkSEayodVpMvU4wkM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 Content-Type:MIME-Version; b=tGfxRD2VFCZLrB4oWkuzjcu2mXnTo49cr5Leb6kvsUoF4QYoYbJPrtnRCMi+wDgmGQHyQC63e4eHOJNQchU48Ao9AKDJJ8ilqUYWHIClUBSj4MifSTc4upHpoiuE9Rqx0+n6uoX8Z3ijjTMOtc9KV0Ij92y4BJ2FfHUkcUglydM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=polito.it; spf=pass smtp.mailfrom=polito.it; dkim=pass (1024-bit key) header.d=polito.it header.i=@polito.it header.b=RvM95djN; arc=fail smtp.client-ip=52.101.72.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=polito.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=polito.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LDJZtO9N";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Fikg24FS"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68PGsipm2083185
-	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 18:37:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qU9jfIhz1O12zDKLeEbU8SmuONKTAC52riWnQ1m5YyY=; b=LDJZtO9NqW208Kqd
-	3VP1kfzgKaoXRi4TUkLtkZP//Cc0v+0CjPyv+Wd93Z2/Z3rdo/t/yhX63zxsUEvT
-	qt6/16w/9/Kt8YdMzJsJdJNzG6QOzrgoBuTbaeRRpQJMXqGnDVHTlM31/yfCSUdR
-	ecbNvirWlqSUL3gNn0pjC+BUnml42AR6fUykbAbpjdAEIV7lNTjlgcW39dhoziCn
-	WwWHu4dtMr/H0QWiDSybuZoD+Lni+KjTZXnQj+heQ8BJLhF1YnuUELyYgqIKhnYF
-	hfDwDQZ25P0pfoBHdtfZgWvboFW6c+n6PArKrWbfpqRc63PjfO31OC/I3sv5RkhB
-	SUCSWw==
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gwvw1gdrg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 18:37:22 +0000 (GMT)
-Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-342138eeff2so2139039eec.0
-        for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 11:37:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1790361441; x=1790966241; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:organization
-         :references:in-reply-to:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=qU9jfIhz1O12zDKLeEbU8SmuONKTAC52riWnQ1m5YyY=;
-        b=Fikg24FS3Q16rDa/mZJeAfsHTfb1X8Ea15+KmdxRSiIRNoYiX6rDJTla2CXtAGLTfj
-         ABCybSr9dJxnsmjc+vY62VpFdSnX7yAfkUg0n88ipTmvqSZm1pYVNFiB1mxiV/ip39Va
-         jDxpm7Z6g5NmjiyDJeLgEILRvpgWWUiXaF5Tcz2B6vQLMtpHTcYuLZR9LPZgv+cqDIzD
-         Uuc1tZhpIEM+25Hx0WbJqO8lDRBLbJ7Y/HjxiJwJVSi2Z2IjLxuSrWhQIoOkg/ktdwJq
-         kVwAU84jeooonz1vCMsJoLJLUyEyoDF34DJk7RikdoUD2qvp4LtiXqhNYaL9rohdMIIs
-         HAvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790361441; x=1790966241;
-        h=content-transfer-encoding:content-type:mime-version:organization
-         :references:in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=qU9jfIhz1O12zDKLeEbU8SmuONKTAC52riWnQ1m5YyY=;
-        b=SzDPEK9pYdbMxj/hLjbh9UUSG6O3biVj08hWn6DmkFtv0P5Bp5U1gtHPDUhs54KSKK
-         +ElRkUvHG/PkYsFbaUAs52hmqGCMwr9YUfHbC+ytZaWwTMjtEqTy7NNWk0Gj6Z8s7+2U
-         4WlSXVkbv82158RLmmVxRoTDiDxdYRcoIOFJDdgqgx1821bVeO3nkwlPT4fFUWv91Nmc
-         Mlq9bbbXOrE5RAzREyx2kovR/l7c8oNDt5UsJM3AYi6GzklH+GRA20OZRUpBrqFbrDp5
-         BfTmJscujE7HFJZ8qzFSvYQ3HCP5qlNKvOm9RrBdBLegDUh4Ni1kNQNw58Tlnb3j1fQX
-         4uVw==
-X-Forwarded-Encrypted: i=1; AKwUvBxRoKn9F3xm3yomGgkHblrL0MXgJ2m4JkVoHOv3ju4qgpb/hDdQfa0CisrpQ2OOn4uaNsHHYyHSzKzMrC9zt1A=@vger.kernel.org
-X-Gm-Message-State: AFuF++kjLko+ZGOKWCOiGre7CqGF8Ds3mk2czWN6KGd/JIx7odg1a+jJ
-	Vs6OBZw1cDZVcD+JGQKK0kn81Ap1j7yUKQ0+aYw7jW/4TYfbsGwB6JpHKD7J29fTybdbvpkZvc0
-	ChQCvKQSnVPwUhklM7mSojYLiCBrByY0uoGOTF2jWsRW1v5K4LQsepqpLEOXpeXQtKQ7uEY8=
-X-Gm-Gg: AYBFou2PJgBROe18q6cbR+72SlPTN45kYcGottumURYSnIBd5KXS8MJBcSYpp5T2EZd
-	6NWpM2dkrZyjuARjmjFbbeMll6gzI8N/97YjeEoKRqEXvzLfd0OXFpEjDeb2MuiKqGwAMmFw025
-	aavS6rZzliIMD8m0hFzJFaqLLkjF+v2gdgoLU2M03I8QuvEM2877I1cqTKKiInmHb7esjxrRzJ7
-	ynGeH3jwOEvCCllm0UCpOA/GLgowbNayKqQNuAP8qdwK+cQ8CA2GrJboFr8GgUSANnuWjqdRAog
-	lTE8iYWo/Wxe/ho62po11e+PTh3F6XF4SF3wOx22r87euzqXfPKA7uNyUKPTW392LSH53VgOlGW
-	bLj7wPcFUZXPGnVcmGKhyffpM4BcbDAF3SU7ICKLYwDoGofvZjnuP8g==
-X-Received: by 2002:a05:7301:4d0b:b0:331:89d6:80e7 with SMTP id 5a478bee46e88-342703c0860mr981568eec.13.1790361440800;
-        Fri, 25 Sep 2026 11:37:20 -0700 (PDT)
-X-Received: by 2002:a05:7301:4d0b:b0:331:89d6:80e7 with SMTP id 5a478bee46e88-342703c0860mr981521eec.13.1790361439446;
-        Fri, 25 Sep 2026 11:37:19 -0700 (PDT)
-Received: from localhost (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3414407c548sm7322093eec.8.2026.09.25.11.37.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Sep 2026 11:37:18 -0700 (PDT)
-Date: Fri, 25 Sep 2026 11:37:09 -0700
-From: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
-        Ard
- Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin
- Marinas <catalin.marinas@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>, David
- Sterba <dsterba@suse.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-        Randy
- Dunlap <rdunlap@infradead.org>, Simon Glass <sjg@chromium.org>,
-        Shuah Khan
- <skhan@linuxfoundation.org>,
-        Nick Terrell <terrelln@fb.com>, Will Deacon
- <will@kernel.org>,
-        Alexandre Ghiti <alexghiti@rivosinc.com>,
-        Conor Dooley
- <conor.dooley@microchip.com>,
-        linux-integrity@vger.kernel.org, Palmer
- Dabbelt <palmer@rivosinc.com>,
-        patches@lists.linux.dev, Ross Philipson
- <ross.philipson@gmail.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Song
- Shuai <songshuaishuai@tinylab.org>
-Subject: Re: [PATCH 16/16] efi/arm64: Implement ARM64 DRTM in the stub
-Message-ID: <20260925113709.00005cd1@oss.qualcomm.com>
-In-Reply-To: <16-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
-References: <0-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
-	<16-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
-Organization: Qualcomm
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
+	dkim=pass (1024-bit key) header.d=polito.it header.i=@polito.it header.b="RvM95djN"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UiX5viqZAjdPiakAVl1DAtLdEJ7njGnWM+bEtHbPINjxtnUQ9YolFJur01CzvCVdXwFnOg/Mwg5yxtNvLle12GusLPIg+EAw1OpChoSdCWjJiYEMWyaVkuC0ZPB3foLHgaolGZ90qcYBU3m6rhh8g1w9eQBVEK4ZtWebe/cl8uV4+pD9NCgVrvaBqKeCByRW7PLrbN5ZTsmVebYigjw0qLX6sEyINyOtHh2b0JlckabJsCDRP9j42pfI1REqYO+G+cWCbL73ObcVphEiTfQPXBBgC6/trQQPAMLQverzmimedEWYCxyRsoywziLdDWB81yvuNkOF0vay19CXc+Vfzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+YwgIrg5+/EyPKyqL9qFJIb3iHc8lOsY9xCuFYzPCwQ=;
+ b=Q0dJlA7WD/N4TdVGwJjCStv8yeeqL7l1qzenTh/M4XYc1eQZsBFPtwkhXfBSFGKg1clFt7XaWEqMLsJGcatFv11JZICPwcRAU732luqxdpMn2PFAdhDClZzp7eDPtfb38bf1kvqfcXeNExcZ9GHcJmS3h9ZrWSgOPtoR480ea+KpozUlTrtr86ZdXqF6I0ZHu4zAgXbPkdOcZzS8q1NHqiQ6Ij673SNs11n6cc/4WnjBMaZxJWa58MBYJi5KKlqKtwyoDW1bmKNTOJpO/xnTMSWoSJkj9mMhppcHU14RzrZS1kJvvQnnaopx6DrtKPwjFYiGSowq0fZ3xuAz9bdXoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=polito.it; dmarc=pass action=none header.from=polito.it;
+ dkim=pass header.d=polito.it; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=polito.it;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+YwgIrg5+/EyPKyqL9qFJIb3iHc8lOsY9xCuFYzPCwQ=;
+ b=RvM95djN4eSBid2NCDB3JnUko5k39s+2aJWjs2fj+eaYMNGQr2gLMkk2htVdUrZfMLgaJdEgf27pPyHTpaee5vfxLqAKtN0u2c7z3MCi79+4esfY3/UHsQa0CYtzzuEpZpJ9xEQw+i+1MDSFSVcMnz+7DhkR/FGKbyCHwUNtlQ0=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=polito.it;
+Received: from AS8PR05MB7880.eurprd05.prod.outlook.com (2603:10a6:20b:253::20)
+ by AMBPR05MB12841.eurprd05.prod.outlook.com (2603:10a6:20b:763::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.19; Fri, 25 Sep
+ 2026 20:35:44 +0000
+Received: from AS8PR05MB7880.eurprd05.prod.outlook.com
+ ([fe80::b739:4a27:cccc:cd64]) by AS8PR05MB7880.eurprd05.prod.outlook.com
+ ([fe80::b739:4a27:cccc:cd64%4]) with mapi id 15.21.0451.014; Fri, 25 Sep 2026
+ 20:35:44 +0000
+Date: Fri, 25 Sep 2026 22:35:42 +0200
+From: Enrico Bravi <enrico.bravi@polito.it>
+To: Frederick Lawler <fred@cloudflare.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+CC: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_1/2=5D_integrity=3A_Report_erro?=
+ =?US-ASCII?Q?r_code_in_integrity=5Faudit=5Fmsg=28=29_call_sites?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20260924-report-hash-error-v4-1-196ca6350619@cloudflare.com>
+References: <20260924-report-hash-error-v4-0-196ca6350619@cloudflare.com> <20260924-report-hash-error-v4-1-196ca6350619@cloudflare.com>
+Message-ID: <F3426284-429D-469B-A72A-7645D03A246A@polito.it>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MI3PEPF00007534.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:298:1::4c6) To AS8PR05MB7880.eurprd05.prod.outlook.com
+ (2603:10a6:20b:253::20)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: CS_cKPnHzSWLRWPnuqs9SUD_5xwzI6e1
-X-Authority-Analysis: v=2.4 cv=YqCa1IYX c=1 sm=1 tr=0 ts=6ab6bf62 cx=c_pps
- a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
- a=Ikd4Dj_1AAAA:8 a=jWgNheo0oZ5oaBA2q4oA:9 a=CjuIK1q_8ugA:10
- a=6Ab_bkdmUrQuMsNx7PHu:22
-X-Proofpoint-ORIG-GUID: CS_cKPnHzSWLRWPnuqs9SUD_5xwzI6e1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI1MDA3NCBTYWx0ZWRfX37K0gF+oxz38
- gy7Ki1hne8gvmbFXBzLSCN4FBWfl2bOIma3vYN6CqAIOHYkeeJXq8xjD0hoDwd4yxnVzQA43IOl
- g+NOPjWLNeZR2qIR4hw3FaTfhGCejEofsEWNGelEQsh/hNpELfLikn06gQ6hN/dQfG3xD/psqVc
- OxiQoVzlcle54m+4VF1ozlvdchVU+OAUlh6ZgfdoZzm6X1YvjPDzknulLfXbseP8fIw4gasZORu
- rQJp5HzeifJkSJVN+XyBDzmw+RVpiysJEI0O6xF0xYQ/FKlvt3HzPN9PKgoRq6Grwjz4pzQ5pEF
- IfZO/UWAXi5EQ5kOLTj6uN/WgDSG7DS/7ehbD12+eHOwpnV4qtLPPQPum2u4wHWYhyCLrCtEyeR
- xXL5lOBGRE1OqRuoSnBN8wOdBXnpMkw15QgnLELsTvG0lWW+rPOyA/K7e+GsMoqREwqcTQPT8On
- r04/GWJBiaGwjLTxYbg==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI1MDA3NCBTYWx0ZWRfX31Moi4o5YCGv
- HqDeFBVow53fWrE21JWCySBUTUvJFG4jeb824jILFCrxJM9vqQlXp7Ndob8r6wfKKBfnv63s3at
- mG+xuUhP1BMqqtPdZj5bZhktrMem/r4=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-25_03,2026-09-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 priorityscore=1501 phishscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609250074
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR05MB7880:EE_|AMBPR05MB12841:EE_
+X-MS-Office365-Filtering-Correlation-Id: d120a12c-5bec-44c8-5ed4-08df1b44927d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|786006|23010399003|7416014|376014|1800799024|366016|10067099003|11063799006|260925022911599003|260925021911599003|260925021311599003|18002099003|22082099003|4143699003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	hdqs4virAB2tKSnN+WEoxDjsHTC1lMqzKBsW4VdTHXIXWTw0+UQO7skZkc//lcrsr05P1Fhhj6/8vU31GJC0mZKNiQHUHcM+HwMkLOljY95JaQfAx9RJMl/DBf5ykueCw+Rx1Eydj+XgzlnfXDW43HIFSfk8mLKeLpn2JrhVuFjJsULai4nQxYryylIY26TKzl7uaieIpOlWPkhGI61AsltEUu/lNFulWhVDGXUp5dpmsBioT/RUKv4A5/KgabI4rZ7qpQj29qpr3x6ac9qhbZgs0MVdNxp7VcD6OyXDsyUFeH2s76QvCBG5zYY4XSnPTFNbDTh7cyU9p1v2YIG30isMGeeatt4dJL+KA3BVdAw35oohh9Nl7i0ojfmBVddG5wd1EJbpQgixkGXqImGzMw1UmEpGUZImDfNwhPa9NJ0R520mDqGkGYy0zEKolHZGCau3sde+PROEjeXzhEF00rWwrAjY/CHW+DdhFURIKGrW5g7OgCSUKXu1oclPVYeg/dG3OGVmn0iwHWKU6si26hEK55puElUvd5JCGbjVrPsajHnnr0N9aKR4Ny67tv+YcdTshwjUQImXd1BGXdh5XwjYEQpv0Bk71qohgc5+RKTQhFJ6WbZMaozBVbd5T/Jno1dOa6YOCuXEsYFMKGoXul6mPrSQ8QQrJEViPi5hm3w=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR05MB7880.eurprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(786006)(23010399003)(7416014)(376014)(1800799024)(366016)(10067099003)(11063799006)(260925022911599003)(260925021911599003)(260925021311599003)(18002099003)(22082099003)(4143699003)(56012099006);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YWZvUUNISXpIMUFnSVMxRmVVWHFhcXNBc2QyWG9JUFczekhyM2srYjN3a0JU?=
+ =?utf-8?B?bXFSOGJudFNweTNjZkthbmdlbDRJd0s4bE1JRUR0VHE0ZGZadFBVR0IvN1dV?=
+ =?utf-8?B?Z0NSdVJ0dGpSY3VGajhlZ1g2QSs3b203U3VDOWNJWW5CbFpwbEN3UjIxNVY5?=
+ =?utf-8?B?bEVyYWI1aDF1TW45bGdOdW83NVZSaXAzNEJsOXFKdXQxQkp6MHRFOFdVMHdz?=
+ =?utf-8?B?c1ArTjJYeU9lVjBnWjA3cmVVUjcycXR5K3B3cGJFNFNtdFJocS94d2hTSHVX?=
+ =?utf-8?B?bDBTTExhbWozZmZQNlc1eE5nWHFsQStMZitmd0JJL0NPSEFTVEhMdi9KYS9i?=
+ =?utf-8?B?Q2NLbmpYRzRmV0Nna2d1N3BPZWN5VGZmTFFZQUREUEpIYm44NlNFV3BmRENX?=
+ =?utf-8?B?dC9ZQlZGRHI4by9VcGwwZS8ybHBTQU1rVHlYVzZWSk1HaVpqNVlhWHVIR0NE?=
+ =?utf-8?B?Sk52dVBzY0xMeGxKUDJjeHVXbFlkTVRYVnFNWjQyVGtHK2xWaHprb0NUM3F1?=
+ =?utf-8?B?TW9jQi9WazYwTm5uNXFIZndKSXNtSXArbXlha0NTZVB5cktjb3poQ2dlRXdk?=
+ =?utf-8?B?VjFFYkJySG8wUVlyeWloTGZUYU9xT20xa0ZZSUdHSWRpVmhraW9JN281bWhw?=
+ =?utf-8?B?ZEdoSlJ1aG5rN0hwbENTQkxVZWpVdElsaEY0dHltTlRPdW5rWWM3cDdtOG5P?=
+ =?utf-8?B?RTZCMnFDVzYwQ1cwdEJ3RDJ3V0xRV2xsNEFFS3dIcnVLRTl1OVNzNXp6M0dx?=
+ =?utf-8?B?M1RJbW05Z1h1d2xKSjh0Vi9acTd1QXhjcHFndytLaElObGR4SENpRFA1WndJ?=
+ =?utf-8?B?UzJJTFEwc0x3cDE5YUhyMkFlZEdDei94U3NaVXAyaE5zdHlSTEFSWnNiTXhG?=
+ =?utf-8?B?T1FuMnMyUWpsbitJdG45WURiZG81Q0F2TkJhR0djNXU4d0RWcEZ6b2NjOGpX?=
+ =?utf-8?B?VEVWaXZ1OGdsUmQrNHd6dENGaE5mU2NCQ0hkMWsxa2E0ZlZlMTVTaFVUaHpH?=
+ =?utf-8?B?VkZuRUMwLzBwRGhTeEwyNStENVBIOTZvUWpUTURmQVIxdVM0WnY0c3hQTDVa?=
+ =?utf-8?B?bENqekpwMFhFM0VWMzBuc0twbGl4NytvOHphZ3lxZDF3eVBza1VCbmhjbDdr?=
+ =?utf-8?B?N2dBUmtZSm1HVnBId1hUUGMrbHVSUVVuN1NmNUZZMDZxN2V6eXdJSzlrN1lo?=
+ =?utf-8?B?ZmZoL1BVUk5Za1NscVN1clFqTjFyRHVYdG1uUjFobDdsSHdqM2hwNlQ2S21o?=
+ =?utf-8?B?WVlEYmhTK1I4N1pabUpDVnFWMU9raGNVc0lJNVpydjNqMWlNUkU1QlJ5a29H?=
+ =?utf-8?B?VXJYeHRraU5qZ0Z2LyszZHAwZTJoQktlVFNWZ0c5SDdEblY5TExFNEdsQ01y?=
+ =?utf-8?B?MDdhbjYyNVFYejhDZzU2NU1sU2dOZG40ZC81OXIwSGVUaVgwMWVxTHAzNGdB?=
+ =?utf-8?B?M2twUlhBS0xhbFR6NXdOaXBhYkRKWllmcGpmeVBJRElIY1RoMEdSWDRKZlYx?=
+ =?utf-8?B?OEFyclhwb0RaWTdvbXFzVGxpVkxrWWFHb3hoS2NZeUZDNGM3ZDNNSHVDNnZP?=
+ =?utf-8?B?QUlmQmhxZlMwU1FYZEs2U1g5eXRvWnhzdXpBZW0wSldWUUNoNlRBWFBGUjVs?=
+ =?utf-8?B?QjlQeXhwQXNwWERLaTNGMkpYS3UvWWRnOUcxbktHeEJFZytDRlVuek0zVEIv?=
+ =?utf-8?B?aTVKVmhoQUw1RldTVFNDamVFcEtWbHRxTjdFZ0tFZnFhNmxtR2ZhaUlkTi9a?=
+ =?utf-8?B?TmtRZ3Z3d3pwRXQvdW14WXRuUU1FRmhsczFybHFvN1RJaDBGMjhIT2FhY0Uz?=
+ =?utf-8?B?NmJTeWdXTlhBeStRZlM4bFVuVFhIaGJhZmR0UG9VYUkwRDQzU1hkdlBWSjdV?=
+ =?utf-8?B?TjNtS1dINVNhclJEbW4yeVZlU2Y0VCtaTHRycVRWWkJxL1psY0FXK1BldFBw?=
+ =?utf-8?B?YXRDSTh5SHMxYkpSVzZsejZ2TytWNCsrcWdqd1lMREhWNEJxRVJKZ3dWWjZW?=
+ =?utf-8?B?VkhBR2xGbXZXVUpWN1p4VHNzaEZ0UzRIeEExUnk3bXExU1RyYXlRYTJCV2Nv?=
+ =?utf-8?B?WDl4RnBpZ0NGbkNEeGtqVDNmSnROUnloRGFxbm81NXU3SW01bkRRSklsTlI0?=
+ =?utf-8?B?YkZicmxld0ZabTlVenhiMkZqNlpnTW5TVmRuelNlWEQ4aGRpeWZ6SUEyQ05R?=
+ =?utf-8?B?WmlNZHRyWkQ5eFFxRmYrYmhVdmNlbklOZkpsaFVXK0E5TVFueUIrdUpabTBa?=
+ =?utf-8?B?b0FZWUZGY05zbEpHY0w5Vld0b1NVSkp0eUVyOUdDdlVRZHo5NVlrelFieHZn?=
+ =?utf-8?B?bWc5QzFQWCtSaVEwM1lISU14V2xZRkNtYjVWOVFBTnVlNSs3RlpiZz09?=
+X-OriginatorOrg: polito.it
+X-MS-Exchange-CrossTenant-Network-Message-Id: d120a12c-5bec-44c8-5ed4-08df1b44927d
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR05MB7880.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2026 20:35:44.2017
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 2a05ac92-2049-4a26-9b34-897763efc8e2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tASF2iYTCFDtsu1EW8Dzjlj+egZSX5npkP38MecK++X9des1K8Tuk02uhuP+wcfw7hSsiCTP7ec/FQwoq80WOw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMBPR05MB12841
 
-On Thu, 24 Sep 2026 10:53:19 -0300
-Jason Gunthorpe <jgg@nvidia.com> wrote:
+Hi Frederick,
 
-> Provide an implementation of the CONFIG_EFI_STUB_DRTM protocol for ARM64
-> DEN0113 >= v1.1.
-> 
-> First, it queries the FW for support and collects all the
-> information. This is needed to compute the extra_size, which comes
-> from FW reporting how much memory it needs during the launch for the
-> DLME Data and DCE-owned data. The generic stub ensures there is
-> trailing memory after Image for this.
-> 
-> Then the DRTM_PARAMETERS launch structure is computed using the
-> offsets in the efi_info.
-> 
-> Finally, the stub does ExitBootServices and calls the actual launch.
-ARM_DRTM_FEATURE_DMA_PROTECTION> 
-> The feature discovery process is deliberately fairly verbose to help
-> debug any FW weirdness in the field. Enable it with efi=debug
-> 
-> It looks something like:
-> 
->  EFI stub: DRTM: interface version 1.4
->  EFI stub: DEBUG: DRTM: TPM algorithm 0xc, TPM hashing unavailable, PCR schemas 0x1
->  EFI stub: DEBUG: DRTM: minimum DLME data 73728 bytes, Normal-world DCE 0 bytes
->  EFI stub: Decompressing Linux Kernel...
->  EFI stub: Generating empty DTB
->  EFI stub: Exiting boot services...
->  EFI stub: DEBUG: DRTM: will launch, selected launch features 0x0
->  [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x000f0510]
-> 
-> Eventually the launch'd kernel is going to require built in crypto
-> libraries that match what the FW is using so it can validate some of the
-> information left behind during early boot. Refuse to launch if these are
-> not built in and build in the most common ones from the ARM64_DRTM
-> kconfig.
-> 
-> One nit, if the platform does not support SMC then using drtm=auto may
-> crash on the SMC op. As far as I can tell there is no way to discover SMC
-> support through EFI. Learning it from the ACPI FADT is doable and costs
-> about 250 lines of code.
-> 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-First read though only found some superficial stuff.
+On September 24, 2026 10:34:58 PM GMT+02:00, Frederick Lawler <fred@cloudfl=
+are.com> wrote:
+>integrity_audit_msg() hides error codes by wrapping
+>integrity_audit_message() which obfuscates the underlying reason for the
+>failure.
+>
+>Update integrity_audit_msg() to take a errno argument, and pass that
+>through to integrity_audit_message(). Then update call sites to
+>take caller's respective error codes.
+>
+>ima_appraise_measurement() stores xattr_len as the return code, but
+>can replace it with a error code later. Therefore conditionally use
+>a code if rc < 0, otherwise report zero. Lastly, conditionally use
+>-EINVAL for ima_release_policy().
+>
+>Signed-off-by: Frederick Lawler <fred@cloudflare.com>
 
-Generally looks fine to me.
+Reviewed-by: Enrico Bravi <enrico.bravi@polito.it>
 
-Jonathan
+Regards,
 
-> diff --git a/drivers/firmware/efi/libstub/arm64-drtm.c b/drivers/firmware/efi/libstub/arm64-drtm.c
-> new file mode 100644
-> index 00000000000000..12ddf7c2dd056a
-> --- /dev/null
-> +++ b/drivers/firmware/efi/libstub/arm64-drtm.c
+Enrico
 
-
-
-> +
-> +static bool efi_drtm_probe_memory(void)
-> +{
-> +	u64 value;
-> +
-> +	if (!efi_drtm_query_feature(ARM_DRTM_FEATURE_MIN_MEMORY, &value))
-> +		return false;
-> +
-> +	drtm_cfg.dlme_data_size =
-> +		FIELD_GET(ARM_DRTM_DLME_DATA_PAGES_MASK, value) *
-
-> +		ARM_DRTM_PAGE_SIZE;
-> +	drtm_cfg.nw_dce_size = FIELD_GET(ARM_DRTM_NW_DCE_PAGES_MASK, value) *
-> +			       ARM_DRTM_PAGE_SIZE;
-> +
-> +	efi_debug(
-> +		"DRTM: minimum DLME data %lu bytes, Normal-world DCE %lu bytes\n",
-
-That code formatter loves the silly.  This is definitely not more readable
-than a slightly longer line!
-I'm reading upwards and got bored now - will assume you'll take a look and tidy
-up other such silliness.
-
-
-> +		drtm_cfg.dlme_data_size, drtm_cfg.nw_dce_size);
-> +	return true;
-> +}
-
-> +
-> +static void efi_drtm_report_previous_error(void)
-> +{
-> +	s64 error_code;
-> +	s64 status;
-> +
-> +	status = arm_drtm_features(ARM_DRTM_SMC_GET_ERROR, NULL);
-> +	if (status != ARM_DRTM_SUCCESS) {
-> +		efi_debug("DRTM: GET_ERROR is unavailable (x0=%lld)\n", status);
-> +		return;
-> +	}
-> +
-> +	status = arm_drtm_get_error(&error_code);
-> +	if (status != ARM_DRTM_SUCCESS) {
-> +		efi_warn("DRTM: failed to read previous error (x0=%lld)\n",
-> +			 status);
-> +		return;
-> +	}
-> +
-> +	if (error_code) {
-> +		efi_warn(
-> +			"DRTM: firmware reports previous launch error 0x%llx\n",
-
-That code formatter is being silly again.
-
-> +			error_code);
-> +		if (efi_drtm_policy != EFI_DRTM_ENFORCE)
-> +			efi_drtm_policy = EFI_DRTM_OFF;
-> +	}
-> +}
-
-> +
-> +efi_status_t efi_drtm_prepare(void)
-> +{
-> +	s64 feature_status;
-> +	u16 major, minor;
-> +	s32 status;
-> +
-> +	if (efi_drtm_policy == EFI_DRTM_OFF)
-> +		return EFI_SUCCESS;
-> +
-> +	if (!efi_arm64_psci_smccc_compatible())
-> +		return efi_drtm_failure();
-> +
-> +	/* VERSION must be the first DRTM call. */
-
-Words like 'must' should be backed by a specific spec reference.
-I couldn't immediately fine one other than common sense suggesting it should
-be called to check we have a version we understand ho to talk to.
-
-> +	status = arm_drtm_version(&major, &minor);
-> +	if (status != ARM_DRTM_SUCCESS) {
-> +		efi_err("DRTM: failed to read interface version (x0=%d)\n",
-> +			status);
-> +		return efi_drtm_failure();
-> +	}
-> +	if (major != ARM_DRTM_VERSION_MAJOR ||
-> +	    minor < ARM_DRTM_VERSION_MIN_MINOR) {
-> +		efi_err("DRTM: unsupported interface version %u.%u\n", major,
-> +			minor);
-> +		return efi_drtm_failure();
-> +	}
-> +	efi_info("DRTM: interface version %u.%u\n", major, minor);
-> +
-> +	efi_drtm_report_previous_error();
-> +	if (efi_drtm_policy == EFI_DRTM_OFF)
-> +		return EFI_SUCCESS;
-> +
-> +	feature_status = arm_drtm_features(ARM_DRTM_SMC_DYNAMIC_LAUNCH, NULL);
-> +	if (feature_status != ARM_DRTM_SUCCESS) {
-> +		efi_err("DRTM: dynamic launch is unavailable (x0=%lld)\n",
-> +			feature_status);
-> +		return efi_drtm_failure();
-> +	}
-> +
-> +	if (!efi_drtm_probe_tpm() || !efi_drtm_probe_memory() ||
-> +	    !efi_drtm_probe_dma() || !efi_drtm_probe_boot_pe())
-> +		return efi_drtm_failure();
-> +
-> +	drtm_cfg.launch_features =
-> +		ARM_DRTM_LAUNCH_HASH_FIRMWARE | ARM_DRTM_LAUNCH_PCR_DEFAULT |
-> +		ARM_DRTM_LAUNCH_DMA_COMPLETE | ARM_DRTM_LAUNCH_NO_AUTH |
-> +		ARM_DRTM_LAUNCH_KEEP_SECURE_IRQS;
-> +
-> +	return EFI_SUCCESS;
-> +}
-> +
-> +unsigned long efi_drtm_get_extra_size(void)
-> +{
-> +	/*
-> +	 * DEN0113 Table 6, feature 0x2 reports both minimum sizes in 4 KiB
-> +	 * pages.  The linker places the DLME data at the 4 KiB-aligned end of
-> +	 * the static Image as required by R314030.  The DLME region must
-> +	 * include all of that data (R45200), and an optional Normal-world DCE
-> +	 * follows it at another 4 KiB-aligned address as required by R312080.
-> +	 * A final page holds the 4 KiB-aligned DRTM_PARAMETERS required by
-> +	 * R312010.  Only the first area is part of the DLME region.
-> +	 */
-> +	if (efi_drtm_policy == EFI_DRTM_OFF)
-> +		return 0;
-> +	return drtm_cfg.dlme_data_size + drtm_cfg.nw_dce_size +
-> +	       ARM_DRTM_PAGE_SIZE;
-> +}
-> +
-> +efi_status_t efi_drtm_prepare_launch(unsigned long image_base,
-> +				     unsigned long fdt_addr)
-> +{
-> +	const struct arm64_image_header *header = (const void *)image_base;
-> +	const struct efi_image_info *info = efi_get_image_info(image_base);
-> +	struct arm64_drtm_handoff *handoff =
-> +		efi_get_image_symbol(image_base, arm64_drtm_handoff);
-> +	struct arm_drtm_parameters *params;
-> +	unsigned long measured_offset;
-> +	unsigned long measured_size;
-> +	unsigned long image_size;
-> +	unsigned long dlme_start;
-> +	unsigned long dlme_end;
-> +	unsigned long dce_end;
-> +	unsigned long entry;
-> +
-> +	if (efi_drtm_policy == EFI_DRTM_OFF)
-> +		return EFI_SUCCESS;
-> +
-> +	image_size = le64_to_cpu(header->image_size);
-> +	measured_offset = le64_to_cpu(info->drtm_measured_start);
-> +	measured_size = le64_to_cpu(info->dlme_measured_size);
-> +	entry = le64_to_cpu(info->drtm_entry);
-> +	dlme_start = image_base + image_size;
-> +	dlme_end = dlme_start + drtm_cfg.dlme_data_size;
-> +	dce_end = dlme_end + drtm_cfg.nw_dce_size;
-> +
-> +	/* Quick checks something didn't go wrong during image construction */
-> +	if (entry < measured_offset ||
-> +	    entry - measured_offset >= measured_size ||
-> +	    !IS_ALIGNED(image_base, ARM_DRTM_PAGE_SIZE) ||
-> +	    !IS_ALIGNED(image_size, ARM_DRTM_PAGE_SIZE) ||
-> +	    !IS_ALIGNED(measured_offset, ARM_DRTM_PAGE_SIZE) ||
-> +	    !IS_ALIGNED(dlme_start, ARM_DRTM_PAGE_SIZE) ||
-> +	    !IS_ALIGNED(dlme_end, ARM_DRTM_PAGE_SIZE) ||
-> +	    !IS_ALIGNED(dce_end, ARM_DRTM_PAGE_SIZE)) {
-> +		efi_err("DRTM: final Image layout is invalid\n");
-> +		return efi_drtm_failure();
-> +	}
-> +
-> +	/*
-> +	 * See arch/arm64/kernel/vmlinux.lds.S for the DRTM Memory layout. After
-> +	 * the DLME we choose to place the Normal World DCE region followed by
-> +	 * the aligned DRTM_PARAMETERS structure.
-> +	 */
-> +	memset((void *)dlme_start, 0, efi_drtm_get_extra_size());
-
-Is that efi_drtm_get_extra_size() adding much?  It is a little irritating to
-have to go look in there to figure out that this memset actually covers
-the params. If you were to just have the sum visible here that would be
-more obvious and align with the comment immediately above the memset.
-
-Maybe it is worth keeping for the big comment in there, but it does
-feel like that and what we have here could be combined.
-
-> +	params = (void *)dce_end;
-> +	params->revision = cpu_to_le16(ARM_DRTM_PARAMETERS_REVISION);
-> +	params->launch_features = cpu_to_le32(drtm_cfg.launch_features);
-> +	params->dlme_region_address = cpu_to_le64(image_base);
-> +	params->dlme_region_size = cpu_to_le64(dlme_end - image_base);
-> +	params->dlme_image_start = cpu_to_le64(measured_offset);
-> +	params->dlme_entry_point_offset = cpu_to_le64(entry - measured_offset);
-> +	params->dlme_image_size = cpu_to_le64(measured_size);
-> +	params->dlme_data_offset = cpu_to_le64(image_size);
-> +	if (drtm_cfg.nw_dce_size) {
-> +		params->nw_dce_region_address = cpu_to_le64(dlme_end);
-> +		params->nw_dce_region_size = cpu_to_le64(drtm_cfg.nw_dce_size);
-> +	}
-> +
-> +	/*
-> +	 * The DLME Data contains its own size in a trusted header, so the
-> +	 * handoff doesn't need to include extra_size. The DCE Data is only
-> +	 * temporary so the kernel also does not need to know about it.
-> +	*/
-> +	handoff->fdt_addr = cpu_to_le64(fdt_addr);
-> +	handoff->drtm_enabled = 1;
-> +
-> +	efi_debug("DRTM: will launch, selected launch features 0x%x\n",
-> +		  drtm_cfg.launch_features);
-> +
-> +	drtm_cfg.params_addr = params;
-> +	return EFI_SUCCESS;
-> +}
-> +
-> +static void efi_drtm_fallback(void)
-> +{
-> +	struct arm_drtm_parameters *params = drtm_cfg.params_addr;
-> +	unsigned long image_base = le64_to_cpu(params->dlme_region_address);
-> +	struct arm64_drtm_handoff *handoff =
-> +		efi_get_image_symbol(image_base, arm64_drtm_handoff);
-> +
-> +	handoff->drtm_enabled = 0;
-> +}
-> +
-> +void efi_drtm_launch(void)
-> +{
-> +
-
-I love trivial. Pointless blank line.
-
-> +	if (efi_drtm_policy == EFI_DRTM_OFF)
-> +		return;
-> +
-> +	/*
-> +	 * No cache maintenance is required before the launch. DEN0113 R42130
-> +	 * requires the DRTM_PARAMETERS to be accessible as Normal Write-Back
-> +	 * Cacheable, Inner Shareable memory, so the DCE reads them coherently
-> +	 * with the writes made above.  R45220 then has the DCE clean and
-> +	 * invalidate the whole DLME region to the Point of Coherency before it
-> +	 * measures the DLME image, which covers both the Image itself and the
-> +	 * handoff struct placed in the DLME region. Thus once we jump into the
-> +	 * kernel with MMU and caches off the CPU will see everything the stub
-> +	 * wrote.
-> +	 */
-> +	arm_drtm_dynamic_launch(drtm_cfg.params_addr);
-> +
-> +	/*
-> +	 * DEN0113 section 3.4 returns from DYNAMIC_LAUNCH only on error. Boot
-
-I'd use a spec version for references + ideally title of section.
-As much as folk may try, sometimes these things move around.
-
-Also tweak the wording.  Failure sure the section doesn't return from anything :)
-
-> +	 * services and their diagnostics are no longer available, so hang.
-> +	 */
-> +	if (efi_drtm_policy == EFI_DRTM_ENFORCE) {
-> +		for (;;)
-> +			asm volatile("wfe");
-> +	}
-> +
-> +	efi_drtm_fallback();
-> +}
-
+>---
+> security/integrity/evm/evm_main.c         |  9 +++++----
+> security/integrity/ima/ima_api.c          |  8 ++++----
+> security/integrity/ima/ima_appraise.c     |  6 +++---
+> security/integrity/ima/ima_fs.c           |  7 ++++---
+> security/integrity/ima/ima_init.c         |  2 +-
+> security/integrity/ima/ima_main.c         |  7 ++++---
+> security/integrity/ima/ima_policy.c       | 11 ++++++-----
+> security/integrity/ima/ima_queue.c        |  2 +-
+> security/integrity/ima/ima_template_lib.c |  2 +-
+> security/integrity/integrity.h            |  5 +++--
+> security/integrity/integrity_audit.c      |  5 +++--
+> 11 files changed, 35 insertions(+), 29 deletions(-)
+>
+>diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/ev=
+m_main.c
+>index b59e3f121b8a89edb14d811351ec393a69de8ff7..5be9349afcd09b47b78d1126ff=
+c1fe341264ae6e 100644
+>--- a/security/integrity/evm/evm_main.c
+>+++ b/security/integrity/evm/evm_main.c
+>@@ -563,7 +563,7 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
+> 				    dentry->d_inode, dentry->d_name.name,
+> 				    "update_metadata",
+> 				    integrity_status_msg[evm_status],
+>-				    -EPERM, 0);
+>+				    -EPERM, 0, -EPERM);
+> 	}
+> out:
+> 	/* Exception if the HMAC is not going to be calculated. */
+>@@ -588,7 +588,7 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
+> 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+> 				    dentry->d_name.name, "appraise_metadata",
+> 				    integrity_status_msg[evm_status],
+>-				    -EPERM, 0);
+>+				    -EPERM, 0, -EPERM);
+> 	return evm_status =3D=3D INTEGRITY_PASS ? 0 : -EPERM;
+> }
+>=20
+>@@ -729,7 +729,7 @@ static int evm_inode_set_acl(struct mnt_idmap *idmap, =
+struct dentry *dentry,
+> 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+> 				    dentry->d_name.name, "appraise_metadata",
+> 				    integrity_status_msg[evm_status],
+>-				    -EPERM, 0);
+>+				    -EPERM, 0, -EPERM);
+> 	return -EPERM;
+> }
+>=20
+>@@ -992,7 +992,8 @@ static int evm_inode_setattr(struct mnt_idmap *idmap, =
+struct dentry *dentry,
+>=20
+> 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+> 			    dentry->d_name.name, "appraise_metadata",
+>-			    integrity_status_msg[evm_status], -EPERM, 0);
+>+			    integrity_status_msg[evm_status], -EPERM, 0,
+>+			    -EPERM);
+> 	return -EPERM;
+> }
+>=20
+>diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima=
+_api.c
+>index 122d127e108dcca8ddae6575c908144859783fb6..f765bfe5db68d0847cfe5b47f8=
+1b64018083f65a 100644
+>--- a/security/integrity/ima/ima_api.c
+>+++ b/security/integrity/ima/ima_api.c
+>@@ -116,7 +116,7 @@ int ima_store_template(struct ima_template_entry *entr=
+y,
+> 		if (result < 0) {
+> 			integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode,
+> 					    template_name, op,
+>-					    audit_cause, result, 0);
+>+					    audit_cause, result, 0, result);
+> 			return result;
+> 		}
+> 	}
+>@@ -159,7 +159,7 @@ void ima_add_violation(struct file *file, const unsign=
+ed char *filename,
+> 		ima_free_template_entry(entry);
+> err_out:
+> 	integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode, filename,
+>-			    op, cause, result, 0);
+>+			    op, cause, result, 0, result);
+> }
+>=20
+> /**
+>@@ -330,7 +330,7 @@ int ima_collect_measurement(struct ima_iint_cache *iin=
+t, struct file *file,
+>=20
+> 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+> 				    filename.name.name, "collect_data",
+>-				    audit_cause, result, 0);
+>+				    audit_cause, result, 0, result);
+>=20
+> 		release_dentry_name_snapshot(&filename);
+> 	}
+>@@ -383,7 +383,7 @@ void ima_store_measurement(struct ima_iint_cache *iint=
+, struct file *file,
+> 	result =3D ima_alloc_init_template(&event_data, &entry, template_desc);
+> 	if (result < 0) {
+> 		integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode, filename,
+>-				    op, audit_cause, result, 0);
+>+				    op, audit_cause, result, 0, result);
+> 		return;
+> 	}
+>=20
+>diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/im=
+a/ima_appraise.c
+>index b280488e15fcb0b6f8a8a0caaab93c7d511e4a40..84c4dee2323cf7352cccd8e4c9=
+291d0fb6eed8e1 100644
+>--- a/security/integrity/ima/ima_appraise.c
+>+++ b/security/integrity/ima/ima_appraise.c
+>@@ -564,7 +564,7 @@ int ima_appraise_measurement(enum ima_hooks func, stru=
+ct ima_iint_cache *iint,
+> 		status =3D INTEGRITY_FAIL;
+> 		cause =3D "unverifiable-signature";
+> 		integrity_audit_msg(audit_msgno, inode, filename,
+>-				    op, cause, rc, 0);
+>+				    op, cause, rc, 0, rc < 0 ? rc : 0);
+> 	} else if (status !=3D INTEGRITY_PASS) {
+> 		/* Fix mode, but don't replace file signatures. */
+> 		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
+>@@ -589,7 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, stru=
+ct ima_iint_cache *iint,
+> 		}
+>=20
+> 		integrity_audit_msg(audit_msgno, inode, filename,
+>-				    op, cause, rc, 0);
+>+				    op, cause, rc, 0, rc < 0 ? rc : 0);
+> 	} else {
+> 		ima_cache_flags(iint, func);
+> 	}
+>@@ -752,7 +752,7 @@ static int validate_hash_algo(struct dentry *dentry,
+> 		path =3D NULL;
+>=20
+> 	integrity_audit_msg(AUDIT_INTEGRITY_DATA, d_inode(dentry), path,
+>-			    "set_data", errmsg, -EACCES, 0);
+>+			    "set_data", errmsg, -EACCES, 0, -EACCES);
+>=20
+> 	kfree(pathbuf);
+>=20
+>diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_=
+fs.c
+>index 2a0bca5543161912abe2a0236c9fcae7055e62bc..3b8174a91a3451128c0b182e85=
+2875d5b73d3efb 100644
+>--- a/security/integrity/ima/ima_fs.c
+>+++ b/security/integrity/ima/ima_fs.c
+>@@ -592,11 +592,11 @@ static ssize_t ima_write_policy(struct file *file, c=
+onst char __user *buf,
+> 	if (data[0] =3D=3D '/') {
+> 		result =3D ima_read_policy(data);
+> 	} else if (ima_appraise & IMA_APPRAISE_POLICY) {
+>+		result =3D -EACCES;
+> 		pr_err("signed policy file (specified as an absolute pathname) required=
+\n");
+> 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+> 				    "policy_update", "signed policy required",
+>-				    1, 0);
+>-		result =3D -EACCES;
+>+				    result, 0, result);
+> 	} else {
+> 		ima_measure_raw_policy(data, datalen);
+> 		result =3D ima_parse_add_rule(data);
+>@@ -745,7 +745,8 @@ static int ima_release_policy(struct inode *inode, str=
+uct file *file)
+>=20
+> 	pr_info("policy update %s\n", cause);
+> 	integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+>-			    "policy_update", cause, !valid_policy, 0);
+>+			    "policy_update", cause, !valid_policy, 0,
+>+			    !valid_policy ? -EINVAL : 0);
+>=20
+> 	if (!valid_policy) {
+> 		ima_delete_rules();
+>diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/im=
+a_init.c
+>index d53f4d89a53e56d7ebb31950c10b37fc89782753..7a76e2686267482b10bf854a76=
+829c60ef9f1e1b 100644
+>--- a/security/integrity/ima/ima_init.c
+>+++ b/security/integrity/ima/ima_init.c
+>@@ -103,7 +103,7 @@ static int __init ima_add_boot_aggregate(void)
+> 	return 0;
+> err_out:
+> 	integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, filename, op,
+>-			    audit_cause, result, 0);
+>+			    audit_cause, result, 0, result);
+> 	return result;
+> }
+>=20
+>diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/im=
+a_main.c
+>index ab1e53b3210d3a4d3f91d65f7db19e6a2a2d401c..9e80f40680d7be08d14d26ba48=
+ed334d4e4ab10c 100644
+>--- a/security/integrity/ima/ima_main.c
+>+++ b/security/integrity/ima/ima_main.c
+>@@ -119,7 +119,7 @@ static int mmap_violation_check(enum ima_hooks func, s=
+truct file *file,
+> 			*pathname =3D ima_d_path(&file->f_path, pathbuf,
+> 					       filename);
+> 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, *pathname,
+>-				    "mmap_file", "mmapped_writers", rc, 0);
+>+				    "mmap_file", "mmapped_writers", rc, 0, rc);
+> 	}
+> 	return rc;
+> }
+>@@ -466,7 +466,7 @@ static int process_measurement(struct file *file, cons=
+t struct cred *cred,
+>=20
+> 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, file_inode(file),
+> 				    pathname, "collect_data",
+>-				    "denied-hash-algorithm", rc, 0);
+>+				    "denied-hash-algorithm", rc, 0, rc);
+> 	}
+> out_locked:
+> 	if ((mask & MAY_WRITE) && test_bit(IMA_DIGSIG, &iint->atomic_flags) &&
+>@@ -579,7 +579,8 @@ static int ima_file_mprotect(struct vm_area_struct *vm=
+a, unsigned long reqprot,
+> 	file =3D vma->vm_file;
+> 	pathname =3D ima_d_path(&file->f_path, &pathbuf, filename);
+> 	integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, pathname,
+>-			    "collect_data", "failed-mprotect", result, 0);
+>+			    "collect_data", "failed-mprotect", result, 0,
+>+			    result);
+> 	if (pathbuf)
+> 		__putname(pathbuf);
+>=20
+>diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/=
+ima_policy.c
+>index 68d9a5e6c232ea0678e9f51f105cebecccccb43e..9013c962dc0bfd6184948230ad=
+6746e71f6e82f5 100644
+>--- a/security/integrity/ima/ima_policy.c
+>+++ b/security/integrity/ima/ima_policy.c
+>@@ -1992,7 +1992,8 @@ ssize_t ima_parse_add_rule(char *rule)
+> 	entry =3D kzalloc_obj(*entry);
+> 	if (!entry) {
+> 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
+>-				    NULL, op, "-ENOMEM", -ENOMEM, audit_info);
+>+				    NULL, op, "-ENOMEM", -ENOMEM, audit_info,
+>+				    -ENOMEM);
+> 		return -ENOMEM;
+> 	}
+>=20
+>@@ -2003,7 +2004,7 @@ ssize_t ima_parse_add_rule(char *rule)
+> 		ima_free_rule(entry);
+> 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
+> 				    NULL, op, "invalid-policy", result,
+>-				    audit_info);
+>+				    audit_info, result);
+> 		return result;
+> 	}
+>=20
+>@@ -2421,7 +2422,7 @@ void ima_measure_loaded_policy(void)
+> 	rule =3D kmalloc(rule_len, GFP_KERNEL);
+> 	if (!rule) {
+> 		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, event_name,
+>-				    op, "ENOMEM", result, 0);
+>+				    op, "ENOMEM", result, 0, result);
+> 		return;
+> 	}
+>=20
+>@@ -2440,7 +2441,7 @@ void ima_measure_loaded_policy(void)
+> 			result =3D -E2BIG;
+> 			integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL,
+> 					    event_name, op, "rule_length",
+>-					    result, 0);
+>+					    result, 0, result);
+> 			rcu_read_unlock();
+> 			goto free_rule;
+> 		}
+>@@ -2454,7 +2455,7 @@ void ima_measure_loaded_policy(void)
+> 	file.buf =3D kmalloc(file_len, GFP_KERNEL);
+> 	if (!file.buf) {
+> 		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, event_name,
+>-				    op, "ENOMEM", result, 0);
+>+				    op, "ENOMEM", result, 0, result);
+> 		goto free_rule;
+> 	}
+>=20
+>diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/i=
+ma_queue.c
+>index f89f0ca3d4edf16a7147b3c23d25fc2cf18044c6..8d3282ff7da4131ae4389bf832=
+442285e500542d 100644
+>--- a/security/integrity/ima/ima_queue.c
+>+++ b/security/integrity/ima/ima_queue.c
+>@@ -292,7 +292,7 @@ int ima_add_template_entry(struct ima_template_entry *=
+entry, int violation,
+> out:
+> 	mutex_unlock(&ima_extend_list_mutex);
+> 	integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode, filename,
+>-			    op, audit_cause, result, audit_info);
+>+			    op, audit_cause, result, audit_info, result);
+> 	return result;
+> }
+>=20
+>diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrit=
+y/ima/ima_template_lib.c
+>index 8a89236f926c10af0dd2b2ef08fbe59bd8a78b66..9bd80ca1159a2fe24b3ea3308a=
+118f6beea733cb 100644
+>--- a/security/integrity/ima/ima_template_lib.c
+>+++ b/security/integrity/ima/ima_template_lib.c
+>@@ -392,7 +392,7 @@ int ima_eventdigest_init(struct ima_event_data *event_=
+data,
+> 	if (result) {
+> 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+> 				    event_data->filename, "collect_data",
+>-				    "failed", result, 0);
+>+				    "failed", result, 0, result);
+> 		return result;
+> 	}
+> 	cur_digest =3D hash_hdr->digest;
+>diff --git a/security/integrity/integrity.h b/security/integrity/integrity=
+.h
+>index 0c581c03c5da72d80e9c352a7adff1fb89628644..2ab6b7e34e7ee2dd29ae03ae1f=
+b45fa26d9c032a 100644
+>--- a/security/integrity/integrity.h
+>+++ b/security/integrity/integrity.h
+>@@ -218,7 +218,8 @@ static inline void evm_load_x509(void)
+> /* declarations */
+> void integrity_audit_msg(int audit_msgno, struct inode *inode,
+> 			 const unsigned char *fname, const char *op,
+>-			 const char *cause, int result, int info);
+>+			 const char *cause, int result, int info,
+>+			 int errno);
+>=20
+> void integrity_audit_message(int audit_msgno, struct inode *inode,
+> 			     const unsigned char *fname, const char *op,
+>@@ -235,7 +236,7 @@ integrity_audit_log_start(struct audit_context *ctx, g=
+fp_t gfp_mask, int type)
+> static inline void integrity_audit_msg(int audit_msgno, struct inode *ino=
+de,
+> 				       const unsigned char *fname,
+> 				       const char *op, const char *cause,
+>-				       int result, int info)
+>+				       int result, int info, int errno)
+> {
+> }
+>=20
+>diff --git a/security/integrity/integrity_audit.c b/security/integrity/int=
+egrity_audit.c
+>index d8d9e5ff1cd22b091f462d1e83d28d2d6bd983e9..2dd2d7e3916e7bf35c75345031=
+5ff22e2d0292b7 100644
+>--- a/security/integrity/integrity_audit.c
+>+++ b/security/integrity/integrity_audit.c
+>@@ -27,10 +27,11 @@ __setup("integrity_audit=3D", integrity_audit_setup);
+>=20
+> void integrity_audit_msg(int audit_msgno, struct inode *inode,
+> 			 const unsigned char *fname, const char *op,
+>-			 const char *cause, int result, int audit_info)
+>+			 const char *cause, int result, int audit_info,
+>+			 int errno)
+> {
+> 	integrity_audit_message(audit_msgno, inode, fname, op, cause,
+>-				result, audit_info, 0);
+>+				result, audit_info, errno);
+> }
+>=20
+> void integrity_audit_message(int audit_msgno, struct inode *inode,
+>
