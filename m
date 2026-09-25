@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A20E28E0F;
-	Fri, 25 Sep 2026 15:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1590440632;
+	Fri, 25 Sep 2026 16:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790351725; cv=none; b=MNR7AzQdFruBDrL9OErOrPnYrG0DBIqEphebsxVrFnl6pfzfIeByMMUoQ0Bj5aZhnAIWy4MBHjeGh/9QhhxZ8SLt62qE3FfZ/oBTnPEqFTahmPk+BA55XexmHnC5MjPVGAGLufUIgXMFY9FQl3maJiYWcXpAgyQWfZyIDMvZyjU=
+	t=1790352197; cv=none; b=WlpR6pbBtqzdQ+gfOuQTXVV7YBFjILECBiLuUkEpk8lsEC0FwmKKbi3PFAhh8N6qSoRJPHQSSfDlSIRRK/Ri1FbNxw/GVybiq80Ccuu/enMj7QqcaPWTLD9xu3RsVPg29vE+BPv4ZUS0S7vVgf0ccZfpQZbJ7lzIZleHcrZNxec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790351725; c=relaxed/simple;
-	bh=nyo/EhOHK3ocDNiFVF6yWDwCwl82D+AW1WKJ8EumOAU=;
+	s=arc-20240116; t=1790352197; c=relaxed/simple;
+	bh=wUvrQx7wN1ZR68S9qB+Q4XG4UdbXYncb7w5tGJaeVyI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tt5J16WOBFlqMHgSQVFUjPF453bdR29gxqKwWvJbI76rbvXqA3hJTw3UCiIf1rm/yzlI+I8Hm6E7f45kqapNldTBYABqV2cRkA6/CyKZzn2e2hKLNXtdOyjCUz5qlxixpE+iH0ys0DzdEHRhuMkauCwINkFD9U4izURXumvply0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiLS1zmR; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=pfhhN3/l4CIqLdtNYlC6FHuF0BP+7YZeC4mG+yAYxvX7TInOaOUt6DS1d2IMraeACSaF4Jn421ENdON6vGmMb9AFE52RugLBqW/BIgFeQQP1OMVdcqHhqIU5GZOzxW8NxoXQz6a7SZH+cvfrcMh6Hll6zMnTyJ7Oy0lFiqtW7w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HtBhFNxo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiLS1zmR"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id F3DA61F00893;
-	Fri, 25 Sep 2026 15:55:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HtBhFNxo"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 75F941F000FF;
+	Fri, 25 Sep 2026 16:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790351723;
-	bh=BbxdJRJKCmSlxCiUrW1I1RT7W/tcODHtzyLooBPGjP0=;
+	s=k20260515; t=1790352194;
+	bh=avJ34ZHeNKOpOv+p5xC+ogLSQK6o6Io53VISfHccvjc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZiLS1zmRbhKXoVxqJJr78nfIUSRefHu2xMw8ZQy3ry19SeuJNDgfVKrGMNxoo6YC6
-	 xyikcRz5YRyPy9Q/KJoyoXl1A6CxVmoyw15L8plYQzc9lknltcUqyoLIAGe9L+7Flz
-	 pa2dTaakQMRapHNf/0I0sjp3cs616WZsSgSffQVllQDZEBSfiqk0y6StjsqqWqspAK
-	 /+qJLB2cFUiw4KDJBNBRE9l3Rw6e7qw7/ol22b6P+PajzNUNq3RmwvnB1hInrOXoAM
-	 GrH6yCP4e6glfWmWhhfTYsa8IJJtCO2Th1nZDH51b4RMKbQOoD8Q20BJLfaOnySoOv
-	 eAiMDbp1W90Ig==
-Date: Fri, 25 Sep 2026 18:55:19 +0300
+	b=HtBhFNxoC/sscRi1Tp8lLM0t0cvv93KdPYIQ6q6QKjLkWtFnf5qgJ+HGhMLj+uXUG
+	 T7rluzmys0Dwr4w5dI8VuQzL051kUWOuu21N7STYovIsqC5Kjd6qBVVo0COnudUVm0
+	 qHyk9emzfjqFzR30vCUX0VB6Bi9OVDUtILycx/obUUwE7pxSt2EuHO0UdhPAOAllFP
+	 7f1O8KMq3UFcnjVqVICL/HXOtNHHmefLtIV4CeENbSdm7WmvhoGvL2pSjPunVarMwU
+	 N4R+LmQ4KeU9KAHEDktjadX8+CXBtvS3ETXZKMsUQZ+cqIRUfEF5fZvdTw9yVn/dDY
+	 BNoubm9KvlTxg==
+Date: Fri, 25 Sep 2026 19:03:10 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Surendran Kanagaraj <surenkj@amazon.com>
 Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
@@ -34,10 +34,11 @@ Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
 	nh-open-source@amazon.com, Alexander Graf <graf@amazon.de>,
 	Gunnar Kudrjavets <gunnarku@amazon.com>,
 	Josh Levinson <joshlev@amazon.com>
-Subject: Re: [PATCH 2/2] tpm_crb: Raise timeouts for Amazon NitroTPM
-Message-ID: <araZZzKDqzrPdY9f@kernel.org>
+Subject: Re: [PATCH 1/2] tpm: Add per-chip timeout for transient
+ unavailability
+Message-ID: <arabPv2YCddSMu_b@kernel.org>
 References: <20260923142834.16786-1-surenkj@amazon.com>
- <20260923142834.16786-3-surenkj@amazon.com>
+ <20260923142834.16786-2-surenkj@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -46,134 +47,167 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260923142834.16786-3-surenkj@amazon.com>
+In-Reply-To: <20260923142834.16786-2-surenkj@amazon.com>
 
-On Wed, Sep 23, 2026 at 02:28:34PM +0000, Surendran Kanagaraj wrote:
-> TPM commands need to complete within the command duration defined in
-> the TPM2 spec or keep answering TPM2_RC_RETRY for at most
+On Wed, Sep 23, 2026 at 02:28:33PM +0000, Surendran Kanagaraj wrote:
+> TPM commands need to complete within the command duration defined
+> in the TPM2 spec or to keep answering TPM2_RC_RETRY for at most
 > TPM2_DURATION_LONG (2s).
 > 
-> In rare scenarios NitroTPM can enter a mode where it either sends
-> TPM2_RC_RETRY for more than 2s or delays command completion. When
-> this happens during auth session start, the driver disables the chip
-> and every subsequent request fails:
+> Devices that have different timeout requirements than the TPM2 spec
+> could exhaust the retry budget or exceed the command duration. These
+> failures disable the device during an auth session, failing all
+> subsequent TPM requests. Worse, when a TPM2_CC_FLUSH_CONTEXT command
+> fails, it leaks the TPM's transient memory:
 > 
 >     tpm tpm0: in retry loop
 >     tpm tpm0: tpm2_load_context: failed with a TPM error 0x0922
+>     ...
+>     tpm tpm0: A TPM error (2338) occurred flushing context
 > 
-> Add support for vendor quirks to the CRB driver. The table is keyed by
-> the vendor ID read from the interface ID register. For NitroTPM, set
-> busy_timeout_ms to 30s, which covers the longest unavailability time
-> along with some headroom.
+> Fix this by adding chip->busy_timeout_ms to support devices that know
+> the expected delay window. This value raises the TPM2_RC_RETRY retry
+> budget and per-command durations to at least busy_timeout_ms. Chips
+> that leave it at 0 keep the current timeouts. The driver sets it for
+> NitroTPM in the following patch.
 > 
-> Tested on an EC2 instance with NitroTPM by inducing multiple
-> unavailability windows with no TPM errors, and in QEMU with swtpm by
-> holding the TPM in TPM2_RC_RETRY and stalling command completion for
-> longer than 2s with the quirk applied.
+> Tested with CONFIG_TCG_TPM2_HMAC=y and the following patch with the
+> NitroTPM quirk applied, in QEMU with swtpm by stalling commands and
+> holding the TPM in TPM2_RC_RETRY.
 > 
 > Assisted-by: LLM
 > Signed-off-by: Surendran Kanagaraj <surenkj@amazon.com>
 > ---
->  drivers/char/tpm/tpm_crb.c | 54 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 54 insertions(+)
+>  drivers/char/tpm/tpm-interface.c | 11 ++++++++---
+>  drivers/char/tpm/tpm.h           |  2 +-
+>  drivers/char/tpm/tpm2-cmd.c      | 17 ++++++++++++-----
+>  include/linux/tpm.h              |  7 +++++++
+>  4 files changed, 28 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-> index ceb4100ba400..4107203beec9 100644
-> --- a/drivers/char/tpm/tpm_crb.c
-> +++ b/drivers/char/tpm/tpm_crb.c
-> @@ -13,6 +13,7 @@
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 0bab78c8767c..a423395b201a 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -53,7 +53,7 @@ MODULE_PARM_DESC(suspend_pcr,
+>  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+>  {
+>  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> -		return tpm2_calc_ordinal_duration(ordinal);
+> +		return tpm2_calc_ordinal_duration(chip, ordinal);
+>  	else
+>  		return tpm1_calc_ordinal_duration(chip, ordinal);
+>  }
+> @@ -213,7 +213,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+>   *
+>   * A wrapper around tpm_try_transmit() that handles TPM2_RC_RETRY returns from
+>   * the TPM and retransmits the command after a delay up to a maximum wait of
+> - * TPM2_DURATION_LONG.
+> + * TPM2_DURATION_LONG, or chip->busy_timeout_ms when the driver declared a
+> + * longer transient unavailability window.
+>   *
+>   * Note that TPM 1.x never returns TPM2_RC_RETRY so the retry logic is TPM 2.0
+>   * only.
+> @@ -228,6 +229,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
+>  	/* space for header and handles */
+>  	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
+>  	unsigned int delay_msec = TPM2_DURATION_SHORT;
+> +	unsigned int max_delay_msec = TPM2_DURATION_LONG;
+>  	u32 rc = 0;
+>  	ssize_t ret;
+>  	const size_t save_size = min(sizeof(save), bufsiz);
+> @@ -241,6 +243,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
+>  	 */
+>  	memcpy(save, buf, save_size);
 >  
->  #include <linux/acpi.h>
->  #include <linux/highmem.h>
-> +#include <linux/io-64-nonatomic-lo-hi.h>
->  #include <linux/rculist.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> @@ -26,6 +27,15 @@
->  #define ACPI_SIG_TPM2 "TPM2"
->  #define TPM_CRB_MAX_RESOURCES 3
+> +	if (chip->busy_timeout_ms > max_delay_msec)
+> +		max_delay_msec = chip->busy_timeout_ms;
+> +
+>  	for (;;) {
+>  		ret = tpm_try_transmit(chip, buf, bufsiz);
+>  		if (ret < 0)
+> @@ -255,7 +260,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
+>  		if (rc == TPM2_RC_TESTING && cc == TPM2_CC_SELF_TEST)
+>  			break;
 >  
-> +/* TPM_CRB_INTF_ID_x vendor ID field, bits 47:32 of the 64-bit register */
-> +#define CRB_INTF_ID_VID(intf_id)	(((intf_id) >> 32) & 0xffff)
+> -		if (delay_msec > TPM2_DURATION_LONG) {
+> +		if (delay_msec > max_delay_msec) {
+>  			if (rc == TPM2_RC_RETRY)
+>  				dev_err(&chip->dev, "in retry loop\n");
+>  			else
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index fa554c5ad80b..457eba8d03dd 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -119,7 +119,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
+>  ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
+>  int tpm2_auto_startup(struct tpm_chip *chip);
+>  void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
+> -unsigned long tpm2_calc_ordinal_duration(u32 ordinal);
+> +unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+>  int tpm2_probe(struct tpm_chip *chip);
+>  int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip);
+>  int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index ae22295df798..dc5ed57fefe1 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -78,20 +78,27 @@ static const struct {
+>  
+>  /**
+>   * tpm2_calc_ordinal_duration() - Calculate the maximum command duration
+> + * @chip:	TPM chip to use.
+>   * @ordinal: TPM command ordinal.
+>   *
+>   * Returns the maximum amount of time the chip is expected by kernel to
+> - * take in jiffies.
+> + * take in jiffies. The duration is never lower than chip->busy_timeout_ms.
+>   */
+> -unsigned long tpm2_calc_ordinal_duration(u32 ordinal)
+> +unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+>  {
+> +	unsigned long duration = TPM2_DURATION_DEFAULT;
+>  	int i;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(tpm2_ordinal_duration_map); i++)
+> -		if (ordinal == tpm2_ordinal_duration_map[i].ordinal)
+> -			return msecs_to_jiffies(tpm2_ordinal_duration_map[i].duration);
+> +		if (ordinal == tpm2_ordinal_duration_map[i].ordinal) {
+> +			duration = tpm2_ordinal_duration_map[i].duration;
+> +			break;
+> +		}
 > +
-> +/* Amazon NitroTPM */
-> +#define CRB_INTF_VID_AMZN		0x0ec2
-> +
-> +/* Longest unavailability seen from NitroTPM */
-> +#define CRB_AMZN_BUSY_TIMEOUT_MS	30000
-
-Use TPM_CRB prefix.
-
-> +
->  static const guid_t crb_acpi_start_guid =
->  	GUID_INIT(0x6BBF6CAB, 0x5463, 0x4714,
->  		  0xB7, 0xCD, 0xF0, 0x20, 0x3C, 0x03, 0x68, 0xD4);
-> @@ -783,6 +793,48 @@ static int crb_map_pluton(struct device *dev, struct crb_priv *priv,
->  	return 0;
+> +	if (duration < chip->busy_timeout_ms)
+> +		duration = chip->busy_timeout_ms;
+>  
+> -	return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> +	return msecs_to_jiffies(duration);
 >  }
 >  
-> +/*
-> + * Read the vendor ID from the interface ID register. Returns -ENODEV when
-> + * the head registers are not mapped for this start method.
-> + */
-> +static int crb_vendor_id(struct crb_priv *priv)
-> +{
-> +	u64 intf_id;
-> +
-> +	if (!priv->regs_h)
-> +		return -ENODEV;
-> +
-> +	intf_id = lo_hi_readq(&priv->regs_h->intf_id);
-> +
-> +	return CRB_INTF_ID_VID(intf_id);
-> +}
-> +
-> +static void crb_amzn_quirk(struct tpm_chip *chip)
-> +{
-> +	/* NitroTPM requires larger timeouts */
-> +	chip->busy_timeout_ms = CRB_AMZN_BUSY_TIMEOUT_MS;
-> +}
-> +
-> +static const struct crb_vendor_quirk {
-> +	u16 vendor_id;
-> +	void (*apply)(struct tpm_chip *chip);
-> +} crb_vendor_quirks[] = {
-> +	{ CRB_INTF_VID_AMZN, crb_amzn_quirk },
-> +};
-> +
-> +static void crb_apply_vendor_quirks(struct crb_priv *priv, struct tpm_chip *chip)
-> +{
-> +	int vendor_id = crb_vendor_id(priv);
-> +	unsigned int i;
-> +
-> +	if (vendor_id < 0)
-> +		return;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(crb_vendor_quirks); i++)
-> +		if (crb_vendor_quirks[i].vendor_id == vendor_id)
-> +			crb_vendor_quirks[i].apply(chip);
-> +}
-> +
->  static int crb_acpi_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -887,6 +939,8 @@ static int crb_acpi_probe(struct platform_device *pdev)
->  	chip->acpi_dev_handle = device->handle;
->  	chip->flags = TPM_CHIP_FLAG_TPM2;
+>  /**
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 0db277af45c3..7089067412d3 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -140,6 +140,13 @@ struct tpm_chip {
+>  	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
+>  	bool duration_adjusted;
 >  
-> +	crb_apply_vendor_quirks(priv, chip);
+> +	/*
+> +	 * Longest unavailability expected from the chip in ms. Raises the
+> +	 * TPM2_RC_RETRY retry budget and the per-command durations to at
+> +	 * least this value; 0 keeps the defaults.
+> +	 */
+> +	unsigned int busy_timeout_ms;
 
-I.e., all this complexity equals to:
+So I think this is a wrong solution.
 
-	if (crb_vendor_id(priv) == CRB_INTF_VID_AMZN)
-		chip->busy_timeout_ms = CRB_AMZN_BUSY_TIMEOUT_MS;
-
-?
+Instead this should be tpm_crb internal and you should simply patch
+chip->duration[]. See tpm_tis_core for example.
 
 > +
->  	rc = tpm_chip_bootstrap(chip);
->  	if (rc)
->  		goto out;
+>  	struct dentry *bios_dir;
+>  
+>  	const struct attribute_group *groups[3 + TPM_MAX_HASHES];
 > -- 
 > 2.47.3
 > 
