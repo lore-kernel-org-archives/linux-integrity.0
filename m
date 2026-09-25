@@ -1,335 +1,177 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8566A202C29
-	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 00:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A86A32ED3A
+	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 02:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790296203; cv=none; b=PzURyI5n6lPRf3VcZkkU/oYUkUxVzAPMEfziIgmCuO3cvpyCMOlukHCbaXOTLVtWhQm1SlozI9DwgZ1hJyLeeNeKNtTlyF9XbyHVFkvv4UIXZ7MBspNnePx+JFNbwMMcG8nDZ5MAu1Lems2lyI+xSH3OX4b5B1qUjZv6OwOaHn0=
+	t=1790303255; cv=none; b=HqNCL1p7sqyFlKP+89IKuSVyKmEVb/omPvYD8LlZ71r2W02UcPxzi9JROBD33v1rruhFGFXwP7cfv3hKZLz2SsFQJCYYsOGGUvVXfCZlVFcc50yEoIXEPtNmzVdhKCABz+eqQor2I+mrEHRT0YUKVSvpmPtkh1jzPmxea39mw14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790296203; c=relaxed/simple;
-	bh=9Q2K6mbtjsAzLVeuxK9KBYZdqtzrNEWwtOzv3XSpeh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sRAXHSF/CM+5irC9L/aBkxMZVkpPrcKQFKV8Rg8XLA2ghoP7Rb83We7ClNEUWN+BjpgoB6o6SIDCQv2WHO7PJvdMzsb/hN/jmOcxEvx+dZ6HXzXEZREdmB7t7nI6U8kCcAYt//xgA3ii53fgP5RtLO66oq/Kd8DNt1sDpMDdQVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P76wGl9I; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Tu16rjmg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1790303255; c=relaxed/simple;
+	bh=znqg67V5TjvnSD6E9JVZjAv37U4X5x4wMbyq/htgOIk=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=AFvWPBqqglOwoDVs17/UtccWlErRH5yu691bywfaH+TvIhnGHv3+KDH0HmHztRDSKDveE5ASq1Ol4h/wUniQB8+vMih61ZSYTdlxoRl3ziuyXMsriO+1spvVDCe3j6gWqYYhL6gQdBQGuVd1onITkuSnySA+lIyE6PXK104H6yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qJ47HuXr; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P76wGl9I";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Tu16rjmg"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68OMPg0G3935177
-	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 00:29:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Oxf/bzY2P61BCqevg2wInSVfof+9uK9KzXUbb4iYa7E=; b=P76wGl9IagAiq66z
-	2eVWkt5gKScEyoH6IEc5LKDqXNs71bWKfmNptmv38ekmGmu7RmwpyI5NtrieqwQS
-	cqaqS8tJ096rBMDXM622NM358/UcNvcfGs4uZCG9YHP+3Ap0plsm232eBGFhqhkX
-	IXSzJCFIpCpBejv+M+BTi42oPh7SdVS7ox23EZQX+Wxgjp/KN3NZe1D9Ppp9IQcP
-	srKp6ngYvY2dbl5kHBU5ShT3bqa8Tnn4XoCaMNINkdLrIPP6WEQQWh+mDbYjzSLJ
-	UBL8Dbnh9uDBCmUIKZ/ji0gn+uoMLIMG3zEq9UsSQTf5HMI286EScBcjOzAqDpSy
-	BpcC+g==
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gw1tjk6vh-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Fri, 25 Sep 2026 00:29:59 +0000 (GMT)
-Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-333543ac378so368810eec.1
-        for <linux-integrity@vger.kernel.org>; Thu, 24 Sep 2026 17:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1790296198; x=1790900998; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:organization
-         :references:in-reply-to:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=Oxf/bzY2P61BCqevg2wInSVfof+9uK9KzXUbb4iYa7E=;
-        b=Tu16rjmgJZmnIgdF6sl8ikP0SYTf32K03hrfrINCtgTOi9FyKAHcTq6eLFd0beh3F3
-         5bw/aO2PEeGnH631jRnbvXGeGQzcDl48I83rbzJ9yrlcOfJN/wh6ZlVa/5eCaUGW/Ldt
-         xsMh+XKgCy46PXeca8vTggH+DLW7vi+OV+yqstmpaPtrcF3yNyxtQMgRDd1niUQvFVBz
-         utkeIl2TAGV05LtOTv4URJerCGqzlWnobyyBqUQUWxiWIEM/Tz5FtuLonMgKun9vQS6l
-         9v3//oGqmAbfZTNhNgpzmeDJu01fYSyTLqYsLVWiL4eDA5k/qxZWf5vC7ehSg9qK3UHv
-         L40g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790296198; x=1790900998;
-        h=content-transfer-encoding:content-type:mime-version:organization
-         :references:in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Oxf/bzY2P61BCqevg2wInSVfof+9uK9KzXUbb4iYa7E=;
-        b=J3TbDfFlCiffMNk4vRFXe/W/VuitW2zlv9Neosc0lmH0pSmXklLJe9oFb7/sUwJC+l
-         buUJsXIfQgsq6Cmsw3vmUQwfOWdizRK9ZKNrjfWfh++nLiY2p91/JZXlT0yqjlmsS8SP
-         1bpuGpibVOifHIdYYu0p2/VQQIrPKjCgJG/gMsFFKQQtF6ILnPILePkApRra+i97UwcM
-         pyVxBotjOIdM/YPNZ/MxaeXVhWeXLDIKqksw+jn2/1VtwKzMYu5HFcUGFg+jamjTK3yd
-         XddiZgWumKK4Ew1H1SzhgmyKj9AD6QHJHCkvouDWTG4jR+LbM99WI4PED36P2FQGypRq
-         zh2g==
-X-Forwarded-Encrypted: i=1; AKwUvBzosF5uj95UIpXmeEIKMpq9EknGc1bt0J90qwRIiHeA+7OqEOURo/2NaqzEMednksnaXwqTWZ6kbb/MlTrwhN8=@vger.kernel.org
-X-Gm-Message-State: AFuF++kZQbrHH4cZS8vj9U5BPG5LmzqKVkCHTfWr57h9enGLIfOS5W0m
-	t7dH59cwIVWduy80Rmi91u2qHaSY7Fm0JtZI+OLwXRIHAJY2CxkxMu91LLrMUZOFuubBhKM3p/R
-	VDGwdn5VH9pXJU7upommKPjekgJjbxVO7TDEoNE0WIqPCvHrK38pZmypVJQstVY7gH6aEOrY=
-X-Gm-Gg: AYBFou3n5lWzn5Fnj+MclMrTJNkGG67gc4tzgPgsE0hFDY0wk7EMVvcvN3Gb/KcJFsf
-	sjO5D/Tp41hR52Hf81RCj4pePRBt8zDIioUa3eqWazsb/Te4QA5St6GPfwRTJh+K936bnzaUMcm
-	VM+rwiTaNfhHytW/c4FRn/Ztln3r+81ZcRGK+8vM7QLQaVyorMrCGwXIaY4KNkASvjPLQ0Rv2tX
-	YGT8VYpzBIcQJor1NKZW0i8Lc5NjPtfIHci3kRJLd/A8E3zjYuS4b46PQ9p6jAjjN/27VSsYGLX
-	eq18sZNbLBS+Q/ZBA90NKl/Y1ks7xvswdMXbocnZ1nH7d52j7vhTNvCw+6QPO6h2IiUoIX3dZc8
-	TiGHIqK0oSvejUBJkxLKhf0mD8CYRXaB0ovfo9jl4yIVJHruRZED99lQ=
-X-Received: by 2002:a05:7300:c019:10b0:33b:c24c:47cd with SMTP id 5a478bee46e88-340035bf9d9mr3661160eec.16.1790296198012;
-        Thu, 24 Sep 2026 17:29:58 -0700 (PDT)
-X-Received: by 2002:a05:7300:c019:10b0:33b:c24c:47cd with SMTP id 5a478bee46e88-340035bf9d9mr3661145eec.16.1790296197403;
-        Thu, 24 Sep 2026 17:29:57 -0700 (PDT)
-Received: from localhost (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-34141a4a5ecsm1889901eec.3.2026.09.24.17.29.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2026 17:29:57 -0700 (PDT)
-Date: Thu, 24 Sep 2026 17:29:52 -0700
-From: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
-        Ard
- Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin
- Marinas <catalin.marinas@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>, David
- Sterba <dsterba@suse.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-        Randy
- Dunlap <rdunlap@infradead.org>, Simon Glass <sjg@chromium.org>,
-        Shuah Khan
- <skhan@linuxfoundation.org>,
-        Nick Terrell <terrelln@fb.com>, Will Deacon
- <will@kernel.org>,
-        Alexandre Ghiti <alexghiti@rivosinc.com>,
-        Conor Dooley
- <conor.dooley@microchip.com>,
-        linux-integrity@vger.kernel.org, Palmer
- Dabbelt <palmer@rivosinc.com>,
-        patches@lists.linux.dev, Ross Philipson
- <ross.philipson@gmail.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Song
- Shuai <songshuaishuai@tinylab.org>,
-        Suzuki K Poulose
- <suzuki.poulose@arm.com>
-Subject: Re: [PATCH 12/16] arm64: drtm: Add macro definitions for DEN0113
-Message-ID: <20260924172952.0000527e@oss.qualcomm.com>
-In-Reply-To: <12-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
-References: <0-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
-	<12-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
-Organization: Qualcomm
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qJ47HuXr"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68P25qmT2741242;
+	Fri, 25 Sep 2026 02:27:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=znqg67
+	V5TjvnSD6E9JVZjAv37U4X5x4wMbyq/htgOIk=; b=qJ47HuXrDohAOfqW/w5Gia
+	UEGUue10Y1s/EcPhCvpbRzffLvxgh7Fq4sVCqzJvXv9HRhSySV+DPA6VM18EaC+P
+	3FcJP1q+BLX7icrDluzHhhcU4JaASLMXfx8j8Appz/UyfjsjPUcLK8G3MXwk2ToR
+	kqOxudQRuDtCKYslo0/a2SLlPmUHCLeVPiXLEY8aFnGtqHetd1qjtRt/RK4ZePav
+	E6FY7oM0dzhTKIPpTiKzROyuKTIk60g2Ow1tAhK/dLSrGVzEYDdzYf2klRzsG1Ck
+	w5jXpOUIXg3fioRvEaCHJnE4VooeGjZRMhIb1PNhgNMTA5HzW9xWQdmwUJTbx1Ww
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gskgqutey-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 25 Sep 2026 02:27:22 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 68P1lgab2994293;
+	Fri, 25 Sep 2026 02:27:21 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gvbt30krv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Sep 2026 02:27:21 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68P2RLcU20513496
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Sep 2026 02:27:21 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CE605805C;
+	Fri, 25 Sep 2026 02:27:21 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9061458051;
+	Fri, 25 Sep 2026 02:27:20 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.81.48])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 25 Sep 2026 02:27:20 +0000 (GMT)
+Message-ID: <55d240d39dfbdac4d034380dd02f78838d09f061.camel@linux.ibm.com>
+Subject: Re: [QUESTION] IMA: kexec appraisal and the unauthenticated target
+ command line
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Danny Hu <dannyhu@arista.com>, linux-integrity@vger.kernel.org
+Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, Pierre De Abreu <pierre@arista.com>,
+        Julien Gomes
+	 <julien@arista.com>,
+        Kunal Bharathi <kbharathi@arista.com>
+In-Reply-To: <CAFn2k5AwOoHesnqB42kpfAGx0Wf-CtQbpU3px7LMj8PeiACvZg@mail.gmail.com>
+References: 
+	<CAFn2k5AwOoHesnqB42kpfAGx0Wf-CtQbpU3px7LMj8PeiACvZg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 24 Sep 2026 22:27:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 06an7liqxAxPp26IYBEtnk3TkNm0HBHl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI1MDAwMSBTYWx0ZWRfX1C9oo24tZk7r
- +HCC/5rJqTxye59YFGC3O8sVpsjVupkrvrCX7Jv38PIrJOywW2pBnbCNjoa43L8QW+ZLZW/CrRQ
- oupgcENsSAzMY0RN+xyjMzT+ITnTYAxmHUYzsedwua0jQE/soiM2AiTAf5MWPwE8VgLYllbapn/
- X6rgf8M/5jT2fMwIkXQMMYG831lbPdD2yxZp8+T1kyvjcveRcDY7rfQr1z8Gfu9lx2OSSe+Bc8V
- VDrDp4iAn2r9XHzNAKevb+hUggMypEHhhVfcAUYwmGJu234cVQl1aJpYic06INR1tj+0AsRngcX
- U83MruHOHFx8YVrLPBZR/BGHUwh+zpy4lsVfYAcnr8EEElfI9l3b/B5SNJ4cskOB3EElzbqpJSL
- 6oq4XiGeGnM3K3ckTvTA1HM1baYbIonGZK/5oJPy7LJ384SzzTKuHebGh+sIY6dPm8/Xd7lO6p+
- MljAqWfwX9cAw8xtQIg==
-X-Authority-Analysis: v=2.4 cv=cK11IVeN c=1 sm=1 tr=0 ts=6ab5c087 cx=c_pps
- a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
- a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=Ikd4Dj_1AAAA:8 a=QhzypnB_sqCglQZzAf8A:9
- a=CjuIK1q_8ugA:10 a=6Ab_bkdmUrQuMsNx7PHu:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-GUID: 06an7liqxAxPp26IYBEtnk3TkNm0HBHl
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI1MDAwMSBTYWx0ZWRfX3ioNBNtBavTN
- k2bJBmiPkwOaZYjEVpmT+scNOQqFQ5G/tsHW4/bi0YXx38ZAG1eTZNPobT/4SV2pmp6RvjQbYnK
- ZSVf4rcVklPi53ulM+JyHQP2otGd4XE=
+User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=G+OJgNk5 c=1 sm=1 tr=0 ts=6ab5dc0a cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=IwKq-39_mviHmJYBMSMA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI1MDAwOCBTYWx0ZWRfX6HlpyuyLRK1y
+ l9zy3M1SF5iou1OihNueJHVdw+VOzHk2b/FeQIu9GBjh6LAv9/RMOxINmXKZ2MZlgUpORPzG0WK
+ CV/FT3H5ByoXZfVdQ3Vuw/Qye2vN9uFOPF20u4ImGZXzVGGdPTt83mUHV+JdtERDpGejc7LJQYQ
+ YeXg98zcgOYCG95zqPFR+vp2Qn73RFmEGKU/g7fbSu0iu1NYnAxaJtLkFT+mlbV3AZesK7QHPRR
+ WeacCwsalrKhZ53KOgOqZMCjsyAV28ynpwYOLM4RZSOpzFp8tcDWs4AmvajSk1AghRG53YJZDko
+ QLL+GYlOm9OuojN04TqD7uNvkZV3p/0umlUgDhEevDiLuHST/6JgC+O4+6Es5Rz8HN3CmVl9doc
+ WTz2jF75NYDwz0sZVuI3uNjYDuzc8RAwdxBy83HWZsuqr3pqwKtxeTKETnP/+b3J7def+4lQrHw
+ 89VjYCeqEaUifa9z9UA==
+X-Proofpoint-ORIG-GUID: kpztPbIPpVwskPoJcG1UiFlL8YK0UQMs
+X-Proofpoint-GUID: NDJH-AaTGrlDh7dF3q0p_ZMVyaX-XW0p
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI1MDAwOCBTYWx0ZWRfX7f3pU10MP5Ko
+ i4KhYHN7L6g38kzGBfOwpGHgOJ7zcfUxu0eOO89NxxabW0tndDX/8oZOKOF3+EBPb47CvVrC+Ri
+ 5WPZsifT+PDn9Zaipr8/W3E85sC8Hbc=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-24_06,2026-09-21_02,2025-10-01_01
+ definitions=2026-09-25_01,2026-09-21_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 malwarescore=0 phishscore=0 adultscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
- definitions=main-2609250001
+ suspectscore=0 adultscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
+ bulkscore=0 priorityscore=1501 clxscore=1011 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609250008
 
-On Thu, 24 Sep 2026 10:53:15 -0300
-Jason Gunthorpe <jgg@nvidia.com> wrote:
+On Thu, 2026-09-24 at 16:34 -0700, Danny Hu wrote:
+> Hello,
+>=20
+> I have a question about the intended security properties of IMA
+> appraisal across kexec_file_load(). I am trying to understand why IMA
+> supports appraisal of the kexec kernel and initramfs through
+> KEXEC_KERNEL_CHECK and KEXEC_INITRAMFS_CHECK, while KEXEC_CMDLINE is
+> measurement-only and cannot reject an unauthorized target command
+> line. Requiring a signer-approved kernel implies that CAP_SYS_BOOT
+> alone is not sufficient authority to boot a target kernel. Then why
+> are command-line parameters capable of weakening the target kernel=E2=80=
+=99s
+> enforcement state not similarly bound to the signer=E2=80=99s approval?
+>=20
+> This appears to leave a gap when IMA is the mechanism enforcing kexec
+> integrity. A caller permitted to perform kexec could use the signed
+> kernel as a downgrade trampoline:
+>=20
+> 1. Supply an approved, signed kernel and initramfs.
+> 2. Supply an unauthenticated command line that prevents IMA
+> enforcement in the target kernel. An example of such is through
+> =E2=80=9Cinitcall_blacklist=3Dinit_ima=E2=80=9D.
+> 3. Boot into the approved kernel without effective IMA enforcement.
+> 4. An attacker is then free to execute unsigned code or kexec into any
+> other unsigned kernel.
+>=20
+> A few questions for the IMA maintainers:
+>=20
+> - Is the lack of KEXEC_CMDLINE appraisal simply an architectural
+> constraint of IMA=E2=80=99s inode-based appraisal model, or an intentiona=
+l
+> part of the security model?
+> - Is command-line integrity expected to be provided by another subsystem?
+> - Have there been any discussions around a concept of =E2=80=9CIMA contin=
+uity=E2=80=9D
+> across kexec? By continuity, I mean preserving the appraisal invariant
+> across the transition so that every accepted target kernel
+> re-establishes equivalent enforcement.
+> - If policy continuity was not intended, what threat model gives
+> appraisal of the kernel and initramfs its intended security value when
+> their execution environment can be weakened through an unauthenticated
+> command line?
+>=20
+> Thank you for any historical context or guidance on the intended design!
 
-> Taken from rev 1.4b of the spec, following the SMCC register layout and
-> constant names.
-> 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->  arch/arm64/include/asm/drtm.h | 196 ++++++++++++++++++++++++++++++++++
->  1 file changed, 196 insertions(+)
->  create mode 100644 arch/arm64/include/asm/drtm.h
-> 
-> diff --git a/arch/arm64/include/asm/drtm.h b/arch/arm64/include/asm/drtm.h
-> new file mode 100644
-> index 00000000000000..d6dd04a4ebcea5
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/drtm.h
-> @@ -0,0 +1,196 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/* Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES
-> + *
-> + * Definitions from ARM DEN 0113 "DRTM Architecture for Arm"
-> + */
-> +#ifndef __ASM_DRTM_H
-> +#define __ASM_DRTM_H
-> +
-> +#include <linux/arm-smccc.h>
-> +#include <linux/bits.h>
-> +
-> +/* Offset 0x02 is reserved by DEN0113. */
-> +#define ARM_DRTM_SMC_FN_BASE                                      \
-> +	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, ARM_SMCCC_SMC_64, \
-> +			   ARM_SMCCC_OWNER_STANDARD, 0x110)
+The lack of KEXEC_CMDLINE appraisal is an architectural constraint of IMA's
+inode-based appraisal model. The kexec command line is a plain buffer passe=
+d
+directly to kexec_file_load() via syscall. Unlike the kernel image or initr=
+amfs,
+it is not a file. There is no natural way to associate a signature with it,
+whether via xattr or as an appended signature. This is not an intentional
+security decision but a consequence of how IMA appraisal works.
 
-Another wrapper for the same thing. Now which patch set did I last
-moan about this in...  RMM 2.0 firmware series.
-https://lore.kernel.org/all/d7ccaf22-5bde-4344-8bf0-a5a17dcac0f3@arm.com/
+The threat model concern you raise is valid =E2=80=94 a caller with access =
+to
+kexec_file_load() can supply an unauthenticated command line that weakens t=
+he
+target kernel's enforcement state, even when the kernel and initramfs are
+appraised. This gap is real and currently unaddressed.
 
-This one at least does it via base and sum.  But that then separates it from
-the spec?   That is sort of the case anyway because the spec has the full
-number.  0xC400_0110 so I guess not too bad.
+IMA continuity across kexec has not been discussed. Appraising the kernel i=
+mage
+and initramfs does not guarantee the target kernel will enforce an equivale=
+nt
+IMA policy after boot.
 
-> +#define ARM_DRTM_SMC_VERSION			(ARM_DRTM_SMC_FN_BASE + 0x00)
+We would welcome proposals for addressing these gaps.
 
-
-
-> +#define ARM_DRTM_FEATURE_SELECTOR	BIT_U64(63)
-> +#define ARM_DRTM_FEATURE_TPM		0x01
-> +#define ARM_DRTM_FEATURE_MIN_MEMORY	0x02
-> +#define ARM_DRTM_FEATURE_DMA_PROTECTION	0x03
-> +#define ARM_DRTM_FEATURE_BOOT_PE	0x04
-> +#define ARM_DRTM_FEATURE_TCB_HASH	0x05
-> +#define ARM_DRTM_FEATURE_IMAGE_AUTH	0x06
-
-Nice to have a mask for the 8 bits of the feature field.
-Also nice to keep order the same as the SMC defines which would put this after
-version.  That also puts it next to the values returned for each feature.
-
-
-
-> +
-> +#define ARM_DRTM_TPM_ALG_MASK		GENMASK_U64(15, 0)
-> +#define ARM_DRTM_TPM_HASHING		BIT_U64(32)
-> +#define ARM_DRTM_PCR_SCHEMA_MASK	GENMASK_U64(36, 33)
-> +#define ARM_DRTM_PCR_SCHEMA_DEFAULT	BIT_U64(33)
-> +#define ARM_DRTM_PCR_SCHEMA_AUTHORITIES	BIT_U64(34)
-
-Ah.  Always love a field made up of a bunch of bits. Hard to define
-cleanly.   Do you actually need the PCR_SCHEMA_MASK?  Might be easier
-to just not have it?  I think you only use it for a print. Maybe
-build the bits we understand from the two specific bits?
-
-Alternatively you could use the spec style definition and have 
-#define ARM_DRTM_PCR_SCHEMA_DEFAULT BIT(0)
-#define ARM_DRTM_PCR_SCHEMA_AUTHORITIES BIT(1)
-or similar and have to check them via a FIELD_GET(FIELD_GET())
-
-
-
-> +
-> +#define ARM_DRTM_DLME_DATA_PAGES_MASK	GENMASK_U64(31, 0)
-> +#define ARM_DRTM_NW_DCE_PAGES_MASK	GENMASK_U64(63, 32)
-> +#define ARM_DRTM_PAGE_SIZE		4096
-> +
-> +#define ARM_DRTM_DMA_PROTECTION_MASK	GENMASK_U64(7, 0)
-> +#define ARM_DRTM_DMA_PROTECTION_COMPLETE BIT_U64(0)
-> +#define ARM_DRTM_DMA_PROTECTION_REGION	BIT_U64(1)
-
-Ah. They are at it again. Fields within fields.
-Maybe could use some white space to make it somewhat obvious
-that is going on?  Indent the subfield a bit more?
-
-
-> +#define ARM_DRTM_MAX_REGIONS_MASK	GENMASK_U64(23, 8)
-
-blank line here probably just to make it obvious going to a
-different u64.
-
-> +#define ARM_DRTM_TCB_HASH_COUNT_MASK	GENMASK_U64(7, 0)
-
-Same here.  I vaguely wonder if it is worth adding something
-reflecting the relevant feature ID to each of these defines
-so we know what the are referring to?
-
-> +#define ARM_DRTM_IMAGE_AUTH_SUPPORTED	BIT_U64(0)
-> +
-
-Maybe a comment for next lot to where to find them in the spec
-- took me a while.  Table 9 DTRM_Parameters, line for
-LAUNCH_FEATURES if anyone is following along.
-
-> +#define ARM_DRTM_LAUNCH_HASH_FIRMWARE	0
-> +#define ARM_DRTM_LAUNCH_HASH_TPM	BIT_U32(0)
-
-I'd rather see them as fields and field value pairs but
-can see that is going to get a bit verbose.
-
-> +#define ARM_DRTM_LAUNCH_PCR_DEFAULT	0
-> +#define ARM_DRTM_LAUNCH_PCR_AUTHORITIES	BIT_U32(1)
-> +#define ARM_DRTM_LAUNCH_DMA_COMPLETE	0
-> +#define ARM_DRTM_LAUNCH_DMA_REGION	BIT_U32(3)
-> +#define ARM_DRTM_LAUNCH_NO_AUTH		0
-> +#define ARM_DRTM_LAUNCH_AUTH		BIT_U32(6)
-> +#define ARM_DRTM_LAUNCH_KEEP_SECURE_IRQS 0
-> +#define ARM_DRTM_LAUNCH_DISABLE_SECURE_IRQS BIT_U32(7)
-> +
-> +#define ARM_DRTM_SUCCESS		0
-> +#define ARM_DRTM_NOT_SUPPORTED		-1
-> +#define ARM_DRTM_INVALID_PARAMETERS	-2
-> +#define ARM_DRTM_DENIED			-3
-> +#define ARM_DRTM_NOT_FOUND		-4
-> +#define ARM_DRTM_INTERNAL_ERROR		-5
-> +#define ARM_DRTM_MEM_PROTECT_INVALID	-6
-
-Hmm. the spec I pulled from arm.com has COPROCESSOR_ERROR for -7. Maybe
-include it?
-
-> +#define ARM_DRTM_OUT_OF_RESOURCES	-8
-> +#define ARM_DRTM_INVALID_DATA		-9
-> +#define ARM_DRTM_SECONDARY_PE_NOT_OFF	-10
-> +#define ARM_DRTM_ALREADY_CLOSED		-11
-> +#define ARM_DRTM_TPM_ERROR		-12
-> +
-> +/* Algorthim IDs are defined by TCG, in the kernel they are TPM_ALG_* */
-> +
-> +#define ARM_DRTM_PARAMETERS_REVISION	2
-> +
-> +#ifndef __ASSEMBLY__
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/build_bug.h>
-> +#include <linux/stddef.h>
-> +#include <linux/types.h>
-
-> +
-> +static inline s64 arm_drtm_features(u64 function_or_feature, u64 *value)
-> +{
-> +	struct arm_smccc_res res;
-> +	s64 status;
-> +
-> +	arm_smccc_1_1_smc(ARM_DRTM_SMC_FEATURES, function_or_feature,
-> +			  0, 0, 0, 0, 0, 0, &res);
-> +	status = res.a0;
-> +	if (status >= 0 && value)
-> +		*value = res.a1;
-If status == 0, is res.a1 useful?
-You have a helpful comment at the call site in the final patch but none
-the less I have read the spec section a couple of times and have no idea.
-
-> +	return status;
-> +}
-
-Thanks,
-
-Jonathan
-
-
+Mimi
