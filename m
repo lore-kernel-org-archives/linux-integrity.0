@@ -1,324 +1,186 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f35.google.com (mail-wr2-f35.google.com [74.125.225.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E162E762C;
-	Sat, 26 Sep 2026 04:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC7F3A6B6F
+	for <linux-integrity@vger.kernel.org>; Sat, 26 Sep 2026 07:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790395476; cv=none; b=g0LssC4Qk2nb3oMIpFNoYXQbWfMNIcVujaJgadLC3hI6SMJ3z+WCdKQOQayTWucPvSB/bMp07SZeJl1h1w9Ex/W0xJundtZOccP2VA6uHLro3rne/M4YVT+9gGbXdHdt33r9KnOP/BqZxIbdFBqe5Lqgn9JHlnQWPuf+waTMlRw=
+	t=1790409399; cv=none; b=DKtk5NypoqEONx6OmFYCD9yuDjQaTDxfkgspR7w1ozpprKjdxfVSarrM35/mOdPjhN20LQj3kobSmuYhYRkOoep+xM7zKn4xQl6p1Brah3219/dj/pawldR6m9u6g66JVF75IuoHSy7i/7HcM+WmomhSB6Z2NPB3ByPFhzRn40E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790395476; c=relaxed/simple;
-	bh=4GYGkVQ1tFRPffJavRRjf0oPhQOylT5XbN92s4E+vR8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ESv4FSMZe7NPs6ZYpl34GzrOPt8gMv5JyNTSefOJh+EtA2v5i5cYKOjJkLrYAdUgSrcFEc0IIOpWAatGOXue2lqtFy5Eews0Q/B21xCAbZmtiIsGMua0ePnqiTk+6/fXZ8+HHB+nYJk4NY2cdeQV1fddtov/LFJkZYyeoHjm12Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DWH4AiEI; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1790409399; c=relaxed/simple;
+	bh=yY5aPVN1kZdRX24f/rOo18N2WyJh702NUMPAilvlSUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAG5jFiGkez/G7tQxboECa5AN5W+FeAHLyLtAcLrmQRF5OTMMTu0SMEQad4T3j3zkTvreBcSD3oOekY0mFRmXRl5baHCE9SWEZFZoZkei6LzL6TIuhTgT086aiswFoDL6lFVDXNu730N+44W31lcKmIATNno0kIAkeiVGumi2rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmiKvR24; arc=none smtp.client-ip=74.125.225.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DWH4AiEI"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68Q3ZZ7g2885730;
-	Sat, 26 Sep 2026 04:04:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=abH1CK
-	xNqijdXYE2eZz9QEq28Sz1CmmGyIC6Xp2jZes=; b=DWH4AiEI5MXf+Itkr6zDHe
-	t+qIN0JCJmk61HMscT3S3gjCwTeqhxUm+QHVP3AUZ2JAQUyb4Pjps2eezPaVH081
-	luDZRdNqkAeDk2zfeQz8ywZkueWVK/p2yx7WyUhKr5BGnM2xSlQHkNOziCJFWZuA
-	A8JjqsEwurDsk3K7A63PXdi7DUEeODtxGRbTvyUod8q3caAemn9BoY5uGMbQV7Qm
-	dYRckgh3uggUIwCNuteQxn/FG/Nf70AIsymkzIRB4oajOTKjzz1vb4M1S+DlQFmj
-	21+Yahrq2PDxvNs4CtjPyIL4V2/66iqGiirTjVij9E4EgRC4GQf6zTi6Xw6i/zQw
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gx5j4r6b4-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Sat, 26 Sep 2026 04:04:30 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 68Q3HVWd717099;
-	Sat, 26 Sep 2026 04:04:30 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4gwy279avc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 26 Sep 2026 04:04:30 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68Q43ieG58196268
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 26 Sep 2026 04:03:44 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2C3AF5805F;
-	Sat, 26 Sep 2026 04:04:28 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 55A485805C;
-	Sat, 26 Sep 2026 04:04:25 +0000 (GMT)
-Received: from [9.67.86.75] (unknown [9.67.86.75])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 26 Sep 2026 04:04:25 +0000 (GMT)
-Message-ID: <1c97a5ff-731b-49aa-83ba-2824ad4b7c75@linux.ibm.com>
-Date: Sat, 26 Sep 2026 09:34:24 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmiKvR24"
+Received: by mail-wr2-f35.google.com with SMTP id ffacd0b85a97d-4887840c529so548674f8f.1
+        for <linux-integrity@vger.kernel.org>; Sat, 26 Sep 2026 00:56:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790409394; x=1791014194; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=YI9LML6UkRl05Tm2nCgeCpB6+5W0fxaRHeYbqDyeGfo=;
+        b=mmiKvR24FbgMjygoeg6BB8jRgCPJkWtPtwrwqdGb7ukGfBXGooX1tM8Cxvka87E4Ft
+         xI0fdGXhg0KAD0IfL3KIDWpM+cYK3kNr0arfep+z1tDNlL+Kr7G6ISQLpZk8dIaGA1YE
+         dH97uGTKbS0UH+/Dfpg5EfoLhYKRk072eZjojnBB3KeYUJx3Yi4WFNTPdYKnc4okaN5L
+         HQf2dWR3lIEogxRJi7BOJN/4go+24yCl49OccXKY68Jwbe7fEgNXXeLXhfu+eT9CQMG5
+         3oPoBj8JL6cVvWmb0HsXtXUoL4AQd2bts16KJ7CL/ESeAkFGH3AKwd5AtErE/sbq9sDW
+         KVeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790409394; x=1791014194;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=YI9LML6UkRl05Tm2nCgeCpB6+5W0fxaRHeYbqDyeGfo=;
+        b=k+yzZmgN/az/Tc7GLc4JgsqFEjsa2jjObS3ImRwEFvbyNkt4PXjh4AOohK+mDn5Yek
+         uKe3wPG3uGVsXAcAlhFHn4j9MrbwYlxvVcH80ynHdAn6awdz6EKKGljWII3A0TJhC4p3
+         kKDKJ5fKtTK/XdsQa+OkHlD2LR6T4yNeOO0oUrzlLjWDPeS2omQM5q0rVNTeF94cfamj
+         7Nt1JcuvLXZsw8LQCumTmfnPNs7V/6ZatpPdozHaERSm717Rn1xjxxeVux/eXnsvyhVE
+         88NjWbjM0w/viAl/x88cC5JaSNJWn+GoZJs9xJUMEgE56ostfNF8C4lbhomVfM4NCvS/
+         +Ggg==
+X-Forwarded-Encrypted: i=1; AKwUvBw/ZGOC8+Eah+p7Efn81TeY+tXPbL18phVH660B+1OxqcOkRr5Q6uzHXLoNW6LVOOf3o5luUu4MhrdHpIzaMcc=@vger.kernel.org
+X-Gm-Message-State: AFuF++lkuJ0iodbHQ0LYENA4p2+AHVD0SUmz409hqqTDXWoy8raXVPzB
+	mlrvlcFKKnbZOx9hn0JKy2wQXPyiXKyoOP6Z6Oz8bwiZVS+ZTwI0h7YB
+X-Gm-Gg: AYBFou3Dx4+ypdiKHUkPtUiE8cRX16BL4mDSkaE22QAXW/ndLxi8n5NCV++XWTrQa8/
+	Qxnq/DfEV1/vK1SnEKV80ck3yAbNn6c8Lz/fuLU+vWzmDj0wHeKy0fo1J2kcx6yVME6SM5BFXwN
+	GKL6h/2QPTrgMz4XJccNu9aC1e/smb0LLqOKWbkETbJOoy4gxe4/nJXphOPf/erXVxnJSlyqn1b
+	i6HCv6U7epdJWz0CQZcW9dh1o+05wmrvwrVECTjpd1tHr3JPa8kJrlmin8FTErlNde+lQ/H++TL
+	NgngpXvohRM5O7OSYpU80j4Di3HIsKB2uv9bYFvpCSUzFami8Mg8ESpNvzlKnY0Titwf64xsE7U
+	lRC4BV1XhX7Mxud++UTrf55NLQXKuoW5fhHHFLDnWKR4HdRLK0G/gzgsYfKCug5a0vcCw77E7Yo
+	2GBzTBhoqwazUdCryD5HtlsRpupMM6uEWQ7LXG9p9KdSLmyMeHMMe6RTsVz/afIp4gqakyDKw13
+	/kumZiHvTlphgCl20HCukY=
+X-Received: by 2002:a05:600c:8b82:b0:49f:fefc:7d01 with SMTP id 5b1f17b1804b1-49ffefc7e4dmr2208755e9.15.1790409394348;
+        Sat, 26 Sep 2026 00:56:34 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fe667ae2fsm204215155e9.13.2026.09.26.00.56.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Sep 2026 00:56:33 -0700 (PDT)
+Date: Sat, 26 Sep 2026 09:56:28 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: Cai Xinchen <caixinchen1@huawei.com>, mic@digikod.net,
+	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, corbet@lwn.net, skhan@linuxfoundation.org,
+	rdunlap@infradead.org, gregkh@linuxfoundation.org,
+	rafael@kernel.org, dakr@kernel.org, dlemoal@kernel.org, hch@lst.de,
+	axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, dhowells@redhat.com, code@tyhicks.com,
+	linkinjeon@kernel.org, sj1557.seo@samsung.com, yuezhang.mo@sony.com,
+	hirofumi@mail.parknet.co.jp, cel@kernel.org, jlayton@kernel.org,
+	neil@brown.name, okorniev@redhat.com, Dai.Ngo@oracle.com,
+	tom@talpey.com, miklos@szeredi.hu, amir73il@gmail.com,
+	senozhatsky@chromium.org, chenxiaosong@chenxiaosong.com,
+	zohar@linux.ibm.com, roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+	stephen.smalley.work@gmail.com, omosnacek@gmail.com,
+	casey@schaufler-ca.com, nanx95726@gmail.com, djwong@kernel.org,
+	daniel@iogearbox.net, linux-security-module@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	driver-core@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
+	ecryptfs@vger.kernel.org, exfat@lists.linux.dev,
+	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org, linux-integrity@vger.kernel.org,
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	xiujianfeng@huawei.com, lujialin4@huawei.com
+Subject: Re: [PATCH RFC -next 00/12] landlock: Add READ_METADATA and
+ WRITE_METADATA access rights
+Message-ID: <20260926.255b951d3013@gnoack.org>
+References: <20260924104831.1081137-1-caixinchen1@huawei.com>
+ <araxO4ze0KZBz756@suesslenovo>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] keys/trusted/tpm2: Validate TPM2_Create object sizes
- separately
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
-        stefanb@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
-        rnsastry@linux.ibm.com
-References: <20260910100222.247529-1-ssrish@linux.ibm.com>
- <aqydqxpVmp67kTQO@kernel.org>
- <e05d8ca7-ac48-47ef-bc47-bef5b22cb723@linux.ibm.com>
- <arZZTGtmo1ZLit0j@kernel.org>
- <bec84181-565a-478e-a485-7f63819024cc@linux.ibm.com>
- <arb5XnpAHe3SZEfv@kernel.org>
-Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <arb5XnpAHe3SZEfv@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI2MDAxNCBTYWx0ZWRfX8r9Jkl3OpwFX
- N//SeU8f3q0J5Wmx8RDgjbo/lN9hgrmmpC8J9MKyIMwfosQ7nAklwxB4BaGvKnsOucTNyOnvgeD
- crDEW07RNk3np9Bt9Plt0xyISRAANYY=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI2MDAxNCBTYWx0ZWRfX4aecbsj6hpqI
- pO1NMC+2pHI5caRKAG5YnisMsOgsxPCbE694Mu89nnuAIuc3qDv3NY4tA4PqvpulzlHaaWT3Vxa
- VNWMmmJ094JPxMpD9UVR3GGx0Ms9bYyg3GnY6n026cklBgnYmSIGhfJZ6VEjXSGMuBCpv62w7WN
- d9d1lE0YzOs+aDtC7hBPIGvXJUgFcAniBjRZOvEqdnkctqrR/Ld5dBgrSfA1yuEV5ekXiIuUMJG
- gp9sr3eKy6/sidtFl45LvrGrq9y0vJ5PdAgRbDrjGaXCX8EtQ4XmnMAmAG4wmz/L+tjiJwoYjsJ
- BQZL5+NBoS4kpGhyjenAq2kShgBLH0buir/z+tT6trQQljF+t9uYSx52eMBb57GomELw+poriq7
- SOYc/5I1A3tIEC9Hgjef5kXMswzvzpwF68bxRTMdVQAJcMwWZ8WKtOn+SUjTtJ1kDSdqqiKTEUG
- kXLWBigXxVilLA0/6ow==
-X-Proofpoint-GUID: PEFUvHYGEQ1Kf9nlXuN4uu7IQdGAmVmR
-X-Authority-Analysis: v=2.4 cv=RKcmjIi+ c=1 sm=1 tr=0 ts=6ab7444e cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=VnNF1IyMAAAA:8
- a=LXdEIwAnBRKBSfTeCqEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: PEFUvHYGEQ1Kf9nlXuN4uu7IQdGAmVmR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-26_01,2026-09-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 spamscore=0 bulkscore=0 impostorscore=0
- adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609260014
+In-Reply-To: <araxO4ze0KZBz756@suesslenovo>
 
+Hello!
 
-On 9/26/26 4:14 AM, Jarkko Sakkinen wrote:
-> On Fri, Sep 25, 2026 at 08:42:09PM +0530, Srish Srinivasan wrote:
->> Hi Jarkko,
->> Thanks for taking a look.
->>
->> On 9/25/26 4:51 PM, Jarkko Sakkinen wrote:
->>> On Fri, Sep 18, 2026 at 12:18:25PM +0530, Srish Srinivasan wrote:
->>>> On 9/18/26 7:40 AM, Jarkko Sakkinen wrote:
->>>>> On Thu, Sep 10, 2026 at 03:32:22PM +0530, Srish Srinivasan wrote:
->>>>>> TPM2_Create returns outPrivate, outPublic, creationData, creationHash and
->>>>>> creationTicket in its response parameter area. However, only outPrivate and
->>>>>> outPublic are included in the trusted key blob. The size of the blob is
->>>>>> therefore not determined by the size of the complete response parameter
->>>>>> area.
->>>>>>
->>>>>> tpm2_seal_trusted() currently compares the size of the complete response
->>>>>> parameter area against MAX_BLOB_SIZE. This can reject a valid response
->>>>>> when the remaining response outputs cause the entire response parameter
->>>>>> area to exceed MAX_BLOB_SIZE, even though the outPrivate and outPublic
->>>>>> TPM2B structures consumed by tpm2_key_encode() remain small enough to be
->>>>>> encoded in the key blob.
->>>>>>
->>>>>> This is observed when creating larger trusted keys using an swtpm TPM 2.0
->>>>>> emulator backed by libtpms.
->>>>>>
->>>>>> For example, requesting a 113-byte key succeeds, 114 fails.
->>>>>>
->>>>>> ~$ keyctl add trusted trusted_key1 "new 113 keyhandle=0x81000001" @u
->>>>>> 520504613
->>>>>> ~$ keyctl add trusted trusted_key2 "new 114 keyhandle=0x81000001" @u
->>>>>> add_key: Argument list too long
->>>>>> ~$
->>>>>>
->>>>>> Remove the MAX_BLOB_SIZE check on the complete response parameter area.
->>>>>> Instead, use the response length passed to tpm2_key_encode() to validate
->>>>>> that the outPrivate and outPublic TPM2B structures are fully contained
->>>>>> in the response before accessing them.
->>>>>>
->>>>>> Previously, a response parameter area larger than MAX_BLOB_SIZE was
->>>>>> rejected with -E2BIG before ASN.1 encoding. With this change, if the
->>>>>> resulting encoded blob does not fit in payload->blob, the error returned by
->>>>>> asn1_encode_sequence() is propagated instead.
->>>>>>
->>>>>> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
->>>>>> ---
->>>>>> Changelog:
->>>>>>
->>>>>>     v2:
->>>>>>      - Exclude a comment pointed out by Jarkko
->>>>>>
->>>>>>     security/keys/trusted-keys/trusted_tpm2.c | 35 +++++++++++++++++------
->>>>>>     1 file changed, 27 insertions(+), 8 deletions(-)
->>>>>>
->>>>>> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
->>>>>> index 01f18bb37047..cbec4f591952 100644
->>>>>> --- a/security/keys/trusted-keys/trusted_tpm2.c
->>>>>> +++ b/security/keys/trusted-keys/trusted_tpm2.c
->>>>>> @@ -24,24 +24,42 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
->>>>>>     			   u8 *src, u32 len)
->>>>>>     {
->>>>>>     	const int SCRATCH_SIZE = PAGE_SIZE;
->>>>>> -	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
->>>>>> -	u8 *work = scratch, *work1;
->>>>>> -	u8 *end_work = scratch + SCRATCH_SIZE;
->>>>>> +	u8 *scratch;
->>>>>> +	u8 *work, *work1;
->>>>>> +	u8 *end_work;
->>>>>>     	u8 *priv, *pub;
->>>>>> -	u16 priv_len, pub_len;
->>>>>> +	u32 priv_len, pub_len;
->>>>>>     	int ret;
->>>>>> -	priv_len = get_unaligned_be16(src) + 2;
->>>>>> +	if (len < sizeof(__be16))
->>>>>> +		return -EFAULT;
->>>>>> +
->>>>>> +	priv_len = get_unaligned_be16(src);
->>>>>> +	if (priv_len > len - sizeof(__be16))
->>>>>> +		return -EFAULT;
->>>>>> +
->>>>>> +	priv_len += sizeof(__be16);
->>>>>>     	priv = src;
->>>>>> +	if (len - priv_len < sizeof(__be16))
->>>>>> +		return -EFAULT;
->>>>> This caused for me some head scrathing tbh.
->>>>>
->>>>> See:
->>>>>
->>>>> 1. len >= 2
->>>>> 2. priv_len <= len - 2
->>>>> 3. 2 - priv_len + priv_len <= 2 - priv_len + len - 2
->>>>> 4. 2 <= len - priv_len
->>>>>
->>>>> Is this check required?
->>>> Hi Jarkko,
->>>> Thanks for taking a look.
->>>>
->>>> The preceding check,
->>>>
->>>>
->>>>       if (priv_len > len - sizeof(__be16))
->>>>           return -EFAULT;
->>>>
->>>>
->>>> ensures that the complete TPM2B_PRIVATE, including its size field,
->>>> fits within len. After this check, priv_len is incremented by 2 and
->>>> therefore represents the complete TPM2B_PRIVATE length.
->>>>
->>>>
->>>> The check you pointed out,
->>>>
->>>>
->>>>       if (len - priv_len < sizeof(__be16))
->>>>           return -EFAULT;
->>>>
->>>>
->>>> then ensures that at least 2 bytes remain for reading the following
->>>> TPM2B_PUBLIC size field.
->>> OK, maybe I got something wrong in my deduction but I'm not
->>> still entirely sure whether this is leanest way to do these
->>> checks.
->>
->> Sure, I will simplify this. Would the following be better?
->>
->>
->>      if (len < 4)
->>        return -EINVAL;
->>
->>      priv_len = get_unaligned_be16(src) + 2;
->>      if (priv_len + 2 > len)
->>        return -EIO;
->>
->>      priv = src;
->>      src += priv_len;
->>
->>      pub_len = get_unaligned_be16(src) + 2;
->>      if (priv_len + pub_len > len)
->>        return -EIO;
->>
->>      pub = src;
->>
->>
->> The first check ensures that len can contain both TPM2B size fields.
->> The second verifies that the complete TPM2B_PRIVATE leaves room for the
->> TPM2B_PUBLIC size field. The final check ensures that both the complete
->> TPM2B_PRIVATE and TPM2B_PUBLIC structures fit within len.
->>
->>> I'll iterate some other remarks so that this can move forward.
->>>
->>> I was not either entirely sure why this was done:
->>>
->>> -	u16 priv_len, pub_len;
->>> +	u32 priv_len, pub_len;
->>
->> Yes, so the change from u16 to u32 was because the values stored in priv_len
->> and
->> pub_len include both the 16-bit value read from the response and the
->> two-byte TPM2B
->> size field.
->>
->>
->>> Why wrong len causes -EFAULT and not -EINVAL? EFAULT is for
->>> memory failures. Probably two that follow should return -EIO.
->>
->> Agreed, I will fix this.
->>
->>
->>> One more that came to mind:
->>>
->>> -	priv_len = get_unaligned_be16(src) + 2;
->>> +	if (len < sizeof(__be16))
->>> +		return -EFAULT;
->>> +
->>> +	priv_len = get_unaligned_be16(src);
->>> +	if (priv_len > len - sizeof(__be16))
->>> +		return -EFAULT;
->>> +
->>> +	priv_len += sizeof(__be16);
->>>
->>> Removing the line above is not necessary and neither is the last
->>> the last statement if you just change your check accordingly.
->>
->> Yes, that's right. And I have made this change in the diff
->> that I have pasted above.
->>
->> Please let me know if this looks better now.
->>
->> And, thanks for the feedback.
-> Yeah, so this is a patch that needs a few iterations I'm not against
-> the change itself per se :-)
->
-> I think it would make sense to declare "u8 *scratch __free(kfree)"
-> while at it so that rollback does not complicate this function
-> further.
+On Fri, Sep 25, 2026 at 02:03:05PM -0400, Justin Suess wrote:
+> On Thu, Sep 24, 2026 at 06:48:19PM +0800, Cai Xinchen wrote:
+> > This series adds two new Landlock filesystem access rights,
+> > LANDLOCK_ACCESS_FS_READ_METADATA and LANDLOCK_ACCESS_FS_WRITE_METADATA,
+> > which control access to file and directory metadata such as inode
+> > attributes (mode, ownership, timestamps), extended attributes and POSIX
+> > ACLs.  It picks up the work from the "landlock: add chmod and chown
+> > support" series [1] and follows the coarse-grained grouping discussed in
+> > that thread [2]: instead of separate chmod/chown rights, metadata
+> > operations are grouped into one read and one write right.
+> > 
+> > Landlock evaluates access rights on a per-path basis, but the metadata
+> > related LSM hooks (inode_getattr, inode_setattr, inode_setxattr,
+> > inode_getxattr, inode_listxattr, inode_removexattr, inode_set_acl,
+> > inode_get_acl, inode_remove_acl) only receive the dentry of the accessed
+> > object.  Patches 1-7 therefore first pass struct path instead of dentry
+> > through the metadata-related VFS helpers and LSM hooks.  This is a pure
+> > refactoring with no behavior change, split so that every patch builds
+> > and works on its own:
+> >
+> I like these patches, but is the ability to read metadata already
+> sorta controlled by LANDLOCK_ACCESS_FS_READ_DIR on the parent
+> directory?
+> 
+> The one case I see this being different is:
+> 
+> 1. if you wanted to grant read access to the file, but not metadata
+> read access, but I can't think of any usecase for being able to read
+> the contents of a file, but not the metadata. (see below)
+> 
+> 2. If you had the absolute path already and didn't need READ_DIR.
+> 
+> I see introducing this READ_METADATA as causing potential
+> hard-to-diagnose issues.
+> 
+> Say you handle READ_METADATA and READ_FILE, but only grant READ_FILE.
+> 
+> The program can technically open the file with the READ_FILE permission,
+> but it may error out because the stat() on it beforehand failed.
+> It's pretty common for programs to do that kind of thing (stat before
+> open), like for checking for config files (strace bash and you see it
+> stat .profile, /etc/profile)
+> 
+> There may be other bugs, because being able to set permissions to read
+> a file *but not read it's metadata* isn't possible currently in posix
+> acl and userspace may not work well if that assumption no longer holds.
+> 
+> So maybe WRITE_METADATA is good enough?
 
-Hi Jarkko,
+The existing use cases are the combinations of (a) READ_DIR
+allowed/denied and (b) READ_METADATA allowed/denied.  Because these
+two access rights overlap slightly, it seems likely that for a given
+directory or file, users will want to either grant both, or deny both.
 
-Sounds good. I will make this change, and incorporate the other changes 
-discussed,
-and post a v3 for further review.
+At the moment, where the (not yet existing) READ_METADATA is
+implicitly always allowed, the problematic case is the one where the
+Landlock user wants to deny READ_DIR, but where much of the same
+metadata is still available through stat() and the various
+get-attribute syscalls.  (c.f. the warning box in the Landlock docs
+[1])
 
+In my view the READ_METADATA right closes a gap that READ_DIR left
+open (which is also potentially surprising to callers if they did not
+read the docs closely).  Also, if its implementation is symmetric to
+WRITE_METADATA, I feel that it's worth having it in the same patch
+set.
 
->
->>>
->>> BR, Jarkko
->>
->> Thanks,
->> Srish.
->>
-> Br, Jarkko
+–Günther
 
-Thanks,
-Srish.
+P.S.: I know, even after we can control stat(), there are likely ways
+to infer the presence of a file by observing Landlock error codes.
+This would be nice to fix as well, but is harder to do without
+controlling the path walk itself [2].  But also, the fact that this is
+currently not controllable is not an excuse for leaving READ_METADATA
+open IMHO.
+
+[1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+[2] https://github.com/landlock-lsm/linux/issues/9
