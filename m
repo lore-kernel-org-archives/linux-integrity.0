@@ -1,268 +1,252 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012027.outbound.protection.outlook.com [52.101.43.27])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBD6392C3A;
-	Sat, 26 Sep 2026 18:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790447264; cv=fail; b=agf/L1i93kYsTAmWBdvWjHaX2bcizLjPcR1RFTPfR50QfhwQvU84GeClEXjhPOdt/FwYYZmLJ1ShrpJoqg50PAWMnvhkp+Cxg2lUUqCHzCypuHyCXhjLKLHJEil0/SaFheddpIuuUQiPNB4+AYhUxA70xVrSJwQWRFolIddbsNU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790447264; c=relaxed/simple;
-	bh=wq8/kwI/k6y6JYjcG2DndgCEdz4tPU/yxoOZR+ovrHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GMZZl1OM7NbWWEf1T0N7tUJwL3DR3Pe4e1iTw3GkcGOKSzb7lu/QQylk1IP6OXggQfo5obYPkwfAOF3z3ZyzL1Wp517HTZJoP6PuLJdNRT1BaJrUD7PzQcP7HU8L2jFK3zCAB0zSqNbZbKiUm7iiXl1Rre7JG4bTpCQ7iZtAkDY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C/3QEAyL; arc=fail smtp.client-ip=52.101.43.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1043803D2;
+	Sat, 26 Sep 2026 18:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790448188; cv=none; b=sIDptHg+tl32qlnWjrSs65NMTlIHOMjzHWxqsdMtUv7Ks+nH/tPTCSaPPo/kFUPnBg63hb27nXNCmgqLun1wLMivuWuN/HQicVoOh3SsAc3Q2X7bhwgS5ovocutoawDDlh38nXRoNZvmTJEJanjzu8s6EcV069IBCKktdeKhM8Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790448188; c=relaxed/simple;
+	bh=xsGuJk232I4PLTQmWUF7L02T34ag+5omrFDsR297W3w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fWX8Ke3zQqOrzUlTGyzcDUo1dFyW4WqWX1cTSh5nvFd8aBKmUDo8cZLKpvNfV5P+XjbnNeI17yVqiCjMTZps6U9vEC0yrgBBFiLgB3VQ6HcEvDILS1nDwXT6gvfNZPsBacv0sCiqOKRQXlO8oHE+e8y0p6RG1P9v1myfC1kbLlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JOdraxMQ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C/3QEAyL"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nosdLy8nRUby5Ns2d3DeOrfyeQE9v42k0EeYwi3sxA6bNHOIy63raEhII3ZPTuzG2ASWQpIXWjASsA5UmkL+dpC2jtCo8UrZLy9OO4dwzB3Kd5kGESw4vXx+SkaFjpgb6j9CBV1eYq2CVRjJBmAX7qOlHLV9oS5NhlBzeAJ2SGr3lRF5W31vRxqXxHcx04dhw9c7gB7P4E4gLgIps1KuBG+sEvhqd4umccEeKb8RjQ3/wwtGGqYZvzHkGRqsIWs/osijajrPRGtIJx4do7T0V8immCEAE8NRhPHVbz3C0VODLgH/jeM9Skw0Yr77ThvzDMp1/QUYXeXy/z2/9HmT6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aJsRb1/nw4q/dpsi/IT2Cexb4DylEARhC1JgpVcCMuA=;
- b=HxOJu63San3DCKeC3TVCWUDFPrrJxRMqF0PlzH/esCG1OKkDI2FrvzfHZkJlb0WVT5F3KblaEECSDKkzewBlmavBAsSAFDUNPl9UiXsfNaa8O8Lf8PrB7PqKnWwgFelQAQNv4klTuoOSMyDQHxuJeJo6eI7eCHEKDUkZiyDEF7Am+uBx6VW7qppQb6PFjl6NcVktA/HHATf03PlU5nIBIdAqrnZpLDP/W4HTbcgPZ5JiZBCak/AyFzUzq3NmbFrTUeCBfKKQKV7cVtD61dDL2W9Y91XajeWx3Kl0cTd6HgUfe/dtsCJs9cIu/kV2mLV5TCL9ucb0SMcFkPzH5AauPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aJsRb1/nw4q/dpsi/IT2Cexb4DylEARhC1JgpVcCMuA=;
- b=C/3QEAyLw7YN3p4mjp158Mo3XEDA6ZWcHsfOc63EdDbV2JR1FZLsCyBLqCIKYKRaWHWvJTH6RK7+s8bTLfQsXtTn7fLsSO2Of+pWa6oQ22itZr5Sg23sK9nEz591V49kC8lSN9vRTyLYkjwLnauhaUv9nI3CG11T/K1wwdqMJCyRWgz4gsdKxVVSQPHxT6jZd5X5mK27VKJd7OTUjyHwwG2Tqg9/xNgWKyVegv1nu2oE3I6sj38eZLERQuSAyh/y9xaC6clncTqRPvNNNL+7fjmKoG1qbL6wuq9Hgyb73BObFqbXF0XczqUopjQJY6FibAGFTLGzx1aeImTHo3iEkA==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CHBPR12MB731189.namprd12.prod.outlook.com
- (2603:10b6:610:33d::12) by MW6PR12MB8868.namprd12.prod.outlook.com
- (2603:10b6:303:242::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Sat, 26 Sep
- 2026 18:27:38 +0000
-Received: from CHBPR12MB731189.namprd12.prod.outlook.com
- ([fe80::b0e5:123d:fe06:e10d]) by CHBPR12MB731189.namprd12.prod.outlook.com
- ([fe80::b0e5:123d:fe06:e10d%6]) with mapi id 15.21.0451.014; Sat, 26 Sep 2026
- 18:27:38 +0000
-Date: Sat, 26 Sep 2026 15:27:36 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, David Sterba <dsterba@suse.com>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Simon Glass <sjg@chromium.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Nick Terrell <terrelln@fb.com>, Will Deacon <will@kernel.org>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-integrity@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>, patches@lists.linux.dev,
-	Ross Philipson <ross.philipson@gmail.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Song Shuai <songshuaishuai@tinylab.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH 12/16] arm64: drtm: Add macro definitions for DEN0113
-Message-ID: <20260926182736.GA473004@nvidia.com>
-References: <0-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
- <12-v1-27d06b313981+8b-arm64_drtm_jgg@nvidia.com>
- <20260924172952.0000527e@oss.qualcomm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260924172952.0000527e@oss.qualcomm.com>
-X-ClientProxiedBy: YT4P288CA0023.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:b01:d4::24) To CHBPR12MB731189.namprd12.prod.outlook.com
- (2603:10b6:610:33d::12)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JOdraxMQ"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68QH6ptI3178453;
+	Sat, 26 Sep 2026 18:42:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=5NWAaCwDcHhIw1u+lP8Elc0CPonTbbi0EH2sp3ZDw
+	v8=; b=JOdraxMQfCw6O5nhANanq2KcsYdLDVbjNbD3pW5MZAjU9ZEisTxr59Cj9
+	1qbwMrTigOdf6AJTWh+i62jFcM7b7AQOoCbbX5aI/HA2eQmux57ztqwhQfUoFWKu
+	gfXjtwDHmk1ugIvHzITie9MXSR1MhLG/j1arAxroAwnstuI3BJdrBzoEa6nmIXWV
+	G9DeDaMrhdvsRPiMv3ZRhW9GxLoArv4xMESmp1jhPIzXMlIARhdkoqctHkCqRGXf
+	cE3AQd+HWrxkwQeL9/AENsJyWRRtSeTl1c9PujOvB14LGN53S79nhHav8mZTpi6M
+	e86sEPvWg79+4DPm++XR7Hh+iEaZA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gx4fdtey0-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sat, 26 Sep 2026 18:42:57 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 68QH2Zrd1541370;
+	Sat, 26 Sep 2026 18:42:56 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gvbu9730u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Sep 2026 18:42:56 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68QIgqkW37814682
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 26 Sep 2026 18:42:52 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 120CC20040;
+	Sat, 26 Sep 2026 18:42:52 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EE50920043;
+	Sat, 26 Sep 2026 18:42:47 +0000 (GMT)
+Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.ibm.com (unknown [9.67.84.252])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 26 Sep 2026 18:42:47 +0000 (GMT)
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+        zohar@linux.ibm.com, stefanb@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        nayna@linux.ibm.com, rnsastry@linux.ibm.com, ssrish@linux.ibm.com
+Subject: [PATCH v3] keys/trusted/tpm2: Validate TPM2_Create object sizes separately
+Date: Sun, 27 Sep 2026 00:12:03 +0530
+Message-ID: <20260926184203.479203-1-ssrish@linux.ibm.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CHBPR12MB731189:EE_|MW6PR12MB8868:EE_
-X-MS-Office365-Filtering-Correlation-Id: eede5eb7-558e-4978-4183-08df1bfbd7e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|1800799024|376014|7416014|3023799007|6133799003|10067099003|11063799006|4143699003|56012099006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	UA+sCkz5pHrUIm2WiWp0NTTEu0/ziz1MYhhlIhK3UyJlLeFUiagSpQxvrmFJYnbQsxity7uqDDKtyt2NKod6lOuJ8m3bM0hbdX7k9rIBXdOkvb12UYNkWN0n5NhpxfaTCavMPhpbUB0edxCGx8eg+k2GIcsTSaP54lb1WE9EsTj/SCBhw3VFukUdczUn8IM+RZLi9QS5XUJ16RGq/et4KdaNrWNWzWyTmQ6azAmfeNXgqlu2dzetfH8+n0M9352Lo+EyYb8/e7jm1ouJR6zoNt7bXcpxGH5QKolCM9/JDkkzXX+3/+FVSv16FbCyWMw8m74F5zG/EpeSFkuBjJ5lF9FfhFwGw1azS0AJh5HtkeBYQpVByWzv+Krcm3vDvHPMFyYe3lnDbnBnqMkagj38AB39rVPDf+gCjqgwzRsc0VYOznHS4iS1lchzBf7NANAbZnHQGpNyDAfoEx23XFyDsHRrUQr+5B4NG8F2d6NxdM5425FUV7bCoratt8Br/B6JVS+Em+wD74xl65SbwlfJ/TzvITr9Wk4gmGBfhRkJ+CNUCoF/3G7aDa/dd+0l9G7+o5KIM+vm0Q/rE+HD/GE8ppG9ZYXD8cVPG2pwanCALZ5HfTm+20hmUXxE32YHXhC9NoS6xdlET1c2AZvvbZYdkPITSo5AjgfhyWWmNhXCwr0=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CHBPR12MB731189.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(7416014)(3023799007)(6133799003)(10067099003)(11063799006)(4143699003)(56012099006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?D+hMZDL5GTVRnJXhX1ycnCQKro2VyOEevI/a0FU7AAg28ujiSf+rHIhhO12m?=
- =?us-ascii?Q?k4QQ9yzrDo+oELqawOVMREAnHiJR5NFinC3U2xcGDFq673x7w5VZS/at7Raj?=
- =?us-ascii?Q?0J+c0p9WC4nE8hJH0jnM5ERRStnlE0nUKVXSwMZ5exij8mUwbwqzI5hCGa+m?=
- =?us-ascii?Q?Bg015eaqX2VgtIePU8gIYGgxmGiFExRLd6Uc2wLCAhDXiAi9NKmy7XJBnTRv?=
- =?us-ascii?Q?GGZo0+hy6qGNEiGmcwCHC4vf65QgK6D62nQ4MGhltAPriahvYpBplDOv1uaU?=
- =?us-ascii?Q?ozv5SkiwEkfrhYwnbUKFP0P6xHCKKFrH/Yl+5bHitWBCAyQ8jH5HiWWDoPZp?=
- =?us-ascii?Q?zGoF3critkIlrvNjLKqX6u84q4giDV9sMQF2jeA/+O6gBW7IjJbCnT6FOLop?=
- =?us-ascii?Q?v0CcFtVDNMJJ+vPVApe4Ys7aSLXLrqMghOFdTMCNEcSKlnzSEiovJ0mHaa1W?=
- =?us-ascii?Q?MItcwDCKoFJ/6cFwyRAQ+uZx2f3j9GJuf6RKMiDVsdCpeJbKeTuXspl8OMm3?=
- =?us-ascii?Q?IaHKbwPdPoTmToFdnxI2NSf17mtzs9fa6XmpQpH8W0Fs8qV+fXF7YJYwgVDr?=
- =?us-ascii?Q?BEJSSsNXUk9ZE3rtO5N7YxBm5DMrAYlgnbkkrQqFj4KZOXQ0EqDNkQVGSdE/?=
- =?us-ascii?Q?NnAtXd8Hnw36E8iW4quo8bO0qDrDTOaju73R3EqUw8Xv1q8oS+8bH6IApzaC?=
- =?us-ascii?Q?VGTpYt4nDjsyzLxvjYBWVI5gyA3QfT2UV6uFkl9M2Kp9AQmrCfJj6g6LPn8f?=
- =?us-ascii?Q?89Ocn5Qh6ALlVH+QAalVUfabKUMT8Q7tAN8i/QRBkNurisbILo2/aWpLPUNM?=
- =?us-ascii?Q?uVky9WDRqqQ7Vcy1H3FcMQv9FFyyd2TDqmNKEREh9EOXOuCHKXy2oumCHkTD?=
- =?us-ascii?Q?TbzLGP/regQaBHa0oGpc2t+48aMa2meAeuAvgYaC0aGf25tGmgZoGff4cx5b?=
- =?us-ascii?Q?TQHMBcx84NLpV15YBDnxcS2h6p3IHmI26OsV2WdmmBxGnPXA9+nXC+w6BN2O?=
- =?us-ascii?Q?jhBVsgq8MDTc3ytMMW5d7BT84vZa2UJPUjWs9WOYBb3erhmKWm990o/ljjpR?=
- =?us-ascii?Q?8Y38CuOIy/8aNlDO5FVdbbO1JrTlTLYW23gl+AF9v9HwVP1Bbz3gmxQ6GKlg?=
- =?us-ascii?Q?8PXCltQczsne/uBFFmgZmLQqqxDBz/OGFJ9aXGCOWbKZFTdnGqtkuhgRKSAh?=
- =?us-ascii?Q?tvPo+pXMX2HE5Fow6d5qN617leVavFOuEVfFA56AP7ZXLnczDarPnzMN4VDo?=
- =?us-ascii?Q?sbnC3Xew2EaQvoW6YIlimQgqpG/J3Y3xC4TrkHDSZBqjWHpzFrs9BuuS1RN8?=
- =?us-ascii?Q?aA7DRE19LJmt58DiI9fPo1Y6Y3zm8NG4MaJxkQVUi1pBiriAijhyPVuEpafG?=
- =?us-ascii?Q?VgBw+X3Wq5lekPbkP2/RygtNhSfMIsPHUCPjDiiH+ImbD8Q+/3poNBmx/j7M?=
- =?us-ascii?Q?tUtB2rP4cgCNXqxXk4E7fSJHcA5R1iU8cPL5FAju27US1F/hDtZq5hKWUtP+?=
- =?us-ascii?Q?P7UXGDIeJTeuBA10sJK2B2h5qXlJbLfCoZ4/0UJ4UMxJZPI7i8OOTgoD5yXB?=
- =?us-ascii?Q?ELgQDvmMz/jI8YGWWobLSeEii5waOIl8pwclhMyju0214ku/67ZSGVL8LIbm?=
- =?us-ascii?Q?jQEOqIs58IjIPIv9VPhB7TQxoj0KfMJkR+KPehLdgxlqYdzaPjZtda+nysm1?=
- =?us-ascii?Q?vtNrgp1rrcYJXrD5D2up/cDZoFHnjvi9jL8tdRv2118OYZmu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eede5eb7-558e-4978-4183-08df1bfbd7e2
-X-MS-Exchange-CrossTenant-AuthSource: CHBPR12MB731189.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2026 18:27:38.3404
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4WkVDWy9d1m2jBxVXSVCgjtHKEoJtN8zmy/AWLWcfFFM9j7383msZvR4xirS9tTG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8868
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=FYWiV5+6 c=1 sm=1 tr=0 ts=6ab81231 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=V8glGbnc2Ofi9Qvn3v5h:22 a=VnNF1IyMAAAA:8 a=70sryTsWxkqKhW1QF0gA:9
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI2MDA3NCBTYWx0ZWRfX6ms4ER1n89SF
+ v5ScGXfhmUPBtnZVn7KNaLJsT9s68Huso7yXUvV1Ofg53TOR1JkJhC/qBipYrV/2k0Mi/PePA4M
+ QlBSWpSJMWQfnJLkR1gZVAraRxrjExw=
+X-Proofpoint-ORIG-GUID: nTdd4-vL3TZhM0jIA4rjZRaRNcD007tn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI2MDA3NCBTYWx0ZWRfX2KowHOEgSA2O
+ LSCnrc3hHUR0OVkJ85Ju2qaJRBhl/6jdLkO5ZkX6f8ScLS91RzEMmv5VRAP2XjEZD/cekDr5/MI
+ 5STEWF02USQm9vlWfM2Nku4e+28Zimg27SlWlI4RYTVaiCpWBJyqB4IFyxABjHsNbm3Lq3MUM5F
+ vJ+emynSGR8CqPyKwc1SP4v1ihikbbABB5FjPV6K3VoAWznz2qGXtdNTIGSHY3+i/53znWG0BEV
+ QOADBAr0kn2hqjxMDN2o6qSkwOfGETTJLRM4lAeVUSSA6nrD6982AttHc72Ej8KGEqfw0bybOhF
+ qx7pFSTe6lBiA6rmz5hUDUw4imdJHW7KxG1WpIwFfm6KaAmDvYJ0ZEDjB2WWhJAwbpAaBee6QxL
+ lMpHQHY+RbbmknVwvn9wgEWqdy4W3nbMdLGkw2JY8fijYAYpnf3zNMzyV4gbB74C+376YZbnkpc
+ 6/w6tMTY8PyUjTbz1Mw==
+X-Proofpoint-GUID: nTdd4-vL3TZhM0jIA4rjZRaRNcD007tn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-26_05,2026-09-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
+ definitions=main-2609260074
 
-On Thu, Sep 24, 2026 at 05:29:52PM -0700, Jonathan Cameron wrote:
-> This one at least does it via base and sum.  But that then separates it from
-> the spec?   That is sort of the case anyway because the spec has the full
-> number.  0xC400_0110 so I guess not too bad.
+TPM2_Create returns outPrivate, outPublic, creationData, creationHash and
+creationTicket in its response parameter area. However, only outPrivate and
+outPublic are included in the trusted key blob. The size of the blob is
+therefore not determined by the size of the complete response parameter
+area.
 
-I wasn't sure what to do with this since the spec had the full hex and
-we have these helper macros.. I made it look more like something else
-with the offset style instead of the function call style:
+tpm2_seal_trusted() currently compares the size of the complete response
+parameter area against MAX_BLOB_SIZE. This can reject a valid response
+when the remaining response outputs cause the entire response parameter
+area to exceed MAX_BLOB_SIZE, even though the outPrivate and outPublic
+TPM2B structures consumed by tpm2_key_encode() remain small enough to be
+encoded in the key blob.
 
-> > +#define ARM_DRTM_SMC_VERSION			(ARM_DRTM_SMC_FN_BASE + 0x00)
+This is observed when creating larger trusted keys using the swtpm TPM 2.0
+emulator backed by libtpms.
 
-IDK, maybe ARM_DRTM_SMC_FN_BASE(0x110) is more connected to the spec,
-but I'm used to doing it like this from ioctl land which is very
-similar.
+For example, requesting a 113-byte key succeeds, 114 fails.
 
+~$ keyctl add trusted trusted_key1 "new 113 keyhandle=0x81000001" @u
+520504613
+~$ keyctl add trusted trusted_key2 "new 114 keyhandle=0x81000001" @u
+add_key: Argument list too long
+~$
 
-> > +#define ARM_DRTM_FEATURE_SELECTOR	BIT_U64(63)
-> > +#define ARM_DRTM_FEATURE_TPM		0x01
-> > +#define ARM_DRTM_FEATURE_MIN_MEMORY	0x02
-> > +#define ARM_DRTM_FEATURE_DMA_PROTECTION	0x03
-> > +#define ARM_DRTM_FEATURE_BOOT_PE	0x04
-> > +#define ARM_DRTM_FEATURE_TCB_HASH	0x05
-> > +#define ARM_DRTM_FEATURE_IMAGE_AUTH	0x06
->
-> Nice to have a mask for the 8 bits of the feature field.
+Remove the MAX_BLOB_SIZE check on the complete response parameter area.
+Instead, use the response length passed to tpm2_key_encode() to validate
+that the outPrivate and outPublic TPM2B structures are fully contained
+in the response before accessing them.
 
-OK
+Previously, a response parameter area larger than MAX_BLOB_SIZE was
+rejected with -E2BIG before ASN.1 encoding. With this change, if the
+resulting encoded blob does not fit in payload->blob, the error returned by
+asn1_encode_sequence() is propagated instead.
 
-> Also nice to keep order the same as the SMC defines which would put this after
-> version.  That also puts it next to the values returned for each feature.
+Also, use scope-based cleanup to simplify resource management.
 
-I reorganized everything
+Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+---
+Changelog:
 
-> > +#define ARM_DRTM_TPM_ALG_MASK		GENMASK_U64(15, 0)
-> > +#define ARM_DRTM_TPM_HASHING		BIT_U64(32)
-> > +#define ARM_DRTM_PCR_SCHEMA_MASK	GENMASK_U64(36, 33)
-> > +#define ARM_DRTM_PCR_SCHEMA_DEFAULT	BIT_U64(33)
-> > +#define ARM_DRTM_PCR_SCHEMA_AUTHORITIES	BIT_U64(34)
-> 
-> Ah.  Always love a field made up of a bunch of bits. Hard to define
-> cleanly.   Do you actually need the PCR_SCHEMA_MASK?  
+ v3:
+  - Simplify the TPM2B_PRIVATE and TPM2B_PUBLIC bounds checks
+  - Use appropriate error codes for failure returns
+  - Use scope-based cleanup to simplify resource management
 
-I did it with a field content which gets reused in the launch struct:
+ v2:
+  - Exclude a comment pointed out by Jarkko
 
-/*
- * PCR schema numbers. ARM_DRTM_PCR_SCHEMA_MASK is a bitmap indexed by these,
- * and the Launch Features ARM_DRTM_LAUNCH_PCR_SCHEMA_MASK field holds one.
- */
-#define ARM_DRTM_PCR_SCHEMA_DEFAULT		0
-#define ARM_DRTM_PCR_SCHEMA_AUTHORITIES		1
+ security/keys/trusted-keys/trusted_tpm2.c | 42 +++++++++++++----------
+ 1 file changed, 24 insertions(+), 18 deletions(-)
 
-/*
- * DMA protection types. ARM_DRTM_DMA_PROTECTION_MASK is a bitmap indexed by
- * these, and the Launch Features ARM_DRTM_LAUNCH_DMA_PROTECTION_MASK field
- * holds one.
- */
-#define ARM_DRTM_DMA_PROTECTION_COMPLETE	0
-#define ARM_DRTM_DMA_PROTECTION_REGION		1
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 906700c3d7f0..920f45c7864b 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -25,24 +25,36 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ {
+ 	struct trusted_key_tpm *private = options->private;
+ 	const int SCRATCH_SIZE = PAGE_SIZE;
+-	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+-	u8 *work = scratch, *work1;
+-	u8 *end_work = scratch + SCRATCH_SIZE;
++	u8 *scratch __free(kfree) = NULL;
++	u8 *work, *work1;
++	u8 *end_work;
+ 	u8 *priv, *pub;
+-	u16 priv_len, pub_len;
++	u32 priv_len, pub_len;
+ 	int ret;
+ 
++	if (len < 4)
++		return -EINVAL;
++
+ 	priv_len = get_unaligned_be16(src) + 2;
+-	priv = src;
++	if (priv_len + 2 > len)
++		return -EIO;
+ 
++	priv = src;
+ 	src += priv_len;
+ 
+ 	pub_len = get_unaligned_be16(src) + 2;
++	if (pub_len + priv_len > len)
++		return -EIO;
++
+ 	pub = src;
+ 
++	scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+ 	if (!scratch)
+ 		return -ENOMEM;
+ 
++	work = scratch;
++	end_work = scratch + SCRATCH_SIZE;
++
+ 	work = asn1_encode_oid(work, end_work, tpm2key_oid,
+ 			       asn1_oid_len(tpm2key_oid));
+ 
+@@ -50,10 +62,9 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 		unsigned char bool[3], *w = bool;
+ 		/* tag 0 is emptyAuth */
+ 		w = asn1_encode_boolean(w, w + sizeof(bool), true);
+-		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode")) {
+-			ret = PTR_ERR(w);
+-			goto err;
+-		}
++		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
++			return PTR_ERR(w);
++
+ 		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
+ 	}
+ 
+@@ -65,8 +76,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	 */
+ 	if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
+ 		 "BUG: scratch buffer is too small")) {
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	work = asn1_encode_integer(work, end_work, private->keyhandle);
+@@ -79,15 +89,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	if (IS_ERR(work1)) {
+ 		ret = PTR_ERR(work1);
+ 		pr_err("BUG: ASN.1 encoder failed with %d\n", ret);
+-		goto err;
++		return ret;
+ 	}
+ 
+-	kfree(scratch);
+ 	return work1 - payload->blob;
+-
+-err:
+-	kfree(scratch);
+-	return ret;
+ }
+ 
+ struct tpm2_key_context {
+@@ -340,10 +345,11 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 		goto out;
+ 
+ 	blob_len = tpm_buf_read_u32(buf, &offset);
+-	if (blob_len > MAX_BLOB_SIZE || buf->flags & TPM_BUF_INVALID) {
++	if (buf->flags & TPM_BUF_INVALID) {
+ 		rc = -E2BIG;
+ 		goto out;
+ 	}
++
+ 	if (buf->length - offset < blob_len) {
+ 		rc = -EFAULT;
+ 		goto out;
+-- 
+2.53.0
 
-Have to use BIT() to get the bitmap encoding.
-
-> Same here.  I vaguely wonder if it is worth adding something
-> reflecting the relevant feature ID to each of these defines
-> so we know what the are referring to?
-
-I added comments and spec references for everything
-
-> > +#define ARM_DRTM_LAUNCH_HASH_FIRMWARE	0
-> > +#define ARM_DRTM_LAUNCH_HASH_TPM	BIT_U32(0)
-> 
-> I'd rather see them as fields and field value pairs but
-> can see that is going to get a bit verbose.
-
-I think that would be too verbose in this case, and the usage is very
-limited.
-
-
-> > +static inline s64 arm_drtm_features(u64 function_or_feature, u64 *value)
-> > +{
-> > +	struct arm_smccc_res res;
-> > +	s64 status;
-> > +
-> > +	arm_smccc_1_1_smc(ARM_DRTM_SMC_FEATURES, function_or_feature,
-> > +			  0, 0, 0, 0, 0, 0, &res);
-> > +	status = res.a0;
-> > +	if (status >= 0 && value)
-> > +		*value = res.a1;
-> If status == 0, is res.a1 useful?
-> You have a helpful comment at the call site in the final patch but none
-> the less I have read the spec section a couple of times and have no idea.
-
-I read the spec as 0 is not allowed.
-
-I changed this around to have two wrapper functions, which works a bit
-better.
-
-static inline s64 arm_drtm_query_function(u64 function_id)
-{
-	struct arm_smccc_res res;
-
-	arm_smccc_1_1_smc(ARM_DRTM_SMC_FEATURES, function_id, 0, 0, 0, 0, 0, 0,
-			  &res);
-	return res.a0;
-}
-
-/*
- * v1.4b Section 3.3.1 says:
- *   A return value of greater than 0 means the feature ID is
- *   implemented, and there are other feature-specific
- *   feature or capability bits available in other return value
- *   registers.
- * And for FEATURE_SELECTOR all defined features return data in other
- * registers, so 0 is not an allowed return.
- */
-static inline s64 arm_drtm_query_feature(u64 feature, u64 *value)
-{
-	struct arm_smccc_res res;
-
-	arm_smccc_1_1_smc(ARM_DRTM_SMC_FEATURES,
-			  ARM_DRTM_FEATURE_SELECTOR |
-				  FIELD_PREP(ARM_DRTM_FEATURE_ID_MASK, feature),
-			  0, 0, 0, 0, 0, 0, &res);
-	*value = res.a1;
-	return res.a0;
-}
-
-Thanks,
-Jason
