@@ -1,172 +1,196 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx2-f42.google.com (mail-yx2-f42.google.com [74.125.224.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD55492E23
-	for <linux-integrity@vger.kernel.org>; Mon, 28 Sep 2026 09:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388BB4F3935
+	for <linux-integrity@vger.kernel.org>; Mon, 28 Sep 2026 17:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790588091; cv=none; b=A1V+iPkD/ZtHEeemuvh9BjtP1qQPUoyFtFOx0fQbEownu5LrHZUqyZCwtW0gUIEUjWICOemkS/R5ICeSCLSCuEss9MEoPjnyvvNbZ42HCtYrejO8FAoaQ3+jiyR79LQvWl9jRSSISD9Q+UQgV2hdBhuRlI2INqA+/5HC1dP60lU=
+	t=1790615651; cv=none; b=uUwbiFj/GTitQ57C3vOT17pVxUVs5OlvCLmrHbJgnZKyKeFHn1m3EAXy9Hf1s3aqEZstYDpeNSj0ck7MUyTLnX2SvFtpvilD6P9WmHGh7sfP+ZC0ljVXrURPKjL9M2fdNmP+0/YDlGGiNuO/MioDss22Ap3esbXpzE8m8N2vsRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790588091; c=relaxed/simple;
-	bh=aut5EtV7EHnIQnhVgpWGAgLGS+IWWJeo0UTmCPk4f+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PZ54MZ1p3Dtc/9mA0BDVNShGzHoroFWOEzBDEXl7jYu3VWSxClE1SCTJ9RpVfRXSBZYMi9Zi3HH8FxYWWTIqGvXdJBkUjtlGR5g8+Tx1T8KXvyzzq7IxvCySIDaHg1d0UmKgcRseImVKdwin/nq5S8+D6/3wbDijeYcV09VZH1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aLkXJMxX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jsE2lCzi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1790615651; c=relaxed/simple;
+	bh=MbYUL73La3phT6CWXVxz3A2hkcPLAKJyAdn49kkRKFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iB09zHJ4HAPI9aDUL0zrCtEv/RT3PSJ9Oy57vrBoHZvlfoU1JMDBRqYpIG1/CMp+MyFraxEMWsSVrFpTDKiQ/bZOyHVDRIZBCsqPWrEgDKfS4pyVi/b1NHPolBT9Dlp0lgktSU7RwvdRxpR02Liisw2QVFxA0na0CgPOkFLEM8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DpEt8Q/R; arc=none smtp.client-ip=74.125.224.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aLkXJMxX";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jsE2lCzi"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68S9MJ9U2168269
-	for <linux-integrity@vger.kernel.org>; Mon, 28 Sep 2026 09:34:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cslUYpSyi91GFkeEotZ13vFtrVwZDY/B9c/HltZgtHA=; b=aLkXJMxXbzCJ6p6Z
-	R1DN0vMl5w3AtEV36Um+luOaXUFYzgfWR2zIKCa3WBtp/4Y/sUhP276G4AgiWvys
-	3oJs/O/B/KifdYqa4l/M9QEYeYXCkIQaCBsb1f9xv+0qypcfzGc19gHVjZPGahbN
-	4fDfnc6Tt8wFluYbpc488aKZpPtjvajURfCEg+wU0zkkOsVJZuhs+Zq8Hu8HqyXz
-	M5wCl15K+5XlP6Zkv0rwloBDRvaP+B/N2lm09lneoGQPx5IeXfi3be6ARv9FLCvo
-	etyxotJivn6ZbarEhG4T38eXD/9665rybEHWBs3+qBtVtnHp3n+SFv3C8zfOpPpA
-	1BGorQ==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gyj6t0vct-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Mon, 28 Sep 2026 09:34:49 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-38e8fee6af3so2792937a91.1
-        for <linux-integrity@vger.kernel.org>; Mon, 28 Sep 2026 02:34:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpEt8Q/R"
+Received: by mail-yx2-f42.google.com with SMTP id 956f58d0204a3-672ce86b21aso3522360d50.3
+        for <linux-integrity@vger.kernel.org>; Mon, 28 Sep 2026 10:14:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1790588088; x=1791192888; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=cslUYpSyi91GFkeEotZ13vFtrVwZDY/B9c/HltZgtHA=;
-        b=jsE2lCzijKPzwdzujjkkma5+C5GBZ99Jn4g09o62nw9OCLT3pXoe9PmjQbHq81+s0g
-         5o1o8XYAp08Pz0rE3NLhFB9m8OReN6GzETizYjWC+Q2JSFXyWDotf1hQtXDIqmjx45No
-         eDE1s9Cp3go85RLfaPqED/rAbbokchq5Kzi9zltfwriGzPRazlYAjRAQlPl+KtIXcfuB
-         67R8KXvqGipoP72TcbY/TsFLsY1nIan/NGL7W65qqab9+i5U3no87aaWKKBjXhfVDiI6
-         /bOa6ku/0i7zVbKR9ZAxkoUqtPX1/PLzFjLLhFc+qpQeLWrsQk5i5cD9I6xTUOx1c08Q
-         cR9w==
+        d=gmail.com; s=20251104; t=1790615647; x=1791220447; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=MmJ/EW0KwY0F0cm8LaUC3Fhj6N704NFs3EmzLQEffnQ=;
+        b=DpEt8Q/Rtt6CU3VVCy088mlM94gI41xgFL8/OIpF7pLSuO5iZe0mNZsHnYrtDAxXH0
+         hJUBdhVhN4oej1WlPQhTfYlrf8FVZLn/Kqq6kzE7jSdpa5rY1Prk7NIoKnPW7z9n+klw
+         mWAtVjQboIZziiPgP+TY2Bge/YSusfHHOvkSn59MNZR1OAL3agPO+Lq0bqe90fr4z29l
+         BZDEZFONCqNi35OL8P0pUwsiDVQddf++iE7GOXMf2O6JOD4jkWmv+EUpdgqp/9MwXfbE
+         bhVWF7vK2Q+15ah7ydijagIGn6QwcNK70wA1I1/gAJIHvjji3tEm5JUboSICRcvCP8nh
+         fHZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790588088; x=1791192888;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=cslUYpSyi91GFkeEotZ13vFtrVwZDY/B9c/HltZgtHA=;
-        b=yQ5Jr6fJ84HeBY7+1W4zMhc8d2InMOeAo+NSTPv/3II5jzcJiiYlmaZPpH3yDAnkUX
-         1IuqFDxzCmf0P0LdINg4Ngbhnn25d3jpJjK75h0XZUXvJqqHvkGruiSQCXsXiueILWE/
-         0vjkmbAf8oN29cq0PJsaNm9XCRx+R2XGxpa/ZAJPhSyjUW7Wxjt3zcPXcgcl05Zmbg5M
-         EmAiIP8eBrjSPbJDyKhOMavyA6e+r/Vz03amMcn41QdLzS1HVBHUykFRe+Gy6h7JBb8z
-         Bivl8Xp38JFQMWrlzemQURk55LxtcB5b3X7BMUiHYWRta3bq3TPrTv4Q5iAg3raDimzJ
-         tOQg==
-X-Forwarded-Encrypted: i=1; AKwUvBzg0fgi7SwcbBiRzpJfUJi9rO0UvemYMybw4YJdLe/UDusWm2wxb0QJzEEqYHspztNPKV2DFHVJZyaNQaXkCO8=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJaADpfLyFfx+o4sXjHAg8yL5+y3/2BCAVmvSFzqgELFuqBYZv7
-	1PNdalvj7CY9nXb0rNKH/PNAIZ4f+jvPenSSt5VfE2ZkZtDtABJYJxsYLpHA8DmfTuP71t0NZWo
-	H9GreHqKd6OAnuNbgD0HPa7/aslbjTR6UWtEGDsw+Iv3rykz5nhB9VaYw1lEp/+WUytfJdFI=
-X-Gm-Gg: AYBFou236PBQ7j5dn2CpG8h71ePBxN2VwUaoXeF31Q7uHrEAG6BVfYsneYR9o2bPWre
-	ZiTgvu/5ZHjvwIZ6wbTM8Kj7MeBhhSd8VXYH8C6HNu8p7IOVDxN1420IVjRLW/gSMHeqgCkWW3m
-	XbcAyusfGg7xVBSCjbHnmW3Q7tprzfp2B7oxtQnnz3EJGOVDDER7Yn9idYoH9Ga9GEbkRS3XJ4G
-	Zmn3OB4m/xECRMJxZfY6nlJ9xOSyFD1E+CrJbCwvwbH/5bBAnRGSx5qzLYLJ5yuUZ9tmV1NNJ5x
-	8V8jTc6Rrn8kO/4l5eQmYmWvgHArYnC1N1J4VMrhq4AZfDDDZfSVLUWhzZsBM0tPV14vWD/sAq8
-	apOgkjtp7LmQI7/PT3Ekkz328a3ZacQ==
-X-Received: by 2002:a17:90b:2649:b0:3a0:b223:683e with SMTP id 98e67ed59e1d1-3a0b2236bfbmr8129130a91.48.1790588088379;
-        Mon, 28 Sep 2026 02:34:48 -0700 (PDT)
-X-Received: by 2002:a17:90b:2649:b0:3a0:b223:683e with SMTP id 98e67ed59e1d1-3a0b2236bfbmr8129114a91.48.1790588087871;
-        Mon, 28 Sep 2026 02:34:47 -0700 (PDT)
-Received: from [10.218.31.125] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a0b9356f48sm19867799a91.6.2026.09.28.02.34.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Sep 2026 02:34:47 -0700 (PDT)
-Message-ID: <bb9b3980-141e-4ad7-ac18-6ea7b9002dfa@oss.qualcomm.com>
-Date: Mon, 28 Sep 2026 15:04:42 +0530
+        d=1e100.net; s=20260707; t=1790615647; x=1791220447;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=MmJ/EW0KwY0F0cm8LaUC3Fhj6N704NFs3EmzLQEffnQ=;
+        b=ZGpM1kEeBthoJIyfAoHtLpfvC0K5B9jnkU9yD8dEQjQuGVWgeSx1OfNdfcWCPjvVuD
+         N+bRp72Fab/DFVxMURfBsZpBkY3qZq9MOyzWkwJoPAsYU4+0DNcTfXRqBxuSLtaW/xWR
+         Fhw9iSt788BAXhl2fnsHx71n/2fQdH7gkjK1pFeJ0pPWxoH9KT3p2E5wtIKkV+P3qU0l
+         m4xcK5i9eI30uMfvS/a33z0ReJRK34sE8XK+WQZKxvTHcMxMEyHuKqNMlzkheiQ/Jdjs
+         4jFbwx9khVzbjDTifFHc3+wxMf59whI7oy33h+y7+NcLXPj3ckR2hdJxjgKE2BUjzmPR
+         WDGg==
+X-Forwarded-Encrypted: i=1; AKwUvBwpxECxNd5qsauCpTpqP3WpGZgl1dyD6oA4DR4ehZTuGEQhVe1/fTkVHMzik+OniAJ1C5ahLRK45I+raEg0qz4=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIM6TPVJN2x3Y/CJQZ7plYNVyhSs5qqT7EEi1KoMoyH2TvnE+Xl
+	QCLoz2dZVirBQEK6EapsZC0AjBENxEdjLddba4cMJd7hwvCbQgnJ3Pam
+X-Gm-Gg: AYBFou0WioYSN2VBWk4vDoXyuwf7tmQ8cNWigtkKY3TMzSMPORtV+yesTSB2yRheIre
+	rz45Kmzpi3NGphpYtd3oxyQy9U8x1HQ2nxC0TxZpljs/SrwCW/4NKttBbE+sU+kFrBpJm3AWa7u
+	9LZOjvDqMwQkIXlbvGxnxnv+YB1NiiyzTO5FSCHSE7XM4a/APieUx8PhimtpixtnLGSnkmxgg35
+	wTq9EyaiPiODcYzHCpwByOGxeQk31lr3zI29qMQASjrvqjZmDwIuT/mhlCaccW77KaQi8C2tVLi
+	rjJMass1bXBPkP0wa6P+ErQoa3WfImMgoABq3ZcLpPktHG1OOeHiVhMuF0oqtb9hN/yZPkJEcnG
+	Ed4VVKdWIm8uhD4jg8cPCSQwRXadjy2KsUM/O9OlBPVLcq3j61VRPRFZ4si7zH1yYWx8o+LnkYq
+	A1jhlP+nziN1SqDbLJYP86Eac0qfuM6KrF3281g5+Uwh47gFguQu3M7xcJyAeV2Vej9OUdvSJNI
+	KQ=
+X-Received: by 2002:a53:ac98:0:b0:671:1398:648d with SMTP id 956f58d0204a3-674111a8a77mr3399078d50.9.1790615647178;
+        Mon, 28 Sep 2026 10:14:07 -0700 (PDT)
+Received: from suesslenovo ([71.132.185.69])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6740ee940a0sm4752038d50.3.2026.09.28.10.14.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Sep 2026 10:14:06 -0700 (PDT)
+Date: Mon, 28 Sep 2026 13:13:35 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: Cai Xinchen <caixinchen1@huawei.com>, mic@digikod.net, 
+	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	corbet@lwn.net, skhan@linuxfoundation.org, rdunlap@infradead.org, 
+	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, dlemoal@kernel.org, 
+	hch@lst.de, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, dhowells@redhat.com, code@tyhicks.com, linkinjeon@kernel.org, 
+	sj1557.seo@samsung.com, yuezhang.mo@sony.com, hirofumi@mail.parknet.co.jp, 
+	cel@kernel.org, jlayton@kernel.org, neil@brown.name, okorniev@redhat.com, 
+	Dai.Ngo@oracle.com, tom@talpey.com, miklos@szeredi.hu, amir73il@gmail.com, 
+	senozhatsky@chromium.org, chenxiaosong@chenxiaosong.com, zohar@linux.ibm.com, 
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	stephen.smalley.work@gmail.com, omosnacek@gmail.com, casey@schaufler-ca.com, nanx95726@gmail.com, 
+	djwong@kernel.org, daniel@iogearbox.net, linux-security-module@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, exfat@lists.linux.dev, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, xiujianfeng@huawei.com, 
+	lujialin4@huawei.com
+Subject: Re: [PATCH RFC -next 00/12] landlock: Add READ_METADATA and
+ WRITE_METADATA access rights
+Message-ID: <arqcbjWLN1CLkL_Y@suesslenovo>
+References: <20260924104831.1081137-1-caixinchen1@huawei.com>
+ <araxO4ze0KZBz756@suesslenovo>
+ <20260926.255b951d3013@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Add TPM support via Qualcomm TEE TPM TA
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-        Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20260907-tpm_qcom_driver-v2-0-71a6b1752da8@oss.qualcomm.com>
- <aqyZtHynb2nuQT-P@kernel.org>
- <d555ee76-3999-4ed0-be6a-ca07354af6d4@oss.qualcomm.com>
- <araJKqHdeXstD7nR@kernel.org>
-Content-Language: en-US
-From: Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
-In-Reply-To: <araJKqHdeXstD7nR@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI4MDAzOCBTYWx0ZWRfX/8cOA7ohKlt6
- dbSr0kCfhuYe5Z/RHmR2DD/ayNXZ8UNWCGWXLTEf7QWB+8YFPC18KmYBHvfW8YSk95wvnCZ7feV
- HC5rIX46qAYUbNMHhuBzLIx9e7E2oIcLeWMC9JdXk1ZcZVO/8pejTm6lABhxDQlVtkdmy62xNS3
- AN79KklY6iCaFcoTixSUbbuZC5mPCIJYGux0lguUj6gqZEJ5dEzwWzW01XL4mCRYUwU/wU3xZQE
- W1CUor0gkWlvZxaVZ77+5D98mdUCx7M2g0YznNnd8zDTafxLV68NcUIylyTBFJrEHAOVvMOPyvf
- V9z795T9lwStr4pXgGCiFyF4oARi3JmZtflopWsV5T4HwQNC240KCLDtKoFOloN0Euo2EHQICAo
- udsHftB68Cj8a84wLunJxUKcJWQIWuQiTeFKXVNcWtAeP1BOeJTi5z6Py5awFxlkCeNnZ2h6C1Q
- ttGlYIMHn/YZVyufNeA==
-X-Proofpoint-ORIG-GUID: PImYKpf1u07yqEynN-j9oL5w7tHjhw8z
-X-Authority-Analysis: v=2.4 cv=dZkVTnXe c=1 sm=1 tr=0 ts=6aba34b9 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=bi0NzNZZtduFk6DORyMA:9 a=QEXdDO2ut3YA:10
- a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-GUID: PImYKpf1u07yqEynN-j9oL5w7tHjhw8z
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI4MDAzOCBTYWx0ZWRfX3wTghIhqQl6Q
- NqiZOC8ansHjmNP5289uUt1uvzwlkzvXGLA5S5jP9AwLXQxG9avcP1on1ihDheDQc8Ld0kogiKC
- SteZJ+mCThrup68PH7BlGfTAq1agouQ=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-28_02,2026-09-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0
- malwarescore=0 impostorscore=0 suspectscore=0 adultscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609280038
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260926.255b951d3013@gnoack.org>
 
-On 25-09-2026 20:16, Jarkko Sakkinen wrote:
-> On Mon, Sep 21, 2026 at 02:06:43PM +0530, Kuldeep Singh wrote:
->>> Causes merge conflicts with my tree when applied with git am (actually
->>> b4 shazam).
->>
->> Jarkko, this series was sent based on tag next-20260828 after applying
->> prerequisite series[1]. Some minor Makefile/MAINTAINERS conflict was
->> observed IIRC.
->>
->> Kindly note for merge strategy, prerequisite series[1] will be merged
->> via TEE tree and current series need patch 1-5(not patch6) only as
->> prerequisite.
->>
->> To merge TPM series, it's better to pick from your tree and TEE
->> maintainer can ACK patch 1/2 for seamless integration?
+On Sat, Sep 26, 2026 at 09:56:28AM +0200, Günther Noack wrote:
+> Hello!
 > 
-> So I'm just having trouble following so: what is the best option
-> for you? What do you want me to do? Which route you prefer?
-I took latest linux-next (based on tag next-20260925) and tried b4
-shazam and observed minor merge conflict in patch 6/6 of dependent
-series[1] in drivers/firmware/qcom/Makefile.
-Makefile conflict was easy to do as seems recently qcom-pas framework[2]
-merged which updated the Makefile.
+> On Fri, Sep 25, 2026 at 02:03:05PM -0400, Justin Suess wrote:
+> > On Thu, Sep 24, 2026 at 06:48:19PM +0800, Cai Xinchen wrote:
+> > > This series adds two new Landlock filesystem access rights,
+> > > LANDLOCK_ACCESS_FS_READ_METADATA and LANDLOCK_ACCESS_FS_WRITE_METADATA,
+> > > which control access to file and directory metadata such as inode
+> > > attributes (mode, ownership, timestamps), extended attributes and POSIX
+> > > ACLs.  It picks up the work from the "landlock: add chmod and chown
+> > > support" series [1] and follows the coarse-grained grouping discussed in
+> > > that thread [2]: instead of separate chmod/chown rights, metadata
+> > > operations are grouped into one read and one write right.
+> > > 
+> > > Landlock evaluates access rights on a per-path basis, but the metadata
+> > > related LSM hooks (inode_getattr, inode_setattr, inode_setxattr,
+> > > inode_getxattr, inode_listxattr, inode_removexattr, inode_set_acl,
+> > > inode_get_acl, inode_remove_acl) only receive the dentry of the accessed
+> > > object.  Patches 1-7 therefore first pass struct path instead of dentry
+> > > through the metadata-related VFS helpers and LSM hooks.  This is a pure
+> > > refactoring with no behavior change, split so that every patch builds
+> > > and works on its own:
+> > >
+> > I like these patches, but is the ability to read metadata already
+> > sorta controlled by LANDLOCK_ACCESS_FS_READ_DIR on the parent
+> > directory?
+> > 
+> > The one case I see this being different is:
+> > 
+> > 1. if you wanted to grant read access to the file, but not metadata
+> > read access, but I can't think of any usecase for being able to read
+> > the contents of a file, but not the metadata. (see below)
+> > 
+> > 2. If you had the absolute path already and didn't need READ_DIR.
+> > 
+> > I see introducing this READ_METADATA as causing potential
+> > hard-to-diagnose issues.
+> > 
+> > Say you handle READ_METADATA and READ_FILE, but only grant READ_FILE.
+> > 
+> > The program can technically open the file with the READ_FILE permission,
+> > but it may error out because the stat() on it beforehand failed.
+> > It's pretty common for programs to do that kind of thing (stat before
+> > open), like for checking for config files (strace bash and you see it
+> > stat .profile, /etc/profile)
+> > 
+> > There may be other bugs, because being able to set permissions to read
+> > a file *but not read it's metadata* isn't possible currently in posix
+> > acl and userspace may not work well if that assumption no longer holds.
+> >
+* posix acl and linux DAC.
 
-Also, I don't think we can merge tpm series once dependent series[1]
-patch 1-5 merges. I initiated thread to atleast conclude 1-5 so that tpm
-series can be picked completely from your tree.
+> > So maybe WRITE_METADATA is good enough?
+> 
+> The existing use cases are the combinations of (a) READ_DIR
+> allowed/denied and (b) READ_METADATA allowed/denied.  Because these
+> two access rights overlap slightly, it seems likely that for a given
+> directory or file, users will want to either grant both, or deny both.
+> 
+> At the moment, where the (not yet existing) READ_METADATA is
+> implicitly always allowed, the problematic case is the one where the
+> Landlock user wants to deny READ_DIR, but where much of the same
+> metadata is still available through stat() and the various
+> get-attribute syscalls.  (c.f. the warning box in the Landlock docs
+> [1])
+> 
+> In my view the READ_METADATA right closes a gap that READ_DIR left
+> open (which is also potentially surprising to callers if they did not
+> read the docs closely).  Also, if its implementation is symmetric to
+> WRITE_METADATA, I feel that it's worth having it in the same patch
+> set.
+> 
+> –Günther
+> 
+> P.S.: I know, even after we can control stat(), there are likely ways
+> to infer the presence of a file by observing Landlock error codes.
+> This would be nice to fix as well, but is harder to do without
+> controlling the path walk itself [2].  But also, the fact that this is
+> currently not controllable is not an excuse for leaving READ_METADATA
+> open IMHO.
+>
+I'm still sort of concerned about the case where read access is allowed,
+but metadata isn't, due to how many applications will not cleanly handle
+such an unexpected condition. You can reproduce this with a seccomp
+policy forbidding stat().
 
-[1]
-https://lore.kernel.org/lkml/20260722-qcom_uefisecapp_migrate_qcomtee-v2-0-b8a8fcbe4211@oss.qualcomm.com/
-[2]
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/firmware/qcom/Makefile#n12
+Would it make sense to have the existing READ rights
+(READ_DIR/READ_FILE) imply READ_METADATA on the files/directories 
+if READ_METADATA is handled? Reading a file's contents should always
+imply that you can read the metadata.
 
--- 
-Regards
-Kuldeep
-
+Thanks,
+Justin
+> [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+> [2] https://github.com/landlock-lsm/linux/issues/9
