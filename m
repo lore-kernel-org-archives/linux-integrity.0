@@ -1,41 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBBA3B27E2;
-	Tue, 29 Sep 2026 22:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522CB1917CD;
+	Tue, 29 Sep 2026 22:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790720542; cv=none; b=QuagTDvy0+7UunD6KmlmGn13K2+NhO3yq5qkGRWiRGPPWHUxDdf57AbsQZXg4HtMwyItOCPpc/2o9Smu503GDOBFAJsiwq0Xf/5GrA41mkZl65J4m6iPNQZP3fMZKi65BCSg00cPDvVN2Y+a9fkfiyDs69zzODI8CJ6GNjLePb4=
+	t=1790720728; cv=none; b=ZB9uqkfnBo+DPZCUROoiyHfDwDicuFWfK9hYpM9VqKFjwKR9VHiI1N02oevUMvTE5Xavbk6rWbZ7kpJbsRYtTeYArS/QRvMfBwLoFZ0h/RYm/GtboT1B/Jy+EfSEMw6c5WwiTt5yxLLoAogDGBcAKg5azuLVnrYTSqsmoSgBNh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790720542; c=relaxed/simple;
-	bh=YC+iyIjz5uqf23WRDerHTOppl0qBIpuHF8Xlgjv7DF8=;
+	s=arc-20240116; t=1790720728; c=relaxed/simple;
+	bh=vDOPVQN8b1p8lmYnEVIbK2Q9J47ViR/ntcYltsxD2TQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C6Jvrsp3HU5ILZFY/rkz5u/w/AoaNJcS75pWAxMwNYDdBsD6Vunxt+GLraHgxneCbTIMV2aeJO6dCn6XIee31qv6OIYArLFW0l4v7xh1a2KP5up8F7JdX1hrn4oaos2l9ZYV3Wz0Ewh1qriGtJYkLHFORqpN5vMnSjvGSHO8wJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QyMHaTDY; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=kij5+oUrmLhkyxRvBORWTCIif8YvejvIqagaUJ2RXg23YCtUZb8y2F2ZUh1aPR+De3pe5uDDUZ4DCl030ppO2vIxniLu8P3JCkMlsWUlvgSrvn6jU3MPFzuCjnCgmnxNOO2TWlDf4hjh+lyiOwzrUS8OQUlJOgmXSrCPEdG1uuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0V0z091; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QyMHaTDY"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 325531F000FF;
-	Tue, 29 Sep 2026 22:22:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0V0z091"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6217D1F000FF;
+	Tue, 29 Sep 2026 22:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790720540;
-	bh=woMNByGZdozSY51jOgCnIsvzYuxzLL7kdbpiLCyratk=;
+	s=k20260515; t=1790720726;
+	bh=3SZuw5cQDBPZfrMBfSK7dageK4m/f3nOjUwtVB4JX1E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=QyMHaTDYMDTSTr6f4Uigi01+wWVKqC6ZUltkatQ5g/P9feFRhAbaIXSruUDPIWhC0
-	 JLL+qZmPEPChwiojMxNQ0DdhT+is0Nlp8VcJ22W3jcRWqehsPe6lqxFHZIxMob0GKP
-	 wKEYWuuIUQ/vnaAjPRWIVBFEHICUutS8WS9CTzSxSLxWF7qGs/8xCDLszJi0Sy9x2C
-	 Dd9kNcHSdebD393++Js0k0PU5pHJxHysT3IV66IEVZe5ynh+AYVOYcDGPwryvAxJCU
-	 RVrxtOQn+y+kX2WygD9a59jis27zWTW5SSpzrqG6R2+wgeHYZcGzatpzFp612hKInw
-	 bVNpx6D9JS56g==
-Date: Wed, 30 Sep 2026 01:22:16 +0300
+	b=n0V0z091s23MgsIIFYrO9om50tjzUJBaMVWKSb9jdVvKz35jmoCjdE8kUkgWmzYuO
+	 hS21Fko4CkYMU0tigikTph27WjaKLnatKjgxbNtLHUQfGp5fSBM7FhcY8aY2dhEyMm
+	 7DiTS5u6v74GECC0h1JQ/LEnxq8EgnnuvQF2CQRwWnDon8ku34vayiuRrSxZPNWFat
+	 W81zDckv3TM6+3A2+WPFHYo6rXGmxIvBGje7jgxkVpkKdZFEDFRzOxY9qhgjroXK3A
+	 bjstIG0AZci9J0Xk7D3tgGYfMmCCneHlfyxtdWCT7T6b3SkmQKW4bKfILhJ0VXt4gR
+	 AwPz5puuIgw0A==
+Date: Wed, 30 Sep 2026 01:25:23 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Surendran Kanagaraj <surenkj@amazon.com>
-Cc: graf@amazon.de, gunnarku@amazon.com, jgg@ziepe.ca, joshlev@amazon.com,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nh-open-source@amazon.com, peterhuewe@gmx.de
-Subject: Re: [PATCH 2/2] tpm_crb: Raise timeouts for Amazon NitroTPM
-Message-ID: <arw6GJymRFjesinz@kernel.org>
-References: <araZZzKDqzrPdY9f@kernel.org>
- <20260928210953.29183-1-surenkj@amazon.com>
+To: Sean Meadows <Hellfire@unspacy.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
+	Adam Alves <adamoa@gmail.com>
+Subject: Re: [BUG] tpm_crb/Intel PTT: Late S3/S5/Reboot ACPI power management
+ deadlock
+Message-ID: <arw609M6mDiqhQwJ@kernel.org>
+References: <bf3a9544-6e49-4d5d-a01a-f1912b717d08@unspacy.com>
+ <aqyTpzk3jcarEMVS@kernel.org>
+ <54425edf-3ca1-4f99-9166-40f9cc3dfff6@unspacy.com>
+ <araNsEodZ3NXf9qT@kernel.org>
+ <0e8f93d0-3da9-4af0-ac12-b3670acdcf79@unspacy.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -44,42 +48,55 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260928210953.29183-1-surenkj@amazon.com>
+In-Reply-To: <0e8f93d0-3da9-4af0-ac12-b3670acdcf79@unspacy.com>
 
-On Mon, Sep 28, 2026 at 09:09:53PM +0000, Surendran Kanagaraj wrote:
-> On Fri, Sep 25, 2026, Jarkko Sakkinen wrote:
-> > On Wed, Sep 23, 2026 at 02:28:34PM +0000, Surendran Kanagaraj wrote:
-> > > +/* Longest unavailability seen from NitroTPM */
-> > > +#define CRB_AMZN_BUSY_TIMEOUT_MS     30000
-> >
-> > Use TPM_CRB prefix.
+On Tue, Sep 29, 2026 at 01:44:29PM -0400, Sean Meadows wrote:
 > 
-> Thanks for taking time to review my patches. Will update this in v2.
+> On 9/25/26 11:05, Jarkko Sakkinen wrote:
+> > 
+> > Thanks for providing the information.
+> > 
+> > Bugzilla bug under discussion: https://bugzilla.kernel.org/
+> > show_bug.cgi? id=217890
+> > 
+> > I also found fix attempt of which 3rd version somehow went past me:
+> > 
+> > https://lore.kernel.org/all/20240308145313.40932-1-adamoa@gmail.com/
+> > 
+> > Does this or disabling hwrng sort out the issue?
+> > 
+> > I got one other idea too with no empirical basis (just hypothesis): perhaps
+> > release memory mapping on suspend could help firmware.
+> > 
+> > 
+> > Br, Jarkko
 > 
-> > > +	crb_apply_vendor_quirks(priv, chip);
-> >
-> > I.e., all this complexity equals to:
-> >
-> >         if (crb_vendor_id(priv) == CRB_INTF_VID_AMZN)
-> >                 chip->busy_timeout_ms = CRB_AMZN_BUSY_TIMEOUT_MS;
-> >
-> > ?
+> Acknowledged.
 > 
-> Yes. I added the table to keep vendor specific quirks out of the probe
-> and could be extended without touching the probe. tpm_tis_core does
-> something similar with vendor_dur_overrides. what do you think? I am
-> happy to switch to the plain check if you prefer.
-
-See my suggestion for 1/2.
-
-I.e. we need two patches:
-
-1. One that makes all duration assignments indirect lookups to
-   chip->duration in the main TPM driver.
-2. This patch should then update that array.
-
+> Disabling HWRNG via kernel cmdline failed, and since my research implied
+> that path would require a custom kernel, I shifted my efforts toward
+> forward-porting Mr. Alves's 2024 patch to 7.2.7. It took some work, but
+> I have successfully compiled it and got it booting on my machine.
 > 
-> Thanks,
-> Surendran
+> The patch appears to sort out the issue so far, but I'm only 43 hours
+> into the test. As we discussed previously, this bug can take days to
+> manifest, so I will reply again once I cross a week of sleep cycles
+> without a crash.
+> 
+> I also have a USB3 debug cable on the way in hope of capturing the
+> hardware state during the power transition. That said, if Mr. Alves's
+> patch continues to work as well as it has so far, there may not be any
+> need for that.
+> 
+> Sean
+
+There's a commit with title "tpm: Call cmd_ready/go_idle for each command
+transmission", which is strongest contender to make a difference to this
+long running issue.
+
+I.e. I think it will improve firmware behavior given full release of
+resources per TPM command.
+
+I'm including it to v7.4 pull request.
 
 Br, Jarkko
