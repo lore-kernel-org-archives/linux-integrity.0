@@ -1,138 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com [74.125.227.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9159434B1A2;
-	Tue, 29 Sep 2026 22:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D3F377A94
+	for <linux-integrity@vger.kernel.org>; Wed, 30 Sep 2026 03:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790721293; cv=none; b=VBNYzbm4tVrlFM4D/z7Y6/ICBbk/rLELKxS6mUxoP3v8+EYO6T+swOgElsqD3bozmweS9wFNYxNKjohmq1ObFT/fdI3etbFY/0Vf/IGm6Dz0UCv/GatDnoGveNqEpJpnUenxvT3R4zPir/OV48aSOy2gs+dTBvExeybzvGtZ1UE=
+	t=1790739195; cv=none; b=jiMfAQzI3+LOxON4IGLrxbtYOsOUPNpoD6uulGbszpMj990MmGKdGCAJRVsn8zpuk3HQc2OJ+TT1oqF2thGc/ixCXtqTUdfYO+ImC6eLzMA4NgFr0ZEu3klt2TIClEOf5XYvYtVCJYJi0i/NpRP/gixoAXGVwwsWoYFvvvkOJhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790721293; c=relaxed/simple;
-	bh=A3kJlSFdcuOCiUm4bW2a0Z+0tSREzC6TX9OwAb3V5kQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GbT6dfyliYfUjKfEss3XK6tLDkJ72yTCi2k9ny30CE9MMs4c05sd6fXBG8csmOZM5ODqcI0BHn2DDW3v4BjkZ0fArdjVPNj59IagKfPDOBIKMb1ZgZEo9jd5uIZ0G8CHYIx6y2xWV88vEL7BY5p8Hp+MtF4BfqReQGtiTrwflkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5h736SE; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790739195; c=relaxed/simple;
+	bh=C5KTfbJItTTfLKyd2Nny7nU/poP0EOmgsN02i1wxWS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Fe9vuuWobT6AiEpK/3xqKmYQk75NyCN8polq8lg9Oki1RGjbTYAelN2dO6rOU61HXLb4CANQNyna5HguUqBtFXDNwKIqw60ARPNix8e9f9SYoYudssulyZ5Q8wl4smBj2tqG8FTiied2vKn9KDgmIRlfCZGz0YvjT7pc81Iz4r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FzD1x6Ta; arc=none smtp.client-ip=74.125.227.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5h736SE"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8DEED1F000FF;
-	Tue, 29 Sep 2026 22:34:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790721292;
-	bh=7Jv9I+GMANQP9pLmot5B/d4pg1K6Q2hX7SaokF+WT1U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=d5h736SEn23ntG/Au/8e1Mbm1+gX2izYZqg1tBCMtSOlhCpZ1hTRXFtHKeBy47NoH
-	 QLaAaDkUoC5D8FsctjLAKBDYosYM7vyhxB4D8L9byjv800G7f5JEdiZ9zFOfrSMLKj
-	 IoLfARj6hsHBmu8i6PkXuMI0DvdaUZJc+hlnu/VM80AJ966WHZp6lSJ93SIuZb8fhR
-	 4FP48jyp7qGgsSz3zaKbU0pbV5xfbbeZT4kDeScqH4bbIl91gttcRwHlgOfiRy+ZwS
-	 7/aHHmfxFmVZ8HtjeaB6PWt0eTZImPMZo4EbHdDxShk+l2XQt2nOZI88VJUmHUNca2
-	 JOWTra2EFrMJA==
-Date: Wed, 30 Sep 2026 01:34:48 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Yuqi Xu <xuyuqiabc@gmail.com>
-Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FzD1x6Ta"
+Received: by mail-pj2-f43.google.com with SMTP id 98e67ed59e1d1-396ccd66bb4so2199423a91.1
+        for <linux-integrity@vger.kernel.org>; Tue, 29 Sep 2026 20:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790739188; x=1791343988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=C5KTfbJItTTfLKyd2Nny7nU/poP0EOmgsN02i1wxWS8=;
+        b=FzD1x6TaMXW/7kul3dD6K4OyYO79+c+9YKdNc6Yv2Opneo9SkZdZFxISW/0qc6LZwC
+         y7rRouKLj6gb8ZJfSN+X1CjBDiAyTxonoNQKwwpBkL6ksFQkmkvFJTmlxQbBz47N+3DG
+         ntb+jRgTSQMcftm2JDQhTfou/QcICpmteWIg5ykAB69BI1sPzoF2+jgORt+OCjsxV8sg
+         79+iTBRUOip1N62gu3Qy4WjPjuRIjMaOoCpm/VhOQg+ABirm3CWHGpssSrUHoiRzohFy
+         c2t7eQ+xwbDaEeilCBiCVC8btpkOGXyH6NzOcpk0KZjqFFU/IvWfw+ID9CdHWuOL7+aH
+         C33A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790739188; x=1791343988;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=C5KTfbJItTTfLKyd2Nny7nU/poP0EOmgsN02i1wxWS8=;
+        b=mKsJiqeG7FQJ0tx5piuX9mO1pAski9C5GZP1+ldGLtrQklLzunSWpaSSTJEaMKiue/
+         air8wbJoNI9gC8flkABtfly5D737mgHRZMe8YcZNqbWnnWfsh6l3KP6QEZ3OWoEOvS58
+         yChgfGAB4eY6XCuwv2MQNaqpGklfPxl9yiOWY/NEEuHih2z/Rrj/pg0cMZ2D4vhqWd0e
+         SlFVbY6QCK3VETAgX635hpMzBP0olTSm1jgZGxq+YMwBW3QaDqoWOJcgdlhmzBLAHXeq
+         z6oWgoP/n3Dt97/t2nk/n5pLR30jXcmvlDST1IGUTSeljYbbAcJBItTnI0Qj+D9zz1SM
+         zVoA==
+X-Gm-Message-State: AFq9FYLZ1EVTSt7PoRLSJYTfIwllxn8t0f53kZOUEKrIiLKfWvu0Lmw8
+	XlzzSa1d/CIiVzSP3m3olLFOZ+DEh1xdloN+0CeOaj50hGG4ibI+0c5W3kIjqA==
+X-Gm-Gg: AYBFou3iGzzBLDoOU49D8Mo3QEKlIFucMjG5ru8O0n0oid7LoqM3qN575e8rpwl/SEd
+	bklU7yb/IO7XefzNy3dSKXl47YEA1XfyICgtSwkCbDr8qsGdwXX27lBegZNaJ7IQtSGo3IB2FcK
+	Y5XY3N7wg6zd79Lu7aPLJuOJqA8CeJzOFjVDbePeS3t/i07QR6QmdusIM1JMpRgx0fH4+7AUlsP
+	pCC95Pr9Xaa4loK7BLA4x8+J1uPJZ+NAmVnXUJt42fpTa773GuULgwRgNym//zvY4x9suObc+82
+	oHGFUSGaxypT+cBkmWXDYJXvcCl+Vt9NX6tGlxsCed52qKdu0Pt0wv/RmBjheza+69dEUZEO8Mv
+	2jTe1dZimQFbUjaOOedAkfIzNN9rVnGQEf3qDxfJnL6pEmc1F6B903BHCyeON/JIPh4mUshp5B7
+	06CBQxeNS7td6xqjz70S+PCTpRllTUwgFn+RLz3JoJ0nK/2Oo1wjJbSkPUme3TDric724DrLcNx
+	6gLILA+KeseoqrU9JEwBdBYPd7KPrmSTzi8jlX/aJhdsU8JIOjJ1rMfr5/SlinLMfxGFyF043B3
+X-Received: by 2002:a17:90a:d446:b0:39e:6a81:5a98 with SMTP id 98e67ed59e1d1-3a4d1b45841mr94775a91.44.1790739188069;
+        Tue, 29 Sep 2026 20:33:08 -0700 (PDT)
+Received: from lenovo-thinkbook.lenovo.com (n11212025079.netvigator.com. [112.120.25.79])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a4ca7810d6sm1184417a91.6.2026.09.29.20.33.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Sep 2026 20:33:07 -0700 (PDT)
+From: Yuqi Xu <xuyuqiabc@gmail.com>
+To: linux-integrity@vger.kernel.org
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
 	Jason Gunthorpe <jgg@ziepe.ca>,
 	Jerry Snitselaar <jsnitsel@redhat.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	stable@vger.kernel.org, Vega <vega@nebusec.ai>,
-	Ren Wei <weir@nebusec.ai>, xuyq21@lenovo.com
-Subject: Re: [PATCH v2 1/1] tpm: reject duplicate PCR banks in
- tpm2_get_pcr_allocation
-Message-ID: <arw9CHc4mIOm5C6Q@kernel.org>
-References: <cover.1790568982.git.xuyuqiabc@gmail.com>
- <9d27c4513a3c6fc32f9574ba192cd3bfcb2bac98.1790568982.git.xuyuqiabc@gmail.com>
- <arwssp0czGg9XKv7@kernel.org>
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	stable@vger.kernel.org,
+	Vega <vega@nebusec.ai>,
+	Ren Wei <weir@nebusec.ai>,
+	xuyq21@lenovo.com
+Subject: Re: [PATCH v2 1/1] tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation
+Date: Wed, 30 Sep 2026 11:33:00 +0800
+Message-ID: <20260930033300.30295-1-xuyuqiabc@gmail.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <arw9CHc4mIOm5C6Q@kernel.org>
+References: <cover.1790568982.git.xuyuqiabc@gmail.com> <9d27c4513a3c6fc32f9574ba192cd3bfcb2bac98.1790568982.git.xuyuqiabc@gmail.com> <arwssp0czGg9XKv7@kernel.org> <arw9CHc4mIOm5C6Q@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <arwssp0czGg9XKv7@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 30, 2026 at 12:25:06AM +0300, Jarkko Sakkinen wrote:
-> On Mon, Sep 28, 2026 at 04:27:00PM +0800, Yuqi Xu wrote:
-> > The TPM2_CAP_PCRS response is external input. tpm2_get_pcr_allocation()
-> > adds every active selection to allocated_banks, while
-> > tpm_sysfs_add_device() has one group slot per distinct hash algorithm.
-> > Eight duplicate selections can therefore write past chip->groups[].
-> > 
-> > The TPM protocol does not allow a hash algorithm to appear twice in
-> > this capability response. Treat a duplicate as a broken TPM and return
-> > -EIO so the chip is not enabled, instead of silently dropping the
-> > extra selection.
-> > 
-> > Fixes: aab73d952402 ("tpm: add sysfs exports for all banks of PCR registers")
-> > Cc: stable@vger.kernel.org
-> > Reported-by: Vega <vega@nebusec.ai>
-> > Assisted-by: LLM
-> > Signed-off-by: Yuqi Xu <xuyuqiabc@gmail.com>
-> > Reviewed-by: Ren Wei <weir@nebusec.ai>
-> > ---
-> > Changes in v2:
-> >  - Return -EIO on a duplicate PCR bank instead of silently ignoring
-> >    it, as requested by Jarkko Sakkinen. A duplicate violates the TPM
-> >    protocol, so the chip is not enabled.
-> >  - v1 Link: https://lore.kernel.org/all/cover.1789800840.git.xuyuqiabc@gmail.com/
-> >  drivers/char/tpm/tpm2-cmd.c | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> > 
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index ae22295df798..a94f4395c198 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -527,6 +527,7 @@ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
-> >  	u32 rsp_len;
-> >  	int rc;
-> >  	int i = 0;
-> > +	int j;
-> >  
-> >  	struct tpm_buf *buf __free(kfree) = kzalloc(TPM_BUFSIZE, GFP_KERNEL);
-> >  	if (!buf)
-> > @@ -569,6 +570,23 @@ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
-> >  		pcr_select_offset = memchr_inv(pcr_selection.pcr_select, 0,
-> >  					       pcr_selection.size_of_select);
-> >  		if (pcr_select_offset) {
-> > +			for (j = 0; j < nr_alloc_banks; j++) {
-> > +				if (chip->allocated_banks[j].alg_id == hash_alg)
-> > +					break;
-> > +			}
-> > +
-> > +			/*
-> > +			 * The TPM protocol does not allow the same hash
-> > +			 * algorithm twice.  A duplicate means this device
-> > +			 * is not behaving; do not enable it.
-> > +			 */
-> > +			if (j != nr_alloc_banks) {
-> > +				pr_err("tpm: duplicate PCR bank for algorithm 0x%04x\n",
-> > +				       hash_alg);
-> > +				rc = -EIO;
-> > +				break;
-> > +			}
-> > +
-> >  			chip->allocated_banks[nr_alloc_banks].alg_id = hash_alg;
-> >  
-> >  			rc = tpm2_init_bank_info(chip, nr_alloc_banks);
-> > -- 
-> > 2.55.0
-> > 
-> 
-> Yeah, so in some places like this some of the TPM driver code does
-> return -EFAULT but I'd like to progressively refactor so that any
-> corrupted traffic is always -EIO and use -EFAULT for memory related
-> issues. 
-> 
-> Thank you!
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Wed, Sep 30, 2026 at 01:34:48AM +0300, Jarkko Sakkinen wrote:
+> No need to resend a new version but I'd need a link to the *report* to
+> retain reported-by tag here.
 
-WARNING: Reported-by: should be immediately followed by Closes: or Link: with a URL to the report
-#18:
-Reported-by: Vega <vega@nebusec.ai>
-Assisted-by: LLM
+https://bugtracker.nebusec.ai/f/675
 
-No need to resend a new version but I'd need a link to the *report* to
-retain reported-by tag here.
+This is the report. The page requires a sign-in or registration
+before it opens.
 
-Br, Jarkko
+Thanks,
+Yuqi Xu
