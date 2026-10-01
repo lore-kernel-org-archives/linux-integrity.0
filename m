@@ -1,85 +1,99 @@
-Received: from pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.12.53.23])
+Received: from mail-43101.protonmail.ch (mail-43101.protonmail.ch [185.70.43.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139BD3C457D;
-	Wed, 30 Sep 2026 19:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.12.53.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8316C3B3891
+	for <linux-integrity@vger.kernel.org>; Thu,  1 Oct 2026 05:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790795768; cv=none; b=OWA+GHf2Rwrgt+I7+VXLWcA4qK5FghM8OI9YajVA0EuRByos+EWSUYV+oEOw4Qk+bxnNNI3jM32SIfdjpc6MCtmksTjQzBS3EH6U2J5RAHbW9uD9vVY6qNYmD6zuOY3YLN3F/EQ5eiYx4VCoi3zd4hpV0/TlJFfL22dENyJkDp0=
+	t=1790833848; cv=none; b=nDefWdE+2p1ysbsJtcfTv25UwW++cGoxPVWu4et70VXh/PbBUrtiXvAsC+qYPz9JhZV8CWvWouGl+MxHfzN/asbc3xlIi87EnJ5y7AEUl1uiQnxL3k6N3oxDFS1l1/Suj94w+A8BiKkg7LHp5FUV7OcTyTdOY5KpeQrGdCuC8fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790795768; c=relaxed/simple;
-	bh=NZ5wwC5Jlg0IpJyLFNo4+HGeXNndofreykcdAtV6ZL0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FVJGHq+8ZI4v+FujjlDGIvJ+if3xF90YbXeao6U8b/TFHqXm0kruG4WX2iJ0p48oDT8GDHN47Lvefzm3MsNetEM1ZtyfBSy0z48P9W8zZI9ZexZNez8DfIYtHHDRnsBvtLYilgix/TXdG+xK/XaSc+y26gWCT1m2uShvjzqs5G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=AQv07yeW; arc=none smtp.client-ip=52.12.53.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1790833848; c=relaxed/simple;
+	bh=LHvwzomglSZ+GGcJZchaw/w0UsqiVLKCXgj9Oi0J3zg=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LhhZJc3im48lo0R7ViW9UnETdIrMY4yo38wKnklvywJHWr4qfz617yhCR41yROWD/q6IdF1qxLK69rr26uUlIox+GpEJjgoRD+auyALtncBWnv7Qr21a0+44FaBw82vi4AXAcCpJiuKLMm399JxCwpNDeRkRloPvuSeMzt7Bht0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=ANBwIvp1; arc=none smtp.client-ip=185.70.43.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="AQv07yeW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1790795767; x=1822331767;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DRrrQnuUVcuozrp3PeKrAq/l0kufNg6YIsMfYm1mJhU=;
-  b=AQv07yeW6azkSi5KXwcd3eEAdJyeVEpH0RlIBiNfhnzhHGV0d8mVOktW
-   WWr0O/CcQs+82f7qwTe7ojSZyW/AugrZq61T8HbwGBXnmwLCfhH1oBgOw
-   5Ej6ThHYZgDaCqTasIpVL6Vpqor6nXvUqKFtWV8wKtYchQxeQ8LoESCK4
-   vdkoTLBF0VCT+GEbZc9oYXe7raYGVU3cxw+e5ckdXymY8Ik1JKdwKtsig
-   /n7K52GqeLO6ufXfswmxkmSDYB/CUaQuoV9RIihoc9AZ0FMWzDVyxJTFc
-   sjJLNbyj15uNxY8mRNuBLcJLh39NE8EKpyZvqdV/GPmimzw1zEN6PDnlV
-   w==;
-X-CSE-ConnectionGUID: d3JOrCyNSaq7eoCyWoOIVw==
-X-CSE-MsgGUID: kFdaw8MiTva0/sJF4Y1vog==
-X-IronPort-AV: E=Sophos;i="6.27,133,1787011200"; 
-   d="scan'208";a="29932371"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2026 19:16:03 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [205.251.233.51:8284]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.213:2525] with esmtp (Farcaster)
- id c29106ad-99f3-4f2e-bd33-0a8b56f7bf1f; Wed, 30 Sep 2026 19:16:02 +0000 (UTC)
-X-Farcaster-Flow-ID: c29106ad-99f3-4f2e-bd33-0a8b56f7bf1f
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
- Wed, 30 Sep 2026 19:16:02 +0000
-Received: from dev-dsk-surenkj-2b-416930d2.us-west-2.amazon.com (10.169.26.94)
- by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
- Wed, 30 Sep 2026 19:16:02 +0000
-From: Surendran Kanagaraj <surenkj@amazon.com>
-To: <jarkko@kernel.org>
-CC: <leitao@debian.org>, <graf@amazon.de>, <gunnarku@amazon.com>,
-	<jgg@ziepe.ca>, <joshlev@amazon.com>, <linux-integrity@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <nh-open-source@amazon.com>,
-	<peterhuewe@gmx.de>, <surenkj@amazon.com>
-Subject: Re: [PATCH 2/2] tpm_crb: Raise timeouts for Amazon NitroTPM
-Date: Wed, 30 Sep 2026 19:15:59 +0000
-Message-ID: <20260930191559.83568-1-surenkj@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <arw6GJymRFjesinz@kernel.org>
-References: <arw6GJymRFjesinz@kernel.org>
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="ANBwIvp1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1790833839; x=1791093039;
+	bh=8ksQy6MeanfkvfpHQut3hQ6xN1hUcsCd/pALFRS+d1A=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=ANBwIvp1/ocowntL22wAN4kLe7moxsFWk60wzZE3feu/nI9zJ9GkL/LVDTmQfALs0
+	 MT0ibl8G+v0sTu+q1a/5/9YbOSL05r7wkKQfsvNCuUT9QI22m6n6V5lS8Y+PVSm1PZ
+	 rc5RG8Auvi6ZxLGOBwnd+TtghDLlK99wxbrybcfNBtefVnB0L/xBVsB2WcEWWo9Z/2
+	 e0OIKnbyv1DbhM3h9st1lSUufUFNAQjAWUkfoXALpfl9UHQTJn29CFSbHiysqNaEMB
+	 mNz+uqjE+XWErGXSN22IQhwduzO7NKdQShrikpq78ljeR8IAJrn4OqjosTBx3B2kse
+	 aWg1T1dLu6yNA==
+Date: Thu, 01 Oct 2026 05:50:34 +0000
+To: kuldeep.singh@oss.qualcomm.com
+From: zeroknots <zeroknots@protonmail.com>
+Cc: amirreza.zarrabi@oss.qualcomm.com, jarkko@kernel.org, jenswi@kernel.org, jgg@ziepe.ca, linux-arm-msm@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org, peterhuewe@gmx.de, sumit.garg@kernel.org
+Subject: Re: [PATCH v2 0/3] Add TPM support via Qualcomm TEE TPM TA
+Message-ID: <20261001055029.1960743-1-zeroknots@protonmail.com>
+Feedback-ID: 44664438:user:proton
+X-Pm-Message-ID: 5be19f9a5cd05f46b76827da84152667a78aadda
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 30, 2026 at 01:22:16AM +0300, Jarkko Sakkinen wrote:
-> See my suggestion for 1/2.
->
-> I.e. we need two patches:
->
-> 1. One that makes all duration assignments indirect lookups to
->    chip->duration in the main TPM driver.
-> 2. This patch should then update that array.
+Hi Kuldeep,
 
-Makes sense. Thanks. I will rework it and send v2 after testing.
+A data point from retail hardware, in case it is useful for this
+series: on an ASUS Zenbook A14 UX3407NA (Glymur, X2E-88-100, BIOS
+UX3407NA.315) the TPM TA is not reachable as QTEE service 81, but it
+is present as the QSEECOM application "qcom.tz.tpm".
+
+With the qcomtee driver on a 7.3-rc3 based kernel, QTEE reports
+version 5.2.0, and service discovery finds neither 81 (TPM) nor 413
+(UEFI secure app). On the same boot, qseecom (version 0x1402000) works
+and backs efivars through "qcom.tz.uefisecapp" (app id 7). An app-id
+lookup for "qcom.tz.tpm" returns app id 1; a made-up name returns
+-ENOENT.
+
+The Windows driver for this machine agrees: QcTrEE8480.inf configures
+the TPM service with AppName=3D"qcom.tz.tpm", SecureApp=3D1, LoadApp=3D0
+(preloaded by firmware). The EFI configuration table carries the
+TPMEventLog and TPMFinalLog entries, so the firmware TPM is active.
+
+Through that app, using a QSEECOM transport (based on Xilin Wu's
+out-of-tree SC8280XP driver: QUERY_INFO_2 / SEND_COMMAND with a
+CRB-style control area, here at 0x81d10000), /dev/tpm0 works: TPM 2.0,
+manufacturer QCOM, vendor string "xCG fTPM", firmware 0x40000, real
+PCR 0-7 values, GetRandom, ECC and RSA-2048 primaries, sign and
+verify, and a sealed object that persists across reboots.
+
+So, as far as I can tell, retail Glymur laptops may ship firmware on
+which this driver finds no TPM, while the same TA is available over
+QSEECOM.
+
+The same applies to the prerequisite series that moves uefisecapp to
+QCOMTEE [1]: on this firmware service 413 is absent and EFI variables
+work only through the QSEECOM uefisecapp. If the QSEECOM path were
+dropped for Glymur, efivars would stop working on this machine, so it
+would be good to keep it as a fallback when the QTEE service is not
+found.
+
+Two questions:
+
+ - Is service 81 expected to appear on retail firmware through an
+   update, or is it specific to the CRD firmware?
+ - Would you consider a QSEECOM-based path for such firmware? I am
+   happy to test this series, or any other service UID you would like
+   checked, on this machine, and to share the transport code.
+
+[1] https://lore.kernel.org/lkml/20260722-qcom_uefisecapp_migrate_qcomtee-v=
+2-0-b8a8fcbe4211@oss.qualcomm.com/
 
 Thanks,
-Surendran
+zeroknots
+
+Assisted-by: LLM (analysis and drafting; the measurements were made on
+the hardware and reviewed by me)
+
