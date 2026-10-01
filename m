@@ -1,99 +1,93 @@
-Received: from mail-43101.protonmail.ch (mail-43101.protonmail.ch [185.70.43.101])
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8316C3B3891
-	for <linux-integrity@vger.kernel.org>; Thu,  1 Oct 2026 05:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDA145629D
+	for <linux-integrity@vger.kernel.org>; Thu,  1 Oct 2026 06:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790833848; cv=none; b=nDefWdE+2p1ysbsJtcfTv25UwW++cGoxPVWu4et70VXh/PbBUrtiXvAsC+qYPz9JhZV8CWvWouGl+MxHfzN/asbc3xlIi87EnJ5y7AEUl1uiQnxL3k6N3oxDFS1l1/Suj94w+A8BiKkg7LHp5FUV7OcTyTdOY5KpeQrGdCuC8fg=
+	t=1790834491; cv=none; b=fWfF2o6hqYapp8sfehb3Q8lpCmpCcWEz6aQnSDosy3NZkht3doU8EIyslLao3zIgco/WfFeGhKX6flp0B+UESlw0B8I70yGBVThHguY9+wkhEUsFdcCS9B/rVFNzGJXmUkxj0h/WUkDjRPvSGzjZjrMxn6W2nFZbwU3pE1hRKk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790833848; c=relaxed/simple;
-	bh=LHvwzomglSZ+GGcJZchaw/w0UsqiVLKCXgj9Oi0J3zg=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LhhZJc3im48lo0R7ViW9UnETdIrMY4yo38wKnklvywJHWr4qfz617yhCR41yROWD/q6IdF1qxLK69rr26uUlIox+GpEJjgoRD+auyALtncBWnv7Qr21a0+44FaBw82vi4AXAcCpJiuKLMm399JxCwpNDeRkRloPvuSeMzt7Bht0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=ANBwIvp1; arc=none smtp.client-ip=185.70.43.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	s=arc-20240116; t=1790834491; c=relaxed/simple;
+	bh=s8QHmFfdYbxj6LfMi5s9V6AqzJvC4+y4v4UsIH3ShyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ST4s9emVtPGEFDUXeX+3NI+NCp40YhWGVMdTi1dz6kpKd00qwACnaVYvu5Ubg3/88pb7CcNgfa4FLY9BktR/OiZ9hOtF0QH4TY7ypZj9c5CqEPZ8ThGuLUA1LSAkDPXVu0n2hYAVX3mx09ngR5s48f/NPkstl/cKba0pmnwc0DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=JqPrx0lY; arc=none smtp.client-ip=185.136.64.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="ANBwIvp1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1790833839; x=1791093039;
-	bh=8ksQy6MeanfkvfpHQut3hQ6xN1hUcsCd/pALFRS+d1A=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=ANBwIvp1/ocowntL22wAN4kLe7moxsFWk60wzZE3feu/nI9zJ9GkL/LVDTmQfALs0
-	 MT0ibl8G+v0sTu+q1a/5/9YbOSL05r7wkKQfsvNCuUT9QI22m6n6V5lS8Y+PVSm1PZ
-	 rc5RG8Auvi6ZxLGOBwnd+TtghDLlK99wxbrybcfNBtefVnB0L/xBVsB2WcEWWo9Z/2
-	 e0OIKnbyv1DbhM3h9st1lSUufUFNAQjAWUkfoXALpfl9UHQTJn29CFSbHiysqNaEMB
-	 mNz+uqjE+XWErGXSN22IQhwduzO7NKdQShrikpq78ljeR8IAJrn4OqjosTBx3B2kse
-	 aWg1T1dLu6yNA==
-Date: Thu, 01 Oct 2026 05:50:34 +0000
-To: kuldeep.singh@oss.qualcomm.com
-From: zeroknots <zeroknots@protonmail.com>
-Cc: amirreza.zarrabi@oss.qualcomm.com, jarkko@kernel.org, jenswi@kernel.org, jgg@ziepe.ca, linux-arm-msm@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org, peterhuewe@gmx.de, sumit.garg@kernel.org
-Subject: Re: [PATCH v2 0/3] Add TPM support via Qualcomm TEE TPM TA
-Message-ID: <20261001055029.1960743-1-zeroknots@protonmail.com>
-Feedback-ID: 44664438:user:proton
-X-Pm-Message-ID: 5be19f9a5cd05f46b76827da84152667a78aadda
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="JqPrx0lY"
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20261001060116b4cc19aa3e00020717
+        for <linux-integrity@vger.kernel.org>;
+        Thu, 01 Oct 2026 08:01:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=QRo8GBuRiwb3EQHOfAciTtVSfngLutrv6EYFrkZSa5E=;
+ b=JqPrx0lY8R9IanCLnR1xelLAhlP4JRa8Y2bP784ejWYXKWALHvHbZXR68xaVU2dMtGHJYY
+ wCRu/UVwc6zhsyp6cklLWlNr/mIHJ4DSr9UJR7nVOhGLM9m8uBpGmI1AKW5h1JGVMjOpA5r2
+ kS3EmNJ1rxzUZk9bGUNrMxzcC37NzKA8dyQSSJpskBpemtjs6giVUSkA20o/e4HflM2PkXft
+ MkijoZHfo0cfWICoWGhhnaEfUWwl48rAfoSqhij2MiMNbGrQv7Zi0DgVUvqvenQrHg6bILlj
+ yZ73e130QkfEA7bf2CVbd/iVWzYNFhTtXEGGbUwrNzy2ZelVqoBEhXoA==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: linux-integrity@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jay Freyensee <why2jjj.linux@gmail.com>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
+	Nayna Jain <nayna@linux.vnet.ibm.com>,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] tpm: tpm2_probe: propagate transport errors
+Date: Thu,  1 Oct 2026 08:01:11 +0200
+Message-ID: <20261001060114.1582092-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-Hi Kuldeep,
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-A data point from retail hardware, in case it is useful for this
-series: on an ASUS Zenbook A14 UX3407NA (Glymur, X2E-88-100, BIOS
-UX3407NA.315) the TPM TA is not reachable as QTEE service 81, but it
-is present as the QSEECOM application "qcom.tz.tpm".
+tpm2_probe() reads the protocol version from the response tag and is
+documented to return -errno on failure, but it always returns 0.  A
+transport error (tpm_transmit_cmd() < 0) is thus swallowed together with
+the intentionally ignored TPM response code, leaving TPM_CHIP_FLAG_TPM2
+unset. A transient bus failure on the first command then misdetects a
+TPM 2.0 as a 1.2 and the probe fails on the TPM 1.2 path:
 
-With the qcomtee driver on a 7.3-rc3 based kernel, QTEE reports
-version 5.2.0, and service discovery finds neither 81 (TPM) nor 413
-(UEFI secure app). On the same boot, qseecom (version 0x1402000) works
-and backs efivars through "qcom.tz.uefisecapp" (app id 7). An app-id
-lookup for "qcom.tz.tpm" returns app id 1; a made-up name returns
--ENOENT.
+  tpm_tis_i2c 0-002e: 1.2 TPM (device-id 0x1C, rev-id 22)
+  tpm tpm0: A TPM error (-62) occurred attempting to determine the timeouts
 
-The Windows driver for this machine agrees: QcTrEE8480.inf configures
-the TPM service with AppName=3D"qcom.tz.tpm", SecureApp=3D1, LoadApp=3D0
-(preloaded by firmware). The EFI configuration table carries the
-TPMEventLog and TPMFinalLog entries, so the firmware TPM is active.
+Return the transport error instead; rc >= 0 still means a valid header was
+received and the TPM's own response code is still ignored.
 
-Through that app, using a QSEECOM transport (based on Xilin Wu's
-out-of-tree SC8280XP driver: QUERY_INFO_2 / SEND_COMMAND with a
-CRB-style control area, here at 0x81d10000), /dev/tpm0 works: TPM 2.0,
-manufacturer QCOM, vendor string "xCG fTPM", firmware 0x40000, real
-PCR 0-7 values, GetRandom, ECC and RSA-2048 primaries, sign and
-verify, and a sealed object that persists across reboots.
+Fixes: 94e266ba1fa3 ("tpm: migrate tpm2_probe() to use struct tpm_buf")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+ drivers/char/tpm/tpm2-cmd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-So, as far as I can tell, retail Glymur laptops may ship firmware on
-which this driver finds no TPM, while the same TA is available over
-QSEECOM.
-
-The same applies to the prerequisite series that moves uefisecapp to
-QCOMTEE [1]: on this firmware service 413 is absent and EFI variables
-work only through the QSEECOM uefisecapp. If the QSEECOM path were
-dropped for Glymur, efivars would stop working on this machine, so it
-would be good to keep it as a fallback when the QTEE service is not
-found.
-
-Two questions:
-
- - Is service 81 expected to appear on retail firmware through an
-   update, or is it specific to the CRD firmware?
- - Would you consider a QSEECOM-based path for such firmware? I am
-   happy to test this series, or any other service UID you would like
-   checked, on this machine, and to share the transport code.
-
-[1] https://lore.kernel.org/lkml/20260722-qcom_uefisecapp_migrate_qcomtee-v=
-2-0-b8a8fcbe4211@oss.qualcomm.com/
-
-Thanks,
-zeroknots
-
-Assisted-by: LLM (analysis and drafting; the measurements were made on
-the hardware and reviewed by me)
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index a94f4395c198a..4b2bb2ddc321a 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -483,8 +483,9 @@ int tpm2_probe(struct tpm_chip *chip)
+ 		out = (struct tpm_header *)buf->data;
+ 		if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
+ 			chip->flags |= TPM_CHIP_FLAG_TPM2;
++		return 0;
+ 	}
+-	return 0;
++	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm2_probe);
+ 
+-- 
+2.55.0
 
