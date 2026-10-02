@@ -1,43 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556D926AC5;
-	Fri,  2 Oct 2026 03:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF21247291;
+	Fri,  2 Oct 2026 05:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790912680; cv=none; b=TpYGKwBpE+k5n7a6SqdOU8VzS2x1TNDoub3pOQ6A3PWH0G+hlgSWLsvZmn7S/cgdkOE8cNQ73KMhZc1bn+kKdQogq1eiuSF74XNKZ8tjvK6Cl6+jNNgMssKBM5hSMOFM4Dsrjs4wStT1ZhyLTcLECV3LQ7SPuBbLgU6ZHldLhxM=
+	t=1790919680; cv=none; b=P2sjV1XpkKsyCSTm62tFWSwVXWUPelA6ogWbvBkaO0M4KbC+Eas4aWvL7fKq6P13nsISI5BkKhGEriCJqQBkP5uwdgSIVep4cvNLqdtZyGokdGY4zluYfo4T4YwHmtI/R0vdYCVmNuL5DzCTsiwhL4THBRrfC1x+n5VrfBY6zv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790912680; c=relaxed/simple;
-	bh=ILPpPq8Vser1NH+/VD1JhEO+iKNEFYL2zNBTQTEwhS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jFFvamxapHhUnK+B0sMAq3r51SRybk9PyNRqgnpaocP0hhLjIaBXPEoESJdf78Oz6/5l/VD2CaXuap/iXX4YZPXgvAWFLPZOgLko/6Gfr98SLj1kdKchPTaafdkUudQraNz5pObEosuFE9NZ6uHsjmzwhAdKPq7dWdJ7iCeg+4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4AUjpod; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790919680; c=relaxed/simple;
+	bh=jFrquyh0KzBfk62Vk19NncU4x/89uYpsShFOT9gFLi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NBvgDlxHiDYY2h1ZQ9jRScKYxQlDlXhhkjZVYdkKDzKnzJxSwvd9WLbJlRNSpPUPWaE/zSQaWek8XxSMd/M5RmFV1ree3RbPW6R44YPH9spkE+YHeo5GIaYHPTr/CUYoyNI1HkMjHbxaBLnfcclvmbhzfjsV72W7xLlRT7sfH6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvBvGCEN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4AUjpod"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 821AC1F000FF;
-	Fri,  2 Oct 2026 03:44:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvBvGCEN"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 770A41F000FF;
+	Fri,  2 Oct 2026 05:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790912679;
-	bh=ya+ofgI7W4YYzdVJENAGjbAvZq2LEFB3huWIBYBKhXI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=g4AUjpodLKOORKyWJrnaPsRWHMsJuCm9GsZlgKFAcwmZBcV8jTcW6rE0lRdFRqBwr
-	 CjOlB4jiCZhVvUebh5+D1PA3wxjFRGo89YpLMvQ/KpWztSgxKEerBCtL0+D7zxj/bp
-	 ffkCnGvw7nBLiVRjSX3lFp5pz0DG5VFAUYgPF9er9dp530nMQ4RGwYALLwbW+HJOa6
-	 ZRvtAoRZX31s1zSkjvS2XBXm1M/LTNvVxBgA3IuncnddEgnOelprfOAK1Agl8XQkNt
-	 WQv6FAceX4unesNo1tCQrCFUPVPv412hWhvb0SWtgYzvf8UoF1u5bGGWvzOD/AMYa4
-	 2tm1O9RbEbGJg==
-Date: Fri, 2 Oct 2026 06:44:34 +0300
+	s=k20260515; t=1790919679;
+	bh=8tg2oYmq3RO1SCq8rpxRbKnkrPEolpP2Yk8HAvjhLx0=;
+	h=Date:From:To:Cc:Subject;
+	b=bvBvGCENFurEjEWysC/ltI6DmIo3fuFg0Ga0U0Gt4E1OL5ho+zPTaW3DF4Vy7aTPr
+	 RvwE256Gmq1U1XtPMThoqX9DnQdn8WcFt9m+/CYBx31fDuYhBsSR0Owhb4rxJ047Uk
+	 iWrtUnq5guHJE2wWHWdCsVOD6saPIySB+eWSbZhJ2/jIDj0wauHiBGm8GfHjl1Fvm7
+	 irhQYXj1vpOGhnlqQ/PKUniAwJHB88Y+YC8tlt7LC7HoQ68CoY5UCgWQD/qppkhayQ
+	 QyJSAPZ692Incd7CmqPS2SsPamNOTjywyxMib9YBpTTn/Wx9HwM3nHmOzxFeIaPu2u
+	 1wkWBFir/pNuQ==
+Date: Fri, 2 Oct 2026 08:41:14 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jay Freyensee <why2jjj.linux@gmail.com>,
-	Jerry Snitselaar <jsnitsel@redhat.com>,
-	Nayna Jain <nayna@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] tpm: tpm2_probe: propagate transport errors
-Message-ID: <ar8oot0ceRNTMF7p@kernel.org>
-References: <20261001060114.1582092-1-alexander.sverdlin@siemens.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] TPM DEVICE DRIVER: for-next-tpm-v7.3-rc6
+Message-ID: <ar9D-mM-KA9P_pJC@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -46,52 +42,36 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261001060114.1582092-1-alexander.sverdlin@siemens.com>
 
-On Thu, Oct 01, 2026 at 08:01:11AM +0200, A. Sverdlin wrote:
-> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> 
-> tpm2_probe() reads the protocol version from the response tag and is
-> documented to return -errno on failure, but it always returns 0.  A
-> transport error (tpm_transmit_cmd() < 0) is thus swallowed together with
-> the intentionally ignored TPM response code, leaving TPM_CHIP_FLAG_TPM2
-> unset. A transient bus failure on the first command then misdetects a
-> TPM 2.0 as a 1.2 and the probe fails on the TPM 1.2 path:
-> 
->   tpm_tis_i2c 0-002e: 1.2 TPM (device-id 0x1C, rev-id 22)
->   tpm tpm0: A TPM error (-62) occurred attempting to determine the timeouts
-> 
-> Return the transport error instead; rc >= 0 still means a valid header was
-> received and the TPM's own response code is still ignored.
-> 
-> Fixes: 94e266ba1fa3 ("tpm: migrate tpm2_probe() to use struct tpm_buf")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> ---
->  drivers/char/tpm/tpm2-cmd.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index a94f4395c198a..4b2bb2ddc321a 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -483,8 +483,9 @@ int tpm2_probe(struct tpm_chip *chip)
->  		out = (struct tpm_header *)buf->data;
->  		if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
->  			chip->flags |= TPM_CHIP_FLAG_TPM2;
-> +		return 0;
->  	}
-> -	return 0;
-> +	return rc;
->  }
->  EXPORT_SYMBOL_GPL(tpm2_probe);
->  
-> -- 
-> 2.55.0
-> 
+The following changes since commit 6f8319e3e9a44dd537d17f41565a8453c560a581:
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+  Merge tag 'mm-hotfixes-stable-2026-09-27-19-12' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2026-09-28 20:11:31 -0700)
 
-Thanks.
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/for-next-tpm-v7.3-rc6
+
+for you to fetch changes up to 015fb29a748342a186f37b602ac70017098c8251:
+
+  tpm: Disable TPM on null key name mismatch (2026-09-29 22:15:21 +0300)
+
+----------------------------------------------------------------
+Hi,
+
+Please pull these bug fixes, which have landed after v7.3-rc1.
 
 Br, Jarkko
+
+----------------------------------------------------------------
+Jiangshan Yi (3):
+      tpm: Fix heap buffer overflow in tpm_transmit_cmd()
+      tpm: Fix auth session leak in tpm2_get_random() error path
+      tpm: fix off-by-four bounds check in tpm2_get_random()
+
+Surendran Kanagaraj (1):
+      tpm: Disable TPM on null key name mismatch
+
+ drivers/char/tpm/tpm-interface.c | 2 +-
+ drivers/char/tpm/tpm2-cmd.c      | 6 ++++--
+ drivers/char/tpm/tpm2-sessions.c | 1 +
+ 3 files changed, 6 insertions(+), 3 deletions(-)
