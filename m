@@ -1,119 +1,100 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93FE360EF7;
-	Mon,  5 Oct 2026 07:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A70369225;
+	Mon,  5 Oct 2026 07:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791186172; cv=none; b=kldtiyB0Onzh/Aaa8vv2QufB9KpVeTFTrNQfYCGAab9ovT5m4Jc4jNHvvSdgGmW+noHEFiPTnRMEDPv0d1iWpNCsFgkaY+RH0lVD1BVHrHgtWyH13GdyyPO9tYM3/fp4bhjVIQIdnZF4AHVZfHWdn1mr+3PcaVW5gJkYl/Nf7oM=
+	t=1791186905; cv=none; b=P6xQgBWxwIkt3jP4xXhah2sgeSgrVooHAJk4jnbg7xMXZXDjZMA1vLrsZP+c1mgTa66foWgcboUX6eLMLSebhqzuS0w7RJ9nC8W2EFNTbvD+f0xXaLZ212sQ0SRfOtVYvWw9B4c2dfxb7/ALHBLrv7cwrgEFBP+534tYG50kUas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791186172; c=relaxed/simple;
-	bh=ZlAKPfrllWGBvl3Ss2bKqHO0PomKSysRCOqXRszE6XM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5bE95ACd4s1F+FIgm4pzK7F84+7KyAg+4VD4gnYDnC85G3fmod2fM3YwDfJwTTm34wJfHIbM0prEDQuLN9D+zNKgHDgRS6FH5wg0r0S0DH7tA/0K2FKT4ONdxCrssJWMEKlpoyFGRbkT8eXsyjZXiQRzn3ZFq+/xgfyYvrPZ/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOLUQ17J; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791186905; c=relaxed/simple;
+	bh=Zcpz617fRR45Pw1ONLAOlzvIQ6R7uHtkL/v32Wg4GQ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uJx2mzD0xkLPlYMWZ8OoKvGLSwjVADvhRTkhOPrGQ9B8vf4MIHxoQ2u2C8lLciybPt8IQLB6ZDX24ip+xaTkoSWZaqsWDarxpPD37lxFysQhACht8SOdflRQYEXjjLSwpML2jBsXJnOGxOfhn0EmOqjw/AKfTYt73hEDQ9g/GhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AuqwtPxK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOLUQ17J"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D7CB71F00893;
-	Mon,  5 Oct 2026 07:42:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuqwtPxK"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B5F651F000FF;
+	Mon,  5 Oct 2026 07:55:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791186171;
-	bh=LQCof4ppfHtoJQlbxYOMHqWUIhHy13oM7f8A6scxOYg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=bOLUQ17JAM1t1GkRD/PJrz4zDpauaigE+zJjr5SHle8B11h/8LmLXQiqKw8xj3oIW
-	 e0fAvbGsNlrsgeuWHJqMxqAFY+MhMm7FLHcoXK9ijLpCvwDE8fhSqFtkXZ1BYtInJk
-	 CmCCvopewG9oIneEeys27fn0OSS3Gy/7zxwaNOsSv2MnMgJeh6aKvzM93D7zzfXywS
-	 OBcu20dv1a/uKBCspoZuB9xs27m9A49/bwzaLnJX8WmToI7/ik9f2tAPmbQqoqH5tl
-	 WYPy9VyY6YWOli/QpnCAB0LNy5zK9FTC+kYjMqMGALO9qK+5H45uluHZRay4zq0au+
-	 MdqhiH2RGqevw==
-Date: Mon, 5 Oct 2026 10:42:47 +0300
+	s=k20260515; t=1791186904;
+	bh=1sBWQJGUsot5fKzQlaDt/ghl1Rfcop5XMF9XkBxEdMA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=AuqwtPxKNaTqJGSfYxVaH9M8YP1fLUoG1/rVr03rSsSyKRch+ux33L5JSQfmZj6Xs
+	 Q1+zXbwcBiVmtuevzg+HEVOh41QTuL3mmWjqlyueZ2+fSqdQON6T9wzuhInMBUlwku
+	 Y5cZMnqcsxRFjdNJb6e8hTBMPVJHemdDt94p/Vxy/HgOTqVkAUK/1Pk4HYgnjdbYMr
+	 f6ORTu19dwusoKeiO0i0GASyUU1A+DTQsY7usaarHV9DOcSf1qNeQCFzN9kSmnHVZK
+	 Ujr+1amo+utAom8Rv8xcfOS2x7bVEywY8ZFkd24JL4AavbhiIUA9qWp87sNK5/azhQ
+	 jwsdPDhwORUSQ==
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>, peterhuewe@gmx.de,
-	jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+To: stable@vger.kernel.org
+Cc: Jiangshan Yi <yijiangshan@kylinos.cn>,
+	Sashiko <sashiko-bot@kernel.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan McDowell <noodles@meta.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Justinien Bouron <jbouron@amazon.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Gunnar Kudrjavets <gunnarku@amazon.com>,
+	Baoli Zhang <baoli.zhang@linux.intel.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] tpm: tpm_ppi: fix wrong error code returned to user
- space
-Message-ID: <asNU92oQXJcolDdy@kernel.org>
-References: <cover.1791015549.git.xiaopei01@kylinos.cn>
- <16ff8f5a35246d5932068ce1b01438bc2895a46a.1791015549.git.xiaopei01@kylinos.cn>
- <asMkuS55pG_q8RsT@iki.fi>
- <42828ffb-d2c4-4f31-88d0-c4b939631ab8@kylinos.cn>
+Subject: [PATCH 7.2.y] tpm: fix off-by-four bounds check in tpm2_get_random()
+Date: Mon,  5 Oct 2026 10:54:45 +0300
+Message-ID: <20261005075447.98992-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <2026100307-vacancy-udder-83a1@gregkh>
+References: <2026100307-vacancy-udder-83a1@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <42828ffb-d2c4-4f31-88d0-c4b939631ab8@kylinos.cn>
 
-On Mon, Oct 05, 2026 at 02:17:23PM +0800, Pei Xiao wrote:
-> 
-> 
-> 在 2026/10/5 12:16, Jarkko Sakkinen 写道:
-> > On Sat, Oct 03, 2026 at 04:27:51PM +0800, Pei Xiao wrote:
-> >> tpm_show_ppi_response() stores its return value in an acpi_status,
-> >> a typedef of u32.  Both error paths of the function (-EINVAL on a
-> >> malformed _DSM package, -EFAULT on a non-zero operation return
-> >> code) end up as huge positive values when returned as ssize_t, so
-> >> user space cannot detect the failure with the usual "ret < 0"
-> >> check.
-> > 
-> > I have no idea what you mean by huge value and why that would be
-> > a problem, and overall this is disconnected from the code change.
-> > 
-> > Two's complement value is correctly stored in status up until the
-> > ssize_t cast, which results the value to be zero-extended, and
-> > as a result corrupt the negative values.
-> How does the following Git commit message look：
-> 
-> tpm: tpm_ppi: fix zero-extension of negative error codes
-> 
-> tpm_show_ppi_response() keeps its return value in an acpi_status,
-> a typedef of u32.  The two's complement of the error code is stored
-> correctly there, but on return the value is converted to ssize_t and
-> zero-extended, so the sign is lost: user space receives 0xFFFFFFEA
-> (4294967274) instead of -EINVAL, which breaks the usual "ret < 0" error
-> check.
-> Declare the variable as ssize_t so that negative values survive the
-> conversion.
+From: Jiangshan Yi <yijiangshan@kylinos.cn>
 
-Works for me. It does not have to be perfect as long as it points out
-to the right direction.
+[ Upstream commit 9b522400bf5c082feb9a0037a053ea822a2c7e4d ]
 
-> > 
-> >>
-> >> Declare the variable as ssize_t to match the show callback's
-> >> return type.
-> >>
-> >> Fixes: 84b1667dea23 ("ACPI / TPM: replace open-coded _DSM code with helper functions")
-> >> Assisted-by: GLM-5.3
-> >> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> >> ---
-> >>  drivers/char/tpm/tpm_ppi.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
-> >> index c9793a3d986d..949fb7055bea 100644
-> >> --- a/drivers/char/tpm/tpm_ppi.c
-> >> +++ b/drivers/char/tpm/tpm_ppi.c
-> >> @@ -234,7 +234,7 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
-> >>  				     struct device_attribute *attr,
-> >>  				     char *buf)
-> >>  {
-> >> -	acpi_status status = -EINVAL;
-> >> +	ssize_t status = -EINVAL;
-> >>  	union acpi_object *obj, *ret_obj;
-> >>  	u64 req, res;
-> >>  	struct tpm_chip *chip = to_tpm_chip(dev);
-> >> -- 
-> >> 2.25.1
-> >>
-> > 
-> > Br, Jarkko
-> 
+When the response carries the TPM2_ST_SESSIONS tag, tpm2_get_random()
+skips the 4-byte parameter size field before locating the random data,
+but the bounds check still validates the response length against
+TPM_HEADER_SIZE.  A truncated response can pass the check and make
+memcpy() read up to 4 bytes past the response end, so stale buffer
+contents end up in the caller's random bytes.
 
-Br, Jarkko
+Fix this by checking the response length against 'offset', which
+already includes the skipped parameter size field.
+
+Cc: stable@vger.kernel.org #  v6.12+
+Fixes: 1b6d7f9eb150 ("tpm: add session encryption protection to tpm2_get_random()")
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Closes: https://sashiko.dev/#/patchset/20260902074839.417419-1-yijiangshan%40kylinos.cn
+Signed-off-by: Jiangshan Yi <yijiangshan@kylinos.cn>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Link: https://lore.kernel.org/r/20260903035837.219284-1-yijiangshan@kylinos.cn
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/tpm2-cmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 52ee350da867..e12e245faeb1 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -318,7 +318,7 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ 		out = (struct tpm2_get_random_out *)&buf.data[offset];
+ 		recd = min_t(u32, be16_to_cpu(out->size), num_bytes);
+ 		if (tpm_buf_length(&buf) <
+-		    TPM_HEADER_SIZE +
++		    offset +
+ 		    offsetof(struct tpm2_get_random_out, buffer) +
+ 		    recd) {
+ 			err = -EFAULT;
+-- 
+2.47.3
+
