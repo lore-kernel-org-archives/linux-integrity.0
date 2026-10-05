@@ -1,125 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33417330D23;
-	Mon,  5 Oct 2026 06:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CD4137923;
+	Mon,  5 Oct 2026 06:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791180673; cv=none; b=uDozZD/Gi2hdPQZbsX7qLMYt1rehVFtiw3KEiCryAV33eRbiv66mUvrR9jjGPhJd9kqilfJyORIW9MXGKGoUxBakjheJ+yOveyRCUJqaV4SoCif/7LZG/Iptrqw3V5bc25JdSKz8gWv1vIxCK73WnqlfNiq6lYsVbHCUWPu/OQI=
+	t=1791181053; cv=none; b=q48jCBK5pxi3F6K6fO0zdy+jT9hfBWOHGg5R1YTTQOwWncM8DK/R/Ig33V/QL/4M9UUEGQU/dYwydBNDziiYtxPdBGY8deIO/b7zxQoTRnhCq1rh6IHTOJB6+vm9/Dxc9t2TkfH13At/Tuh7hHXuLgHGndOqMF+L2vfviYDvD9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791180673; c=relaxed/simple;
-	bh=8zs15e5/Mr8o+vsyskBxb2vXVRC4+eeJnZVtfr2eEk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JEfwT04zplGl0ug3z9QAylDuf75ly7y2S/eXU3W0EQBOyoh9c256V4+9VPG5lB768lib04aFr0IyAsQvZlhUJVw8RF4fsmM0ZSVyz1E5vaNK0ZqbYZzdU5MT3LAYIQ3xvLKHYd/eyHJCLdXzJIIb88VaD8mA7I6vn5x9QWlvI30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NHTMYy6K; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NHTMYy6K"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2E2431F000FF;
-	Mon,  5 Oct 2026 06:11:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791180671;
-	bh=nlxnRJxOH90GEUi41R4JqS5v1Dy6OKqRlffqBLxP7oU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NHTMYy6K0l1PTQSLzEFhIsUZ445mhNO1gJkLq+2wDiAHDDGupLWkOut41Wtca7OJ9
-	 DYD8GVD+UrKEm2fo2lndW5QKdWfGRPs90ZQHXKG3fIyEzqgU0rd1DIZCZ0uo0l24wi
-	 OsH4WcKVCJiJMCyZOsaQ4+NgV9hm+5JPg0/P9awXdGicJPgDMOd4WxWkLOu8aQeaz7
-	 33WR4xHjaIFfeZS+tebObK1Fbe/MKuSldsXDyJqk+gk+SYnzX5BSng79FnrbDKVL6c
-	 gYSQxmM7+rTiFpxY07LExq7FahPsAWfv5nOaJiltEeMtaS1ucyG1cjoie3KZMA+L1e
-	 W02+Vgk9OPF1A==
-Date: Mon, 5 Oct 2026 09:11:07 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>, peterhuewe@gmx.de,
-	jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] tpm: fix log messages in tpm_init()
-Message-ID: <asM_e08v18eyXx2s@kernel.org>
-References: <cover.1791015549.git.xiaopei01@kylinos.cn>
- <de8bafc78e84dc6abc6f11e8eaa1b91c17e0c368.1791015549.git.xiaopei01@kylinos.cn>
- <asMdetm05nGIBbyn@iki.fi>
- <aa976135-27f4-4c4a-a9e0-a5a3347b514e@kylinos.cn>
- <asM-ICLM-C0ADrAL@kernel.org>
+	s=arc-20240116; t=1791181053; c=relaxed/simple;
+	bh=aDGNUxFnoGNZoKx51Rif4l0kxdmZi6UolPntCC8eR8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dtWI0lqVUN5wwioUXcn7jIF3FUKfITmK1AqmNVwLLjFX1+oPg6JbPZpEAtmWILbwjUf296sWO1xJ/yPpLCocuK4GEUA4EqDXwVNdkXfaSbbePJhIUCojPRRBRaUoNy7tvnDi6uW3HFBeqyZth93D+7GYlxCzcX81Sgl57TUdmLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 6f957b10c08411f19a56ed5b684f684d-20261005
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.19,REQID:3c361553-7787-4014-9ec1-90f1dcc92796,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:7db8b62,CLOUDID:0bad8d6b600c03dd905a494a9d71863b,BulkI
+	D:nil,BulkQuantity:0,SF:80|81|82|83|102|136|865|898,TC:nil,Content:0|15|52
+	|99,EDM:-3|-100,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+	,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 6f957b10c08411f19a56ed5b684f684d-20261005
+X-User: xiaopei01@kylinos.cn
+Received: from [10.42.12.251] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 514251661; Mon, 05 Oct 2026 14:17:26 +0800
+Message-ID: <42828ffb-d2c4-4f31-88d0-c4b939631ab8@kylinos.cn>
+Date: Mon, 5 Oct 2026 14:17:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] tpm: tpm_ppi: fix wrong error code returned to user
+ space
+To: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+Cc: jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1791015549.git.xiaopei01@kylinos.cn>
+ <16ff8f5a35246d5932068ce1b01438bc2895a46a.1791015549.git.xiaopei01@kylinos.cn>
+ <asMkuS55pG_q8RsT@iki.fi>
+From: Pei Xiao <xiaopei01@kylinos.cn>
+In-Reply-To: <asMkuS55pG_q8RsT@iki.fi>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <asM-ICLM-C0ADrAL@kernel.org>
 
-On Mon, Oct 05, 2026 at 09:05:25AM +0300, Jarkko Sakkinen wrote:
-> On Mon, Oct 05, 2026 at 12:23:31PM +0800, Pei Xiao wrote:
-> > 
-> > 
-> > 在 2026/10/5 11:46, Jarkko Sakkinen 写道:
-> > > On Sat, Oct 03, 2026 at 04:27:55PM +0800, Pei Xiao wrote:
-> > >> Make the error messages consistently prefixed with "tpm: ", and fix
-> > >> the tpm_dev_common_init() failure message which was wrongly copied
-> > >> from the previous step.
-> > >>
-> > >> Assisted-by: GLM-5.3
-> > >> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> > >> ---
-> > >>  drivers/char/tpm/tpm-interface.c | 6 +++---
-> > >>  1 file changed, 3 insertions(+), 3 deletions(-)
-> > >>
-> > >> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > >> index 1ccdbde98b69..666a1c654c02 100644
-> > >> --- a/drivers/char/tpm/tpm-interface.c
-> > >> +++ b/drivers/char/tpm/tpm-interface.c
-> > >> @@ -524,13 +524,13 @@ static int __init tpm_init(void)
-> > >>  
-> > >>  	rc = class_register(&tpm_class);
-> > >>  	if (rc) {
-> > >> -		pr_err("couldn't create tpm class\n");
-> > >> +		pr_err("tpm: couldn't create tpm class\n");
-> > >>  		return rc;
-> > >>  	}
-> > >>  
-> > >>  	rc = class_register(&tpmrm_class);
-> > >>  	if (rc) {
-> > >> -		pr_err("couldn't create tpmrm class\n");
-> > >> +		pr_err("tpm: couldn't create tpmrm class\n");
-> > >>  		goto out_destroy_tpm_class;
-> > >>  	}
-> > >>  
-> > >> @@ -542,7 +542,7 @@ static int __init tpm_init(void)
-> > >>  
-> > >>  	rc = tpm_dev_common_init();
-> > >>  	if (rc) {
-> > >> -		pr_err("tpm: failed to allocate char dev region\n");
-> > >> +		pr_err("tpm: failed to allocate TPM workqueue\n");
-> > >>  		goto out_unreg_chrdev;
-> > >>  	}
-> > >>  
-> > >> -- 
-> > >> 2.25.1
-> > >>
-> > > 
-> > > I NAK this one. It is not fixing anything.
-> > Hmm, this is a cleanup, not a fix—just a very minor change to an error
-> > log/print. I noticed it was duplicated (with the alloc_chrdev_region
-> > error print), which made it impossible to tell which function call had
-> > failed (it might actually never be executed). So I just brought up this
-> > cleanup along the way.
-> 
-> If there is patch that is coming along the way, it is patch that should
-> not be sent because:
-> 
-> 1. It wastes also everyone else's time.
-> 2. Lack of understanding of cause and effect because by definition
->    you have no idea what you are submitting. E
-> 
-> Pure clean ups per se are already something that is usually best to NAK
-> but this patch is not a clean up.
-> 
-> I mean the path is doing arbitrary log message changes. That is not
-> harmless change as you enforce your arbitrary preferences also for few
-> billion other users. 
 
-Well, maybe just machines but anyhow :-)
 
-Br, Jarkko
+在 2026/10/5 12:16, Jarkko Sakkinen 写道:
+> On Sat, Oct 03, 2026 at 04:27:51PM +0800, Pei Xiao wrote:
+>> tpm_show_ppi_response() stores its return value in an acpi_status,
+>> a typedef of u32.  Both error paths of the function (-EINVAL on a
+>> malformed _DSM package, -EFAULT on a non-zero operation return
+>> code) end up as huge positive values when returned as ssize_t, so
+>> user space cannot detect the failure with the usual "ret < 0"
+>> check.
+> 
+> I have no idea what you mean by huge value and why that would be
+> a problem, and overall this is disconnected from the code change.
+> 
+> Two's complement value is correctly stored in status up until the
+> ssize_t cast, which results the value to be zero-extended, and
+> as a result corrupt the negative values.
+How does the following Git commit message look：
+
+tpm: tpm_ppi: fix zero-extension of negative error codes
+
+tpm_show_ppi_response() keeps its return value in an acpi_status,
+a typedef of u32.  The two's complement of the error code is stored
+correctly there, but on return the value is converted to ssize_t and
+zero-extended, so the sign is lost: user space receives 0xFFFFFFEA
+(4294967274) instead of -EINVAL, which breaks the usual "ret < 0" error
+check.
+Declare the variable as ssize_t so that negative values survive the
+conversion.
+> 
+>>
+>> Declare the variable as ssize_t to match the show callback's
+>> return type.
+>>
+>> Fixes: 84b1667dea23 ("ACPI / TPM: replace open-coded _DSM code with helper functions")
+>> Assisted-by: GLM-5.3
+>> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+>> ---
+>>  drivers/char/tpm/tpm_ppi.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
+>> index c9793a3d986d..949fb7055bea 100644
+>> --- a/drivers/char/tpm/tpm_ppi.c
+>> +++ b/drivers/char/tpm/tpm_ppi.c
+>> @@ -234,7 +234,7 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
+>>  				     struct device_attribute *attr,
+>>  				     char *buf)
+>>  {
+>> -	acpi_status status = -EINVAL;
+>> +	ssize_t status = -EINVAL;
+>>  	union acpi_object *obj, *ret_obj;
+>>  	u64 req, res;
+>>  	struct tpm_chip *chip = to_tpm_chip(dev);
+>> -- 
+>> 2.25.1
+>>
+> 
+> Br, Jarkko
+
