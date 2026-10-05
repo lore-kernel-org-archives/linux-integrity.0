@@ -1,117 +1,243 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CD4137923;
-	Mon,  5 Oct 2026 06:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDA9347BAF;
+	Mon,  5 Oct 2026 06:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791181053; cv=none; b=q48jCBK5pxi3F6K6fO0zdy+jT9hfBWOHGg5R1YTTQOwWncM8DK/R/Ig33V/QL/4M9UUEGQU/dYwydBNDziiYtxPdBGY8deIO/b7zxQoTRnhCq1rh6IHTOJB6+vm9/Dxc9t2TkfH13At/Tuh7hHXuLgHGndOqMF+L2vfviYDvD9E=
+	t=1791181667; cv=none; b=kY3HjSoDLGyFmuBaLB2cRphQOYiBBsF4b+W2KNncouyqHG0lcc+pJuYwtK/VmBAdtLt9WO9Ald1zMGylDTK/g+HdSwhjtxIWtsM5FuOdyY3UebUlqL3OIqzC5Al1Qw4pQOti+95jlLHyD75nMb5f7LebwC2+AIn7UCMJk3vz8cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791181053; c=relaxed/simple;
-	bh=aDGNUxFnoGNZoKx51Rif4l0kxdmZi6UolPntCC8eR8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dtWI0lqVUN5wwioUXcn7jIF3FUKfITmK1AqmNVwLLjFX1+oPg6JbPZpEAtmWILbwjUf296sWO1xJ/yPpLCocuK4GEUA4EqDXwVNdkXfaSbbePJhIUCojPRRBRaUoNy7tvnDi6uW3HFBeqyZth93D+7GYlxCzcX81Sgl57TUdmLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 6f957b10c08411f19a56ed5b684f684d-20261005
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.19,REQID:3c361553-7787-4014-9ec1-90f1dcc92796,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:7db8b62,CLOUDID:0bad8d6b600c03dd905a494a9d71863b,BulkI
-	D:nil,BulkQuantity:0,SF:80|81|82|83|102|136|865|898,TC:nil,Content:0|15|52
-	|99,EDM:-3|-100,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-	,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 6f957b10c08411f19a56ed5b684f684d-20261005
-X-User: xiaopei01@kylinos.cn
-Received: from [10.42.12.251] [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 514251661; Mon, 05 Oct 2026 14:17:26 +0800
-Message-ID: <42828ffb-d2c4-4f31-88d0-c4b939631ab8@kylinos.cn>
-Date: Mon, 5 Oct 2026 14:17:23 +0800
+	s=arc-20240116; t=1791181667; c=relaxed/simple;
+	bh=YKhMdesrFcsShgS/YkWJwsmF+udLu87KaB0poBt6/tc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lBaU2aZMUf/nq0g9MJo8q4cJAxOL4raJEop/TVFnSlLZh35h8zQqtIrYqkPXpdHV/s7PoOtyHnm4WwDNdFjGnvZwLQJbzRjKw+FZrtxE6Kga2G2Grx1h64yZjpEXICq7I44vF3PwJyy6cfxVF76+5usJM1OnUOIzVC6WAPsYltU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TN915XRu; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TN915XRu"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 695165wP3291450;
+	Mon, 5 Oct 2026 06:27:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=eBOdU4bbrn9Y819oJUNB6uuympUKXhDiDovpQ4qdW
+	j8=; b=TN915XRu6jk4v126nzpgquifrDxKfX15SZDWRHZcD7X/VsJdN69qni2WV
+	0Fm95qny2NxS6VyrfronwwEZQKh6kheRqQfdlZE+FkUjpzJg/qcl2Y5cHZHHmcF1
+	Snnl1Wv1aL16qmhbadxcB88P/2oZDOtKjU6HW9NPjAWjh44Ml1d9NEN8jyerxC3b
+	27d0mxqWKLUkgD8rQRRCDiSYGa60NoErDmaqBv/vnL3a4fIFzg4QRp8sfbida4oG
+	xr91zO1pJrHkkX9ncmTtF/NiFFi+1cXFKtVYGgyOuVR+dPyNkcz2rBMHOVepKAI3
+	o8RZPNlPT7EFEAWs0rG3c1c8r9HfA==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4h2sbuyxm3-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 05 Oct 2026 06:27:42 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6956Exam2165217;
+	Mon, 5 Oct 2026 06:27:41 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4h3c1pmdf3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Oct 2026 06:27:41 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6956Rbd240239500
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 Oct 2026 06:27:37 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C31452004B;
+	Mon,  5 Oct 2026 06:27:37 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 555FA20043;
+	Mon,  5 Oct 2026 06:27:35 +0000 (GMT)
+Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.bl1-in.ibm.com (unknown [9.123.14.23])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  5 Oct 2026 06:27:35 +0000 (GMT)
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+        zohar@linux.ibm.com, stefanb@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        nayna@linux.ibm.com, rnsastry@linux.ibm.com, ssrish@linux.ibm.com
+Subject: [PATCH v3] keys/trusted_keys: reuse TPM version in option handling
+Date: Mon,  5 Oct 2026 11:57:32 +0530
+Message-ID: <20261005062732.140733-1-ssrish@linux.ibm.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] tpm: tpm_ppi: fix wrong error code returned to user
- space
-To: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
-Cc: jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1791015549.git.xiaopei01@kylinos.cn>
- <16ff8f5a35246d5932068ce1b01438bc2895a46a.1791015549.git.xiaopei01@kylinos.cn>
- <asMkuS55pG_q8RsT@iki.fi>
-From: Pei Xiao <xiaopei01@kylinos.cn>
-In-Reply-To: <asMkuS55pG_q8RsT@iki.fi>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: us9bSo0CG4I9kdkDzTr7YGN2CXd-y_ku
+X-Authority-Analysis: v=2.4 cv=KJHPn1Fo c=1 sm=1 tr=0 ts=6ac3435e cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=RzCfie-kr_QcCd8fBx8p:22 a=VnNF1IyMAAAA:8 a=R0B3_GDsR3QM9wD39lMA:9
+X-Proofpoint-GUID: us9bSo0CG4I9kdkDzTr7YGN2CXd-y_ku
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA1MDAyNCBTYWx0ZWRfX33SVWNkKhkSv
+ tfgDs9deS1RNE1rgjvp+2sj0hEijc18RlXrK1VoNzjxsn4Lg3JgE+sTaA5ZD4M84PNwC62o+vT6
+ 2yD0uVT05AU5f+NjjZdHKl1rPtydG8vvD2TDPg9VNr0s0eqC79cKynIVKA83f9AZo/1cjk6ZbV2
+ /1WdIFSDjLI1GOi/6BetKLR6QxOe1CaesB0jj6IDBa9UpS2ORLzVXI1nU3eFVBsepZ4DeyAsrTw
+ 2WEF/L7Fg1gWeC6cdn6eJ8Joxp90TY6YrLre5bsQjMsqzDv2RCxGN5QzXvHL2XGGoKQfZ99iTI8
+ ci9+hxGM7CjI6i2uawsq9YbEolrLE/N/FKdLdmixiaNujvkLKVF20CqaCLoVzAYxokr3DHbm7j2
+ 0OomiMd/gmDSrSysBGC1dLstfL5qb4UIerkm7FokGVq7xOyD0k7fLt1SqtRvRsKHXf5XDcUk7oq
+ 9b/58LSCJC1bjEAcz5g==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA1MDAyNCBTYWx0ZWRfX/PdPXmo2Q2Xu
+ Hv9BJSbrVpfnHrcdTyT+lhcaXSPhXmgMR1XuSdBXNSvfXZaXl+SZO27AWtDO6HjWm8h7lQlTrHj
+ 2DUMx5bUkeugxP1AO256r/oBKgEsOew=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-05_01,2026-10-02_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 impostorscore=0 adultscore=0 clxscore=1015
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
+ definitions=main-2610050024
 
+Determine the TPM version once in the seal and unseal paths, and reuse
+it when allocating and parsing trusted key options.
 
+This reduces the number of fallible calls to tpm_is_tpm2() and avoids
+unnecessary I/O between the kernel and the TPM.
 
-在 2026/10/5 12:16, Jarkko Sakkinen 写道:
-> On Sat, Oct 03, 2026 at 04:27:51PM +0800, Pei Xiao wrote:
->> tpm_show_ppi_response() stores its return value in an acpi_status,
->> a typedef of u32.  Both error paths of the function (-EINVAL on a
->> malformed _DSM package, -EFAULT on a non-zero operation return
->> code) end up as huge positive values when returned as ssize_t, so
->> user space cannot detect the failure with the usual "ret < 0"
->> check.
-> 
-> I have no idea what you mean by huge value and why that would be
-> a problem, and overall this is disconnected from the code change.
-> 
-> Two's complement value is correctly stored in status up until the
-> ssize_t cast, which results the value to be zero-extended, and
-> as a result corrupt the negative values.
-How does the following Git commit message look：
+Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+Changelog:
 
-tpm: tpm_ppi: fix zero-extension of negative error codes
+ v3:
+  - Tweak the commit message to highlight the reduced failure surface and
+    TPM I/O
 
-tpm_show_ppi_response() keeps its return value in an acpi_status,
-a typedef of u32.  The two's complement of the error code is stored
-correctly there, but on return the value is converted to ssize_t and
-zero-extended, so the sign is lost: user space receives 0xFFFFFFEA
-(4294967274) instead of -EINVAL, which breaks the usual "ret < 0" error
-check.
-Declare the variable as ssize_t so that negative values survive the
-conversion.
-> 
->>
->> Declare the variable as ssize_t to match the show callback's
->> return type.
->>
->> Fixes: 84b1667dea23 ("ACPI / TPM: replace open-coded _DSM code with helper functions")
->> Assisted-by: GLM-5.3
->> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
->> ---
->>  drivers/char/tpm/tpm_ppi.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
->> index c9793a3d986d..949fb7055bea 100644
->> --- a/drivers/char/tpm/tpm_ppi.c
->> +++ b/drivers/char/tpm/tpm_ppi.c
->> @@ -234,7 +234,7 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
->>  				     struct device_attribute *attr,
->>  				     char *buf)
->>  {
->> -	acpi_status status = -EINVAL;
->> +	ssize_t status = -EINVAL;
->>  	union acpi_object *obj, *ret_obj;
->>  	u64 req, res;
->>  	struct tpm_chip *chip = to_tpm_chip(dev);
->> -- 
->> 2.25.1
->>
-> 
-> Br, Jarkko
+ v2:
+  - Use bool to indicate whether the chip is TPM 2.0 in the option helpers
+
+ security/keys/trusted-keys/trusted_tpm1.c | 35 +++++++++--------------
+ 1 file changed, 13 insertions(+), 22 deletions(-)
+
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index 3ec078ca3f97..6dbce058368f 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -700,7 +700,7 @@ static const match_table_t key_tokens = {
+ 
+ /* can have zero or more token= options */
+ static int getoptions(char *c, struct trusted_key_payload *pay,
+-		      struct trusted_key_options *opt)
++		      struct trusted_key_options *opt, bool is_tpm2)
+ {
+ 	struct trusted_key_tpm *private = opt->private;
+ 	substring_t args[MAX_OPT_ARGS];
+@@ -712,13 +712,8 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 	unsigned long token_mask = 0;
+ 	unsigned int digest_len;
+ 	int i;
+-	int tpm2;
+-
+-	tpm2 = tpm_is_tpm2(chip);
+-	if (tpm2 < 0)
+-		return tpm2;
+ 
+-	private->hash = tpm2 ? HASH_ALGO_SHA256 : HASH_ALGO_SHA1;
++	private->hash = is_tpm2 ? HASH_ALGO_SHA256 : HASH_ALGO_SHA1;
+ 
+ 	if (!c)
+ 		return 0;
+@@ -773,7 +768,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 				break;
+ 			}
+ 
+-			if (tpm2 &&
++			if (is_tpm2 &&
+ 			    private->blobauth_len <=
+ 			    sizeof(private->blobauth)) {
+ 				memcpy(private->blobauth, args[0].from,
+@@ -808,14 +803,15 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 			}
+ 			if (i == HASH_ALGO__LAST)
+ 				return -EINVAL;
+-			if  (!tpm2 && i != HASH_ALGO_SHA1) {
++			if (!is_tpm2 && i != HASH_ALGO_SHA1) {
+ 				pr_info("TPM 1.x only supports SHA-1.\n");
+ 				return -EINVAL;
+ 			}
+ 			break;
+ 		case Opt_policydigest:
+ 			digest_len = hash_digest_size[private->hash];
+-			if (!tpm2 || strlen(args[0].from) != (2 * digest_len))
++			if (!is_tpm2 ||
++			    strlen(args[0].from) != (2 * digest_len))
+ 				return -EINVAL;
+ 			res = hex2bin(private->policydigest, args[0].from,
+ 				      digest_len);
+@@ -824,7 +820,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 			private->policydigest_len = digest_len;
+ 			break;
+ 		case Opt_policyhandle:
+-			if (!tpm2)
++			if (!is_tpm2)
+ 				return -EINVAL;
+ 			res = kstrtoul(args[0].from, 16, &handle);
+ 			if (res < 0)
+@@ -838,15 +834,10 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 	return 0;
+ }
+ 
+-static struct trusted_key_options *trusted_options_alloc(void)
++static struct trusted_key_options *trusted_options_alloc(bool is_tpm2)
+ {
+ 	struct trusted_key_tpm *private;
+ 	struct trusted_key_options *options;
+-	int tpm2;
+-
+-	tpm2 = tpm_is_tpm2(chip);
+-	if (tpm2 < 0)
+-		return NULL;
+ 
+ 	options = kzalloc_obj(*options);
+ 	if (options) {
+@@ -858,7 +849,7 @@ static struct trusted_key_options *trusted_options_alloc(void)
+ 			kfree_sensitive(options);
+ 			options = NULL;
+ 		} else {
+-			if (!tpm2)
++			if (!is_tpm2)
+ 				private->keyhandle = SRKHANDLE;
+ 			options->private = private;
+ 		}
+@@ -877,13 +868,13 @@ static int trusted_tpm_seal(struct trusted_key_payload *p, char *datablob)
+ 	if (tpm2 < 0)
+ 		return tpm2;
+ 
+-	options = trusted_options_alloc();
++	options = trusted_options_alloc(tpm2);
+ 	if (!options)
+ 		return -ENOMEM;
+ 
+ 	private = options->private;
+ 
+-	ret = getoptions(datablob, p, options);
++	ret = getoptions(datablob, p, options, tpm2);
+ 	if (ret < 0)
+ 		return ret;
+ 	dump_options(options);
+@@ -922,12 +913,12 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
+ 	if (tpm2 < 0)
+ 		return tpm2;
+ 
+-	options = trusted_options_alloc();
++	options = trusted_options_alloc(tpm2);
+ 	if (!options)
+ 		return -ENOMEM;
+ 	private = options->private;
+ 
+-	ret = getoptions(datablob, p, options);
++	ret = getoptions(datablob, p, options, tpm2);
+ 	if (ret < 0)
+ 		return ret;
+ 	dump_options(options);
+-- 
+2.53.0
 
