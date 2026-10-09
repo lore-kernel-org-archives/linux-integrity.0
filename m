@@ -1,396 +1,242 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4693F0A81
-	for <linux-integrity@vger.kernel.org>; Fri,  9 Oct 2026 08:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065E74CC28B;
+	Fri,  9 Oct 2026 11:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791535139; cv=none; b=RRjz0jkYKh1FsLu8DE9mZ20Z5nymv9f5xoNq05Svs0lR0vh5WVwID8mZXCaybiMJqKtR1bngu5iTKP6InPwdemzr4QmlBIJM2YV0xMKSHvRyennXRrwBDVPXUAxL4QkSD7Hx/GH5fhesj29fvdAHv6imV8cxkf3zDpc5kdBr6vc=
+	t=1791545360; cv=none; b=ccWSd7KmJN9nJjVVrUao47dJslD/+bq1HnoVklrLbOc9tq4wRzPvu04IBDnQzMJ5cEv2AHigUimmcxAqftVB1dmdRGBtcxQ87Tm+QjnDynszEclxkB0hzUityTFOZTL0m1VV1XJ4TgwTm3DMKy00rWmA1jQoD8rPWCz7gssQlh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791535139; c=relaxed/simple;
-	bh=eHSJHFeHIldWKcgm30qXvdjqXRviTowQjwzPSxEXDy8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O+wtceSKC7LIJM+8YrrvhB2orQx/p8abEcfxKjeR5qrEK6LQBLbITr9f/gEziImZvdRN9BYeADS4Ov5avkv0kvXgBvoe19kX5wDqYejqBDAtdE7PLghNB5Q97ib63L1/fqQScugUZiBt9/N1Tl5t6aBpz35cgiXptHRAQLxOmOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+	s=arc-20240116; t=1791545360; c=relaxed/simple;
+	bh=MpHafslSgTuO3ufNGAeO92J7Egq7ohQAL0gYI/dZzXE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FV8rzg7Fq8PSsTs/Z3RMfc4bGF+hDwKpJWJ7IzUEuJsQ6VROSqDssoMo942+C6eyhT4AxRqXFbauoZcZgmw9dL6/O9eev3kvy6BAq1dKOuBTuXlLc60LPQJOHyYcyH/W1a5YXOchC3bZGxiYPSusZJF3/93S/KyW6+bQteLtpRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.18.224.196])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4j1KMc0swtzpTRZ
-	for <linux-integrity@vger.kernel.org>; Fri,  9 Oct 2026 16:11:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 514E940009
-	for <linux-integrity@vger.kernel.org>; Fri,  9 Oct 2026 16:19:49 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with UTF8SMTPA id LxC2BwDHza2eo8hqmya8AQ--.16282S2;
-	Fri, 09 Oct 2026 09:19:48 +0100 (CET)
-Message-ID: <b331fb0d0c787cdec43b6aa74b8db8dd0f4b3218.camel@huaweicloud.com>
-Subject: Re: [PATCH] ima: bind cached appraisal results to policy identity
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4j1PCG32VKzt5JN;
+	Fri,  9 Oct 2026 19:04:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id D27E940491;
+	Fri,  9 Oct 2026 19:12:26 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with UTF8SMTPA id GxC2BwAHNS0RzMhqBcK7AQ--.22919S2;
+	Fri, 09 Oct 2026 12:12:26 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Sung Byeongchan <tjdqudcks0424@naver.com>, zohar@linux.ibm.com, 
-	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com
-Cc: linux-integrity@vger.kernel.org
-Date: Fri, 09 Oct 2026 10:19:39 +0200
-In-Reply-To: <20261008134309.276625-1-tjdqudcks0424@naver.com>
-References: <20261008134309.276625-1-tjdqudcks0424@naver.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+To: zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Hodges <git@danielhodges.dev>,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH] evm: check return values of crypto_shash functions
+Date: Fri,  9 Oct 2026 13:12:12 +0200
+Message-ID: <20261009111212.1516243-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDHza2eo8hqmya8AQ--.16282S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfJrW8uryDAr1rXFyxCryDWrg_yoW8GryrXo
-	WfK39rJF4rGry3Cay8uFn5tFWxuay5Grs3JFW8WrZ8G3ZFq34DG3y3ur17ZF4fuF15JF4U
-	C347X3y8tF1ktas5n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUU5K7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK
-	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
-	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF
-	7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r1j6r4UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwAHNS0RzMhqBcK7AQ--.22919S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFWrXF45Kw15Aw13uw18AFb_yoWxJF1fpF
+	W5WayDKr4DJa1UWFZaya1rZ34F9ay0yry7KrWUW34SvFn7Xr1Fqr4Iyw18uF98Gr45Jw1Y
+	qr4S9w1Uuw4aq3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
 	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjVbkUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBGrIkZ4K0AAAsw
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUF1v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBGrIkbkfWQABsJ
 
-On Thu, 2026-10-08 at 22:43 +0900, Sung Byeongchan wrote:
-> IMA caches an appraisal result per inode and hook, but does not record th=
-e
-> policy rule which produced it.  A file accepted through a weaker subject
-> rule can therefore retain PASS when a later, stronger subject matches a
-> rule which requires a signature.  Replacing LSM-backed rules on policy
-> reload leaves the same stale result usable as well.
+From: Daniel Hodges <git@danielhodges.dev>
 
-Hi Sung
+The crypto_shash_update() and crypto_shash_final() functions can fail
+and return error codes, but their return values were not being checked
+in several places in security/integrity/evm/evm_crypto.c:
 
-I take the opportunity to remind everyone that the contributor is the
-sole responsible for what the contributor sends, regardless of the tool
-used to make the contribution. Therefore, it is task of the contributor
-to have fully understood the problem and being confident on the
-proposed solution.
+- hmac_add_misc() ignored returns from crypto_shash_update() and
+  crypto_shash_final()
+- evm_calc_hmac_or_hash() ignored returns from crypto_shash_update()
+- evm_init_hmac() ignored returns from crypto_shash_update()
 
-With that said, I have a question. In your design, you assign a rule ID
-to each iint cache. What happens if the cache is matched by another
-rule (for example with different subject credential), and the rules
-have similar requirements? I might have understood wrong, but if there
-is a match from a different rule, you invalidate the cache, correct? If
-the requirements are similar, the cache should be ok to use.
+If these hash operations fail silently, the resulting HMAC could be
+invalid or incomplete, which could weaken the integrity verification
+security that EVM provides.
 
-I think the right solution for this problem is to record in the iint
-which appraisals you did, and require to do the missing one depending
-on what is required by the rule. If the iint cached a weaker appraisal,
-you still need to do the stronger one, since that is not cached.
+This patch converts hmac_add_misc() from void to int return type and
+adds proper error checking and propagation for all crypto_shash_*
+function calls. All callers are updated to handle the new return values.
+Additionally, error messages are logged when cryptographic operations
+fail to provide visibility into the failure rather than silently
+returning error codes.
 
-If you decide to follow up, I would expect a proper patch with proper
-motivations and following the kernel code guidelines and submission
-process (e.g., using checkpatch.pl and get_maintainer.pl).
+Fixes: 66dbc325afce ("evm: re-release")
+Signed-off-by: Daniel Hodges <git@danielhodges.dev>
+Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+Link: https://github.com/linux-integrity/linux/issues/17
+[zohar@linux.ibm.com: fixed commit 0496fc9cdc38 merge conflict,
+checkpatch.pl warnings]
+[roberto.sassu@huawei.com: call hmac_add_misc() in evm_calc_hmac_or_hash()
+ only if no previous error, to avoid overwriting -ENODATA, and jump to out
+ only if hmac_add_misc() fails]
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/evm/evm_crypto.c | 69 ++++++++++++++++++++++-------
+ 1 file changed, 53 insertions(+), 16 deletions(-)
 
-What is the relevance of the commits you mentioned, since you added a
-commit in the Fixes tag which could potentially be the problem? Anyway,
-if you decide to contribute, the feature will be significant, I don't
-expect it will be suitable for stable kernels.
-
-Thanks
-
-Roberto
-
-> Assign stable rule IDs and maintain a monotonic appraisal policy
-> generation.  Record both with the inode's appraisal result, and clear
-> appraisal state when the next matching rule or generation differs.  This
-> preserves same-rule cache reuse while preventing PASS from crossing rule
-> and policy identities.
->=20
-> On ff47652a4b66, complete IMA policy publication and the one-reload and
-> two-reload cases each reproduced the stale allow in three fresh boots.
-> With this change, the stronger consumer was denied in all nine
-> corresponding runs.  Same-rule reuse, unprimed and new-inode denial,
-> content and xattr invalidation, and normal policy reload controls passed.
-> All touched source blobs are byte-identical and the four changed IMA
-> objects build successfully at 47324d3a5b3a.  This is an appraisal
-> authorization bypass; no RCE or LPE primitive is claimed.
->=20
-> This issue was found through manual source inspection assisted by an
-> AI/LLM, then evaluated with local production-path dynamic validation.
->=20
-> Fixes: d79d72e02485 ("ima: per hook cache integrity appraisal status")
-> Cc: stable@vger.kernel.org
-> Assisted-by: LLM
-> Signed-off-by: Sung Byeongchan <tjdqudcks0424@naver.com>
-> ---
->  security/integrity/ima/ima.h          | 13 +++++++++++--
->  security/integrity/ima/ima_api.c      |  5 +++--
->  security/integrity/ima/ima_appraise.c |  2 +-
->  security/integrity/ima/ima_main.c     | 25 +++++++++++++++++++++----
->  security/integrity/ima/ima_policy.c   | 21 ++++++++++++++++++++-
->  5 files changed, 56 insertions(+), 10 deletions(-)
->=20
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 10214f73ca1ed..4ed21e731fe7d 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -229,6 +229,8 @@ struct ima_iint_cache {
->  	struct mutex mutex;	/* protects: version, flags, digest */
->  	struct integrity_inode_attributes real_inode;
->  	unsigned long flags;
-> +	u64 appraisal_rule_id;
-> +	u64 appraisal_policy_generation;
->  	unsigned long measured_pcrs;
->  	unsigned long atomic_flags;
->  	enum integrity_status ima_file_status:4;
-> @@ -239,6 +241,11 @@ struct ima_iint_cache {
->  	struct ima_digest_data *ima_hash;
->  };
-> =20
-> +struct ima_appraisal_rule_id {
-> +	u64 rule_id;
-> +	u64 policy_generation;
-> +};
-> +
->  extern struct lsm_blob_sizes ima_blob_sizes;
-> =20
->  static inline struct ima_iint_cache *
-> @@ -427,7 +434,8 @@ int ima_get_action(struct mnt_idmap *idmap, struct in=
-ode *inode,
->  		   const struct cred *cred, struct lsm_prop *prop, int mask,
->  		   enum ima_hooks func, int *pcr,
->  		   struct ima_template_desc **template_desc,
-> -		   const char *func_data, unsigned int *allowed_algos);
-> +		   const char *func_data, unsigned int *allowed_algos,
-> +		   struct ima_appraisal_rule_id *appraisal_rule);
->  int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func)=
-;
->  int ima_collect_measurement(struct ima_iint_cache *iint, struct file *fi=
-le,
->  			    void *buf, loff_t size, enum hash_algo algo,
-> @@ -458,7 +466,8 @@ int ima_match_policy(struct mnt_idmap *idmap, struct =
-inode *inode,
->  		     const struct cred *cred, struct lsm_prop *prop,
->  		     enum ima_hooks func, int mask, int flags, int *pcr,
->  		     struct ima_template_desc **template_desc,
-> -		     const char *func_data, unsigned int *allowed_algos);
-> +		     const char *func_data, unsigned int *allowed_algos,
-> +		     struct ima_appraisal_rule_id *appraisal_rule);
->  void ima_init_policy(void);
->  void ima_update_policy(void);
->  void ima_update_policy_flags(void);
-> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/im=
-a_api.c
-> index 122d127e108dc..bc049d257db95 100644
-> --- a/security/integrity/ima/ima_api.c
-> +++ b/security/integrity/ima/ima_api.c
-> @@ -192,7 +192,8 @@ int ima_get_action(struct mnt_idmap *idmap, struct in=
-ode *inode,
->  		   const struct cred *cred, struct lsm_prop *prop, int mask,
->  		   enum ima_hooks func, int *pcr,
->  		   struct ima_template_desc **template_desc,
-> -		   const char *func_data, unsigned int *allowed_algos)
-> +		   const char *func_data, unsigned int *allowed_algos,
-> +		   struct ima_appraisal_rule_id *appraisal_rule)
->  {
->  	int flags =3D IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
-> =20
-> @@ -200,7 +201,7 @@ int ima_get_action(struct mnt_idmap *idmap, struct in=
-ode *inode,
-> =20
->  	return ima_match_policy(idmap, inode, cred, prop, func, mask,
->  				flags, pcr, template_desc, func_data,
-> -				allowed_algos);
-> +				allowed_algos, appraisal_rule);
->  }
-> =20
->  static bool ima_get_verity_digest(struct ima_iint_cache *iint,
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/i=
-ma/ima_appraise.c
-> index b280488e15fcb..1a3cde20a733c 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -82,7 +82,7 @@ int ima_must_appraise(struct mnt_idmap *idmap, struct i=
-node *inode,
->  	security_current_getlsmprop_subj(&prop);
->  	return ima_match_policy(idmap, inode, current_cred(), &prop,
->  				func, mask, IMA_APPRAISE | IMA_HASH, NULL,
-> -				NULL, NULL, NULL);
-> +				NULL, NULL, NULL, NULL);
->  }
-> =20
->  static int ima_fix_xattr(struct dentry *dentry, struct ima_iint_cache *i=
-int)
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
-ma_main.c
-> index ab1e53b3210d3..b85732bc1285a 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -272,6 +272,7 @@ static int process_measurement(struct file *file, con=
-st struct cred *cred,
->  	bool violation_check;
->  	enum hash_algo hash_algo;
->  	unsigned int allowed_algos =3D 0;
-> +	struct ima_appraisal_rule_id appraisal_rule =3D {};
-> =20
->  	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
->  		return 0;
-> @@ -282,7 +283,7 @@ static int process_measurement(struct file *file, con=
-st struct cred *cred,
->  	 */
->  	action =3D ima_get_action(file_mnt_idmap(file), inode, cred, prop,
->  				mask, func, &pcr, &template_desc, NULL,
-> -				&allowed_algos);
-> +				&allowed_algos, &appraisal_rule);
->  	violation_check =3D ((func =3D=3D FILE_CHECK || func =3D=3D MMAP_CHECK =
-||
->  			    func =3D=3D MMAP_CHECK_REQPROT) &&
->  			   (ima_policy_flag & IMA_MEASURE) &&
-> @@ -364,6 +365,22 @@ static int process_measurement(struct file *file, co=
-nst struct cred *cred,
->  					 IMA_APPRAISED_SUBMASK);
->  	}
-> =20
-> +	/*
-> +	 * An appraisal result is reusable only for the policy rule which
-> +	 * produced it.  A weaker rule must not prime the inode cache for a
-> +	 * later, stronger rule matching another subject or policy context.
-> +	 */
-> +	if (must_appraise &&
-> +	    (iint->appraisal_rule_id !=3D appraisal_rule.rule_id ||
-> +	     iint->appraisal_policy_generation !=3D
-> +					appraisal_rule.policy_generation)) {
-> +		iint->flags &=3D ~(IMA_APPRAISED | IMA_APPRAISED_SUBMASK |
-> +				 IMA_NONACTION_RULE_FLAGS);
-> +		iint->appraisal_rule_id =3D appraisal_rule.rule_id;
-> +		iint->appraisal_policy_generation =3D
-> +					appraisal_rule.policy_generation;
-> +	}
-> +
->  	/* Determine if already appraised/measured based on bitmask
->  	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
->  	 *  IMA_AUDIT, IMA_AUDITED)
-> @@ -563,11 +580,11 @@ static int ima_file_mprotect(struct vm_area_struct =
-*vma, unsigned long reqprot,
->  	inode =3D file_inode(vma->vm_file);
->  	action =3D ima_get_action(file_mnt_idmap(vma->vm_file), inode,
->  				current_cred(), &prop, MAY_EXEC, MMAP_CHECK,
-> -				&pcr, &template, NULL, NULL);
-> +				&pcr, &template, NULL, NULL, NULL);
->  	action |=3D ima_get_action(file_mnt_idmap(vma->vm_file), inode,
->  				 current_cred(), &prop, MAY_EXEC,
->  				 MMAP_CHECK_REQPROT, &pcr, &template, NULL,
-> -				 NULL);
-> +				 NULL, NULL);
-> =20
->  	/* Is the mmap'ed file in policy? */
->  	if (!(action & (IMA_MEASURE | IMA_APPRAISE_SUBMASK)))
-> @@ -1143,7 +1160,7 @@ int process_buffer_measurement(struct mnt_idmap *id=
-map,
->  		security_current_getlsmprop_subj(&prop);
->  		action =3D ima_get_action(idmap, inode, current_cred(),
->  					&prop, 0, func, &pcr, &template,
-> -					func_data, NULL);
-> +					func_data, NULL, NULL);
->  		if (!(action & IMA_MEASURE) && !digest)
->  			return -ENOENT;
->  	}
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
-/ima_policy.c
-> index 68d9a5e6c232e..5e88e6798a78f 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -59,6 +59,9 @@ int ima_policy_flag;
->  static int temp_ima_appraise;
->  static int build_ima_appraise __ro_after_init;
-> =20
-> +static atomic64_t ima_rule_id =3D ATOMIC64_INIT(0);
-> +static atomic64_t ima_policy_generation =3D ATOMIC64_INIT(1);
-> +
->  atomic_t ima_setxattr_allowed_hash_algorithms;
-> =20
->  #define MAX_LSM_RULES 6
-> @@ -101,6 +104,7 @@ static inline bool vfsgid_lt_kgid(vfsgid_t vfsgid, kg=
-id_t kgid)
-> =20
->  struct ima_rule_entry {
->  	struct list_head list;
-> +	u64 rule_id;
->  	int action;
->  	unsigned int flags;
->  	enum ima_hooks func;
-> @@ -511,6 +515,8 @@ int ima_lsm_policy_change(struct notifier_block *nb, =
-unsigned long event,
->  	if (event !=3D LSM_POLICY_CHANGE)
->  		return NOTIFY_DONE;
-> =20
-> +	/* Readers using either old or replacement rules must not reuse a PASS.=
- */
-> +	atomic64_inc(&ima_policy_generation);
->  	ima_lsm_update_rules();
->  	return NOTIFY_OK;
->  }
-> @@ -754,6 +760,7 @@ static int get_subaction(struct ima_rule_entry *rule,=
- enum ima_hooks func)
->   * @template_desc: the template that should be used for this rule
->   * @func_data: func specific data, may be NULL
->   * @allowed_algos: allowlist of hash algorithms for the IMA xattr
-> + * @appraisal_rule: identity of the matched appraisal rule
->   *
->   * Measure decision based on func/mask/fsmagic and LSM(subj/obj/type)
->   * conditions.
-> @@ -766,7 +773,8 @@ int ima_match_policy(struct mnt_idmap *idmap, struct =
-inode *inode,
->  		     const struct cred *cred, struct lsm_prop *prop,
->  		     enum ima_hooks func, int mask, int flags, int *pcr,
->  		     struct ima_template_desc **template_desc,
-> -		     const char *func_data, unsigned int *allowed_algos)
-> +		     const char *func_data, unsigned int *allowed_algos,
-> +		     struct ima_appraisal_rule_id *appraisal_rule)
->  {
->  	struct ima_rule_entry *entry;
->  	int action =3D 0, actmask =3D flags | (flags << 1);
-> @@ -790,6 +798,11 @@ int ima_match_policy(struct mnt_idmap *idmap, struct=
- inode *inode,
-> =20
->  		action |=3D entry->action & IMA_DO_MASK;
->  		if (entry->action & IMA_APPRAISE) {
-> +			if (appraisal_rule) {
-> +				appraisal_rule->rule_id =3D entry->rule_id;
-> +				appraisal_rule->policy_generation =3D
-> +					atomic64_read(&ima_policy_generation);
-> +			}
->  			action |=3D get_subaction(entry, func);
->  			action &=3D ~IMA_HASH;
->  			if (ima_fail_unverifiable_sigs)
-> @@ -895,6 +908,9 @@ static void add_rules(struct ima_rule_entry *entries,=
- int count,
->  	for (i =3D 0; i < count; i++) {
->  		struct ima_rule_entry *entry;
-> =20
-> +		if (!entries[i].rule_id)
-> +			entries[i].rule_id =3D atomic64_inc_return(&ima_rule_id);
-> +
->  		if (policy_rule & IMA_DEFAULT_POLICY)
->  			list_add_tail(&entries[i].list, &ima_default_rules);
-> =20
-> @@ -1065,6 +1081,8 @@ void ima_update_policy(void)
->  {
->  	struct list_head *policy =3D &ima_policy_rules;
-> =20
-> +	/* Invalidate appraisal results before publishing appended rules. */
-> +	atomic64_inc(&ima_policy_generation);
->  	list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
-> =20
->  	if (ima_rules !=3D (struct list_head __rcu *)policy) {
-> @@ -2006,6 +2024,7 @@ ssize_t ima_parse_add_rule(char *rule)
->  				    audit_info);
->  		return result;
->  	}
-> +	entry->rule_id =3D atomic64_inc_return(&ima_rule_id);
-> =20
->  	list_add_tail(&entry->list, &ima_temp_rules);
-> =20
->=20
-> base-commit: 47324d3a5b3abd781295044d01d92d09f184e872
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 1c41af2f91a6..5eae8723f5f9 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -140,8 +140,8 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+  * (Additional directory/file metadata needs to be added for more complete
+  * protection.)
+  */
+-static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+-			  char type, char *digest)
++static int hmac_add_misc(struct shash_desc *desc, struct inode *inode,
++			 char type, char *digest)
+ {
+ 	struct h_misc {
+ 		/*
+@@ -156,6 +156,7 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+ 		gid_t gid;
+ 		umode_t mode;
+ 	} hmac_misc;
++	int error;
+ 
+ 	memset(&hmac_misc, 0, sizeof(hmac_misc));
+ 	/* Don't include the inode or generation number in portable
+@@ -176,14 +177,30 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+ 	hmac_misc.uid = from_kuid(&init_user_ns, inode->i_uid);
+ 	hmac_misc.gid = from_kgid(&init_user_ns, inode->i_gid);
+ 	hmac_misc.mode = inode->i_mode;
+-	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
++	error = crypto_shash_update(desc, (const u8 *)&hmac_misc,
++				    sizeof(hmac_misc));
++	if (error) {
++		pr_err("crypto_shash_update() failed: %d\n", error);
++		return error;
++	}
+ 	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
+-	    type != EVM_XATTR_PORTABLE_DIGSIG)
+-		crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZE);
+-	crypto_shash_final(desc, digest);
++	    type != EVM_XATTR_PORTABLE_DIGSIG) {
++		error = crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid,
++					    UUID_SIZE);
++		if (error) {
++			pr_err("crypto_shash_update() failed: %d\n", error);
++			return error;
++		}
++	}
++	error = crypto_shash_final(desc, digest);
++	if (error) {
++		pr_err("crypto_shash_final() failed: %d\n", error);
++		return error;
++	}
+ 
+ 	pr_debug("hmac_misc: (%zu) [%*phN]\n", sizeof(struct h_misc),
+ 		 (int)sizeof(struct h_misc), &hmac_misc);
++	return 0;
+ }
+ 
+ /*
+@@ -267,9 +284,14 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 
+ 		if ((req_xattr_name && req_xattr_value)
+ 		    && !strcmp(xattr->name, req_xattr_name)) {
+-			error = 0;
+-			crypto_shash_update(desc, (const u8 *)req_xattr_value,
+-					     req_xattr_value_len);
++			error = crypto_shash_update(desc,
++						    (const u8 *)req_xattr_value,
++						    req_xattr_value_len);
++			if (error) {
++				pr_err("crypto_shash_update() failed: %d\n",
++				       error);
++				goto out;
++			}
+ 			if (is_ima)
+ 				ima_present = true;
+ 
+@@ -293,15 +315,23 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
+ 				 dentry->d_name.name, xattr->name, size,
+ 				 user_space_size);
+-		error = 0;
+ 		xattr_size = size;
+-		crypto_shash_update(desc, (const u8 *)xattr_value, xattr_size);
++		error = crypto_shash_update(desc, (const u8 *)xattr_value,
++					    xattr_size);
++		if (error) {
++			pr_err("crypto_shash_update() failed: %d\n", error);
++			goto out;
++		}
+ 		if (is_ima)
+ 			ima_present = true;
+ 
+ 		dump_security_xattr(xattr->name, xattr_value, xattr_size);
+ 	}
+-	hmac_add_misc(desc, inode, type, data->digest);
++	if (!error) {
++		error = hmac_add_misc(desc, inode, type, data->digest);
++		if (error)
++			goto out;
++	}
+ 
+ 	if (inode != d_backing_inode(dentry) && iint) {
+ 		if (IS_I_VERSION(inode))
+@@ -409,6 +439,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
+ 	struct shash_desc *desc;
+ 	const struct xattr *xattr;
+ 	struct xattr_list *xattr_entry;
++	int error;
+ 
+ 	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
+ 	if (IS_ERR(desc)) {
+@@ -423,14 +454,20 @@ int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
+ 				   XATTR_SECURITY_PREFIX_LEN, xattr->name) != 0)
+ 				continue;
+ 
+-			crypto_shash_update(desc, xattr->value,
+-					    xattr->value_len);
++			error = crypto_shash_update(desc, xattr->value,
++						    xattr->value_len);
++			if (error) {
++				pr_err("crypto_shash_update() failed: %d\n",
++				       error);
++				goto out;
++			}
+ 		}
+ 	}
+ 
+-	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
++	error = hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
++out:
+ 	kfree(desc);
+-	return 0;
++	return error;
+ }
+ 
+ /*
+-- 
+2.43.0
 
