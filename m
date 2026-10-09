@@ -1,123 +1,87 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f226.google.com (mail-qk1-f226.google.com [209.85.222.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34306136672;
-	Fri,  9 Oct 2026 01:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FE13D7D65
+	for <linux-integrity@vger.kernel.org>; Fri,  9 Oct 2026 08:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791507679; cv=none; b=OCFuBINR0kpw+9Ey6FEEBcrSSRQF6N/8co/ZWWaMuvWzeGBo2ucl3wNxXQLtMuF/X2GLsZYj/5EFM0GPALzifQ7Kl+2qCmcQiNOkOj2GK5jNv0Qccw0ZrK5ju8+cmLN3lXSm7t4uDkUYx6gj18zP1tF6wpUMl7qS06O8/WvP2+M=
+	t=1791534595; cv=none; b=t4uqlm+7AhkR2HipFFxol9v/xf4KxsLcdFGqAztfiJAVsbzK2CrjJwF3nH1H+gpaaN8KEtb6UciAmZNLg2Tyulxj729KnLHQQ1jLX8kwfKB8hhXtY2f3KNdap/734rpcSI8oAYylZNuDBKYWKKMBRBoo2Oz/RK8XxNL1gnxLSxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791507679; c=relaxed/simple;
-	bh=5o681WT2JcMa4Lay67+1VkJC6lNCwbB9VjmTuQcNFPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNCWs9loCA8ANtSffuAcJjohdUuKfbD+Xzrmc9ky5D9Z2S+0Qxmw2Hj9lNCyAfstHE1qzhPMFwqn3CyRgm5K/3yTeclGb54bK7YUBEHXGybpPEyttM0pfBUDik6UyhOAnfzT3Fh4HTcZdGrfVR+3WKz4OtU4VfuexqCBlDrPTq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: e91068e2c37c11f19a56ed5b684f684d-20261009
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.19,REQID:14e4ba6b-5637-4e74-8698-223140aa71d8,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:7db8b62,CLOUDID:474d0c777375c55cc720d8e150a63839,BulkI
-	D:nil,BulkQuantity:0,SF:80|81|82|83|102|865|898,TC:nil,Content:0|15|52|99,
-	EDM:-3,IP:nil,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
-	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: e91068e2c37c11f19a56ed5b684f684d-20261009
-X-User: xiaopei01@kylinos.cn
-Received: from [10.42.12.251] [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 172668676; Fri, 09 Oct 2026 09:01:07 +0800
-Message-ID: <c74c47b0-e1e6-48f4-8997-ef264fcbf977@kylinos.cn>
-Date: Fri, 9 Oct 2026 09:01:05 +0800
+	s=arc-20240116; t=1791534595; c=relaxed/simple;
+	bh=KdOxe03RJFJSOXfBnXYN+A603ShkIe/cWcsUKZ0d0NU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9JbpOIJCRQcCy/MzefVeTtki1LunG5JoDIXzKpg/0WOXRzBKH0kv04s91x3bMcsLSrBxNs0/T+2B6jHXZiYcGGbk9xWlav+7Fbs/YsHbSv7AxEpJdlj9RXr8nd/sbHqj/0Lc4iaTxkdpeYrJtJJLg18ETleL4MHydIQn6HsnLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=srcf.ucam.org; spf=pass smtp.mailfrom=cavan.codon.org.uk; arc=none smtp.client-ip=209.85.222.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=srcf.ucam.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cavan.codon.org.uk
+Received: by mail-qk1-f226.google.com with SMTP id af79cd13be357-93e55db58cfso548486085a.1
+        for <linux-integrity@vger.kernel.org>; Fri, 09 Oct 2026 01:29:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791534592; x=1792139392;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=cq8gQSDpD+5YFxqUsScItWyxOjZQR+1g4Dz/3bcOwAM=;
+        b=rjZAIRyva1sZz9WfYaUwmK0rGe8cB+41xomDsIm1qBKjHyHBQ26C0cQzZCJuOG+57+
+         UWfGFDBIwMS54tqhkHP3vwYzw/w+P4fRcujXr1ndsv+YenCoitHCJvZ3phngJbkdabJ9
+         go5KWH5v9FXyYcI7I76VsU+SDfv7pyPYwcEE7wnZSRy4dppKU/lfSFBhdtWIWrCi7qoZ
+         tIAdCyWIDDMEpuAAVFjtEjnHc5zI3TYby4TDhjtCZf9iFvoppKohn+7g279nam0sMc9Q
+         QeJ3o8O/8RydRDxH/LdHS9S0dteizU7xm/e6G2gQ8toXo2+PsNWS4viOKB0Q/nhW5wNs
+         3stw==
+X-Forwarded-Encrypted: i=1; AKwUvBzbIaOmgJsEmNV1mr+FAhLh48E6X87V+Xyizm3N7lZ1dEI28eSeRK0YYymhhNY3cGmKZaJX4ZLg8cuHih0a8C8=@vger.kernel.org
+X-Gm-Message-State: AFuF++mVDVRi3fVbal+jy8x2PekaRrV6eEBaq3PAtDm+HYV7GDzuWxqq
+	6+rFNRhKjS+BH8O48zPbxu6kpgTMsEF0W6Ro4qnnz49+no0ANAkjVBi2wPuyMeHpOCIaZf5Duzp
+	DZZncrl0AUsSwHw7XasR8OGCh0QcN19PtACbM
+X-Gm-Gg: AYBFou1oqziYyFcRq+jTfwalflEkUrHVqplvIXlGXowiC3mcEbskgm+yu6isCt38tAF
+	klKQ7cqpY12VL1W4JGarCZWg/YOIgn+0Qy9yeMy4jw98c+4XmTRqJ8io658S3LblgB+4j0ubxFT
+	7ag92y0VN0KLJ/Z060LbPWt82oEDQIJzpiRfzGrEdWthukGHrSlodeL5HjZOJWnmHeCIj2xgTO9
+	RUwDQb5/N6dkqJOJHjKPJd8KS6k996IVoTeXCwGHHh0Me8ZVefKv3rfNNxIRed7VjAAR4pZufhe
+	sQf54wts93K7DALGnt/UYtiJTG58V+4CQ/xGc5PrmLipfZchICaNfjOs//hEZaNWnSWWpJjJMC8
+	6WhoPrBbnV4UNb//tKuFcAAnmUQmL2ENPffW6/Fn9
+X-Received: by 2002:a05:620a:471f:b0:93c:2c15:e510 with SMTP id af79cd13be357-93ebd2085ddmr144845685a.37.1791534592672;
+        Fri, 09 Oct 2026 01:29:52 -0700 (PDT)
+Received: from cavan.codon.org.uk (207-53-253-74.PUBLIC.monkeybrains.net. [207.53.253.74])
+        by smtp-relay.gmail.com with ESMTPS id af79cd13be357-93eb9811a3csm31984285a.3.2026.10.09.01.29.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Oct 2026 01:29:52 -0700 (PDT)
+X-Relaying-Domain: codon.org.uk
+Received: by cavan.codon.org.uk (Postfix, from userid 1000)
+	id 72C7C12862CC; Fri, 09 Oct 2026 01:29:51 -0700 (PDT)
+Date: Fri, 9 Oct 2026 01:29:51 -0700
+From: Matthew Garrett <mjg59@srcf.ucam.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Matthew Garrett <matthewg@nvidia.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, rafael@kernel.org,
+	linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [PATCH 05/17] tpm: Add a kernel attestation key and signed audit
+ digest retrieval
+Message-ID: <asil_22hdNKBXH2p@srcf.ucam.org>
+References: <20261008132532.1155166-1-matthewg@nvidia.com>
+ <20261008132532.1155166-6-matthewg@nvidia.com>
+ <c5d1b69763362db8a681d00d3325dd673c4db08b.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] tpm: some tpm small fixes.
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: peterhuewe@gmx.de, linux-integrity@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1791421672.git.xiaopei01@kylinos.cn>
- <asfYIg95-qQ4JrL_@kernel.org>
-From: Pei Xiao <xiaopei01@kylinos.cn>
-In-Reply-To: <asfYIg95-qQ4JrL_@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5d1b69763362db8a681d00d3325dd673c4db08b.camel@HansenPartnership.com>
 
+On Thu, Oct 08, 2026 at 06:45:15PM +0200, James Bottomley wrote:
 
+> Oof, there's a lot of duplication in here.  Basically you're creating a
+> signing primary key (technically it's not an attestation key because
+> they're supposed to be non-primary; this isn't a criticism because the
+> only consumer is the machine owner who doesn't need to use privacy
+> preserving AKs because they know all about the TPM in their own
+> machine).  The primary generation routines that exist in tpm2-
+> sessions.c:tpm2_create_primary() et al. already does most of this.  The
+> only real current difference is that it creates an encryption key not a
+> signing key, but that could have an additional bool argument
+> (signing=true/encryption=false) rather than duplicating the entire
+> routine set.
 
-在 2026/10/9 01:51, Jarkko Sakkinen 写道:
-> On Thu, Oct 08, 2026 at 09:16:19AM +0800, Pei Xiao wrote:
->> This series fixes several small issues found during a code review of
->> drivers/char/tpm:
->>
->>   1. tpm_ppi: tpm_show_ppi_response() stores its return value in an
->>      acpi_status (a u32 typedef), so error codes such as -EINVAL reach
->>      user space as huge positive values.  Declare the variable as
->>      ssize_t to match the show callback's return type.
->>
->>   2. tpm_nsc: tpm_nsc_remove() doubles as the release callback of the
->>      hand-created platform device and dereferences the chip drvdata
->>      unconditionally; init failures before tpmm_chip_alloc() crash
->>      module load.  Return early when the chip has not been created.
->>
->>   3. tpm_nsc: the cleanup runs twice on module exit because
->>      tpm_nsc_remove() is both the explicit cleanup and the device
->>      release callback; the second run operates on an already freed
->>      chip.  Stop overriding the release callback, which also stops the
->>      platform object allocation from leaking.
->>
->>   4. tpm_dev: a zero-length read() discards a pending response,
->>      breaking the command/response pairing of the TPM character
->>      devices, although POSIX requires zero-count reads to have no side
->>      effects.  Return early on a zero count.
->>
->> chhanges in v2:
->> 1.add reviewed-by tag
->> 2.remove patch 5: 
->> make the tpm_init() error messages consistently prefixed with "tpm: " and
->> report the actual failure of tpm_dev_common_init().
->> 3.modify patch 1 git commit information.
->>
->> Pei Xiao (4):
->>   tpm: tpm_ppi: fix zero-extension of negative error codes
->>   tpm: tpm_nsc: fix NULL pointer dereference on init failure
->>   tpm: tpm_nsc: stop using the cleanup callback as dev.release
->>   tpm: fix zero-length read discarding the pending response
->>
->>  drivers/char/tpm/tpm-dev-common.c | 3 +++
->>  drivers/char/tpm/tpm_nsc.c        | 8 ++++++--
->>  drivers/char/tpm/tpm_ppi.c        | 2 +-
->>  3 files changed, 10 insertions(+), 3 deletions(-)
->>
->> -- 
->> 2.25.1
->>
-> 
-> Right, so I've already applied some of the patches so I'm a bit 
-> confused what to do with this.
-> 
-> See:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/
-> 
-> Is there something wrong in the ones that I already applied?
-hi Jarkko，
-  Because this patch ("tpm: tpm_ppi: fix zero-extension of negative
-error codes") did not pass review, I resend a v2 version that includes
-the patches that have already passed review and carries their
-Reviewed-by tags.
-
-Pei.
-thanks!>
-> Br, Jarkko
-
+ACK, that's fair. I'll respin with that in mind.
