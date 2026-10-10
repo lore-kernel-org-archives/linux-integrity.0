@@ -1,122 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C513451CD;
-	Sat, 10 Oct 2026 04:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BCC33EB10;
+	Sat, 10 Oct 2026 09:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791607066; cv=none; b=rnb45ouQueaCIA3sJQeNvT/v6KM7ZWUmZGtAvxql4TsifQodJFJs6joBHLQHoAGTUVwngOBc292u2qyx5U9GjBDtI8Lexu+DrmsyszzQmO+tOPW8IsklJ4v3S5An4M7sdaa3b8j67pyjUA/B/7o4Wv4DOZUmRkMIasqO5wVNKOI=
+	t=1791624161; cv=none; b=cha+g2SfrX4SlYqacek7TNVxe+qg6bCKJCm6UB277BATgqgrf8bUyOlSkrCASGJ6iIgw2AP5Q46zdTmC/Tv9xDSJiNXifzYPe4cLJnFJUge12GAk2q6E8hydSvsEghDMJq5zqgkyiYBWsjsGWerOD2WcwCi6MicbzY3f3GWnF/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791607066; c=relaxed/simple;
-	bh=IrHjKkj+D8DU5ckKYWgKnh1RN9L06X//M7q9ZNvM934=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b3+/ywdvK1OZOkOowvimKtPqksM8LOzKEFFifhEROWtsua8mbalEqt2pmmPd+W/XzP50fupFx+mKtwLIv3P8lca6luZov+iil4WUFl5E2Duic0An/4m/XCT1NrlBUmGNmGppwqqMAeF4P+yW/dCiz59C8JPHknsvHkLSwL+qGK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0z9Dtj1; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791624161; c=relaxed/simple;
+	bh=NAaEPaB+o1Dm/fm+7bezAR2jI1G44dpDFT9mWVuNpkY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B24xzj5SDAsV/O9JNQrt6xIy4H4LDOVCN7e/ntLFqoAVdtAnQKifJ6ynYVYB6vN05A/TBYRcD65khe0FSocNNVMEnbiFK2xzHBf9EPjwH6L4EzllFOzHiNtLkZ6UfAD0/GdwpyQTxeu1l3rZZgqUMRwKoC4Jr2dKqwVDhKELLH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ad+GAUPS; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0z9Dtj1"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 809131F000FF;
-	Sat, 10 Oct 2026 04:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791607065;
-	bh=DphHsZp1KEB4Zq1MHO6l6LHNE4Q8dWYRthKIspYwFY8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=E0z9Dtj1BwdO6ikmfavrG8BDcuWX7zdSrl4/TFEdsZUaFmdEvTi3UvAGUBf3CJSL5
-	 jDnnUSDTboKSsvEGgasJoTshsIMl2ZQZBkvHBoyqPHTmGG0nx1hAGQoXFisfBiXsY9
-	 QGQbhTzaGX4YvvPBk93Xw3G55+jOZkD9upNHiGfscYrFclLYqL4XTh6fxTE2AjYQjF
-	 mMsQn5iFrJIYzKSugV3yKNzvq39QeSzUIBbKzxj5CVVFxQNb9k5lEKHUEnA0CkHRp0
-	 EpV5BKBYYmPypz2JzqUIkIEjZyiW3wzytbbUMExAEeVdezR2ZvcwniTIalEh3utqwh
-	 z7X/o91eHk69g==
-Date: Sat, 10 Oct 2026 07:37:40 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: peterhuewe@gmx.de, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] tpm: some tpm small fixes.
-Message-ID: <asnBFP1jo1g82ZHQ@kernel.org>
-References: <cover.1791421672.git.xiaopei01@kylinos.cn>
- <asfYIg95-qQ4JrL_@kernel.org>
- <c74c47b0-e1e6-48f4-8997-ef264fcbf977@kylinos.cn>
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ad+GAUPS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1791624157;
+	bh=NAaEPaB+o1Dm/fm+7bezAR2jI1G44dpDFT9mWVuNpkY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=ad+GAUPS4Jx2gG2f5gc+BjCLeBUGhqY0SmbZvdyQx241DPA+80DRKcZv+SHJKQ23I
+	 4nNm34PbIVmflPKJbNfZ0cHH26p25vVinpZBquZGXeQLaOr/0nm7uJd8iBlQCM1WIJ
+	 T1l881uZ/CUVeQeqfa1Cjgw09Z+fzP6UhrfUCTWM=
+Received: from [10.23.23.39] (unknown [80.188.228.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 814011C01AF;
+	Sat, 10 Oct 2026 05:22:36 -0400 (EDT)
+Message-ID: <435907614242e82ecde1767a967a3110fca6fb37.camel@HansenPartnership.com>
+Subject: Re: [PATCH 01/17] tpm: Define a kernel-owned TPM NV index that
+ can't be modified by userland
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Matthew Garrett <matthewg@nvidia.com>, mjg59@srcf.ucam.org
+Cc: keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	rafael@kernel.org, linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
+Date: Sat, 10 Oct 2026 11:22:34 +0200
+In-Reply-To: <20261008132532.1155166-2-matthewg@nvidia.com>
+References: <20261008132532.1155166-1-matthewg@nvidia.com>
+		 <20261008132532.1155166-2-matthewg@nvidia.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNE
+ lecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn
+ 1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHU
+ RfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8
+ X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvd
+ HRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGw
+ MGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAml2ZBI
+ FCS3GUMIACgkQgUrkfCFIVNZKjQf/deRzlXZClKxTC/Ee2yEPqqS7mm/INUA49KdQQ5oIhSxkUBy0
+ 9J4qjMIo5F8ZFkFTqikBqeL35LKu7O7rn8WETfX8Bxvos3HUsl3jHo34DES4MUFIpoQPgtiLRGwLb
+ K0cVCAArR2u2qj4ABmTRrs1I1kvdjEw6gatOuXtEe/j5O2fvfzTq9GBr0Q3n2IAsFXi4hLlx6VPE8
+ tyWUZ8BWJKtih3JAeUiXFvASL3McV0rV9RnU0VbjEQEhSE7PMYhWpnDC9AyBb0lXJllQRvC3NSkUB
+ 8KVQgNNxRPss0WE/nBoZ4dFA42jTyzTz8lNylxZoAWV7WJb3QxVg4oCodRVrxxrQhSmFtZXMgQm90
+ dG9tbGV5IDxqZWpiQGtlcm5lbC5vcmc+iQFVBBMBCAA/AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeA
+ QIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mYBQkbNYS9AAoJEIFK5HwhSFTWBpwIAL5Bk3
+ 5FB34U6iHmDzzgdCbxLTs43T/YQyJpcGIvopBvnI/fDY8oSG6Df64/O6B+1R+A8TDp6ZG5ysUWnCC
+ 6GuIaEHemBYkitMPglR6+sGCMQY7O0mlsPvdssvKK1KI9Bno4VU6ogaF2qVzefSqg1Djmf/DcsxWP
+ rI/jdJ8FB5AYR2rjIdDFc+zRdAJuavo1/anyY2wgpFh/3R8IOYAEfWV9nGgYkf9+tA4EIn1sxE0I3
+ L5oW2N3mbyRrkzuBwO8ztMCwqEPk7moWzhokcZqMXiAIahaZdkashJC+s2X2RZSGCy+g+pvY5NN4B
+ BVG5XwLgVBqbHMTcxE0fbmPqz+q6O0LEphbWVzIEJvdHRvbWxleSA8amVqYkBoYW5zZW5wYXJ0bmV
+ yc2hpcC5jb20+iQFXBBMBCABBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmODZ5ACGwMFCRs1hL0F
+ CwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQgUrkfCFIVNZu0Af/TzvL2/NdgAcw9uN3x60H8
+ jc4QUq14VpxcFEFEMpcj1morkX/G93V+56HBBaXZj+yK8PhxIA/SIz+sU7C/0YvKuvzakP8ZX/7WJ
+ e32SOUtjfr/VTaqjIBzNj6OxLvZpmNbBw7s6DwhhNpHOWqJ/1ml+PtDRDV71IB58yVqQjp1xlNKVl
+ ZppcJ5908EJzsFnRIVjiQiDSKoppqB2BCibBbrWcln7CiWMyOC/cco6SIn6twH+f7+aivJ3xGcOE2
+ a9gBKF5rNi9TBoX9oyPmshv/TDmnohsVrH7AYXlGYfZTk15SWEiROh1QX8/uD9wl/gcIv5EDUpT/F
+ L2jzOsA5663bw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c74c47b0-e1e6-48f4-8997-ef264fcbf977@kylinos.cn>
 
-On Fri, Oct 09, 2026 at 09:01:05AM +0800, Pei Xiao wrote:
-> 
-> 
-> 在 2026/10/9 01:51, Jarkko Sakkinen 写道:
-> > On Thu, Oct 08, 2026 at 09:16:19AM +0800, Pei Xiao wrote:
-> >> This series fixes several small issues found during a code review of
-> >> drivers/char/tpm:
-> >>
-> >>   1. tpm_ppi: tpm_show_ppi_response() stores its return value in an
-> >>      acpi_status (a u32 typedef), so error codes such as -EINVAL reach
-> >>      user space as huge positive values.  Declare the variable as
-> >>      ssize_t to match the show callback's return type.
-> >>
-> >>   2. tpm_nsc: tpm_nsc_remove() doubles as the release callback of the
-> >>      hand-created platform device and dereferences the chip drvdata
-> >>      unconditionally; init failures before tpmm_chip_alloc() crash
-> >>      module load.  Return early when the chip has not been created.
-> >>
-> >>   3. tpm_nsc: the cleanup runs twice on module exit because
-> >>      tpm_nsc_remove() is both the explicit cleanup and the device
-> >>      release callback; the second run operates on an already freed
-> >>      chip.  Stop overriding the release callback, which also stops the
-> >>      platform object allocation from leaking.
-> >>
-> >>   4. tpm_dev: a zero-length read() discards a pending response,
-> >>      breaking the command/response pairing of the TPM character
-> >>      devices, although POSIX requires zero-count reads to have no side
-> >>      effects.  Return early on a zero count.
-> >>
-> >> chhanges in v2:
-> >> 1.add reviewed-by tag
-> >> 2.remove patch 5: 
-> >> make the tpm_init() error messages consistently prefixed with "tpm: " and
-> >> report the actual failure of tpm_dev_common_init().
-> >> 3.modify patch 1 git commit information.
-> >>
-> >> Pei Xiao (4):
-> >>   tpm: tpm_ppi: fix zero-extension of negative error codes
-> >>   tpm: tpm_nsc: fix NULL pointer dereference on init failure
-> >>   tpm: tpm_nsc: stop using the cleanup callback as dev.release
-> >>   tpm: fix zero-length read discarding the pending response
-> >>
-> >>  drivers/char/tpm/tpm-dev-common.c | 3 +++
-> >>  drivers/char/tpm/tpm_nsc.c        | 8 ++++++--
-> >>  drivers/char/tpm/tpm_ppi.c        | 2 +-
-> >>  3 files changed, 10 insertions(+), 3 deletions(-)
-> >>
-> >> -- 
-> >> 2.25.1
-> >>
-> > 
-> > Right, so I've already applied some of the patches so I'm a bit 
-> > confused what to do with this.
-> > 
-> > See:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/
-> > 
-> > Is there something wrong in the ones that I already applied?
-> hi Jarkko，
->   Because this patch ("tpm: tpm_ppi: fix zero-extension of negative
-> error codes") did not pass review, I resend a v2 version that includes
-> the patches that have already passed review and carries their
-> Reviewed-by tags.
+On Thu, 2026-10-08 at 06:20 -0700, Matthew Garrett wrote:
+> TPM NV indexes can be used for various purposes, including using them
+> as PCRs without depleting the limited number of hardware PCRs. It
+> would be beneficial to have one that's under control of the kernel in
+> order to be able to prove whether certain TPM operations occurred
+> within the kernel or not.
 
-Hey, no worries, I'm just sanity checking (and thus asking, that's
-all). Nothing you did particularly wrong.
+I've been thinking about using this as an approach to creating keys
+which can only be unsealed by the kernel.  The "natural" way would be
+via localities, but non trusted execution BIOSs lock all the localities
+except zero, so they're not really viable.  An alternative way is to
+have the kernel populate a NV index on boot with a randomly generated
+authority it knows and then tie the key to a PolicySecret of that index
+... which means only the kernel can unseal it.  My property
+requirements are similar to yours: userspace can't be allowed to remove
+or redefine the authority of the index (since it would be empty I don't
+care if they can read it or not, but I don't mind if they can't).
 
+The reason I never really proposed such a scheme is the rollback
+problem (old version of OS or non-Linux OS can create the NV index from
+user space bypassing the kernel only block) which you try to solve with
+PCR5.  Do you have any data for how widespread measuring
+exitbootservices is?  I know edk2 does it, but I just looked on my
+XPS13 and I only have two PCR5 events: a separator and the GPT table,
+so it's definitely in violation, but if Dells don't do this then it's
+indicative that many other manufacturers might not as well.
 
-> Pei.
-> thanks!>
+If we do have a problem with lack of manufacturer compliance, one other
+way I've got on my todo list is fake trusted launch: now that
+Trenchboot is heading upstream, we have the real trusted launch, but
+that's usually too fiddly for most people, so I was thinking if we
+could get enough of the TXT launch to happen to open the localities
+(without bothering too much about anything else) that might be easier
+and give us the ability to run the Kernel in locality 2.
 
-Br, Jarkko
+> Reserve NV index 0x014c4853 for use by the kernel, and filter
+> commands submitted through /dev/tpm* and /dev/tpmrm* so that
+> userspace cannot undefine or modify it. Blocking definition is more
+> awkward so let's allow that for now, not being able to modify
+> ithttps://www.bbc.co.uk/sounds/play/p0pfxh72
+> means there's nothing interesting they can do there. The filter
+> simply validates which handle the relevant set of commands is
+> referring to and returns -EPERM if it's the kernel one.
+
+As you say there are several other use cases, including mine above and
+NV PCRs, that can only be extended by the kernel, so I think this
+should be a range from the get go.
+
+Regards,
+
+James
