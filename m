@@ -1,91 +1,114 @@
-Received: from mail-pf1-f226.google.com (mail-pf1-f226.google.com [209.85.210.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7AD3B47E0
-	for <linux-integrity@vger.kernel.org>; Sun, 11 Oct 2026 11:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486FE2E7185;
+	Sun, 11 Oct 2026 18:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791718116; cv=none; b=lvE5miZjgmljkQT6a7u7SmCh649KSaBCc6imLFBHYxbSlwFC6YTdXuVs2frnM4rgk8hY8dHvElq7k1wWxs1iwDClh1J0HEBqmxfw2nFLt/Xa3cR0TMGgBtI2HVRUfpN5WbWs0Aoy9P6Mo4PD+SPrEDIhTCnAKXaRPgLvdnziQoA=
+	t=1791742563; cv=none; b=c3k8oVm8i2MiVibNZZngcJSFrUgz/9Cmn7yfgFUAc7haBnwvoej0QyzLYL/bstp2grOB6i2OIRUSye/oM0GGOvYEoIHye90KYsx/UFMonWNFco8t1D9FcoRCSe6sO+ZB2ovxVvx7psq/U+0DIJzzUURklX5boC28VrWb6ENDP/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791718116; c=relaxed/simple;
-	bh=9FzCwcYPrekTsa0r1L9b19cAAS0RIbiRexDegUF0QXQ=;
+	s=arc-20240116; t=1791742563; c=relaxed/simple;
+	bh=JNQPz0An7gY4u/uWmT33dW6bJsZ9FjHuHTe4otE5eQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BdQ5wbqTtofBMDd8ozc/GDGM7KHlAAYVGRD9GLfxvFRRGz4PXdvBzFixDtywG4bSYNgTrSn9zipB+eFZmq9bk7vJ1mNdcgbp72jR/2uzztoUlbSDSMcTBhcEMkkuLneO6NE3LoLeweejCXLkHcIASDmMVnjlzUpIeLTdBAnE5Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=srcf.ucam.org; spf=pass smtp.mailfrom=cavan.codon.org.uk; arc=none smtp.client-ip=209.85.210.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=srcf.ucam.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cavan.codon.org.uk
-Received: by mail-pf1-f226.google.com with SMTP id d2e1a72fcca58-8897e83332fso1367353b3a.1
-        for <linux-integrity@vger.kernel.org>; Sun, 11 Oct 2026 04:28:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791718114; x=1792322914;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=I+CJmtB1KpJvhzp1M+nBD7BDZNjs1heGmH4XU3JRK2Q=;
-        b=xKy82WsqVA0mlsfyApW96Jj8Bcn9PyPbe5nM1EwZxjqTiEKycLyue3PfxmpFOAG+mr
-         nRjnZru8DbTtIec23aSWHS8i4y2s7ohFPm1dLOXRNCu3aU2RLkfLGnULO/eBmsvby/T8
-         ZxbGBvkVJGpbDociM6qyN3qFa2HG0zo6UHBARZGft9Nng5mU1W+U1/jXSMLgZVtmTN6K
-         5EhExo702Df4eqlmlnITunTglFyNnE3mCZjNh2G3c3zxPjE6Y2itpD7Obqubh5VEd9Gb
-         K5GkUrAncxCJTGB99y/4W+PX694uE7W0CG6aZhsO85EVhKjkBzglNmey0kpoWZUmXC4o
-         JpDg==
-X-Forwarded-Encrypted: i=1; AKwUvBxaEZ3ECXE/erFJAg7YdJjSpqNA8u+tdTlcvLiW5K3Umb5bOKW474exzfQjw5CCZNRKhKfbLqo8ft24wcpuCQk=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI7zxgVmU0KBqnVjtklszNIyyWOHdH6cQnrFM0jeS4MZaDUb+YL
-	XX8tqAmFDnIJ6quBtGqFvykhKP84VIGAuY0Kd/fVO8UwxccsziiNHQKJdUgiW/y9ScyGweXlk4B
-	jBi5PkIbIY3S2G3saEK3TVZ0vloqa5TluEMUB19l1P0NiNk6nrLtB
-X-Gm-Gg: AYBFou1zB0jhKn90mLZu7CaZAia5BNdGeZiZ05ej/6Bee32t6r4e4lGJzWvHI47UcXw
-	0ONfeAf/hPmFzbs+2WiqFpgHVG2meP7bB1qekPk5Cihehm6OaPJMqapQ0AJH0/aWUC3Ua+Hz8B3
-	l7xKm0Nm3oFSTGXo3n25fubaQH96OpqpQECZoUOJ08pGAi7PWPdAaUtxl6Gd7eQhP5ocm5p/nN1
-	l4Dw4PVhcfItieirCyBYJfEv1NvC8U3y+rLjo8AoHhlNLQjFBrf4ulYNwCNyCtoixvFJkw/2WZB
-	knQIdbh0cv2pByhUQuyFlFcvQFxtWFuKlLlcOwGh1alOGVFN298fwroDroxIQNqOdmpSwRNM/dv
-	zhv0=
-X-Received: by 2002:a05:6a21:e355:b0:3de:a136:6850 with SMTP id adf61e73a8af0-3e164eb339emr4709275637.17.1791718114268;
-        Sun, 11 Oct 2026 04:28:34 -0700 (PDT)
-Received: from cavan.codon.org.uk ([2607:f598:b99a:160:8a88:88ff:fe88:8788])
-        by smtp-relay.gmail.com with ESMTPS id 41be03b00d2f7-cd3d9e37988sm284927a12.8.2026.10.11.04.28.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Oct 2026 04:28:34 -0700 (PDT)
-X-Relaying-Domain: codon.org.uk
-Received: by cavan.codon.org.uk (Postfix, from userid 1000)
-	id 7CB4118A512C; Sun, 11 Oct 2026 04:28:33 -0700 (PDT)
-Date: Sun, 11 Oct 2026 04:28:33 -0700
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Matthew Garrett <matthewg@nvidia.com>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org, rafael@kernel.org,
-	linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
-Subject: Re: [PATCH 01/17] tpm: Define a kernel-owned TPM NV index that can't
- be modified by userland
-Message-ID: <asty4acE2B94t5q6@srcf.ucam.org>
-References: <20261008132532.1155166-1-matthewg@nvidia.com>
- <20261008132532.1155166-2-matthewg@nvidia.com>
- <435907614242e82ecde1767a967a3110fca6fb37.camel@HansenPartnership.com>
- <asqthz69ohnMVCye@srcf.ucam.org>
- <059384e86fd256618498b9a7214b6421d38fdf1f.camel@HansenPartnership.com>
- <astjpI65VOyU8xvI@srcf.ucam.org>
- <f002fc613bf0bdcf895e5be02dfd2524b7608787.camel@HansenPartnership.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hTyAQ9sDUki3Vt6cr/6U8I4rg7emdocqOCtXlj1BjpnLowfCRGgiKlgZ+N1RKNAEP/4ZKx3JJa/5JdUA4n/Lc6mtd04lMvRAnaHKvacxkIcdOYp/i+KXJWpRCEYVvC+bc6tKp+M4Su4dbVYtrOTYD0GrJNcgcTUpF++xA1w28Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/DG3FRT; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/DG3FRT"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9FB361F0089B;
+	Sun, 11 Oct 2026 18:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791742562;
+	bh=KyNI9zYP9RZu+/Mg+SREr8t6XcjtR27Kpffa8V9RMns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=C/DG3FRTVFRKp55gNDscDCPOVqo5NMpTZhhNOIR6r73Zr+HNjXR/W+rWBzwru9Pz/
+	 pxdYDMtjPalYvjEQ83EAOTFJ5E+GOs4l4lUZhrOrDrY9KcZvyAXZml8n7r/R8eC1AH
+	 pxLk9vLOlewdwkYcQ/6pTh/wOnWv3EW/xZky40kC/C5Rt4Qf+E7A2CO9/YLuNAA+Xg
+	 sin+fERmzkq6qqNlXwyzo5vBr6RAwK03a+nPSHBjLDq0W24s21ArpQsobIU8pU//yE
+	 gwslu584vw1XOEXBkukEQK9QEm5uA2vUasFLjGjcMvUMfb6AtwFmWXmwmFtZtNcKY7
+	 kaVU7TdlThSGw==
+Date: Sun, 11 Oct 2026 21:15:58 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	Peter =?iso-8859-1?Q?H=FCwe?= <peterhuewe@gmx.de>,
+	LKML <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH] tpm: clean up error checking in setup_ring()
+Message-ID: <asvSXjQQ0vEvF7yL@kernel.org>
+References: <ar_DUjuGv-9vPzga@stanley.mountain>
+ <74850205-dba2-4a97-951d-cda28be129c9@web.de>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f002fc613bf0bdcf895e5be02dfd2524b7608787.camel@HansenPartnership.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <74850205-dba2-4a97-951d-cda28be129c9@web.de>
 
-On Sun, Oct 11, 2026 at 12:27:58PM +0200, James Bottomley wrote:
-> On Sun, 2026-10-11 at 03:23 -0700, Matthew Garrett wrote:
-> > Hmm. Well, that's irritating. Which year's XPS is this?
+On Sun, Oct 11, 2026 at 11:30:13AM +0200, Markus Elfring wrote:
+> > The bind_evtchn_to_irqhandler() function can never return 0.
+> …
 > 
-> It's an XPS-13 9380 Core i7 ... circa 2019 I think.
+> I suggest to reconsider information once more also according to the probability
+> of return values from such a function.
+> https://elixir.bootlin.com/linux/v7.3-rc6/source/drivers/xen/events/events_base.c#L1453-L1461
+> 
+> bind_evtchn_to_irqhandler_chip()
+> https://elixir.bootlin.com/linux/v7.3-rc6/source/drivers/xen/events/events_base.c#L1432-L1451
 
-Yes, that's definitely later than I hoped. Bother. I think this patchset 
-is probably still worthwhile because it does unblock us on at least some 
-machines, and the implementation is intended to be opaque (other than 
-the change in PCR 5 measurements, but we should still get log replay) 
-and can be replaced with something else if we want. The other approach 
-that springs to mind is tying this to having distros switch to a new 
-kernel signing key before enabling this and so having PCR 7 be 
-associated with the feature, but that sounds like an incredibly tedious 
-thing to get right in a reliable way.
+
+I'm not sure what you are trying to exactly or have hard time following
+this response but if there is a problem it can be investigated. All I'm
+seeing now is a collection of links and abstract statements.
+
+I guess this is the function that picks the IRQ number:
+
+static struct irq_info *xen_allocate_irq_dynamic(void)
+{
+	int irq = irq_alloc_desc_from(0, -1);
+	struct irq_info *info = NULL;
+
+	if (irq >= 0) {
+		info = xen_irq_init(irq);
+		if (!info)
+			xen_irq_free_desc(irq);
+	}
+
+	return info;
+}
+
+And if I did not get loss while scavenging the call hierachy it ends
+up to:
+
+static int irq_find_free_area(unsigned int from, unsigned int cnt)
+{
+	MA_STATE(mas, &sparse_irqs, 0, 0);
+
+	if (mas_empty_area(&mas, from, MAX_SPARSE_IRQS, cnt))
+		return -ENOSPC;
+	return mas.index;
+}
+
+And if I looked it up right @from == -1 and @cnt == 1 when
+irq_find_free_area is reached.
+
+I'm not IRQ code expert per se but in order to this never return zero,
+sparse_irqs should not have it available?
+
+I do agree that something in this patch does not appear right, or 
+at least not very well explained so it is a good catch anyhow.
+
+My decision on this is that:
+
+1. I'll drop the current patch as it actually does not make a case
+   why zero could not possibly happen. I spent 45 minutes browsing
+   because commit message did not have any technical details.
+2. Even if it was legit it is hard to see that the change is high
+   priority for anyone.
+3. However, I'm open for v2 with better tecnical backing if there
+   is any.
+
+Br, Jarkko
