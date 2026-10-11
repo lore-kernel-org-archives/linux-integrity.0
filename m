@@ -1,126 +1,179 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F6D3644C6;
-	Sun, 11 Oct 2026 08:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B493F1E0DD8;
+	Sun, 11 Oct 2026 09:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791706892; cv=none; b=cYw1pvvmzTZFWkNPVcwW0zhsSqaEbknAkQANHROW0emk9dXwNyOdqN7v+DI/+39SzPbJJPJaWiY80DXcUpZZb5z86MP0EBcje+FI4bEyPSQtW0N/FIOJNO18z2InYK3+LeXWYihYiKQFFD0EiTmxIhsmJLOkswQ+rEbObEOI3J8=
+	t=1791711029; cv=none; b=fR75r1Bfy9D8OxRCQDVfBGqn5sUkC4XhfQCZ57tu7X8zAyHU+XFkIYO1SUlyVKFX+voumwtHg+OvkTz2sxRTLU5UPHCE7NTKLJYESMaIbAVlmEQiGntuSsnyga8VdcWJPiLZakh6e4SBi2ER9GrMMtYoKtGr021rKfgpEj2vxx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791706892; c=relaxed/simple;
-	bh=8LdKDzBJ+e+7VR18SRBTbtAqhcjd9xD7lDD0ZUYR4Nw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Lege4ZPa3BGdg9xPEmG2Yc+02wb5tVo3rwJj39DjDoVhcrmxYh4612KX4mLS7aibHtdebJWbzCGkmdvsmqomyt4t5JZ/BXBgyw9dTrTQwHRNPNwN2ydWKadfdYfYNxF7/nlu5tn1m8i+hG46an+XYWX6kNFy6gDF4ybNTu+7wNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=mIxHxx2B; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1791711029; c=relaxed/simple;
+	bh=hSpAMAz6L66EbSt4QATCBtWKU6hlfSpYqtv2qGsi13A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=IgB3XUI/3OHxUwMNstaQCuZTgsNpYFpBaGtGNJE08UU1dso+0gJ2XoBGSg5iuVvgbuWpD4XNUu5s5ZPMTEVD2jfeDkBHhWuOOj3qRzjW7pRYkh8SmCkVbYTsbDRA87444uFZkriwErlFzaKC81Ip45GhCXhmcSttb0khmAl+QOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=e7kuzT22; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mIxHxx2B"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1791706889;
-	bh=8LdKDzBJ+e+7VR18SRBTbtAqhcjd9xD7lDD0ZUYR4Nw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=mIxHxx2BAmwFDRwhjO9zHgghXLZwcoNPZ16RdRFJvEU+MIDsLGuJmxXk+UvaR1tfz
-	 s0T5IkDEowtEqq+GEvNsbs7uGSEec+/aIa2vikXnXEMClOW0OwAxsKHBukrkF/auY1
-	 fqVhKRAPNFjk2MLSj70x/daiDYdQLAac+3G7mk/w=
-Received: from [10.23.23.39] (unknown [80.188.228.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id BB6A21C0492;
-	Sun, 11 Oct 2026 04:21:27 -0400 (EDT)
-Message-ID: <916e6cede1a704dd7bc9889829dd8b1598a431e7.camel@HansenPartnership.com>
-Subject: Re: [PATCH 01/17] tpm: Define a kernel-owned TPM NV index that
- can't be modified by userland
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Matthew Garrett <matthewg@nvidia.com>, keyrings@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, rafael@kernel.org,
- linux-pm@vger.kernel.org, 	linux-efi@vger.kernel.org
-Date: Sun, 11 Oct 2026 10:21:23 +0200
-In-Reply-To: <asqthz69ohnMVCye@srcf.ucam.org>
-References: <20261008132532.1155166-1-matthewg@nvidia.com>
-		 <20261008132532.1155166-2-matthewg@nvidia.com>
-		 <435907614242e82ecde1767a967a3110fca6fb37.camel@HansenPartnership.com>
-		 <asqthz69ohnMVCye@srcf.ucam.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNE
- lecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn
- 1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHU
- RfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8
- X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvd
- HRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGw
- MGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAml2ZBI
- FCS3GUMIACgkQgUrkfCFIVNZKjQf/deRzlXZClKxTC/Ee2yEPqqS7mm/INUA49KdQQ5oIhSxkUBy0
- 9J4qjMIo5F8ZFkFTqikBqeL35LKu7O7rn8WETfX8Bxvos3HUsl3jHo34DES4MUFIpoQPgtiLRGwLb
- K0cVCAArR2u2qj4ABmTRrs1I1kvdjEw6gatOuXtEe/j5O2fvfzTq9GBr0Q3n2IAsFXi4hLlx6VPE8
- tyWUZ8BWJKtih3JAeUiXFvASL3McV0rV9RnU0VbjEQEhSE7PMYhWpnDC9AyBb0lXJllQRvC3NSkUB
- 8KVQgNNxRPss0WE/nBoZ4dFA42jTyzTz8lNylxZoAWV7WJb3QxVg4oCodRVrxxrQhSmFtZXMgQm90
- dG9tbGV5IDxqZWpiQGtlcm5lbC5vcmc+iQFVBBMBCAA/AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeA
- QIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mYBQkbNYS9AAoJEIFK5HwhSFTWBpwIAL5Bk3
- 5FB34U6iHmDzzgdCbxLTs43T/YQyJpcGIvopBvnI/fDY8oSG6Df64/O6B+1R+A8TDp6ZG5ysUWnCC
- 6GuIaEHemBYkitMPglR6+sGCMQY7O0mlsPvdssvKK1KI9Bno4VU6ogaF2qVzefSqg1Djmf/DcsxWP
- rI/jdJ8FB5AYR2rjIdDFc+zRdAJuavo1/anyY2wgpFh/3R8IOYAEfWV9nGgYkf9+tA4EIn1sxE0I3
- L5oW2N3mbyRrkzuBwO8ztMCwqEPk7moWzhokcZqMXiAIahaZdkashJC+s2X2RZSGCy+g+pvY5NN4B
- BVG5XwLgVBqbHMTcxE0fbmPqz+q6O0LEphbWVzIEJvdHRvbWxleSA8amVqYkBoYW5zZW5wYXJ0bmV
- yc2hpcC5jb20+iQFXBBMBCABBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmODZ5ACGwMFCRs1hL0F
- CwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQgUrkfCFIVNZu0Af/TzvL2/NdgAcw9uN3x60H8
- jc4QUq14VpxcFEFEMpcj1morkX/G93V+56HBBaXZj+yK8PhxIA/SIz+sU7C/0YvKuvzakP8ZX/7WJ
- e32SOUtjfr/VTaqjIBzNj6OxLvZpmNbBw7s6DwhhNpHOWqJ/1ml+PtDRDV71IB58yVqQjp1xlNKVl
- ZppcJ5908EJzsFnRIVjiQiDSKoppqB2BCibBbrWcln7CiWMyOC/cco6SIn6twH+f7+aivJ3xGcOE2
- a9gBKF5rNi9TBoX9oyPmshv/TDmnohsVrH7AYXlGYfZTk15SWEiROh1QX8/uD9wl/gcIv5EDUpT/F
- L2jzOsA5663bw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="e7kuzT22"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1791711025; x=1792315825; i=markus.elfring@web.de;
+	bh=2Tr2pAfI9CT6tJlmMA+Oy/YVrov/x/vP1QVyrXDF0is=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=e7kuzT22COUT8Ps1E/lNtMJDVCGuLMpdKie4HHkUAdYCgd+OvcHP4BzBua/4Txa8
+	 5AAnQIaNgSIFkt4Exg+wx4EMxuwdZoBdDFcaMABaY+ufZG3p+MW85UcG/DOXxuCod
+	 jQFk+7aPi9w0Ng+0Ry72klYeYZbpqZAMkPgH85O6CrV11HZYUO4z8KLIFiKKpUKiA
+	 uAY8V5eXeTYR6kcISMSzXukzhA/jClxqPhhhqF00H6goObnN1C83MxPqvjExHoWTj
+	 TCx+5ILXeoqLho9v+Av6PpUDreqiXMJiWWW7oYfW6R3L7QnfXHKE2yhMRlOiHqKYS
+	 Ze+J8B1L3Gz+YNh5tQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFaui-1xRP830yUA-00Gdgi; Sun, 11
+ Oct 2026 11:30:25 +0200
+Message-ID: <74850205-dba2-4a97-951d-cda28be129c9@web.de>
+Date: Sun, 11 Oct 2026 11:30:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org,
+ linux-integrity@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+ =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+References: <ar_DUjuGv-9vPzga@stanley.mountain>
+Subject: Re: [PATCH] tpm: clean up error checking in setup_ring()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <ar_DUjuGv-9vPzga@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1/f6U7KPfin9Z6fIf39ittEO/iO2JNFHDt4XdqOPyjsV+NBXrVv
+ 3EnjtmTJm9M6Nqj3q4lsRdE+8TyigHE7UidAUOlF7mhpE1RH/V1GrO8CMhB8gSpCJlLL4YT
+ /0Igji9JSVxH43wgErUin035WUMx9ACrase3Sx59ipKm4d9OBqoZzL1CZnutF/ZRJynjXqW
+ PM4cQydKn4Qb383rwSj2g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HNNmcHyfClk=;Le9U5dA32zi6C+mfFjwrDmYle1a
+ +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
 
-On Sat, 2026-10-10 at 14:26 -0700, Matthew Garrett wrote:
-[...]
-> > If we do have a problem with lack of manufacturer compliance, one
-> > other way I've got on my todo list is fake trusted launch: now that
-> > Trenchboot is heading upstream, we have the real trusted launch,
-> > but that's usually too fiddly for most people, so I was thinking if
-> > we could get enough of the TXT launch to happen to open the
-> > localities (without bothering too much about anything else) that
-> > might be easier and give us the ability to run the Kernel in
-> > locality 2.
+> The bind_evtchn_to_irqhandler() function can never return 0.
+=E2=80=A6
+
+I suggest to reconsider information once more also according to the probab=
+ility
+of return values from such a function.
+https://elixir.bootlin.com/linux/v7.3-rc6/source/drivers/xen/events/events=
+_base.c#L1453-L1461
+
+bind_evtchn_to_irqhandler_chip()
+https://elixir.bootlin.com/linux/v7.3-rc6/source/drivers/xen/events/events=
+_base.c#L1432-L1451
+
+
+=E2=80=A6
+> ---
+> From static analysis.  Untested.
 >=20
-> Remember that many consumer devices don't implement TXT, it's only
-> the enterprise SKUs that tend to. But that would be funny - it's the
-> same sort of shape as an awful hack that's used on some of the
-> Qualcomm laptops to get access to EL2.
+>  drivers/char/tpm/xen-tpmfront.c | 2 +-
+=E2=80=A6
 
-I haven't really got much farther than a bit of dissassembly of the AC
-block on the theory that if I could work out how the localities get
-opened, I wouldn't even need to do a fake trusted launch.  However, I
-have been doing most of the investigation on random Dell laptops, which
-do claim support for TXT (at least they have a BIOS switch for it) ...
-although I was looking for it now and it seems to have disappeared on
-my XPS, which might be deliberate:
-
-https://www.dell.com/community/en/conversations/xps/9730-secure-launch/6872=
-f0a3915c657bf9d40ae2
-
->  Localities are very clearly the Right Way to deal with this and ugh
-> if we'd been having this conversation 20 years ago instead.
-
-Yes, I know. I actually have an unpublished patch series that makes the
-kernel enforce locality 2 for its operations and 0 for userspace (to
-demonstrate locality policy for keys) but because of the BIOS block it
-only works on kvm guests, which makes upstreaming it a bit pointless.
-
-Perhaps the way forward on this one is to pressure Intel and AMD to
-tell us how to open the localities absent a trusted launch.  I mean, we
-only need localities 0-2 which would give them an easy way to
-distinguish our use case from trusted launch ... but I bet the bios
-switch is all or nothing ...
+Would you be looking for further collateral evolution?
+https://elixir.bootlin.com/linux/v7.3-rc6/source/drivers/char/tpm/xen-tpmf=
+ront.c#L267-L272
 
 Regards,
-
-James
+Markus
