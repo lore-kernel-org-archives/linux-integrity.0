@@ -1,151 +1,132 @@
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD6D4FD279;
-	Tue, 13 Oct 2026 13:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AAC5013AF
+	for <linux-integrity@vger.kernel.org>; Tue, 13 Oct 2026 13:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791896748; cv=none; b=AC+t1mwAa0zGdM6bQK1JF1Xs8QlPbhJ6cb5n4/eT57xbHS/U3/5t9tS/OhcXzGbDB1cPG/rV1Pmxxivmk4nw8+pX/HlQUxSptW1KXaDT71KdKV6bDiKs3wq4QKMG7d0pmwRkYTVAXD+68UyURZlwkQDHy978sff94tXrQ5kHGtQ=
+	t=1791898627; cv=none; b=F2LYMtYGSK2LV4ofOE0ww3KZcDnBu+EZij2u1gVwSodlfWIUH3LeTKsZjPeQNyotaFdWyRaIlrpGLMubofCmPbsHwP93MUX5iUj/Qv5v8u9SAymCAeX8yR8lQbFCYkAKEkWKiup2Bc0bb6gQ7rKNhcAlOI6hAD5Fd6NGUC/35Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791896748; c=relaxed/simple;
-	bh=XLVDDsJ9SkLDOPsRoHBlkN1g12Muht7f6+awpZoSXhM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bhfQhN9xikyVLan1IQ50lV+T3JTVSQ0tDsHdnRh8bNnJb0Rit2JEFfM1oegD5H9H/pvd9q8VoCfjkQaI0KDykjbxuVOF27d631MWwxSLh7wijGbsxNL1BzdHDK3RTixve5O89wGVsEplrw+Kc3Aw5qjmWjBs52pb6Bn5ThTOR+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=6F7V5ju2; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1791898627; c=relaxed/simple;
+	bh=/hCU9eM+EAM+gbO2WZ1UL5JdVd2fGYoXa+LQjApjQ9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aDuSnoXU/VSdTwGG6Eijcp1BFe2TBKxED2wbpudqfs7ItLJQhhYieh62eJ8BMiIimXsY6VAsZoSBE1LZxiqzsx2p6vcAksIb9VBxqJemn7RHVDejfP87y2oHrqWWUM7dzZdDrwrq3MZAZvRN4zGWJcbJOUReHCBj3It+r7N105Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=MPpzjFTh; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="6F7V5ju2"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=wYQuXQ0KfHa17CDRJUy3J57K/iJLMTM6lvkW2CcSDiQ=;
-	b=6F7V5ju2QgWQ9eZjW3MED7pvYgSKl/itfkouUmXO5AnPvg4CViMZ+cJbrkHhH87RerZ3E2r8M
-	GCZPwWzNbKZLEmW98TNci7+YUNiTmHaBGjPkmvgfhRB6SvQAAfJuoDmaTpgxKg9SY9c6ir2ICg/
-	saTm5ZL2eP+7OY3gxwfW1xg=
-Received: from mail.maildlp.com (unknown [172.19.163.200])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4j3vQQ6Q24zKm4b;
-	Tue, 13 Oct 2026 20:53:18 +0800 (CST)
-Received: from kwepemo100015.china.huawei.com (unknown [7.202.195.69])
-	by mail.maildlp.com (Postfix) with ESMTPS id 17A474055B;
-	Tue, 13 Oct 2026 21:05:40 +0800 (CST)
-Received: from [10.67.111.244] (10.67.111.244) by
- kwepemo100015.china.huawei.com (7.202.195.69) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 13 Oct 2026 21:05:39 +0800
-Message-ID: <1451a49c-f37a-486f-ac47-e2ff86fef28a@huawei.com>
-Date: Tue, 13 Oct 2026 21:05:37 +0800
-Precedence: bulk
-X-Mailing-List: linux-integrity@vger.kernel.org
-List-Id: <linux-integrity.vger.kernel.org>
-List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] security: ima: support TSM measurement registers
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-CC: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Eric Snowberg
-	<eric.snowberg@oracle.com>, <linux-integrity@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, Dan Williams <djbw@kernel.org>, Mimi
- Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>, Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Catalin
- Marinas <catalin.marinas@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Suzuki
- Poulose <suzuki.poulose@arm.com>, Steven Price <steven.price@arm.com>, Sami
- Mujawar <sami.mujawar@arm.com>, Aneesh Kumar K.V <aneesh.kumar@kernel.org>,
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="MPpzjFTh"
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-93e6eb77f0bso289873085a.3
+        for <linux-integrity@vger.kernel.org>; Tue, 13 Oct 2026 06:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1791898625; x=1792503425; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=/hCU9eM+EAM+gbO2WZ1UL5JdVd2fGYoXa+LQjApjQ9A=;
+        b=MPpzjFThiloA1rXZ/Xs7+Ba+mlqw222Gl+AL341vd2von9MSnRwrzd9iFiGbSilR/L
+         WFcgZ9zB55znMBK/Rzrzti49PR5I1oiyg+ji6myyeUH+GAHOY2YA26zRZ0U/HnSMRumQ
+         NI8xIdJdHfQjKPn6H7vGGSEVV5KdoJLTtyu7owtx3s9MNvXPUrIB6cOSoLtUE3o8tZuw
+         edAcX/LvBwk9pxMctutv2QEVP7NQTzTDf+DE3uAaq6VyRqd1nC4GkC8zgwD56GZPAiOt
+         67JucTbHLZhY11Ovxr6Me9VENTwee8OOs6xeUAzRWN/i1mYXqpaY1HZ4R62BaxOvjU+1
+         Q+ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791898625; x=1792503425;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=/hCU9eM+EAM+gbO2WZ1UL5JdVd2fGYoXa+LQjApjQ9A=;
+        b=CAdq+J/vpC4tIpx8jHwUTlxx9wmU492ns7gyTBgwMxXA4D+XjRHOMta2Wg0AjWEmdA
+         lSXWZjkzYPQK1in2g/tN/lYCYRaYTAVV2AQXBTvp/CxOYoQoRfSvcEPI99Tuq/nqbR1i
+         rRiK+XopoLonbj/aZMEFljLxbij0CrdwxJccdBRlBiJiVZbqghfyJmU+tCqTRDSskkJ8
+         MZeFHo60rJyvVq4ZoPFRb0HZKIFpJPLLMTEiKLQH8Adxx0WKUEQLSaSNBwl1n3FCXaNJ
+         hLN9ddHrCm4buGz6xx4BsMqeVARwE0GhTDtCYDrezfd2b3dqIY1Ce0o6vGPnluv5sSW6
+         mvoQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxev7DcX8ZFhkcSdYdaGKgQdb0ooOumg9/v4MRmIIeNloxq/mYZ7qe4vaKLIL25wK/cfTFZvLsQtuIRpNjuqrQ=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLH5neNVuUCzVzqj1xbgVEL4NHjfRFjMjaaet78bFbzMCHj5Qek
+	ycinkeHSPd+4DA9JxUUG1NaHUJMk/iuy88KcaN8D0e37uWOQHzhIRBzJTJBpmqPguVc=
+X-Gm-Gg: AYBFou3G9hyMnpvuCEmKt3Pxbxps/5ODwVDNObkbdO8IG0aOb21eF38mRVk97k2zqV3
+	tcro7d28v65IW2wfj8HWhTgXIJX1UhXScutaGiToiNYEU3m/NJ0Ao8t9G2v4clkHkl4+nNMPxs/
+	3nhvTM2LU1VuYNOgVhAYb0v1B4lChIWp2fBH53DN6S3TDZSuZsIsTYg4o24NV64dygNqMHb1jpv
+	yaeIBtJNXxum+sb2v94JN7t6Ma3+eRpkFusWWLqTwDXHSFvU/N05zGkyNZbQTCO7TJvYLCZjTqZ
+	bYkJpACYEJsCGRzRAJhBISoaMUx+apbzlmuxvq3LbPkv1s0QLsvGU/3mY7ndEA3CwmLHFJG5RaX
+	eXn3D3yLs88vZI5ieadSUzwG1OSHME9Oaea+TL+ullC2MjcsaeFEqpNP/XMnpbPNzfksNeBUOlu
+	7q1oDj3hP8lq7RUXlJnqZMBkHrbvaFq8T1WJ8GrT5ZKAJRcrMBn19ZMUc6rd4de3kwBTexuk4hR
+	wNX+grM5OIWo8rcNfBOuJ5l2IyfzhH79HN28H6WIiVc+5e0mOA50ydovl051yjFkzg=
+X-Received: by 2002:a05:620a:1a03:b0:93c:ba44:673d with SMTP id af79cd13be357-93ebd1b7173mr2238297585a.23.1791898624601;
+        Tue, 13 Oct 2026 06:37:04 -0700 (PDT)
+Received: from ziepe.ca (hlfxns010zw-159-2-239-150.pppoe-dynamic.high-speed.ns.bellaliant.net. [159.2.239.150])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93ef50295a7sm238844085a.23.2026.10.13.06.37.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 06:37:03 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1xGcgh-00000009eSN-12xH;
+	Tue, 13 Oct 2026 10:37:03 -0300
+Date: Tue, 13 Oct 2026 10:37:03 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: GONG Ruiqi <gongruiqi1@huawei.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>,
+	Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Dan Williams <djbw@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Suzuki Poulose <suzuki.poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Sami Mujawar <sami.mujawar@arm.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
 	Jiri Pirko <jiri@resnulli.us>
+Subject: Re: [PATCH RFC 0/3] security: ima: support TSM measurement registers
+Message-ID: <20261013133703.GJ14213@ziepe.ca>
 References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
  <ebe68f6463f8ece8a5cd8ce70bba292ec4f64a41.camel@huaweicloud.com>
  <c4fe5315d70fc162f1e5648e3fccb1676710d5e6.camel@huaweicloud.com>
  <ar5tOUor0bp3MtQ6@e129823.arm.com>
  <9e74ff9d-e8a3-425e-bf7c-f973d06e6cdf@huawei.com>
  <as3uzQ7L6tJ-Lu-Q@e129823.arm.com>
-Content-Language: en-US
-From: GONG Ruiqi <gongruiqi1@huawei.com>
-In-Reply-To: <as3uzQ7L6tJ-Lu-Q@e129823.arm.com>
-Content-Type: text/plain; charset="UTF-8"
+ <1451a49c-f37a-486f-ac47-e2ff86fef28a@huawei.com>
+Precedence: bulk
+X-Mailing-List: linux-integrity@vger.kernel.org
+List-Id: <linux-integrity.vger.kernel.org>
+List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemo100015.china.huawei.com (7.202.195.69)
+In-Reply-To: <1451a49c-f37a-486f-ac47-e2ff86fef28a@huawei.com>
 
-On 10/13/2026 4:41 PM, Yeoreum Yun wrote:
->> On 10/1/2026 10:24 PM, Yeoreum Yun wrote:
->>> Hi Roberto,
->>>
->>>> On Thu, 2026-10-01 at 13:27 +0200, Roberto Sassu wrote:
->>>>> On Wed, 2026-09-30 at 14:43 +0100, Yeoreum Yun wrote:
->>>>>> Confidential computing guests without a TPM can use TSM measurement
->>>>>> registers to record IMA measurement digests instead of TPM PCRs.
->>>>
->>>> + Gong Ruiqi, of course.
->>>>
->>>> Roberto
->>
->> Hi Roberto,
->>
->> [...]Thank you for involving me!
->>
->>>>
->>>>> Hi Yeoreum
->>>>>
->>>>> a similar patch set has been sent to the linux-integrity mailing list:
->>>>>
->>>>> https://lore.kernel.org/linux-integrity/20250630125928.765285-1-gongruiqi1@huawei.com/
->>>>>
->>>>> Could you please work with Gong Ruiqi to have a unified proposal?
->>>>>
->>>>> Thanks
->>>>>
->>>>> Roberto
->>>>>
->>>
->>> Thanks for letting me know and I think the proposal is almost the same
->>> with the different terminology only.
->>>
->>> @Gong, what do you think?
->>
->> Hi Yeoreum,
->>
->> Nice to see this topic picked up again — I'm glad the IMA RoT framework
->> series I posted last year is still of interest.
->>
->> Yes, I'd be happy to work with you on a unified proposal. It's been a
->> while since I last worked on that series, so I'll first revisit my
->> previous patch set, and then follow up with you to discuss the code details.
->>
->> Looking forward to working with you.
->>
->> BR,
->> Ruiqi
-> 
-> Hi Ruiqi :)
-> 
-> Thanks for replying and I'm happy with you too.
-> However, I think we need to rework based on the Jiri's patch [0].
-> 
-> Any thought?
+On Tue, Oct 13, 2026 at 09:05:37PM +0800, GONG Ruiqi wrote:
+> I'd rather not base our work on Jiri's patch at this stage: it is
+> a pre-RFC draft of the new attestation subsystem, whose design is
+> itself still in progress. Building upon it instead of current
+> mainline would be quite risky — we would be rebasing on a moving
+> target, and merging would be blocked until the whole framework
+> lands, which is realistically far off.
 
-Hi Yeoreum,
+I'm going to be strongly against any work to try and put a ROT
+multiplexor into IMA. This is architecturally the wrong direction and
+is clearly very a short term project that will expose uABI that will
+be difficult to unwind later.
 
-I'd rather not base our work on Jiri's patch at this stage: it is
-a pre-RFC draft of the new attestation subsystem, whose design is
-itself still in progress. Building upon it instead of current
-mainline would be quite risky — we would be rebasing on a moving
-target, and merging would be blocked until the whole framework
-lands, which is realistically far off.
+If you want this to go faster please work with Jiri.
 
-I'd suggest we develop the proposal on current mainline, and
-switch to the new attestation subsystem once it lands. As I
-understand it, for us that is mostly just a matter of switching
-to a different set of APIs.
+> I'd suggest we develop the proposal on current mainline, and
+> switch to the new attestation subsystem once it lands. As I
+> understand it, for us that is mostly just a matter of switching
+> to a different set of APIs.
 
-BR,
-Ruiqi
+It isn't, one activity is moving the policy and ROT multiplexer into a
+shared subsystem, the other is building a ROT multiplexer into IMA for
+only IMA to use.
 
-> 
-> Link: [0] https://github.com/jpirko/linux_mlxsw/tree/wip_attestation_pre_rfc_draft1 
-> 
-> 
-
+Jaon
