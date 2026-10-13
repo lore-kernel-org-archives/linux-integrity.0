@@ -1,183 +1,130 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0E53ACA71
-	for <linux-integrity@vger.kernel.org>; Mon, 12 Oct 2026 14:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808B13B42C7;
+	Tue, 13 Oct 2026 08:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791814604; cv=none; b=pmV4w37SVC7n+4PDvpKDZ6NLQk1Pt2fR1ESPeeY1v5nCnaOcf8tsj+4Sx9VGMb3YQZP2ea6hRLDxT5b1lErH6yCwJoii2jE9I8ZemOhDLLn96+FQi7k50S/plJS0LKnP493eBwt8vxWR1I6POSxSPJQnQCxZnVQvjbqtLh7Z7mw=
+	t=1791880920; cv=none; b=SAyUFJ5CGQRQZfExllYFKbrI4y5aKksizcZbwP9a0pzEyE866fER8sHbafsXmh46Rn1GdOdqbfoReIodH/0EJs2fUMaQgNudyTisSvY9euLmUwLawyT3ZfZF6nSBSYvl//SxI9dRPiOdY/DgKLovJ/6ZstGo/BNHG+vO7u+ZpAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791814604; c=relaxed/simple;
-	bh=shmolJxvI3RFleQ+crYUcs8/qC3TjBJhcdJjT+VCboI=;
+	s=arc-20240116; t=1791880920; c=relaxed/simple;
+	bh=NI8CmL/lnRoC7aE++YpF7fiq+bAGnCCUDMqbYkmDDew=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iUd2EGOji1FKoXMiL2F+FCYHcigQzbCFYP8fCC4mWnKPR9lC9KFZ0YocgzbzJZI87TmfQeK3bU15FyZcUoTAd7Bbo7JJSoIZKsHzmc3ATpdxrDUTBT74/p/WHPJfskINv4rUsOaKsKvSynpYh469Pb3O2hW4VNeIgYSDKjT3lsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DtHDBal2; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=oHKd88Xf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=TLLq5FJRA5/x7iyR4SkX3ocsC0RM1sx5yewA5XAgYeWHxORnEf8L7T3LxjVIA0yD0exShE2VpYqk88A0d306lq4ScijplzeaH5ypolXC4CRMYjii+sFvE4IohUJhtRwsuPb+KiZV4NG2pwDA+wLuZo8scIEVFgrus7DF4rn3acU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=bZqkt7Lf; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DtHDBal2";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="oHKd88Xf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1791814602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ae0YyaBMRBi9QvMtuCD5/ZgDBRqhVmjNOSyXkR59Fsc=;
-	b=DtHDBal2TcbY3x48zZQ2fODPURa6Snyw3VCVVF5mc+QLbmkew6d1r0dEdZpve0vD2Y3XNZ
-	Q3ZTDz0dsj+FadMGvX5vtjb89t7wb/c8TiUGZPpbalu+KZY1lfGSWXPNmlKKgR4OWicFb9
-	ZyTyB4a9IrF58+mVftpzvvtvBlW9Ass=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-345-Q-jjjdeNNT2p6-dNiuuOmw-1; Mon, 12 Oct 2026 14:16:34 +0000
-X-MC-Unique: Q-jjjdeNNT2p6-dNiuuOmw-1
-X-Mimecast-MFC-AGG-ID: Q-jjjdeNNT2p6-dNiuuOmw_1791814593
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-48c50ed05abso1833803f8f.0
-        for <linux-integrity@vger.kernel.org>; Mon, 12 Oct 2026 07:16:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1791814593; x=1792419393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Ae0YyaBMRBi9QvMtuCD5/ZgDBRqhVmjNOSyXkR59Fsc=;
-        b=oHKd88XfEsFMdU8xqoTQL3gKLdZ1RHWqf/TOGwdH4PB1lVb56Rta5eD4Ne0/yRxey+
-         e3Wnkwt2ly7NZfMSBR7kFEi6EXAeiiAbzxijQBN58unWZTtReS/PUeilOtijAcnzDL8n
-         jR2Cw6Vw4dh64wjAyZhYciJW73fDK+oSyxeBdffiTDa4kuZRenzd9cEQFsjFRlr683Bc
-         r2FTTw7n+gQ9GB8sLyyoMglOFjM+tgMpAAxswXhP37GUY7mkexkPVGnT/sYTecqqb6VQ
-         W5AIoxAqQJWT2iRiR3NaYScAZo+6XigllSV+E+ZKMdnYdWSxcL00kAsYSOJUliYE8Ieh
-         wnAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791814593; x=1792419393;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Ae0YyaBMRBi9QvMtuCD5/ZgDBRqhVmjNOSyXkR59Fsc=;
-        b=rkGvAVo+Fni3eCYPnIM2QwkYW5YN3PcVRoL8nL4eIGE2CPDGXLJhUJDtHw9vP5QyR/
-         sU1p1wAimI8S1wgGRNk2yUUMwP2TpdGv6WDTKobjcSURIbC8iQX9TTxoU6RDAJpTcrhE
-         iFlGdbY+khrBIxH6TUrJCOL/uhkqgQUtZo9nExWj7YogwYMpeRdDFP6JMgBjgJGi6OgI
-         H5DYbBDN2CgJ7JESktg6b54+S8/lss9lYnow84XXANAHMsQURzDt/C4/x8RKuXuwojXw
-         Wi7e1WKMbMnnQlgTSPaBjuMPO8s8of3hjySJsMowruENuSaXcwRPiKu3StfZ95PQAZJm
-         XF5A==
-X-Gm-Message-State: AFq9FYJr2L5KZJXGmFjsPGZXCAkgUcirzcvOCcKH05kxqAFmpWIYr9vM
-	4Dcl3qtK87MmMU7BiYUccNYTLFecrNR3G2V5xk1fDKRZReliVutdHE5kYdTvlm8DZZelOqXq2LU
-	BJqM8ceQUKR7CUlgi36ahrLvLIQSC391C8NweGxa+2fpzq4bFkMtxUaJ4cKP8pk7Of/6bxU139o
-	2SnA==
-X-Gm-Gg: AYBFou0zZpuepn6XIlcUenOPiz5HPMIfE68MGRyPngCdVZf5K8TH2zYwVDiPKrV6u4M
-	Lb9FYltb09EmYZ2wFfR0uYXb7qjMmtUFBwnxJ9jrfO9WxTj0IKf8YPUAJ8bLk5AfH3I44zLzgo/
-	/yTmxgpF0MvW7PZNLs4zeAvsT+gsoqlcS0pF8JMFwE1V6PYGF6Qe5itmgYLDtZbSAZuSg4GBPfL
-	7PXyn+PWocprUY6c8hcXPe40bsyr3SAMvVzeDCNT9FSi4CNKDZsSotVtfxvpI4Z+mUv6sSzRO7s
-	sbtBwtHcH0UndmGBabKnnhzJw1kmj9TOI44N7AvMQRLCDqBCqH7dvOuhwBbe+1hzb9ZJsn5guDu
-	WDJU=
-X-Received: by 2002:a05:600c:620e:b0:4a1:7c56:d4e2 with SMTP id 5b1f17b1804b1-4a18e4b2aebmr194094735e9.16.1791814593116;
-        Mon, 12 Oct 2026 07:16:33 -0700 (PDT)
-X-Received: by 2002:a05:600c:620e:b0:4a1:7c56:d4e2 with SMTP id 5b1f17b1804b1-4a18e4b2aebmr194094035e9.16.1791814592552;
-        Mon, 12 Oct 2026 07:16:32 -0700 (PDT)
-Received: from sgarzare-redhat ([94.32.38.194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18dcd7dd3sm186331845e9.2.2026.10.12.07.16.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 07:16:31 -0700 (PDT)
-Date: Mon, 12 Oct 2026 16:16:26 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Stuart Yoder <stuart.yoder@arm.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Chu Guangqing <chuguangqing@inspur.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tpm_crb: Remove dead code from crb_map_res()
-Message-ID: <aszqTFP9fTZg_gXa@sgarzare-redhat>
-References: <20261010235500.2915629-1-jarkko@kernel.org>
- <asy0K_6VkuAn9rTB@sgarzare-redhat>
- <aszhPcubTH8HKxh2@kernel.org>
- <aszmcDeBBIJ5zvPw@kernel.org>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="bZqkt7Lf"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FDCC169C;
+	Tue, 13 Oct 2026 01:41:52 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 702B53F66F;
+	Tue, 13 Oct 2026 01:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1791880915; bh=NI8CmL/lnRoC7aE++YpF7fiq+bAGnCCUDMqbYkmDDew=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bZqkt7LfHhgrP+LpLkfSWkgVJSZiTZFy4lKziZu5iR37k9EFAy02+ty8P4ISH7oZJ
+	 KekFmta7QOPeZeaIU4GpQdPFpSIaN4Jm43CjCrlwnAe9zBdYufWXPGSmiCV/ITKyn4
+	 5OZk62xDJBVPfh1/7axdbnw2G3tJM7jWkrMYzZEU=
+Date: Tue, 13 Oct 2026 09:41:49 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: GONG Ruiqi <gongruiqi1@huawei.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>,
+	Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Dan Williams <djbw@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki Poulose <suzuki.poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Sami Mujawar <sami.mujawar@arm.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Jiri Pirko <jiri@resnulli.us>
+Subject: Re: [PATCH RFC 0/3] security: ima: support TSM measurement registers
+Message-ID: <as3uzQ7L6tJ-Lu-Q@e129823.arm.com>
+References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
+ <ebe68f6463f8ece8a5cd8ce70bba292ec4f64a41.camel@huaweicloud.com>
+ <c4fe5315d70fc162f1e5648e3fccb1676710d5e6.camel@huaweicloud.com>
+ <ar5tOUor0bp3MtQ6@e129823.arm.com>
+ <9e74ff9d-e8a3-425e-bf7c-f973d06e6cdf@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aszmcDeBBIJ5zvPw@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e74ff9d-e8a3-425e-bf7c-f973d06e6cdf@huawei.com>
 
-On Mon, Oct 12, 2026 at 04:53:52PM +0300, Jarkko Sakkinen wrote:
->On Mon, Oct 12, 2026 at 04:31:45PM +0300, Jarkko Sakkinen wrote:
->> On Mon, Oct 12, 2026 at 12:23:05PM +0200, Stefano Garzarella wrote:
->> > On Sun, Oct 11, 2026 at 02:54:57AM +0300, Jarkko Sakkinen wrote:
->> > > In all the pre-existing call sites both @iomem and @iobase_ptr are either
->> >
->> > Do you mean @iores ?
->> >
->> > > both NULL or have a valid address.
->> > >
->> > > Add an invariant for the expeced conditions and remove a dead basic block.
->> > > The second block is dead given that if @iomem turns out not to be NULL,
->> > > neither can't be @iobase_ptr.
->> > >
->> > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->> > > ---
->> > > v2:
->> > > - Updated the commit message in order to clarify things better.
->> > > - Updated the invariant in order to address checkpatch.pl --strict
->> > >   errors.
->> > >  drivers/char/tpm/tpm_crb.c | 9 +++------
->> > >  1 file changed, 3 insertions(+), 6 deletions(-)
->> > >
->> > > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
->> > > index ceb4100ba400..833226966fa2 100644
->> > > --- a/drivers/char/tpm/tpm_crb.c
->> > > +++ b/drivers/char/tpm/tpm_crb.c
->> > > @@ -570,15 +570,12 @@ static void __iomem *crb_map_res(struct device *dev, struct resource *iores,
->> > >  	if (start != new_res.start)
->> > >  		return IOMEM_ERR_PTR(-EINVAL);
->> > >
->> > > +	if (!iores != !iobase_ptr)
->> > > +		return IOMEM_ERR_PTR(-EINVAL);
->> > > +
->> > >  	if (!iores)
->> > >  		return devm_ioremap_resource(dev, &new_res);
->> > >
->> > > -	if (!*iobase_ptr) {
->> >
->> > Sorry to insist, but in the commit description we talk about @iobase_ptr
->> > can't be null, and I agree, but here we were checking the value of the
->> > pointer, so IMO this code was not dead.
->> >
->> > But again, I know nothing on this code. So, if you think it's correct go
->> > head, I'm surely missing something.
->>
->> Ugh, you're actually right, and this is not, and should not have sent
->> this. And it is for lazy init.
+> On 10/1/2026 10:24 PM, Yeoreum Yun wrote:
+> > Hi Roberto,
+> > 
+> >> On Thu, 2026-10-01 at 13:27 +0200, Roberto Sassu wrote:
+> >>> On Wed, 2026-09-30 at 14:43 +0100, Yeoreum Yun wrote:
+> >>>> Confidential computing guests without a TPM can use TSM measurement
+> >>>> registers to record IMA measurement digests instead of TPM PCRs.
+> >>
+> >> + Gong Ruiqi, of course.
+> >>
+> >> Roberto
+> 
+> Hi Roberto,
+> 
+> Thank you for involving me!
+> 
+> >>
+> >>> Hi Yeoreum
+> >>>
+> >>> a similar patch set has been sent to the linux-integrity mailing list:
+> >>>
+> >>> https://lore.kernel.org/linux-integrity/20250630125928.765285-1-gongruiqi1@huawei.com/
+> >>>
+> >>> Could you please work with Gong Ruiqi to have a unified proposal?
+> >>>
+> >>> Thanks
+> >>>
+> >>> Roberto
+> >>>
+> > 
+> > Thanks for letting me know and I think the proposal is almost the same
+> > with the different terminology only.
+> > 
+> > @Gong, what do you think?
+> 
+> Hi Yeoreum,
+> 
+> Nice to see this topic picked up again — I'm glad the IMA RoT framework
+> series I posted last year is still of interest.
+> 
+> Yes, I'd be happy to work with you on a unified proposal. It's been a
+> while since I last worked on that series, so I'll first revisit my
+> previous patch set, and then follow up with you to discuss the code details.
+> 
+> Looking forward to working with you.
+> 
+> BR,
+> Ruiqi
 
-Yeah, a lazy init makes sense.
+Hi Ruiqi :)
 
->>
->> I need to sanity check my test environment because I thought I was
->> testing this with swtpm emulated tpm_crb but tests passed, and this
->> should not work.
->>
->> Sorry and thanks :-)
+Thanks for replying and I'm happy with you too.
+However, I think we need to rework based on the Jiri's patch [0].
 
-You're welcome!
+Any thought?
 
->>
->> Just wanted to make it explicit that I was making somehting extremely
->> stupid.
+Link: [0] https://github.com/jpirko/linux_mlxsw/tree/wip_attestation_pre_rfc_draft1 
 
-Don't beat yourself up, it happens to all of us! Thanks for taking the 
-time to check and clarify!
 
->
->Probably too much multitasking lately with all these bugs.
->
->Lessons learned is that from now on I keep my own contributions
->and reviewing in separate sessions. Things have gotten much
->busier than they used to be so need to adapt and learn how
->to have focus on all actitivies :-)
-
-Yeah, it's something that's happening here too, and it's a real pain to 
-deal with! :-(
-
-Thanks,
-Stefano
-
+-- 
+Sincerely,
+Yeoreum Yun
