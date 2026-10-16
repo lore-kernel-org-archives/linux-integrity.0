@@ -1,177 +1,188 @@
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010051.outbound.protection.outlook.com [52.101.85.51])
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FBE4F85B7;
-	Fri, 16 Oct 2026 16:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792169656; cv=fail; b=armz2SVfzT7+thWUtAXxPgPEOX2jXYx8O9MI2/ihMZj16u1RBlNbpRF7eBEADQ7jDcvM6xkWlOYTwt8H9FfJdVN8DvZouzUepqEsq8h+Gtda/eeiflTvIsrGAT7MUSw2m0suKSkoptLo893ku4tPIYtlmpfWLlOSPRauXuvEKao=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792169656; c=relaxed/simple;
-	bh=MUwdEgIyK9UwUuge7riCvmrgZFjRt2Kr/z41tCBB+y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GmD+n8GGpeovaOKwZ89H5sx4g5rWg3A4kZPsWj5hJ43uQrvSZExF218TYNfEKILYGMiNNETgCJrO1GKYmXhG+N6235WHOMbct7AwcKBu5dVMDcmVsIMXUK9m5Gexmyq6FrsA3c0/FLxb3xshdgHiMQ0QqmDmx4opfjtbD17Ngbs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hpIC53TB; arc=fail smtp.client-ip=52.101.85.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832B25304AD;
+	Fri, 16 Oct 2026 16:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792169716; cv=none; b=OduHW9A8YSh3IpbEFVXhx8qvCRHj7AKnNDu3KKywsm27RhjVceJvzmhAjBkLDUAIiTj8+Ej28R8iBXCyyEDKFGSeE2+hiLnpBqBhUyYoY7bN+PGvsQI4+WwPJ2RH21VYlyhQ7BoTflhEZgO3nQAdkQ1C/n+0GmhSoqc6SKgQcZQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792169716; c=relaxed/simple;
+	bh=saDf3Ozq7NwBYW+zq0u7wY10N4VJ7lLwcMoKNfGPEd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qmcKnDyaKP7iRPr4wwo7Z/onzjIhqISdQ6f9wlrqURb0qAUzyoygrVcFou9s7tGG0HrYihk4j3+dCCJYEeQ4tkqkwPZf27vK8mwKgufoha9rOlziIDR+OQlgbBhD4ElFCN8m99trbWU4pyiuS6jDsHOKbJLz8tZXDKxAndieu9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=OyBV4FFt; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hpIC53TB"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wt0WQzP+cDQABQM4Kn4ut3QLMDntSP0WAzUsZUtQ6nScJ7SjVejlP94jglp3XOniYxoQik1ORKyA4l6WbmYWOHsAGH7HmhZLP5baO33qgbknlwdhW6oPIy0KWYUqziWls6vGMKoyKoYbRCDuSV+kWk2oUOzHYPW247E5mG+wkudlug0XUqdIJ0JalxfjDEBwJZWnTCIIejffaFWjr965uaUMksr6Z3naYzFLYjWj1omR4iHify2++qTR4B4lss0m8rOZSppR8m/NaU+GAIHZLuOgjx4ZfxN1BKVXIOXLWSlI9aADN1Ws1EDUTGc2AIRZo2oPbwD21kpmZVlchqM3cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q+idNlqcAGbMoo3CQDK4SQZ7yrzN7w+FLH/16+j578k=;
- b=BSNkhceOzZPadk9V4ftGrAeYkvMtRI7sIVnESnIJdc/ZL778w/4P3voz2erjMMepFlb6fpdJIQGveAsmSZ2LGs3DWbz+7vqd9gjrU3nf0dAw21xZe8r9mnUJ4TcioXe+uxSszUduAp99te6XveMSg9tamvMDEHejppbzT7aU9V/dsJFDiVBT7fy2JS4sRXyEElcnZZExFHClvkzgMU630c0Q1WrSEtBDJ6l0w+Zre8GE7cIKT5k1xxLkjy3takeSjgJgRIZuSUshYb/G8tt9mSgRiYZRdJD9WBwp+i5bNVZwjovUyEqojTbUw+TTXQM+QaWjIdAG+v7ksBKoELslGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q+idNlqcAGbMoo3CQDK4SQZ7yrzN7w+FLH/16+j578k=;
- b=hpIC53TBADFZkxW/Whg28yqcNEvN4CFz8nImTgGVst0tZRLTcpnzqH4bxwC93qZbKK8CKx6THDD/SIIiLI93Eq+NebGsHiNYQCRtMavpjtysp8IFA0PppLVSTLH8nNvT1dFYe3QL9eBhNJvdJclJepchy5n7NHAlnbmwwTPaTDLDJMJwTyMC7cvHMy7FuoMdTqndnhHSD8AzF9C6r7pT8Bmlj/om/ZPMgOfhs+mE+un42A2A7TycR6N6acwYupfK+elNfqc9wCxq4980dmrMyFIPewlxTFKMyrwtY4aGl1MRl+rIczAexLW2bFFu6Awa1Kgn0aftfoq1ZfJt3fM8AQ==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CHBPR12MB731189.namprd12.prod.outlook.com
- (2603:10b6:610:33d::12) by CH2PR12MB4165.namprd12.prod.outlook.com
- (2603:10b6:610:a4::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Fri, 16 Oct
- 2026 16:54:04 +0000
-Received: from CHBPR12MB731189.namprd12.prod.outlook.com
- ([fe80::b0e5:123d:fe06:e10d]) by CHBPR12MB731189.namprd12.prod.outlook.com
- ([fe80::b0e5:123d:fe06:e10d%6]) with mapi id 15.21.0522.013; Fri, 16 Oct 2026
- 16:54:04 +0000
-Date: Fri, 16 Oct 2026 13:54:03 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, David Sterba <dsterba@suse.com>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Simon Glass <sjg@chromium.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Nick Terrell <terrelln@fb.com>, Will Deacon <will@kernel.org>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
-	linux-integrity@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>, patches@lists.linux.dev,
-	Piotr =?utf-8?B?S3LDs2w=?= <piotr.krol@3mdeb.com>,
-	Ross Philipson <ross.philipson@gmail.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Song Shuai <songshuaishuai@tinylab.org>
-Subject: Re: [PATCH v2 15/15] efi/arm64: Implement ARM64 DRTM in the stub
-Message-ID: <20261016165403.GA503225@nvidia.com>
-References: <0-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
- <15-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
-X-ClientProxiedBy: BLAP220CA0021.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:32c::26) To CHBPR12MB731189.namprd12.prod.outlook.com
- (2603:10b6:610:33d::12)
+	dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b="OyBV4FFt"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=c7XiiXVGQMZTlw/hu5tGFdABDTYIIGVbIpI1631Y1NU=; b=OyBV4FFt103PyF9pRyt+kmplMq
+	0dpPaYAMzyFEqrzxePPuDr5Q5Z6WPTIgovUKXxO0Rp1BGoTiafxx3E7oo8EkSFlOTO9xWWq9w8uc+
+	YPdqXYGV8tFPgTJfMXgK3Cpjb/GJHwfKsSf2CyuyBsJQftqJQUBMjDbl0dRXehNwQqCXIpZ20F4Kt
+	okmu+FDO7ZCN9IgjiPbZ31qCEnXB6Xvoqf7z3uyYZuMcbWZGwvY8N0uRcg6BY2tSGY8yphq0zjb9W
+	j2bnGAYHTrh7ajaFDCUk2ZJJY+uL9Nuj/QjSuiXwcISVABkdHvCysizbS5ghjpIlZMWrVDiogJxyH
+	3CNSqF9Q==;
+Received: from noodles by the.earth.li with local (Exim 4.98.2)
+	(envelope-from <noodles@earth.li>)
+	id 1xHkmX-00000002QIY-3ndq;
+	Fri, 16 Oct 2026 17:27:46 +0100
+Date: Fri, 16 Oct 2026 17:27:45 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Surendran Kanagaraj <surenkj@amazon.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+	nh-open-source@amazon.com, Alexander Graf <graf@amazon.de>,
+	Gunnar Kudrjavets <gunnarku@amazon.com>,
+	Josh Levinson <joshlev@amazon.com>
+Subject: Re: [PATCH v2 2/2] tpm_crb: Raise durations for Amazon NitroTPM
+Message-ID: <atJQgXYkFjcQROb6@earth.li>
+References: <20261016043733.30589-1-surenkj@amazon.com>
+ <20261016043733.30589-3-surenkj@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CHBPR12MB731189:EE_|CH2PR12MB4165:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf5ec9ae-d639-4d45-6986-08df2ba615ff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|23010399003|366016|921020|56012099006|11063799006|4143699003|10067099003|22082099003|18002099003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	vyI8zSyIm4k8XZhp7n4MVPqQQBU/Ch2U2xf/qt8bc6dlvGIyTIdDlezVdJUZdZyPX72znxM/K/CCuKvhEsUbQpDliv4WXkBTm4/8CTmseZlChZnoo0nmZXcvbSqIfkLZzmGR2UleJn7mUzd4rOJ936YkQXbuyFiUjgoz0x9Dsyo2N+ab2nzfDnsVIcbMVaBoanqkYkYoOAROO1nJMk4ndvERxehA7ELPhsw9oB5KlL1MYGXvCZXRlYne7D7wTPoxrp4hjfXxP8a3Oq/rIlMq9i9P139ZhfWf+CW2aioZayVqXdkXSqpSC5luDDBaFlSmv8nsVKWTrJdBO1CJo+BI/t2/VDqzZwyevMaLkPjpvGRsMXyWn7kuuRpYr7lu2LcWK8fE+m6kpZslk2oHrgdNhKB6HRSzNIQWyYAzoOKV8aVpQh1eP0UiQpAvq5ZeKdU4Cw4KwD0/jSUGKx8G5njDGTlLx4gChMFBoqbbvkXwRbkbWPmS2xgEw1O0iZ1Xd3+6oYpprSfyK9cmFeoONywapvKWBZqos2KeRNK0XAAoKRJ6wuhQZO/F4yUhLPfBCMOqR6dTBmO0vLWWWJlwpfdBzP+BQDy0CyGXQqRwfpyVZ42gjyI4S+iqjC+ypkt06wmqUCsne2wzCzTzWsFufJVil07IyY3GqNqmQnpSFYj+/XW6MEFjdXXlmBsRFSwX9vdUMAubhJu7vhsuzY4be6cl7g==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CHBPR12MB731189.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(23010399003)(366016)(921020)(56012099006)(11063799006)(4143699003)(10067099003)(22082099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Sl8cWOobVfWulWC5LserYRmzRpgwGZrgoFWMDrFAMVxLzC36I4A03l6sfuri?=
- =?us-ascii?Q?r+i56ozJlLsilcb0I4llCpfUDE4B6vuLbISa4e1vfSaFm1mCeXTSkXpI1o4l?=
- =?us-ascii?Q?GV7D5NtL+sEXXV2zsVSIsRgXVfzG49FwDSwC5kbXpoKQTVp5rXQHTCRgQSy6?=
- =?us-ascii?Q?lOun31crKdy1I5S/TpxGcArXFabtfTh9e2beC2n7x/8XHdWgMxjbtPHD5dte?=
- =?us-ascii?Q?Zo+2UwLlwHRq0b0T+4w9I/fFqj9ctwFERkXn2fk/yZ7EV4r430BXH49RFdIi?=
- =?us-ascii?Q?AHRPyBmKwx+8Rgn8jqXXiMdCN9o5psPYionf40J3h06ViKfpb65gwUrXOGKz?=
- =?us-ascii?Q?7zUHF65/5D1956GzAQVXfpYZ+kiYIdDpoGhP9gdg7I/qLlyVxKKk1ETdJH+5?=
- =?us-ascii?Q?9nHJDgeGUpoOaBIng8F8jnOnA6gmeN3XNMMI3/+316L5ifP0W5OueI27AmHu?=
- =?us-ascii?Q?PjqavIt7eGXSzgFt3FvXR8vM/Iwgp0WitWXwO2glC+cvzWcc5GXhKrLgV9gH?=
- =?us-ascii?Q?yxKJYnAWOIhfqWFsbYmA1qM4CDVGHNQuEILsl/W0UeveRMsqPEoAJfQTnTpi?=
- =?us-ascii?Q?9+dLYrWK4vZOhhC5jI6zNda1SAA8Lq6BhOUPe97Hw5antUkcz7s3qArlAXBW?=
- =?us-ascii?Q?gCAXnyBICrs2I+IceefwZM7krnB6ua20ZjpXi/p6pIgmXmdhEDrPz/T8TbDC?=
- =?us-ascii?Q?WhhkaTaoVHxv1gPth3rIbezpPvMO8fVt2UkgJYtYnLE0Ra81PJhrUJRWjRiY?=
- =?us-ascii?Q?fS7izEXjl283SIRsNpsEnn7yEmDXjvXhwey3g8qhZ3mHZ1ahTcL+tSxwcLx8?=
- =?us-ascii?Q?hREPKvsaUyqZrAlpMMYAUu+AkoNhJ38k1aWsS4t5t5U9sdJ9LlJEPKBT279O?=
- =?us-ascii?Q?75j1u0FqOv4r+z1q/pYwqwFHla8YaLm4wS6OEDzIdKSfSLdBpZp+fK43+M2U?=
- =?us-ascii?Q?9AN2CxnXQ9kDmX8QCKqO4cucD0bEYDdwrgOJArhXsaK4+l5EQbFooEPQSo8w?=
- =?us-ascii?Q?4tjAMXHTYYIkI6cEf2rhCxLD0r2cxpXBHptuKNPbuKTHLMRpGKxQB2MlBK3P?=
- =?us-ascii?Q?nX4AWNe6n8S1wpuXPAfM7rSm7IE8xt4a65s2mJVYIhF2JlVALB5hyrQQ/eFq?=
- =?us-ascii?Q?maT3wTIOseDrkOT7c5o0ubcUjW5bkbm/IKhvt8VS+HbgKswEUiyGV66RoXAb?=
- =?us-ascii?Q?E4Fh9ETYHgrpVJeaO8levKj5xwmwNvDDLrRvsHUrDwGQg3HF09a43eNZT82k?=
- =?us-ascii?Q?A4K35xvYiCYkuFXBjFo49tu7D4h6ZcCuuH4Sb8OpLexB0B+sqHAWdd9+dll6?=
- =?us-ascii?Q?gRjm4phpIPyaaKUkU5ol7nSfN7S4Z8eGRfeh3QB6P/dZxq8PvDqzMOUYjBj0?=
- =?us-ascii?Q?t4No/BYD1nvrMgbE7PteedWMsmos9wyHc28Cx9ef/gUS3wd3ZDujWUyzGTtH?=
- =?us-ascii?Q?DUacqnZwBNXn/aZQaS8SUVzPiTbafPRU/xlGLHUpT8lwxp27yZjMJduMEJi7?=
- =?us-ascii?Q?2K3vd2kUSWOJzyknbpkbCGDt4F+c4x9TPZAAwr+djWEkgO7GtSXiXN5L4mGw?=
- =?us-ascii?Q?qhEXAp0xO/B/phraAiRzjp6pv4UWKA+B0wCBCyQgfK583tgcb1ka90/1JXdh?=
- =?us-ascii?Q?gBO1+2c+CpScH0mmkoxc+gHMOcJc9CqVeDKCFO1x4AHC07YNCvTEpMgHSVRv?=
- =?us-ascii?Q?L49Oqt6mrV1hWFaRalVRgUqAh10j7VXlKrCPRmkuUSlV+GwK?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf5ec9ae-d639-4d45-6986-08df2ba615ff
-X-MS-Exchange-CrossTenant-AuthSource: CHBPR12MB731189.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 16:54:04.4535
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LtOCklqy5zPgujMF+vKP1en6w9/UtYIJWSsiOToDhNNXJ6blRA5yKPjHpqRyAB7i
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4165
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261016043733.30589-3-surenkj@amazon.com>
 
-On Fri, Oct 02, 2026 at 08:31:52PM -0300, Jason Gunthorpe wrote:
-> +efi_status_t efi_drtm_prepare_launch(unsigned long image_base,
-> +				     unsigned long fdt_addr)
+On Fri, Oct 16, 2026 at 04:37:33AM +0000, Surendran Kanagaraj wrote:
+> TPM commands need to complete within the command duration defined in
+> the TPM2 spec or keep answering TPM2_RC_RETRY for at most
+> TPM2_DURATION_LONG (2s).
+> 
+> In rare scenarios NitroTPM can enter a mode where it either sends
+> TPM2_RC_RETRY for more than 2s or delays command completion. When
+> this happens during auth session start, the driver disables the chip
+> and every subsequent request fails:
+> 
+>     tpm tpm0: in retry loop
+>     tpm tpm0: tpm2_load_context: failed with a TPM error 0x0922
+> 
+> Add support for vendor duration overrides to the CRB driver, based on
+> the vendor ID read from the interface ID register. For NitroTPM, raise
+> TPM_SHORT, TPM_MEDIUM and TPM_LONG to 30s which covers the longest
+> unavailability time along with some headroom.
+
+Bumping all of these to 30s seems excessive. Is it really the case that 
+all commands can potentially take this long? Is that because of 
+non-TPM-related operations Nitro might be doing behind the scenes?
+
+> Tested on an EC2 instance with NitroTPM by inducing multiple
+> unavailability windows with no TPM errors, and in QEMU with swtpm by
+> holding the TPM in TPM2_RC_RETRY and stalling command completion for
+> longer than 2s.
+> 
+> Assisted-by: LLM
+> Signed-off-by: Surendran Kanagaraj <surenkj@amazon.com>
+> ---
+> V1 -> V2:
+> - Raise the durations through ->update_durations() instead of setting
+>   chip->busy_timeout_ms.
+> - Raise TPM_SHORT, TPM_MEDIUM and TPM_LONG to 30s.
+> - Replace the vendor quirk table with a plain vendor ID check.
+> - Use the TPM_CRB_ prefix for the new macros.
+> - Rename from "tpm_crb: Raise timeouts for Amazon NitroTPM".
+> 
+> v1: https://lore.kernel.org/linux-integrity/20260923142834.16786-3-surenkj@amazon.com/
+> ---
+>  drivers/char/tpm/tpm_crb.c | 44 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> index ceb4100ba400..6ba9016d6463 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -13,6 +13,7 @@
+>  
+>  #include <linux/acpi.h>
+>  #include <linux/highmem.h>
+> +#include <linux/io-64-nonatomic-lo-hi.h>
+>  #include <linux/rculist.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> @@ -26,6 +27,15 @@
+>  #define ACPI_SIG_TPM2 "TPM2"
+>  #define TPM_CRB_MAX_RESOURCES 3
+>  
+> +/* TPM_CRB_INTF_ID_x vendor ID field, bits 47:32 of the 64-bit register */
+> +#define TPM_CRB_INTF_ID_VID(intf_id)	(((intf_id) >> 32) & 0xffff)
+> +
+> +/* Amazon NitroTPM */
+> +#define TPM_CRB_INTF_VID_AMZN		0x0ec2
+
+This should really live with the other VID definitions in 
+linux/include/tpm.h
+
+> +/* Longest NitroTPM unavailability, with some headroom */
+> +#define TPM_CRB_AMZN_DURATION_MS	30000
+> +
+>  static const guid_t crb_acpi_start_guid =
+>  	GUID_INIT(0x6BBF6CAB, 0x5463, 0x4714,
+>  		  0xB7, 0xCD, 0xF0, 0x20, 0x3C, 0x03, 0x68, 0xD4);
+> @@ -521,6 +531,39 @@ static bool crb_req_canceled(struct tpm_chip *chip, u8 status)
+>  	return (cancel & CRB_CANCEL_INVOKE) == CRB_CANCEL_INVOKE;
+>  }
+>  
+> +/*
+> + * Read the vendor ID from the interface ID register. Returns -ENODEV when
+> + * the head registers are not mapped for this start method.
+> + */
+> +static int crb_vendor_id(struct crb_priv *priv)
 > +{
-> +	const struct arm64_image_header *header = (const void *)image_base;
-> +	const struct efi_image_info *info = efi_get_image_info(image_base);
-> +	struct arm64_drtm_handoff *handoff =
-> +		efi_get_image_symbol(image_base, arm64_drtm_handoff);
-> +	struct arm_drtm_parameters *params;
-> +	unsigned long measured_offset;
-> +	unsigned long measured_size;
-> +	unsigned long image_size;
-> +	unsigned long dlme_start;
-> +	unsigned long dlme_end;
-> +	unsigned long dce_end;
-> +	unsigned long entry;
+> +	u64 intf_id;
 > +
-> +	if (efi_drtm_policy == EFI_DRTM_OFF)
-> +		return EFI_SUCCESS;
+> +	if (!priv->regs_h)
+> +		return -ENODEV;
 > +
-> +	image_size = le64_to_cpu(header->image_size);
+> +	intf_id = lo_hi_readq(&priv->regs_h->intf_id);
+> +
+> +	return TPM_CRB_INTF_ID_VID(intf_id);
+> +}
+> +
+> +static void crb_update_durations(struct tpm_chip *chip,
+> +				 unsigned long *duration_cap)
+> +{
+> +	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+> +	unsigned long duration;
+> +
+> +	chip->duration_adjusted = false;
+> +
+> +	if (crb_vendor_id(priv) == TPM_CRB_INTF_VID_AMZN) {
+> +		duration = msecs_to_jiffies(TPM_CRB_AMZN_DURATION_MS);
+> +		duration_cap[TPM_SHORT] = duration;
+> +		duration_cap[TPM_MEDIUM] = duration;
+> +		duration_cap[TPM_LONG] = duration;
+> +		chip->duration_adjusted = true;
+> +	}
+> +}
+> +
+>  static const struct tpm_class_ops tpm_crb = {
+>  	.flags = TPM_OPS_AUTO_STARTUP,
+>  	.status = crb_status,
+> @@ -532,6 +575,7 @@ static const struct tpm_class_ops tpm_crb = {
+>  	.cmd_ready = crb_cmd_ready,
+>  	.request_locality = crb_request_locality,
+>  	.relinquish_locality = crb_relinquish_locality,
+> +	.update_durations = crb_update_durations,
+>  	.req_complete_mask = CRB_DRV_STS_COMPLETE,
+>  	.req_complete_val = CRB_DRV_STS_COMPLETE,
+>  };
+> -- 
+> 2.47.3
+> 
+> 
 
-We've been able to do some testing with UKIs now and this line doesn't
-work with systemd's PE loader, it discards the PE headers. The stub
-already has a comment about this:
+J.
 
-	/*
-	 * When built as part of the kernel, the EFI stub cannot branch to the
-	 * kernel proper via the image header, as the PE/COFF header is
-	 * strictly not part of the in-memory presentation of the image, only
-	 * of the file representation. So instead, we need to jump to the
-	 * actual entrypoint in the .text region of the image.
-	 */
-
-I will fix this by passing the image_size through the efi_image_info
-instead.
-
-Jason
+-- 
+... She's the one for me. She's all I really need, oh yeah.
