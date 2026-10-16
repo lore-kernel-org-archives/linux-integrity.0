@@ -1,174 +1,135 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.245.243.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DA7175A9D;
-	Fri, 16 Oct 2026 00:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A552FC00D;
+	Fri, 16 Oct 2026 04:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.245.243.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792109034; cv=none; b=GcEUZbON0Sl7GBhm3Re/lHAxTmhPCRfMEXgo7FTIrzMNjEKdMtdtapWDgLq9Lrw3bLqDYLaaJp9keEkrU8qaHLavRwnM3CAWEj1yxjBy0q9F0C627LQHDpr3Xa7OOtiZC6tVcrDdB8hhPAPkeHife+luiEzYOTgbxcLj3iNRdPM=
+	t=1792125473; cv=none; b=jqZimb1oGb3QGVaikPAIHdoMp9P2rYLavoVgrgAmZfLgfPmrOJB1B8wgqJtSfDgfa5zpt/dvLyJfVOUjI0+MqPguWiWvrg820o+8SIG/BXLfYiEWmEEmjvjJmDDFmQn7M7nTaT57GdRIm1IApYH0FXGMTY8WE/8E1t5f3N5u0Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792109034; c=relaxed/simple;
-	bh=/J9vkQnHyxosFoJr9W9QBtjq0YYxgnpGBT61RpVtPOM=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=FDoTwb61XxwCZbfcXsMHOIWKCUXgcscMEil4TFAWQppXdq4oFCB8FjxtcovcS9Sqm0NEgCdPVdxlPOFY3wy2aGLXyjEobPl38ss7JT3ijJg9JOoo7NUgRph5/Xu7eaLmrzoz3QTOL0D2tQP9c6TnwwfeOz4fjjj5asspvndjurg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T8JmhcId; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1792125473; c=relaxed/simple;
+	bh=INJ4wf4IsaRjCYXDG/NLUNJ67XJuPD17eqsCAcvsPrI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HKq8/9dVm2Xum38Yfjr9yOLBggD7BSzWTUYm7ViPo7gy5DGKj5ZSNAnhBpRrDGjAFDbcA5YP07aBkZbXS5Ixktoc9ADZWDGlf/pHPKZMsUudVB73bqVUe/2lERObm+37rpOAU4QY2dUNhZonVQysAFGpaoz6axwcUa08dXSf5Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=a6SW0tdu; arc=none smtp.client-ip=44.245.243.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T8JmhcId"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69FJSN6v437488;
-	Fri, 16 Oct 2026 00:02:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/J9vkQ
-	nHyxosFoJr9W9QBtjq0YYxgnpGBT61RpVtPOM=; b=T8JmhcIdM+IZlDu1hLe31J
-	m6mbjwcWL7wzOhkhG48GMAQlsaYPR+qFspy9MtxmiqJAc7tEhHppbNKH9Ly6ZtZV
-	VqxL0sG8s2UwXNLFqIJ/BYZUI5pdL3Q7nroUwRsfUZ8NnojGqzqlf4TRT4AYhP4L
-	6FIDNuGbJCz0GmEFk/Hg39Qj1dTW+wDF8Je9F6lhuDnTz0Ez1O9eo34NkYGd3QWl
-	cZT5GXWip3BeiaEHOopn1erdpxY1LeO4vtBHH3q98w6K3sLk76T90ISRopD52k3Y
-	zDVC5jr2MvAZIMwg+xjEXbsZPTVrL2CYSC8Mm8BnPyO6Np9NnZwnVMHA81Yvggnw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4h7dwjc4bu-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 16 Oct 2026 00:02:55 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 69FN3x9q1927457;
-	Fri, 16 Oct 2026 00:02:54 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4h9ypq94xa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Oct 2026 00:02:54 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 69G02sUl44827056
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Oct 2026 00:02:54 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 18558580DF;
-	Fri, 16 Oct 2026 00:02:54 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 36309580E3;
-	Fri, 16 Oct 2026 00:02:51 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.159.15])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 16 Oct 2026 00:02:51 +0000 (GMT)
-Message-ID: <2dd935d171066eb4f1c251184eee871ad91f46b4.camel@linux.ibm.com>
-Subject: Re: [PATCH] kexec: Select ima_get/free_kexec_buffer() with
- CONFIG_HAVE_IMA_KEXEC(_OF)
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, catalin.marinas@arm.com,
-        will@kernel.org, mark.rutland@arm.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, maddy@linux.ibm.com, mpe@ellerman.id.au,
-        npiggin@gmail.com, chleroy@kernel.org, pjw@kernel.org,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-        tglx@kernel.org, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, hpa@zytor.com, robh@kernel.org,
-        saravanak@kernel.org
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        devicetree@vger.kernel.org, noodles@fb.com,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Roberto Sassu
- <roberto.sassu@huawei.com>
-In-Reply-To: <20261014150005.138309-1-roberto.sassu@huaweicloud.com>
-References: <20261014150005.138309-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 15 Oct 2026 20:04:39 -0400
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="a6SW0tdu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1792125472; x=1823661472;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EbMriqCgdCDNOTylQtGXmimWeNIgMRcJBHuF6V05NNM=;
+  b=a6SW0tdu7qEPDiUd1J3DAkV3TjEcgcvpK/KKaqP9SrrBuQvRo9r4i5Kt
+   N+p6DQF+BQ94ii9xHbMk+t7PR7lFY8ngYw6TJECTO4d4ajfYe2jF2RPtm
+   u8+v+N7UWwaJvD8jBsMPmF/4XXdo/Z0dzvAq1UorjI3ykT86KrJg3v18N
+   WY4j1s4Dxirw3Yt1Qf2myPn5FGjheDiItEi/MCrE3DyKal+tZPIt7N2zM
+   KCYobSvmOQqgo5KHgl40D8GKyXAoIufOvuqLSYJ3ufmA92SmSKlXje8Mb
+   hnY+7MeQ41O6eWGt81uxV8LzIu7ucVdvHsE9V+CgG2xlBFTihLZXh9GYp
+   A==;
+X-CSE-ConnectionGUID: bxs8z7W5Q4mZkicg8/XaHQ==
+X-CSE-MsgGUID: IcNWancFQmq6+aHw+Dfj9Q==
+X-IronPort-AV: E=Sophos;i="6.27,161,1787011200"; 
+   d="scan'208";a="30914192"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2026 04:37:50 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [205.251.233.182:10375]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.12.154:2525] with esmtp (Farcaster)
+ id cb4d2b5b-66c4-48bf-a27a-41e8b64f8f6a; Fri, 16 Oct 2026 04:37:49 +0000 (UTC)
+X-Farcaster-Flow-ID: cb4d2b5b-66c4-48bf-a27a-41e8b64f8f6a
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
+ Fri, 16 Oct 2026 04:37:49 +0000
+Received: from dev-dsk-surenkj-2b-416930d2.us-west-2.amazon.com (10.169.26.94)
+ by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.53;
+ Fri, 16 Oct 2026 04:37:49 +0000
+From: Surendran Kanagaraj <surenkj@amazon.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+CC: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Breno
+ Leitao" <leitao@debian.org>, <nh-open-source@amazon.com>, Alexander Graf
+	<graf@amazon.de>, Gunnar Kudrjavets <gunnarku@amazon.com>, Josh Levinson
+	<joshlev@amazon.com>
+Subject: [PATCH v2 0/2] tpm: Handle transient NitroTPM unavailability
+Date: Fri, 16 Oct 2026 04:37:31 +0000
+Message-ID: <20261016043733.30589-1-surenkj@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE1MDA5NCBTYWx0ZWRfX2HSmi+79F5sk
- F6cJ7NPejHB+7WHifxwy2jTNeN+1trz8LY4O/c9Nrxfke0WNdl7j1Q+67s4DKMWPR6esIHz8ktI
- K0tq6WDkqAuHdd5alAeGCbELszv+Iy4JZ0+fqSO/L13P8KVSgc+hLSs0BUMcp1abGeEddTWuQ0x
- DgckQmdPn28cVLNyaRpJNpQgHrkPzvNhtB4BrwiL11DqWhTQ4iKZBnJ6O6YMYp3wIbPkHlbPNTu
- yuFjLtwZNiUnx0o6/TBRUj7JJDZnA2Psv+zNVmANtyZBcqWuyk14cfQgW2Kd9p6jpMvxEPS0i4P
- 9izNnrleHEY+3qJ5vxEC5owm2SmqeBCu4OE58PHvT8msLi1bqUTwEmcDI3uhC1lcyvBSJ8AI2/Z
- P4yU5XoeV0+kwIer2DSUzTnv5W4e9/IuU49Yz1D77lWvgRbiAXpcAuzu2CM8QtMFWDh3J7Pn/95
- F6Hddu++a3Zm8l5+F0g==
-X-Proofpoint-GUID: NTtm2mgFbtZvv4BT6wKycrFWT1K8ZNoK
-X-Proofpoint-ORIG-GUID: tiREeBn2CptRBXexEe4TPGoQAtBFlstP
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE1MDA5NCBTYWx0ZWRfX/DAorNGlPVs4
- yv5/RElxR2BVrhNGnK8pZHiy6neDZgmPdHp2jFgKzGeIaabQ9Lw8/ORsLJZrcqeRQhQk4Obp43l
- W/UyHe4tHhV1wBc+cnuG7GIYhmkZQRE=
-X-Authority-Analysis: v=2.4 cv=btHZl0ai c=1 sm=1 tr=0 ts=6ad169af cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=i0EeH86SAAAA:8
- a=oj6d6ukrGZa-rDQ9-ikA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-14_01,2026-10-14_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 phishscore=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1011 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
- definitions=main-2610150094
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D031UWA001.ant.amazon.com (10.13.139.88) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-Hi Roberto,
+TPM commands need to complete within the duration defined in the
+TPM2 spec or keep answering TPM2_RC_RETRY for at most TPM2_DURATION_LONG
+(2s).
 
-On Wed, 2026-10-14 at 17:00 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+Devices that have different timeout requirements than the TPM2 spec
+can either exhaust the retry budget or delay the command completion.
+NitroTPM can very rarely enter a mode where it either sends
+TPM2_RC_RETRY for more than 2s or completes the command late.
 
-The first paragraph should explain the problem from a high level: the user-
-visible impact and cause. For example, something like:
+When this happens in tpm2_load_null() during auth session start, the
+driver sets TPM_CHIP_FLAG_DISABLE and fails all subsequent TPM requests.
 
-=E2=80=9COn x86, if CONFIG_OF_FLATTREE is enabled, the kernel uses the devi=
-ce tree
-implementation of ima_get/free_kexec_buffer(). However, x86 doesn=E2=80=99t=
- pass the IMA
-buffer through the device tree, so the buffer is never found and the IMA
-measurement log is not carried over across kexec.=E2=80=9D
+    tpm tpm0: in retry loop
+    tpm tpm0: tpm2_load_context: failed with a TPM error 0x0922
 
-Then continue with the fix: defining CONFIG_HAVE_IMA_KEXEC_OF and selecting=
- it
-only on the architectures that use the device tree implementation.
+Add support to override command durations and TPM2_RC_RETRY budget
+based on chip->duration. tpm2_get_timeouts() fills the array with TPM2
+defaults and lets the driver adjust the durations (patch 1) as TPM 1.x
+does. Raise the TPM_SHORT, TPM_MEDIUM and TPM_LONG durations to 30s for
+NitroTPM (patch 2).
 
-thanks,
+V1 -> V2:
+- Drop chip->busy_timeout_ms. TPM2 durations and the TPM2_RC_RETRY
+  budget now come from chip->duration.
+- Map TPM2_CC_SELF_TEST and TPM2_CC_VERIFY_SIGNATURE to TPM_LONG with
+  floors of 3s and 30s since their durations do not fit SHORT, MEDIUM,
+  LONG durations.
+- Keep the TPM2 defaults for commands sent before tpm2_get_timeouts()
+  has run such as the one in tpm2_probe() and keep the 2s retry
+  budget for TPM 1.x chips.
+- Keep the first TPM2_RC_RETRY wait at TPM2_DURATION_SHORT instead of
+  chip->duration[TPM_SHORT]. No TPM2 command maps to TPM_SHORT today
+  and a driver that raises TPM_SHORT for its commands should not also
+  lengthen the first retry wait.
+- Return early from tpm_tis_update_durations() for TPM2 chips, since
+  its overrides are for TPM 1.x.
+- Raise TPM_SHORT, TPM_MEDIUM and TPM_LONG to 30s for NitroTPM.
+- Replace the vendor quirk table in tpm_crb with a plain vendor ID
+  check.
+- Use the TPM_CRB_ prefix for the new tpm_crb macros.
+- Rename the patches from "tpm: Add per-chip timeout for transient
+  unavailability" and "tpm_crb: Raise timeouts for Amazon NitroTPM".
 
-Mimi
+Tested on an EC2 instance with NitroTPM by inducing unavailability
+windows under HMAC session workloads and in QEMU with swtpm on
+tpm_crb, tpm_tis, tpm_tis_i2c, tpm_ibmvtpm and tpm_vtpm_proxy.
 
->=20
-> The ima_get/free_kexec_buffer() device tree implementation relies on the
-> arch code calling of_kexec_alloc_and_setup_fdt() to pass the information
-> about where the IMA kexec buffer is located. Only the arm64, powerpc and
-> riscv architectures support that. LoongArch implicitly assumes that the
-> device tree implementation is used, but it does not call that function.
+v1: https://lore.kernel.org/linux-integrity/20260923142834.16786-1-surenkj@amazon.com/
 
->=20
-> The ima_get/free_kexec_buffer() x86 implementation instead still relies o=
-n
-> the setup data to pass the kexec buffer information, and is built only if
-> CONFIG_OF_FLATTREE is not defined.
->=20
-> However, if CONFIG_OF_FLATTREE is selected in x86, x86 attempts to use th=
-e
-> device tree implementations of ima_get/free_kexec_buffer(), which are nev=
-er
-> going to succeed because of_kexec_alloc_and_setup_fdt() is not called for
-> that architecture.
->=20
-> Instead, define CONFIG_HAVE_IMA_KEXEC_OF (automatically selects
-> HAVE_IMA_KEXEC), select it for the architectures that should use the
-> ima_get/free_kexec_buffer() device tree implementation, and enable these
-> functions if the new config option is enabled. Set it also on LoongArch, =
-to
-> preserve the current behavior and avoid a link failure. LoongArch does no=
-t
-> pass the buffer location to the next kernel yet; this will be addressed
-> separately.
->=20
-> Finally, don't select it for x86, and use x86's own setup_data-based
-> implementation regardless of CONFIG_OF_FLATTREE.
->=20
-> Fixes: b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kex=
-ec")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Surendran Kanagaraj (2):
+  tpm: Add support for updating TPM2 durations
+  tpm_crb: Raise durations for Amazon NitroTPM
+
+ drivers/char/tpm/tpm-interface.c | 11 ++--
+ drivers/char/tpm/tpm.h           |  2 +-
+ drivers/char/tpm/tpm2-cmd.c      | 90 ++++++++++++++++++++++++--------
+ drivers/char/tpm/tpm_crb.c       | 44 ++++++++++++++++
+ drivers/char/tpm/tpm_tis_core.c  |  4 ++
+ 5 files changed, 125 insertions(+), 26 deletions(-)
+
+
+base-commit: 9708d29f225bd326165bfec1962d13f0a00b91ba
+-- 
+2.47.3
+
