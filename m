@@ -1,99 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBBF4EC665;
-	Mon, 19 Oct 2026 13:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C388E4F4043;
+	Mon, 19 Oct 2026 13:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792415557; cv=none; b=Wy0YM56VqqC1qwxQfH9yK/77tURn451shsRzGfSbBvrz+dpDa2Zv0crpjaCIJU2k+KYGLC0k/QejPDvlQhxwuXQBH3ZDKoWlAvf9+x7CHQDVIeL0ejFludbr69l1rb+AYTx8K/8Fb34hqPP8AuYvmWcZB5WwsANDhhVVc/P9LZ8=
+	t=1792415807; cv=none; b=p9y034GIKmj4+x2ziW0SHvyiIy6KpV+4gM9hwHkf4SpI1WD5bNfXvlk6wmN02Rykiv/Br/YOrfokJtDWhbEBp2w5wD0E0f5eDZcI/DEJ7vTGT4uuIJEFNn/JnaJavg/lZ5aEaSbn/jbmcPsYyQrdRAZjxIa4CWLcNWCO2ECsWMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792415557; c=relaxed/simple;
-	bh=odzFymFz98XdH2rVjddDufFkvKVVlBD5K9QVTchdDhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f2I6Vest4rK2uJecFmVMnxNg4hPOqBclNTOErtFweSHWKLcwVCnl2ikT0I7a268yEn5n+S9b7R51AtV5GEYOjDuOw5EMW4/+xyIYrYaThkczN1trT1BxbnN9JzVl2zT5iudyxSzmCdKD4dyMpnrG93CaSIU6vWKrgIRk+7y9b9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiJCjhso; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792415807; c=relaxed/simple;
+	bh=KEfUjJ+sWeyEpypWIo35O6elA0OeVZ28l/vNOIqBtYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mA5/VZwc5jpK8Yvou1ZFTHU80J2mswJ24LI3Boh1XORYUYOGJ7C3SX5xYGegXqi5nVbI2fdtrTIwxSDnvltkUUHaL/joIQZGSrD+FMg0OC0iXHsb3acLJ3cEb/9DU9OTaiHq+y4juD2qWTHboD48rp66iSVaQvrOSQp+um4GJGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=CGjJxHSS; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiJCjhso"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 4424D1F000C4;
-	Mon, 19 Oct 2026 13:12:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792415555;
-	bh=PDZO6ZUZ9dPn9nc2jnwVKTXnRmt7E2e4VwZk+WnthNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PiJCjhsoidTunUUjZJWh1tHJd3EJwms2CTCTo3cv6C1a5tV61yPOfJJ/HUGZBVg08
-	 35q7iCZWoPZO+UZD3ijN94IaQ3HCUPXLJnMwkAKbItm8p6nR1fuoGnqx63S7x5d0X2
-	 LReB/unyIMvIGupOxmHva33X63TKBPaS18F2sVhyP0i9/x3cCxRQ7n88uJvz+qCdQK
-	 gdFJFKDmaU7XJaUSv82240r6pBCXTgrebHmkcS7MFdIh798Sw97r0F9FzAOda8b97H
-	 LAGLUKa+c2qpn09CTWcA1SdPcntMVqhi4gozgORbf1a10pTLeB9taOQcnuakLD90ao
-	 GPcU8VwAxDSpQ==
-Date: Mon, 19 Oct 2026 16:12:32 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Sean Meadows <Hellfire@unspacy.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-	rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-	Adam Alves <adamoa@gmail.com>
-Subject: Re: [BUG] tpm_crb/Intel PTT: Late S3/S5/Reboot ACPI power management
- deadlock
-Message-ID: <atYXQF68D_SL4fGT@kernel.org>
-References: <araNsEodZ3NXf9qT@kernel.org>
- <0e8f93d0-3da9-4af0-ac12-b3670acdcf79@unspacy.com>
- <arw609M6mDiqhQwJ@kernel.org>
- <723ff551-7852-4d57-ab1e-787a1a195759@unspacy.com>
- <asfXObGNaZ9Z8CwN@kernel.org>
- <ca2d299b-4153-4b0b-a60e-7fe64f9dbdef@amd.com>
- <2db92c1a-815c-4db2-adfa-3708152ec8f2@unspacy.com>
- <asqUgaKpEJbo8g87@kernel.org>
- <24255490-d0b6-4793-aa7c-2954bd52383e@unspacy.com>
- <atYWR_DUQlYupk03@kernel.org>
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="CGjJxHSS"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=KEfUjJ+sWeyEpypWIo35O6elA0OeVZ28l/vNOIqBtYE=;
+	b=CGjJxHSSLnLyFiBJ6fmCvw7MlJSp71N6IQMPcQkTfVBF4w4+qhSNBqybtc2YkWCvE5LwoEOVU
+	nkl6Q6kL3AgrL1evhkMPi2OeyEjemmmAVgbOgxQlks5tBhbrz4Ra7a12Oy27gvkosJfa6xtd7mk
+	IO1wVoLvEGKoMecheF6kbbs=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4j7bfV0G5ZzRhrQ;
+	Mon, 19 Oct 2026 21:16:34 +0800 (CST)
+Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3320840575;
+	Mon, 19 Oct 2026 21:16:37 +0800 (CST)
+Received: from [10.67.110.140] (10.67.110.140) by
+ whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 19 Oct 2026 21:16:30 +0800
+Message-ID: <5e6e9ac9-172e-4434-a333-8bcad9e026de@huawei.com>
+Date: Mon, 19 Oct 2026 21:16:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <atYWR_DUQlYupk03@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next 09/18] landlock: Add READ_METADATA and
+ WRITE_METADATA access rights
+To: Justin Suess <utilityemal77@gmail.com>
+CC: <mic@digikod.net>, <gnoack@google.com>, <paul@paul-moore.com>,
+	<jmorris@namei.org>, <serge@hallyn.com>, <corbet@lwn.net>,
+	<skhan@linuxfoundation.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+	<andrii@kernel.org>, <eddyz87@gmail.com>, <memxor@gmail.com>,
+	<martin.lau@linux.dev>, <song@kernel.org>, <yonghong.song@linux.dev>,
+	<jolsa@kernel.org>, <emil@etsalapatis.com>, <ihor.solodrai@linux.dev>,
+	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<dakr@kernel.org>, <johan@kernel.org>, <dlemoal@kernel.org>, <hch@lst.de>,
+	<axboe@kernel.dk>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <dhowells@redhat.com>, <code@tyhicks.com>,
+	<linkinjeon@kernel.org>, <sj1557.seo@samsung.com>, <yuezhang.mo@sony.com>,
+	<hirofumi@mail.parknet.co.jp>, <cel@kernel.org>, <jlayton@kernel.org>,
+	<neil@brown.name>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
+	<tom@talpey.com>, <hyc.lee@gmail.com>, <miklos@szeredi.hu>,
+	<amir73il@gmail.com>, <senozhatsky@chromium.org>,
+	<chenxiaosong@chenxiaosong.com>, <kpsingh@kernel.org>, <matt@bobrowski.net>,
+	<rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<mathieu.desnoyers@efficios.com>, <john.johansen@canonical.com>,
+	<georgia.garcia@canonical.com>, <zohar@linux.ibm.com>,
+	<roberto.sassu@huawei.com>, <dmitry.kasatkin@gmail.com>,
+	<eric.snowberg@oracle.com>, <stephen.smalley.work@gmail.com>,
+	<omosnacek@gmail.com>, <casey@schaufler-ca.com>, <takedakn@nttdata.co.jp>,
+	<penguin-kernel@i-love.sakura.ne.jp>, <xiujianfeng@huawei.com>,
+	<nanx95726@gmail.com>, <djwong@kernel.org>, <lujialin4@huawei.com>,
+	<bpf@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<driver-core@lists.linux.dev>, <linux-block@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <netfs@lists.linux.dev>,
+	<ecryptfs@vger.kernel.org>, <exfat@lists.linux.dev>,
+	<linux-nfs@vger.kernel.org>, <ntfs@lists.linux.dev>,
+	<linux-unionfs@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
+	<linux-integrity@vger.kernel.org>, <selinux@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>
+References: <20261015125425.3246251-1-caixinchen1@huawei.com>
+ <20261015125425.3246251-10-caixinchen1@huawei.com> <atI20Vs7Du9-g1Hz@zenbox>
+Content-Language: en-US
+From: Cai Xinchen <caixinchen1@huawei.com>
+In-Reply-To: <atI20Vs7Du9-g1Hz@zenbox>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ whupemk100010.china.huawei.com (7.152.184.41)
 
-On Mon, Oct 19, 2026 at 04:08:27PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Oct 19, 2026 at 03:05:42AM -0400, Sean Meadows wrote:
-> > 
-> > On 10/10/26 15:39, Jarkko Sakkinen wrote:
-> > > 
-> > > So the gist why I believe that this might have effect is that every
-> > > transmit reverts the state to the initial state. That should erase any
-> > > weird state that firmware might be in (usually not that great quality
-> > > code).
-> > > 
-> > > I think Mario's patch is good overall for the stability. It looks to me
-> > > that we are catching some weird state inside firmware where we don't
-> > > have direct visibility. Or this is my guess at least.
-> > > 
-> > > Br, Jarkko
-> > 
-> > 7.3.0-rc6-g587527648af0 with cherry-pick
-> > 9154aa6c4b789d23e59d599c330cab2c4e915401
-> > 
-> > strings /lib/modules/$(uname -r)/build/vmlinux | grep "cmd_ready"
-> > Used to validate crb_cmd_ready responses.
-> > 
-> > The patch failed at 201 hours, on the ninth drop into S3. While this
-> > represents an all-time high for uptime, the failure demonstrates that
-> > the Intel PTT can still enter a corrupt state.
-> > 
-> > Where do we go from here?
-> 
-> I don't know. I'd even consider finding the channel to report the
-> possible firmware bug to Intel.
-> 
-> I don't have resources to do this but getting Windows CRB register
-> state captured could help. And then writing perhaps bpftrace script
-> to dump the live register state of tpm_crb (because you should
-> never trust reading code when you measure).
+Hello Justin,
 
-This leaves room open though on whether Windows does something with
-TPM on suspend. Probably nothing but just mentioning for completeness
-to point out where there is room for error.
+Thank you for the review, and for thinking the implications through so
+carefully -- the concrete scenarios you describe were very helpful to
+settle the design.
 
-Br, Jarkko
+I agree it should be a conscious
+decision: the next revision will make the *_METADATA checked at open time
+
+and follow the mechanic for the truncate right
+
+On 10/16/2026 10:44 PM, Justin Suess wrote:
+> LANDLOCK_ACCESS_FS_*_METADATA should be checked at open time and follow
+> the mechanic for the truncate right. Otherwise the access for already
+> opened file descriptors would be changed. See hook_file_open in
+> security/landlock/fs.c and this discussion here [1]
+>
+> It should have clear documentation for this as well.
