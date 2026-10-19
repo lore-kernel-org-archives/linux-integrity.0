@@ -1,43 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5498567636;
-	Mon, 19 Oct 2026 13:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F30260C107;
+	Mon, 19 Oct 2026 14:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418262; cv=none; b=uwYLL1DByCie81gQaGcHrCtPENYfRF3WHr8W38NL2lP2ZgPgDJ6/9vpsd64pgEQeeoEvlTORAnwYnOkgYxRDjfOfyweDnRapw4w9kE3ZqxdO4MzHusmJHKhBG5gFlC2QhBgzdZani6mlf8zfWQHVcNFllGPT0/+5HJ2gbIWMFl8=
+	t=1792418613; cv=none; b=X6xAOdoCSpZfcniutZrD/c4hQP/rLwrfgA5+vXDXbSkzE06u4PiiHXb031yPK6ytHvciRS5WnUdGME3kZoG9i2VdH31M9lJcJRqlipxiY7g8bApuDM5RHKVXWUAnyk3o2FZZWhqn+xiPvxwDdtMZ5ZI50K81br182TYwGgVpL5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418262; c=relaxed/simple;
-	bh=4IJ95QmyIwySBghoX3OiWGk7JuwUWxFU7DTQ9/ZwBH0=;
+	s=arc-20240116; t=1792418613; c=relaxed/simple;
+	bh=36HdIlOFHdL/vVYmiZs7Q2F+j2DiREH0OCTVOMHKEsM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l0sHZJe3YQtvQMIi1yhOomE6Ky3V7zvswlJ0Sx/ruu8oU+NffdzWcl3XdOhGkyvDzU5g/GXCk1nYk26FXZIL5JeB1FvYKA6ZL4q6LR9QFKDHuUtzlU2pjXYBxpUTdxVlrWrswZrs0ddglWriMf39FzR4n5woSrk8cGF94gy/ebQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SrEmTah3; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=LaGhtc0xkw/O1zJs0WXJjQB12ER8S3QiBoQVQ/aWKQS95cpwXmOSDFdRpskkbkUM6KhA2JXPTG+D4LOgJ6XISTpoJ/7rWWbrVY8kH/BK+SvT7ppF1mJC/22xGW0INmz67wgrO3y10vkvn1DajHXa0IghmWZE6NDOdn7pO08oJg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5FfhMgv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SrEmTah3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95C81F000C6;
-	Mon, 19 Oct 2026 13:57:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5FfhMgv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755C31F000C8;
+	Mon, 19 Oct 2026 14:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418260;
-	bh=SsOW5VfsgNpEbr9I97vmwt9dDZ2MBlJTVNWb6++x0fs=;
+	s=k20260515; t=1792418610;
+	bh=4udapwcgqT1eSwUZFlUCJ5E9O4cf3E3CyLCU8wLYjFw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=SrEmTah3D/k5Lb78SLE4cTOWVmT47jXSWTJQ7L/egLeGfxa5mNxmb0Klw2l2b/K75
-	 +ge0bE8JOAZcw6GGt3NIlQ7lv7kppBl3Ipnj00LUyvtbsDdJMKW9efhS6omT3hue1K
-	 C751j3fgWtGZ5EO04eB4UKAfnKqzWDe21UXheQVUb0qFbm8BzxKYlrME0YE3ozMLFR
-	 sbZNXidBUQkU3R2ql1CGKMclZTolJnrf0U7csfNWLDfMguEFQhmld83Xdsuw/Bj7Sz
-	 +5qxpH23+vpt1YfP14FUAj/5q8Ad/CE14HqwlRdt4TAXhnxC4tU3tAe6xDpl2kHheD
-	 mKE8uluJgMYRg==
+	b=D5FfhMgvavQ8vJ53GE0NKIjPzio7zAyrdlbk8M691ofc2CW6u+opHiSffy6C4o8r3
+	 6aIe32Wallkjc6NKnFUc0UyPCJXgblvFYe1j81NKAx4DSUgI+J7ELIeQpTgZad8FKV
+	 Ro5Rb1QTFNAR2M8Tqv7D1XhxxsvHMvDNP53wKWxZqFs9g8xUHkIKOjaTAJ78A9i8P9
+	 Uh7rhCmydfU9ig8ubNTRlg77bd54l3aTK/wHKxlo9FlgYFPFFzbdyZ4N/OEkg2koWb
+	 TUrKpbbKVY+WlGGDAYLcLcc9Ji+FkPlNJnK+54uMRB6FFbMIUSZIJaLnGYR760b5lV
+	 7/9MsBmLb78vg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Li Jun <lijun01@kylinos.cn>,
+Cc: Karl Mehltretter <kmehltretter@gmail.com>,
 	Jarkko Sakkinen <jarkko@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	peterhuewe@gmx.de,
 	linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] tpm: tpm_tis_spi: fix nodef CR50 tpm_tis_spi_resume is null
-Date: Mon, 19 Oct 2026 09:46:57 -0400
-Message-ID: <20261019135441.1420968-126-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18] tpm: atmel: depend on X86
+Date: Mon, 19 Oct 2026 09:51:02 -0400
+Message-ID: <20261019135441.1420968-371-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -53,407 +53,336 @@ X-stable-base: Linux 6.18.57
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Li Jun <lijun01@kylinos.cn>
+From: Karl Mehltretter <kmehltretter@gmail.com>
 
-[ Upstream commit b4d1adc70471d0752bba674552d19971ed9fa869 ]
+[ Upstream commit 4bfacee94f309346bef0b598ea091088b9150af9 ]
 
-if no define CONFIG_TCG_TIS_SPI_CR50 in config,
-the add of tpm_tis_spi_resume is null, this cause the tpm chip to
-fail to resume.
+tpm_atmel probes for the chip at fixed x86 Super-I/O ports (0x4e) with
+inb()/outb(), so it only works on x86. TCG_ATMEL nevertheless depends
+only on HAS_IOPORT_MAP/HAS_IOPORT, which arm and arm64 also satisfy.
+There the probe is useless, and on platforms whose unbacked I/O access
+faults it oopses in init_atmel() at boot (e.g. arm/versatile):
 
-Signed-off-by: Li Jun <lijun01@kylinos.cn>
-Link: https://lore.kernel.org/r/20260812100914.3540149-1-lijun01@kylinos.cn
+  Unable to handle kernel paging request at virtual address fee0004e
+  PC is at init_atmel+0x34/0x244
+
+TCG_NSC and TCG_TIS already "depends on X86" (commit 2f592f2a7d74 ("TPM:
+NSC and TIS drivers X86 dependency fix")); TCG_ATMEL was missed. Add the
+same dependency.
+
+Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Link: https://lore.kernel.org/r/20260712183234.23125-1-kmehltretter@gmail.com
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-Local tree is **6.12.111** (`p-6.12-3-gc504cf0baa3d8`). The SPI TPM
-header still defines `tpm_tis_spi_resume` as `NULL` unless CR50 is
-built, so this resume bug is present here.
+## Phase 1: Commit message forensics
 
-===============================================================
-PHASE 1: COMMIT MESSAGE FORENSICS
-===============================================================
+**Step 1.1 — Subject**
+Record: `[tpm / TCG_ATMEL]` `[depend]` Restrict the Atmel TPM driver to
+x86 because it probes Super-I/O ports.
 
-Step 1.1: PARSE THE SUBJECT LINE
-Record: **[tpm / tpm_tis_spi] [fix] CR50 not defined leaves
-`tpm_tis_spi_resume` NULL**
-
-Step 1.2: PARSE ALL COMMIT MESSAGE TAGS
+**Step 1.2 — Tags**
 Record:
-- **Fixes:** none (expected; not a negative signal)
-- **Reported-by:** none
-- **Tested-by:** none
-- **Reviewed-by:** Jarkko Sakkinen `<jarkko@kernel.org>` (TPM
-  maintainer)
-- **Acked-by:** none
-- **Link:** `https://lore.kernel.org/r/20260812100914.3540149-1-
-  lijun01@kylinos.cn`
-- **Cc: stable:** none (expected)
-- **Signed-off-by:** Li Jun `<lijun01@kylinos.cn>` (author); Jarkko
-  Sakkinen (maintainer)
-- Ignore pipeline-added Sasha Levin SOB / Upstream-commit markers if
-  present
+- `Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>` (TPM maintainer)
+- `Link: https://lore.kernel.org/r/20260712183234.23125-1-
+  kmehltretter@gmail.com`
+- `Signed-off-by: Karl Mehltretter` (author)
+- `Signed-off-by: Jarkko Sakkinen` (maintainer)
+- No `Fixes:`, no `Reported-by:`, no `Cc: stable` (absence is expected
+  for this review)
+- Ignore any pipeline `Signed-off-by: Sasha Levin` / `[Upstream commit
+  …]` markers
 
-Step 1.3: ANALYZE THE COMMIT BODY TEXT
+**Step 1.3 — Body**
 Record:
-- **Bug:** Without `CONFIG_TCG_TIS_SPI_CR50`, `tpm_tis_spi_resume` is
-  `#define`d to `NULL`.
-- **Symptom/failure mode:** SPI TPM chip fails to resume after system
-  sleep.
-- **Version info:** none in the message.
-- **Root cause:** Resume callback is compiled in only for CR50, but
-  `SIMPLE_DEV_PM_OPS` in `tpm_tis_spi_main.c` always uses
-  `tpm_tis_spi_resume` for every SPI TIS device.
+- Bug: `tpm_atmel` probes Super-I/O at `0x4e` with `inb()`/`outb()`.
+  Kconfig only required `HAS_IOPORT_MAP`/`HAS_IOPORT`, which ARM/arm64
+  also satisfy.
+- Symptom: boot oops, `Unable to handle kernel paging request at virtual
+  address fee0004e`, `PC is at init_atmel+0x34/0x244` (example:
+  arm/versatile).
+- Root cause: unbacked PCI I/O window access on non-x86.
+- Same class of fix as `2f592f2a7d74` (`TCG_NSC` / `TCG_TIS` `depends on
+  X86`); `TCG_ATMEL` was missed.
 
-Step 1.4: DETECT HIDDEN BUG FIXES
-Record: Not hidden. This is an explicit resume-path bug fix. The wording
-is poor English, but the claimed failure is concrete.
+**Step 1.4 — Hidden bug fix?**
+Record: Not hidden. Explicit crash fix via Kconfig dependency. Not
+cleanup or a new feature.
 
-===============================================================
-PHASE 2: DIFF ANALYSIS - LINE BY LINE
-===============================================================
+## Phase 2: Diff analysis
 
-Step 2.1: INVENTORY THE CHANGES
+**Step 2.1 — Inventory**
+Record: One file, `drivers/char/tpm/Kconfig`. `TCG_ATMEL`: replace
+`depends on HAS_IOPORT_MAP` + `depends on HAS_IOPORT` with `depends on
+X86`. Scope: single-file, two-line Kconfig change.
+
+**Step 2.2 — Code flow**
+Record: Before: any arch with I/O-port mapping can build/enable
+`tpm_atmel`; `init_atmel()` always probes `0x4e`. After: the driver is
+not built on non-x86. Affected path: module/builtin init, not a hot
+path.
+
+**Step 2.3 — Bug mechanism**
+Record: Kconfig/hardware-scope bug that produces a NULL/unmapped I/O
+dereference. On ARM, `inb(0x4e)` becomes a load at
+`PCI_IO_VIRT_BASE+0x4e` (`0xfee0004e`). If that page is not mapped, the
+kernel oopses.
+
+**Step 2.4 — Fix quality**
+Record: Obviously correct for the Super-I/O probe. Minimal. No runtime
+locking/API change. Regression risk is only over-restricting platforms
+that still have a working non-x86 path. That matters on **this** tree
+(see Phase 6): PPC64 OF support is still present, so the backport must
+be `depends on X86 || PPC64`, not bare `depends on X86`.
+
+## Phase 3: Git history
+
+**Step 3.1 — Blame**
+Record: `TCG_ATMEL` dates to `1da177e4c3f41` (Linux 2.6.12-rc2). Local
+depends lines:
+- `depends on PPC64 || HAS_IOPORT_MAP` — `ce816fa88cca0` (2014; rename
+  of `HAS_IOPORT` → `HAS_IOPORT_MAP`)
+- `depends on HAS_IOPORT` — `6155153601183` (“char: tpm: handle
+  HAS_IOPORT dependencies”, 2024; **in this tree**)
+
+The Super-I/O probe in `tpm_atmel.h` (`#else` of `CONFIG_PPC64`) has
+been there for the life of the driver.
+
+**Step 3.2 — Fixes: tag**
+Record: None. Related historical commit `2f592f2a7d74` (2011, **in this
+tree**) added `depends on X86` for NSC/TIS after PPC oopses; Atmel was
+not included.
+
+**Step 3.3 — Related file history**
+Record: `5578b4347bb5d` (“tpm: atmel: Drop PPC64 specific MMIO setup”,
+2024-11-22) is **not** an ancestor of this checkout (`git merge-base
+--is-ancestor` exit 1). It is an ancestor of the candidate. That commit
+changed Kconfig to `depends on HAS_IOPORT_MAP` only; the candidate then
+changed that to `depends on X86`.
+
+**Step 3.4 — Author**
+Record: Karl Mehltretter — this is the only Atmel TPM commit from that
+author on `origin/master`. Jarkko Sakkinen (TPM maintainer) reviewed and
+applied it.
+
+**Step 3.5 — Prerequisites**
+Record: The **verbatim** diff assumes PPC64 was already dropped. That
+drop is not in 6.12. The **semantic** fix does not need that drop: this
+tree can use `depends on X86 || PPC64` and keep the existing OF path.
+Standalone with that one-line adaptation. Do not pull in `5578b4347bb5d`
+(feature removal, ~140 lines).
+
+## Phase 4: Mailing list / external
+
+**Step 4.1 — Original discussion**
+Record: `b4 dig -c 4bfacee94f309` →
+https://patch.msgid.link/20260712183234.23125-1-kmehltretter@gmail.com
+`b4 dig -a`: single revision (v1 only).
+Thread (mbox): author patch + Jarkko `Reviewed-by`. No NAK, no stable
+debate, no risk flags.
+
+**Step 4.2 — Recipients** (`b4 dig -w`)
+Record: Jarkko Sakkinen, Peter Huewe, Jason Gunthorpe, `linux-
+integrity`, `linux-kernel`. Right maintainers/list.
+
+**Step 4.3 — Bug report**
+Record: No syzbot/bugzilla. Concrete oops in the commit message; PC and
+fault address match ARM `inb(0x4e)`.
+
+**Step 4.4 — Series**
+Record: Standalone, not patch x/y.
+
+**Step 4.5 — Stable list**
+Record: No stable-specific thread found. lore.kernel.org HTTP fetch
+returned 403; discussion recovered via `b4 dig -m`. UNVERIFIED: whether
+anyone later nominated it on `stable@`.
+
+## Phase 5: Semantic / call surface
+
+**Step 5.1 — Functions**
+Record: No C functions changed. Runtime path gated: `init_atmel()` →
+`atmel_get_base_addr()` → `atmel_verify_tpm11()` → `tpm_read_index()` →
+`outb`/`inb` at `TPM_ADDR` (`0x4E` in `drivers/char/tpm/tpm.h`).
+
+**Step 5.2 — Callers**
+Record: `module_init(init_atmel)` — builtin boot or `modprobe
+tpm_atmel`.
+
+**Step 5.3 — Callees**
+Record: Super-I/O index/data ports; no allocation/locking in the
+faulting probe.
+
+**Step 5.4 — Reachability**
+Record: Yes, if `CONFIG_TCG_ATMEL=y/m`. Not a syscall. User/config must
+enable an x86 Super-I/O TPM driver.
+`arch/parisc/configs/generic-64bit_defconfig` sets `CONFIG_TCG_ATMEL=m`.
+ARM `allyesconfig`/custom configs can set it `=y` and oops at boot.
+
+**Step 5.5 — Similar patterns**
+Record: `TCG_NSC` already `depends on X86` in this tree. `TCG_TIS` is
+`depends on X86 || OF` here (OF added later; not Super-I/O).
+
+## Phase 6: This checkout (6.12.y)
+
+**Step 6.1 — Does the buggy code exist?**
+Record: Yes.
+- Tree: `git describe` → `p-6.12-3-gc504cf0baa3d8`, `make kernelversion`
+  → **6.12.111**
+- Candidate `4bfacee94f309` is **not** in HEAD
+- Local Kconfig:
+
+```164:171:drivers/char/tpm/Kconfig
+config TCG_ATMEL
+        tristate "Atmel TPM Interface"
+        depends on PPC64 || HAS_IOPORT_MAP
+        depends on HAS_IOPORT
+```
+
+- Non-PPC64 `tpm_atmel.h` still does Super-I/O `inb`/`outb` at
+  `TPM_ADDR`.
+- `arch/arm/Kconfig` `select HAS_IOPORT`. `HAS_IOPORT_MAP` defaults y
+  unless `NO_IOPORT_MAP`. `ARCH_VERSATILE` does **not** select
+  `NO_IOPORT_MAP`.
+- ARM `PCI_IO_VIRT_BASE` is `0xfee00000`; `inb(0x4e)` → `0xfee0004e`,
+  matching the oops.
+
+**Step 6.2 — Backport difficulty**
+Record: Exact hunk will not apply (this tree still has `PPC64 ||
+HAS_IOPORT_MAP`). Trivial adaptation:
+
+```
+depends on X86 || PPC64
+```
+
+Do **not** apply bare `depends on X86`; that would disable the still-
+present PPC64 OF path (`CONFIG_PPC64` in `tpm_atmel.h`).
+
+**Step 6.3 — Related fixes already here?**
+Record: No other Atmel X86-dependency fix. `2f592f2a7d74` only covered
+NSC/TIS.
+
+## Phase 7: Subsystem context
+
+**Step 7.1**
+Record: `drivers/char/tpm` — TPM. Criticality: **IMPORTANT** for TPM
+users; Atmel Super-I/O is a legacy path. Still a driver that can be
+built into generic/distro kernels.
+
+**Step 7.2**
+Record: TPM core is active (HMAC, new backends). `tpm_atmel` itself is
+mature/legacy.
+
+## Phase 8: Impact and risk
+
+**Step 8.1 — Who is affected**
+Record: Config-specific: `CONFIG_TCG_ATMEL` on non-x86 (ARM/arm64 with
+PCI I/O, parisc defconfig, etc.). Not all 6.12 users.
+
+**Step 8.2 — Trigger**
+Record: Boot if builtin; module load if `=m`. Unprivileged users cannot
+trigger unless the module is loaded. Commonness: low on production ARM,
+high on `allyesconfig` / mistaken enablement. Author hit it on
+versatile.
+
+**Step 8.3 — Failure mode**
+Record: Kernel paging-request oops in `init_atmel`. Severity:
+**CRITICAL** when the driver is enabled (boot crash if `=y`).
+
+**Step 8.4 — Risk/benefit**
 Record:
-- **File:** `drivers/char/tpm/tpm_tis_spi.h` only (~+6 / −2)
-- **Functions:** none; preprocessor selection of the resume callback
-- **Scope:** single-file surgical header change
+- Benefit: stops a real oops; Kconfig-only.
+- Risk: very low if PPC64 is preserved; **high if applied verbatim**
+  (would hide `tpm_atmel` on PPC64 while the OF code remains).
+- Ratio: favorable **with** `X86 || PPC64`.
 
-Step 2.2: UNDERSTAND THE CODE FLOW CHANGE
-Record:
-- **Before:** `#if CONFIG_PM_SLEEP && CONFIG_TCG_TIS_SPI_CR50` → `extern
-  tpm_tis_spi_resume`; else → `#define tpm_tis_spi_resume NULL`.
-- **After:**
-  - `CONFIG_PM_SLEEP && CR50` → CR50 `tpm_tis_spi_resume` (resets
-    `wake_after`, then `tpm_tis_resume`)
-  - `CONFIG_PM_SLEEP && !CR50` → `#define tpm_tis_spi_resume
-    tpm_tis_resume`
-  - `!CONFIG_PM_SLEEP` → still `NULL`
-- **Path:** system sleep resume for `tpm_tis_spi`
-  (`SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_spi_resume)`).
+## Phase 9: Synthesis
 
-Step 2.3: IDENTIFY THE BUG MECHANISM
-Record:
-- **Category:** logic / PM correctness (missing resume callback)
-- **Mechanism:** `tpm_pm_suspend()` sets `TPM_CHIP_FLAG_SUSPENDED`. With
-  a NULL `.resume`, that flag is never cleared. `tpm_try_get_ops()` then
-  returns `-EIO` (`rc` starts as `-EIO` and the SUSPENDED branch jumps
-  to `out_lock` without starting the chip). TPM 1.2 self-test / IRQ re-
-  enable in `tpm_tis_resume()` are skipped as well.
-- **Fix:** restore the pre-CR50 callback (`tpm_tis_resume`), which
-  Infineon/ST/Atmel SPI TIS used before 797c0113c9a48.
+**Evidence FOR**
+- Documented boot oops; fault address verified against ARM `inb()`.
+- Same bug class already fixed for NSC/TIS in this tree.
+- One-file Kconfig change; TPM maintainer Reviewed-by.
+- Buggy probe is in this 6.12 tree.
+- Fits “build/Kconfig dependency” stable exception; prevents a crash,
+  adds no API.
 
-Step 2.4: ASSESS THE FIX QUALITY
-Record:
-- Obviously correct: aliases the existing exported `tpm_tis_resume`
-  already used by `tpm_tis.c` and `tpm_tis_i2c.c`.
-- `tpm_tis_spi.h` includes `tpm_tis_core.h`, which declares
-  `tpm_tis_resume` under `CONFIG_PM_SLEEP` — same gate as the new
-  `#define`.
-- Nested `#if` indentation is ugly kernel style, not a functional risk.
-  Jarkko accepted it as-is.
-- **Regression risk:** very low. CR50 path unchanged. Non-CR50 path
-  restored to the historical, still-current TIS resume helper.
+**Evidence AGAINST**
+- Verbatim patch does not apply; depends on PPC64-drop `5578b4347bb5d`
+  which is **not** in 6.12.
+- `TCG_ATMEL` is not in ARM defconfigs; impact is config-selected.
+- Bare `depends on X86` would be a PPC64 regression on this tree.
 
-===============================================================
-PHASE 3: GIT HISTORY INVESTIGATION
-===============================================================
+**Unresolved**
+- UNVERIFIED: whether any live PPC64 machine still uses AT97SC3201 via
+  OF (Rob Herring later found no in-tree powerpc configs; that drop is
+  still not in 6.12, so this backport should keep PPC64).
+- UNVERIFIED: stable@ discussion (lore HTTP 403).
 
-Step 3.1: BLAME THE CHANGED LINES
-Record:
-- Introduced by **797c0113c9a48** (`tpm: tpm_tis_spi: Support cr50
-  devices`, Andrey Pronin / Stephen Boyd, 2019-11-12).
-- `git blame -L 43,47 drivers/char/tpm/tpm_tis_spi.h` attributes the
-  `#if ... && CR50` / `#define ... NULL` block entirely to that commit.
-- Present since v5.5-era CR50 support; long-lived in this 6.12 tree.
+**Stable rules**
+1. Obviously correct and tested? **PASS** (Kconfig restrict + maintainer
+   review; oops matches code).
+2. Real user-visible bug? **PASS** (boot oops).
+3. Important (crash)? **PASS** when the option is enabled.
+4. Small and contained? **PASS** (1–2 Kconfig lines).
+5. No new features/APIs? **PASS**.
+6. Apply to this tree? **PASS with backport** (`depends on X86 ||
+   PPC64`); **FAIL** if taken verbatim.
 
-Step 3.2: FOLLOW THE FIXES: TAG
-Record: No Fixes: tag. The introducing commit is 797c0113c9a48. `git
-merge-base --is-ancestor 797c0113c9a48 HEAD` succeeded — it is in this
-tree. Before that commit, `tpm_tis_spi.c` used `SIMPLE_DEV_PM_OPS(...,
-tpm_tis_resume)` (verified with `git show
-797c0113c9a48^:drivers/char/tpm/tpm_tis_spi.c`).
+**Exception category:** Kconfig/build dependency fix that prevents a
+crash.
 
-Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES
-Record:
-- `git log --oneline -S tpm_tis_spi_resume -- drivers/char/tpm/` only
-  shows 797c0113c9a48. No later rewrite of this symbol in this tree.
-- Header history besides that is unrelated (`6422cbd3c52de` phy_ops
-  cleanup).
-- Standalone; not patch X/Y.
-
-Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS
-Record: `git log --author='Li Jun' -- drivers/char/tpm/` is empty in
-this tree. Author is an outside contributor. Weight comes from
-**Reviewed-by / Signed-off-by Jarkko Sakkinen**, TPM DEVICE DRIVER
-maintainer.
-
-Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS
-Record: None. The `#define` uses `tpm_tis_resume`, present since
-**41a5e1cf1fe15** (2016, `tpm/tpm_tis: Split tpm_tis driver into a
-core...`). Can apply standalone.
-
-===============================================================
-PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
-===============================================================
-
-Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION
-Record:
-- `b4 mbox 20260812100914.3540149-1-lijun01@kylinos.cn` saved a
-  2-message thread (lore WebFetch returned 403; b4 succeeded).
-- Submission: Li Jun, 12 Aug 2026, `[PATCH] tpm: tpm_tis_spi: fix nodef
-  CR50 tpm_tis_spi_resume is null`
-- Reply: Jarkko Sakkinen, 21 Aug 2026: **Reviewed-by: Jarkko Sakkinen**
-  — no NAK, no requested changes, no extra revisions.
-- `b4 dig -a` on the CR50 introducer was attempted; lore search from b4
-  returned a server error. Not needed for this candidate (the 2026
-  thread was retrieved directly).
-- No Cc: stable in the thread.
-
-Step 4.2: CHECK WHO REVIEWED THE PATCH
-Record: Recipients were peterhuewe@gmx.de, jarkko@kernel.org,
-jgg@ziepe.ca, linux-integrity@vger.kernel.org — the TPM maintainer set.
-Jarkko reviewed.
-
-Step 4.3: SEARCH FOR THE BUG REPORT
-Record: No syzbot/bugzilla. The report is the patch itself: Kylinos hit
-resume failure with CR50 disabled. Severity from author: TPM chip fails
-to resume.
-
-Step 4.4: CHECK FOR RELATED PATCHES AND SERIES
-Record: Standalone `[PATCH]`, not a series. No follow-up in that thread.
-
-Step 4.5: CHECK STABLE MAILING LIST HISTORY
-Record: WebSearch of lore.kernel.org/stable for this subject found no
-prior stable discussion. Nothing indicating it was rejected.
-
-===============================================================
-PHASE 5: CODE SEMANTIC ANALYSIS
-===============================================================
-
-Step 5.1: IDENTIFY KEY FUNCTIONS IN THE DIFF
-Record: No function body edited. Symbols involved: `tpm_tis_spi_resume`
-(header), used as resume callback; fallback `tpm_tis_resume`.
-
-Step 5.2: TRACE CALLERS
-Record:
-- Only caller: `drivers/char/tpm/tpm_tis_spi_main.c:310`
-  `static SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend,
-  tpm_tis_spi_resume);`
-- Wired as `.pm = &tpm_tis_pm` on `tpm_tis_spi_driver`.
-- Invoked by the PM core on system suspend/resume/hibernation
-  (`.suspend/.resume/.freeze/.thaw/.poweroff/.restore` via
-  `SYSTEM_SLEEP_PM_OPS`).
-- Context: process context, PM not IRQ.
-
-Step 5.3: TRACE CALLEES
-Record:
-- CR50 `tpm_tis_spi_resume`: reset `phy->wake_after = jiffies`, then
-  `tpm_tis_resume(dev)`.
-- `tpm_tis_resume`: `tpm_chip_start` → optional IRQ re-enable → TPM 1.2
-  `tpm1_do_selftest` → `tpm_chip_stop` → `tpm_pm_resume` (clears
-  `TPM_CHIP_FLAG_SUSPENDED`).
-- Generic fallback after this patch is exactly `tpm_tis_resume`.
-
-Step 5.4: FOLLOW THE CALL CHAIN
-Record: Userspace/system suspend (`echo mem > /sys/power/state`, systemd
-suspend, etc.) → PM core → `tpm_pm_suspend` (always registered) → later
-resume callback. Reachable on any board with `CONFIG_TCG_TIS_SPI` +
-`CONFIG_PM_SLEEP` and no CR50. After the broken resume, `/dev/tpm0`,
-hwrng, and key operations fail via `tpm_try_get_ops()` → `-EIO`.
-
-Step 5.5: SEARCH FOR SIMILAR PATTERNS
-Record: Sibling TIS phys already use `tpm_tis_resume` (`tpm_tis.c:249`,
-`tpm_tis_i2c.c:322`, `tpm_tis_synquacer.c:110`). Only SPI TIS lost that
-callback when CR50 was optional. The header already stubs
-`cr50_spi_probe` with `-ENODEV` when CR50 is off; resume was not stubbed
-equivalently.
-
-===============================================================
-PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
-===============================================================
-
-Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?
-Record: **Yes.** `drivers/char/tpm/tpm_tis_spi.h:43-47` is the exact
-pre-patch `#if defined(CONFIG_PM_SLEEP) &&
-defined(CONFIG_TCG_TIS_SPI_CR50)` / `#define tpm_tis_spi_resume NULL`
-block. Bug since 797c0113c9a48 (2019). Candidate is **not** already in
-this tree (`git log --grep='fix nodef CR50'` / `'tpm_tis_spi_resume is
-null'` empty).
-
-Step 6.2: CHECK FOR BACKPORT COMPLICATIONS
-Record: **Clean apply.** Current header matches the patch’s old side. No
-later refactor of this `#ifdef` in 6.12.
-
-Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE
-Record: No alternate resume fix. Recent TPM SPI change here is unrelated
-(`bb63a0530e8e6` wait_woken).
-
-===============================================================
-PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
-===============================================================
-
-Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY
-Record: **TPM character driver** (`drivers/char/tpm/`). **IMPORTANT** —
-not core mm/VFS, but security hardware used for measured boot, keys,
-hwrng. SPI TIS is the usual driver for discrete TPMs on embedded boards
-(SLB9670, ST33HTPM, ATTPM20P).
-
-Step 7.2: ASSESS SUBSYSTEM ACTIVITY
-Record: Actively maintained (many 6.12 TPM stable-style fixes). The
-buggy `#ifdef` itself has been untouched since 2019.
-
-===============================================================
-PHASE 8: IMPACT AND RISK ASSESSMENT
-===============================================================
-
-Step 8.1: DETERMINE WHO IS AFFECTED
-Record: **Driver-specific / config-specific.** Users with
-`CONFIG_TCG_TIS_SPI=y/m`, `CONFIG_PM_SLEEP=y`, and
-**`CONFIG_TCG_TIS_SPI_CR50` unset** (Kconfig bool, default n).
-Chromebooks with CR50 enabled are unaffected. Infineon/ST/Atmel SPI TPM
-boards (common on ARM/embedded) are the hit.
-
-Step 8.2: DETERMINE THE TRIGGER CONDITIONS
-Record: Any system sleep/hibernation of that SPI TPM. Common on
-laptops/SBCs that suspend. Unprivileged users typically cannot suspend;
-after resume, any user of `/dev/tpm0` sees failures. Not a race.
-
-Step 8.3: DETERMINE THE FAILURE MODE SEVERITY
-Record:
-- **Failure mode:** TPM stays `TPM_CHIP_FLAG_SUSPENDED`; ops return
-  `-EIO`. Device does not come back after suspend. TPM 1.2 also skips
-  resume self-test.
-- **Severity: HIGH** (device dead after suspend; security hardware). Not
-  a panic, but a hard functional break of the TPM until reboot.
-
-Step 8.4: CALCULATE RISK-BENEFIT RATIO
-Record:
-- **Benefit: high** for SPI TPM + suspend without CR50 — restores post-
-  resume TPM.
-- **Risk: very low** — 6-line header, CR50 path unchanged, fallback is
-  the same function other TIS drivers already use.
-- **Ratio:** strongly favors backport.
-
-===============================================================
-PHASE 9: FINAL SYNTHESIS
-===============================================================
-
-Step 9.1: COMPILE THE EVIDENCE
-FOR:
-- Real user-visible bug: SPI TPM does not resume unless CR50 is compiled
-  in.
-- Regression vs pre-2019 `tpm_tis_resume` usage, introduced by optional
-  CR50 support.
-- Bug and introducing commit are in this 6.12 tree.
-- Tiny, obviously correct, applies cleanly.
-- TPM maintainer Reviewed-by.
-- Failure is `-EIO` on all TPM ops after suspend (verified in
-  `tpm_try_get_ops`).
-
-AGAINST:
-- Commit message is terse / no Fixes:/stable tags (not a reason to
-  reject).
-- Nested `#if` style is non-idiomatic (no runtime risk).
-- Not a crash/UAF; “only” a device that stays unusable after suspend.
-- Affects a subset of TPM users (SPI, no CR50).
-
-UNRESOLVED:
-- Could not WebFetch lore (403); thread was recovered with `b4 mbox`.
-- No independent bugzilla/syzbot report.
-
-Step 9.2: APPLY THE STABLE RULES CHECKLIST
-1. Obviously correct and tested? **PASS** — alias to existing helper;
-   maintainer reviewed.
-2. Fixes a real bug that affects users? **PASS** — author reports TPM
-   resume failure; code confirms NULL resume + sticky SUSPENDED.
-3. Important issue? **PASS** — HIGH: TPM unusable after suspend
-   (security device / `-EIO` on all ops).
-4. Small and contained? **PASS** — one header, ~6 lines.
-5. No new features or APIs? **PASS**.
-6. Can apply to the local tree? **PASS** — exact match, no prereqs.
-
-Step 9.3: CHECK FOR EXCEPTION CATEGORIES
-Record: Not an ID/quirk/DT/build/docs exception. Ordinary small bugfix.
-
-Step 9.4: MAKE YOUR DECISION
-This belongs in 6.12. The driver suspends the TPM, then installs a NULL
-resume whenever CR50 is off, so the chip never leaves
-`TPM_CHIP_FLAG_SUSPENDED`. The patch restores `tpm_tis_resume` for that
-config, which is what this driver used before CR50 and what sibling TIS
-drivers still use.
-
-**What it solves for stable users:** After suspend, SPI TPMs (SLB9670
-and similar) work again without requiring `CONFIG_TCG_TIS_SPI_CR50`.
-
-**Rules:** Small, correct, real functional/security-device bug, no new
-API, clean apply.
-
-**Risk vs benefit:** Very low risk, high benefit for the affected
-config.
-
-**Concerns:** None that block backport. Style of nested `#if` is
-cosmetic.
+The 6.12 bug is real: `TCG_ATMEL` can still be enabled on
+ARM/arm64/parisc, and `init_atmel()` will touch `0x4e` and oops on
+unbacked I/O. Restricting the symbol is the right stable fix. Use
+`depends on X86 || PPC64` so the still-present PowerPC OF path is not
+dropped.
 
 Verification:
-- [Phase 1] Tags: Reviewed-by Jarkko Sakkinen; Link lore Message-ID
-  20260812100914.3540149-1-lijun01@kylinos.cn; no Fixes/Reported-
-  by/Cc:stable
-- [Phase 2] Diff: `tpm_tis_spi.h` only; `#define tpm_tis_spi_resume
-  tpm_tis_resume` when PM_SLEEP && !CR50
-- [Phase 2] `tpm_tis_spi_main.c:310` `SIMPLE_DEV_PM_OPS(...,
-  tpm_tis_spi_resume)` verified
-- [Phase 2] `tpm_try_get_ops()` returns `-EIO` if
-  `TPM_CHIP_FLAG_SUSPENDED` (`tpm-chip.c:159-174`)
-- [Phase 2] `tpm_pm_suspend` sets that flag;
-  `tpm_pm_resume`/`tpm_tis_resume` clear it
-- [Phase 3] blame: 797c0113c9a48 (2019); `git merge-base --is-ancestor`
-  confirms it is in this tree
-- [Phase 3] pre-CR50 file used `tpm_tis_resume` in SIMPLE_DEV_PM_OPS
-- [Phase 3] candidate not in this tree (`git log --grep` empty)
-- [Phase 4] b4 mbox: 2-message thread; Jarkko Reviewed-by; no NAK
-- [Phase 4] lore WebFetch 403 — UNVERIFIED via HTTP, recovered via b4
-- [Phase 4] no stable-list discussion found
-- [Phase 5] callers: only tpm_tis_spi PM ops; siblings already use
-  tpm_tis_resume
-- [Phase 6] `git describe HEAD` → p-6.12-3-gc504cf0baa3d8; `make
-  kernelversion` → 6.12.111; buggy `#ifdef` present; patch old-side
-  matches
-- [Phase 7] TPM DEVICE DRIVER, maintainer Jarkko
-- [Phase 8] Failure: TPM dead after suspend (`-EIO`), severity HIGH;
-  risk very low
-- UNVERIFIED: whether linus/master already contains a later stylistic
-  rewrite of this header (GitHub search snippet still showed the old
-  `#ifdef`; does not affect this 6.12 checkout)
+- [Phase 1] Tags: Reviewed-by Jarkko; lore Link; no Fixes/Cc:stable
+- [Phase 2] Diff: Kconfig only, `HAS_IOPORT*` → `X86`
+- [Phase 3] `git describe` / `make kernelversion`: 6.12.111
+- [Phase 3] `git merge-base --is-ancestor 4bfacee94f309 HEAD`: not in
+  tree
+- [Phase 3] `git merge-base --is-ancestor 5578b4347bb5d HEAD`: PPC64
+  drop not in tree
+- [Phase 3] `git merge-base --is-ancestor 2f592f2a7d74 HEAD`: NSC/TIS
+  X86 dep is in tree
+- [Phase 3] `git blame drivers/char/tpm/Kconfig`: HAS_IOPORT added by
+  `6155153601183`
+- [Phase 4] `b4 dig -c 4bfacee94f309`: v1 only; Jarkko Reviewed-by; no
+  NAK
+- [Phase 4] lore WebFetch: 403; thread read from `b4 dig -m`
+- [Phase 5] `init_atmel` → `atmel_verify_tpm11` →
+  `tpm_read_index(TPM_ADDR=0x4E)`
+- [Phase 6] Local Kconfig still `PPC64 || HAS_IOPORT_MAP`; ARM
+  `PCI_IO_VIRT_BASE=0xfee00000` matches oops
+- [Phase 6] `ARCH_VERSATILE` does not select `NO_IOPORT_MAP`;
+  `HAS_IOPORT` selected by ARM
+- [Phase 8] parisc `generic-64bit_defconfig` has `CONFIG_TCG_ATMEL=m`
+- UNVERIFIED: live PPC64 Atmel hardware; stable@ thread beyond b4 mbox
 
 **YES**
 
- drivers/char/tpm/tpm_tis_spi.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/char/tpm/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_spi.h b/drivers/char/tpm/tpm_tis_spi.h
-index d0f66f6f19318..ced416ecd92c2 100644
---- a/drivers/char/tpm/tpm_tis_spi.h
-+++ b/drivers/char/tpm/tpm_tis_spi.h
-@@ -40,8 +40,12 @@ static inline int cr50_spi_probe(struct spi_device *spi)
- }
- #endif
+diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+index 8a8f692b60880..5f672f2c01b04 100644
+--- a/drivers/char/tpm/Kconfig
++++ b/drivers/char/tpm/Kconfig
+@@ -163,8 +163,7 @@ config TCG_NSC
  
--#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_TCG_TIS_SPI_CR50)
--extern int tpm_tis_spi_resume(struct device *dev);
-+#if defined(CONFIG_PM_SLEEP)
-+	#if defined(CONFIG_TCG_TIS_SPI_CR50)
-+		extern int tpm_tis_spi_resume(struct device *dev);
-+	#else
-+		#define  tpm_tis_spi_resume tpm_tis_resume
-+	#endif
- #else
- #define tpm_tis_spi_resume	NULL
- #endif
+ config TCG_ATMEL
+ 	tristate "Atmel TPM Interface"
+-	depends on HAS_IOPORT_MAP
+-	depends on HAS_IOPORT
++	depends on X86
+ 	help
+ 	  If you have a TPM security chip from Atmel say Yes and it 
+ 	  will be accessible from within Linux.  To compile this driver 
 -- 
 2.53.0
 
