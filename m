@@ -1,94 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.246.68.102
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792422182;
-	b=QidnZ6st5YXL6tcI5fih2UFAa8O0xEKY84fUQ7yMezhwL7g/RkqbBkKP3mHsIvDgvWgs
-	 JikohdmFYSklj6Qrhb82whwdXfZU66UfhVMquSmBTazCxjFPEICTh6lipjVfbxbS3QGc3
-	 NnFShXhJbnJbvWQThlzzkCkexEEkARTR6i0aRROG7zoLhF7YoOXxOtCTa4wA/X8WZmn7G
-	 vIuNjf6T3SJ7u2QEHnq1w0SdCPVI6aCmyjxdO5dDcuWorfg5bOsYX0aq+sw7jQYOOalVv
-	 PV4N2LqazEg3DnNw56h2kC9wqxX+kuKfOq6cGwHdLq9uTkxhbXIKm3s/JCIOAymCcpw==
+	t=1792434441;
+	b=Fs2H1XuqKyCYQUz3P9VUkVf0vx8TVOfqUQrqiUvdwfNrSTf1sS9C3D1faXIpEvGwPTpx
+	 /BMOibwXZlecnoq6GpVzzRomwaMHEUNlveBJ1S/jV4H7VNmxTCHujP/rkvc1bWpJ4eSPn
+	 mtnMa/RMQA+q/onKLzH8p51glFxRFFYCVFJFGbGuRsKyi+Qx97QzfsdmjmaBli3PqZtGx
+	 qzc2kqu6GygvfngukCstlzoYFkOPbtiP9GvAWUjzF7Rq8eXeCIRoNBsEkktE0QOAW8FpC
+	 9l4ef7K5yC2CcII+lwKpMoV3NNrVctmU1H5eMZiIp81kU+LgG7B0E1z6rfqbxoWpv1w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792422182;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
-	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
-	 MIME-Version:User-Agent:X-TM-AS-GCONF:X-Proofpoint-Reinject:
-	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=Rq4MAL1fQzRXP47VmHrMlaeZyrntTtbpzmgafG5g2JU=;
-	b=MBYxIAVQDidSJq9lrdOFk2NF9dUlxu4T+vBIgrQKSA6oYMphWB4oJ7He5zqDTiCBa1yp
-	 Qps/0beMv4XL5fgAVno57t3k0u3SZouzEtjcWsIE7q4CeNeNGUTaSxcrgqkpbchNZ9OsU
-	 L9I8SbOqbes1gKswwZQGn2vr3ZDUSh/+SFA9sfMRbd1d94O93/q/odb70Otk1SSqGUEqz
-	 hIqZ7vyF6sJEgn67/ExfuvB/5xIvYhwxqvo8y1bQQUsfElCBvOtG9Dyhh2Q5q7giOVk/J
-	 PiFNXYhmXZI9IUPCYGJ3+A/HCd8UWGIKlI4RB417SLQDYFYa/D3HFwqrD07sYJnLJ2Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792434441;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:Received:Received:X-Farcaster-Flow-ID:Received:Received:
+	 From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy;
+	bh=o7FjhCPmXbZMctj//JJUrqZDv3+6C4QkSctbr92ltS4=;
+	b=0i+K15gAEYl85N3NEws9BGgyZ9d5XC2JtIYDOewSK2xSeW7tbwkZ5x+ZKCdynW/+FbfO
+	 YRRF0eWDCOYaH9BOHCrPoMmfaWJ2c6bxiwQb/qjJjJ4vvwp9niWraiJDtsRuJaUrRkOql
+	 LZfKI3RT3o2T2wclNNRO0Abh7sD58XcKJc+5Ldt5hH0CS44BQoIapjTWsIa2Ucc4v+XHf
+	 RqETZrGehI3gzamtvKmH+4knhUmKhLu+4mkaCb6Muwrfv7jrt8KJgBqVtUztYOt7H//ef
+	 8fe8aR8DbVggymMWwxDGzXJZyQx5SniJYBXdPHbtrKFI5HUsIg5ycaUm8fLz0llFa8g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.ibm.com;
-	spf=pass smtp.mailfrom=linux.ibm.com;
-	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=KMvz5Aug;
-	arc=none smtp.remote-ip=148.163.156.1
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=amazon.com;
+	spf=pass smtp.mailfrom=amazon.com;
+	dkim=pass header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=oH3p538Z;
+	arc=none smtp.remote-ip=44.246.68.102
+Received: from pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.68.102])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11526607BF3C;
-	Mon, 19 Oct 2026 15:03:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 11526607BF3C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6030A60A3813;
+	Mon, 19 Oct 2026 18:27:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6030A60A3813
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=KMvz5Aug
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69JEEmAh4015228;
-	Mon, 19 Oct 2026 15:02:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Rq4MAL
-	1fQzRXP47VmHrMlaeZyrntTtbpzmgafG5g2JU=; b=KMvz5Aug2n2vRkVcGW3/ru
-	Sfgfc3WNb+26owQYZ1VW4hhvcwDZjrzlKI4gwk9SuQR80pmQmiZLiMvt82RsRMIX
-	/2lNuNdZLeqwdBFGn+ZUreRWICZjiE9LTk/niDZjUQLbBN5jrfikQL87YGr8me2M
-	5L2E4Dmdn/1WvbpI861pAXULQh3LgtVFvrjf/woVw9vTjE4WZwlcdu8Tfy1HTwa0
-	FeMMHwJ61B4LowszuDzc9wjdzqbi4AN+xePEfDueu9yQPBu/yaeE1J2YGrQ60C67
-	uS+y4QJvMkioIoKATyQQE8BXH0kWM6iZ5uvWMzcnRfquFHNQZ6AzcWXB/KeQPDeg
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hc0r7kv7b-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 19 Oct 2026 15:02:04 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 69JE4sQE3023650;
-	Mon, 19 Oct 2026 15:02:03 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4hcnjgx0gf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Oct 2026 15:02:03 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 69JF22gM27722114
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Oct 2026 15:02:03 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BC31E58069;
-	Mon, 19 Oct 2026 15:02:02 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 516BA5805D;
-	Mon, 19 Oct 2026 15:02:02 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.112.91])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 19 Oct 2026 15:02:02 +0000 (GMT)
-Message-ID: <8fc08e24ab4941f6b5e130ce46b7f31b89bed0c4.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: discard modsig on detached-data binding failure
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: =?ISO-8859-1?Q?J=E9r=E9my?= Jean <Jeremy.Jean@oss.cyber.gouv.fr>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20260924085516.3111521-2-Jeremy.Jean@oss.cyber.gouv.fr>
-References: <20260924085516.3111521-2-Jeremy.Jean@oss.cyber.gouv.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 11:03:21 -0400
+	dkim=pass (2048-bit key, unprotected) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=oH3p538Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1792434441; x=1823970441;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=o7FjhCPmXbZMctj//JJUrqZDv3+6C4QkSctbr92ltS4=;
+  b=oH3p538ZTD5/l7e77CmFIHq0F9dxPTTW4f9HVFOoch++Cq07C6vWAvj+
+   St0rns20FgCGYE/DW3B6TQnY1Pwd3O/75oHZFWhPlfnaRTjxK74wvwhMB
+   1LS9CUGHyeHo1dCEE6WspjoSp0l8BEVdqhnyGbQOtzNcFZrtnV9fCxF3h
+   FWfVe0T7rzRXNDJESOxQ/Us+Rq2qY4359+RK4ganH4Yvo3qQmIHFg+dZ1
+   6WGZioofTGbp3ATKANujTU+O6/dWStSx8nqWf8iR4Xbg6xbTSspupKH5D
+   1qb52nab9Qm9wExMdj6PLYj6oDVIYz71ua/dVSEy/hJ6Er8cFTx6e1kNY
+   A==;
+X-CSE-ConnectionGUID: gSdzwmxRTyquCVYkuPh3sA==
+X-CSE-MsgGUID: Jy32Wv5ETNCvryrbhGyOag==
+X-IronPort-AV: E=Sophos;i="6.27,167,1787011200"; 
+   d="scan'208";a="31587261"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2026 18:27:17 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.178:15353]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.51.105:2525] with esmtp (Farcaster)
+ id 2998b543-fa1d-4238-a539-40ba3ca3ede5; Mon, 19 Oct 2026 18:27:17 +0000 (UTC)
+X-Farcaster-Flow-ID: 2998b543-fa1d-4238-a539-40ba3ca3ede5
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
+ Mon, 19 Oct 2026 18:27:17 +0000
+Received: from dev-dsk-surenkj-2b-416930d2.us-west-2.amazon.com (10.169.26.94)
+ by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.53;
+ Mon, 19 Oct 2026 18:27:16 +0000
+From: Surendran Kanagaraj <surenkj@amazon.com>
+To: <jarkko@kernel.org>
+CC: <peterhuewe@gmx.de>, <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <leitao@debian.org>,
+	<nh-open-source@amazon.com>, <graf@amazon.de>, <gunnarku@amazon.com>,
+	<joshlev@amazon.com>
+Subject: Re: [PATCH v2 2/2] tpm_crb: Raise durations for Amazon NitroTPM
+Date: Mon, 19 Oct 2026 18:27:13 +0000
+Message-ID: <20261019182713.57308-1-surenkj@amazon.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <atLD-d1v1B8ARv7x@kernel.org>
+References: <atLD-d1v1B8ARv7x@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -98,74 +86,34 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE5MDA1OCBTYWx0ZWRfXyQLMxI+d7h6u
- ZrxYQActJQnL1GF1ZmkPY6cegryhEFx7I7ZUnNUz0f0NK2vUn+hszbf+W3cFi6mQCdPpoZKIVHm
- i0xmK876sxQCOHcE7meKtFZiLPEAMY4=
-X-Authority-Analysis: v=2.4 cv=PrUG/AM3 c=1 sm=1 tr=0 ts=6ad630ec cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=OPNBBWazzn5nCynDWsEA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE5MDA1OCBTYWx0ZWRfX9JzuUlcI1Xfe
- ro+Ajz9ppyB0jzIw4hWY9AjVs4idZ9wjkaRldGnKS8xmlbewDfi431EWYZ+ria/WkZSSjCmkSMl
- DHLzZ3saN/Q5r6r3GWSaAG+/BXjRCBXblx7wv87aEuaPa3lo5a2qWSobTiwh64qEUNozI1RbJSx
- APoRTG8Mfp2tl20pMgDvk1GDZBAALxAyMzkF/s52zY+H18KQEDJJk5E5J+R+O/ujMkmI/tgtyHi
- t8eoR1apF2/cQkSiX8JoxnfmODEgXpQprLL6iTts7L3ZhsoagUATAcnZailqZ7NykZct0l757Ht
- KMO2xsPkwDjdDzibtvo4wPFKEXnxuL4fgOqV0dOd4nPQDWBXFUgFXNbFLJpPhgWReGrIR0bJ70h
- v1HGxwNqVEwG5BPqg2K/f7Z8xrUh9CDT+6dQNGXi9CZLxQ4idKn784k5oVnEDqrU/uG9960fl3q
- k2sMDmbgOdjCs+PIt3w==
-X-Proofpoint-GUID: OO2VOubz8564iKspuNSSO0ODDnqxq84C
-X-Proofpoint-ORIG-GUID: ryqVHJYewvubwaD0dafVEAzl5VVkg6KE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-19_04,2026-10-14_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 bulkscore=0 impostorscore=0 phishscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 suspectscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610190058
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D031UWA002.ant.amazon.com (10.13.139.96) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-Hi J=C3=A9r=C3=A9my,
+On Sat, Oct 17, 2026 at 03:40:25AM +0300, Jarkko Sakkinen wrote:
+> On Sat, Oct 17, 2026 at 03:31:32AM +0300, Jarkko Sakkinen wrote:
+> > Yeah so this needs a bit more redesign and while it is a possible
+> > way to address all these issues I don't believe it is best possible
+> > way imaginable to do something that lasts long-term.
+> >
+> > I don't want to go into concrete proposals because then I would have
+> > to really engineer the whole change while at it because I would
+> > likely try a number of approaches out. I.e. just a bit more effort
+> > and innovation please.
+>
+> I can give this:
+>
+> 1. Map the whole flow how we fluctuate values of durations.
+> 2. Think that if you were starting from zero how would you design a
+>    unified and coherent flow. This includes all the callbacks and both TPM
+>    1.x and TPM 2.0.
+> 3. Redo the flow based on that premise.
+>
+> I.e., break more things with consideration and if it goes over the
+> top then we attenuate the changes where needed.
 
-I'm so sorry for the delay in reviewing v2.  Somehow I missed it.
+Thanks for the pointers Jarkko. Will work out a design and send a
+proposal.
 
-On Thu, 2026-09-24 at 08:55 +0000, J=C3=A9r=C3=A9my Jean wrote:
-> ima_collect_modsig() supplies the file contents to the parsed PKCS#7
-> message as detached data. If the message already contains embedded data,
-> pkcs7_supply_detached_data() returns -EINVAL, but IMA discards the error.
-> ima_modsig_verify() subsequently verifies that embedded data instead of
-> the file being appraised.
-
-Returning the ima_collect_modsig() error code isn't necessary to fix the bu=
-g,
-but is needed to emit an audit message.  In terms of backporting, maybe onl=
-y the
-bug fix should be backported.
-
->=20
-> Return binding errors and discard the modsig on failure, preserving
-> ordinary hashing and security.ima appraisal. Keep digest export optional:
-> ML-DSA and multiple-signer messages can still verify without it. Leave
-> d-modsig empty when unavailable instead of dropping the measurement.
-> Audit binding errors separately so O_DIRECT does not hide their cause.
-
-Is "binding errors" something that AI suggested?  I'm not familiar with thi=
-s
-terminology.  Please reword the sentence.
-
->=20
-> Fixes: 15588227e086 ("ima: Collect modsig")
-> Assisted-by: LLM
-
-At the recent "maintainers summit" it was decided to remove "Assisted-by".
-
-> Signed-off-by: J=C3=A9r=C3=A9my Jean <Jeremy.Jean@oss.cyber.gouv.fr>
-
-Other than splitting the patch, it looks good.
-
-thanks,
-
-Mimi
+Surendran
