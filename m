@@ -1,103 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792522210;
-	b=0q8qMViJFbxsh3ZvTwc81pOSgJvyrLkmHS8ERI+WG88hl+P3RfcQsBUDhk0W8U3P2viM
-	 jWm/bHU82sfF4PsiCw7/Baztnwh0L0H0xX8suGkC49RjT9TdPP+DlEhR8cZU/Dr8k1+wo
-	 rK9I4gcvl8xrNrnWJbsD41Y9hkeGvicTSRK32oOwQ/MjcehlIzrt6fZJJ/VkeNc2ApGpg
-	 YqpSv4sAnVK+4iunHWIhxBI5Ey0OcyROftZrH3BBPhWunQ6ncvZTejRya0eoIVejb91Xu
-	 A+k3MDXfp4m1obZ7ERVvsW5mXNGnASDzyYIGJFFxecEYS0W9f98B+R28l+O2jGXuBSg==
+	t=1792536595;
+	b=zAlwCGCvl7/Dnxfzidx7M0cziOMiIHek981Y3ziasCB9Nbf//mASh4rsoGU848etM/j9
+	 x3qqDCQtUKwXwN8rk8AnFk+YyepPRkbmDq0A0I3LnsqP9ya132k+0G3riGrPExHP1/pg7
+	 T/HbvgiHzc4KZkFAdo2Fwnx4mDBbwdyvtLDrmY8pM1Rle0pJGSzQ2wmk83Tg69TJM+hmF
+	 gEEeWAZb+9KUJa+nqogXO9YuMC8mrdMFQFXxZVwM+iXgDQ//1O3s7mGJSthoKkNodn3VD
+	 tVlzrdJECsZ79oV6YoiLg7kUi9VFc+y7mt48IeIvZVKHtj/YfbxdKpKUcgT/OBaTtGg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792522210;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
-	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
-	 MIME-Version:User-Agent:X-TM-AS-GCONF:X-Proofpoint-Reinject:
-	 X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=CUipg4fJiQC0gX8LVYNaRjwOaAjhAgEsBQ5MnjXNco0=;
-	b=fnm7U5Db9gs64UqpPasynAWaAyYZyE7LI0HXyoG6CVCwiRy6+TA8RH2alZ3btH5wmHqp
-	 SBGc4zUVmCu3/jO9/cWEboI/8qLlhaPGqAmGV75Epl9JsdqRyHMrMvYUx4Ph510Gqcjsp
-	 w27QL3yot/fEBaV7DyOHB3C5TkEdWlG5gZNbJEFbXeGwuCvsDkZyZrgUPngC2CUNPOEBB
-	 TK+F5mHtO25olZC1gtWpRBJgGYV4SDuplmoqCIkQkMLnAsG2vYA5/XIQ6D7owXAqKFlq4
-	 l572up761n035C3GXPPobh1lloiUEbvUoAlKXXFqUcY/cS9DAX5TegFAuyPl5AKi6bw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792536595;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=8L3dbJg7n3McKQQtwak49EcNPS+ZUeJOE3KFcCfv8HU=;
+	b=mnEw/TcJyF3l+yjzmScjwzh7ugTCwszDIbBa0FZFT4RWUtfkVpFTHJZ5Iwb8d1rtJvrh
+	 YSMVuZhPOlRJxDJjdfXyzte8FXMECI75xg23NPSA308JU7b3gCTV52Gn3ndPTYJzgX/V4
+	 UxfDBk9t8TecnxWzBpiAPuebSJ8M+1Tv3L2QlkFQCVZJqaZE/juInq769mb3QTjtlOJWF
+	 VCeJqtGlJZgHjtjRFWo6kEt032nKPxsba7uDQnnIP8a/Yb9m0ddhdrcOIVhqbp3fpHM9H
+	 DTs6UW6R/+BQ/YF4S0bs8mwdfBHCi7HAmRIXAm9b/9c3JjIxe5MtMc7LNUph8pk0GOQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.ibm.com;
-	spf=pass smtp.mailfrom=linux.ibm.com;
-	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b="PyLs4m/b";
-	arc=none smtp.remote-ip=148.163.158.5
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175B2606A326;
-	Tue, 20 Oct 2026 18:50:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 175B2606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Iy65iNq2;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C5A606A32E;
+	Tue, 20 Oct 2026 22:49:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 41C5A606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=PyLs4m/b
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69KHEGYY2978623;
-	Tue, 20 Oct 2026 18:49:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=CUipg4
-	fJiQC0gX8LVYNaRjwOaAjhAgEsBQ5MnjXNco0=; b=PyLs4m/bwKvEN1Xub2+nsy
-	RvDztJMNx/Z+zoVjhqf3OXsUqlQyAwKi6Di8U1rhrdN+ORF9bIIUy2WpblIgKMrY
-	wQz5uaGWAvaV+A7KvUL4yg9m/v9EDesHFCLuqNWzfGs8kRBM6IgqNGhQw8n0tdht
-	eA+deQAvJRxk3pWNsU0LIS6ntBFtiTy68Ba6SbC3Pc87D2WQ25G8+09mz4Ij+aqj
-	fYLWN3kFHFJa9s292QZL70nuHrDz+JW2NDEXBhYrt7nyY40OuZt07GGrc2GhUGlX
-	1gCPfU03Slx8kl4J391XkgR2GEiNQu4gyoA19xotJcjdqMfJj0AXeYXgDD9RM+7w
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hdw5ammmp-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 20 Oct 2026 18:49:13 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 69KH4pQG1836498;
-	Tue, 20 Oct 2026 18:49:13 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4he8vhsb58-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Oct 2026 18:49:13 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 69KInCjW27787960
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Oct 2026 18:49:12 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8711458056;
-	Tue, 20 Oct 2026 18:49:12 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AE8CB58052;
-	Tue, 20 Oct 2026 18:49:10 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.74.192])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 20 Oct 2026 18:49:10 +0000 (GMT)
-Message-ID: <f6829d2023573445b0906b34812e5b0bfdfb2e4c.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] kexec: Select ima_get/free_kexec_buffer() with
- CONFIG_HAVE_IMA_KEXEC(_OF)
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, catalin.marinas@arm.com,
-        will@kernel.org, mark.rutland@arm.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, maddy@linux.ibm.com, mpe@ellerman.id.au,
-        npiggin@gmail.com, chleroy@kernel.org, pjw@kernel.org,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-        tglx@kernel.org, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, hpa@zytor.com, robh@kernel.org,
-        saravanak@kernel.org
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        devicetree@vger.kernel.org, noodles@fb.com,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Roberto Sassu
- <roberto.sassu@huawei.com>
-In-Reply-To: <20261020083727.1906495-1-roberto.sassu@huaweicloud.com>
-References: <20261020083727.1906495-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 20 Oct 2026 14:49:10 -0400
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Iy65iNq2
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22FC515A1;
+	Tue, 20 Oct 2026 15:49:50 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92E9E3F673;
+	Tue, 20 Oct 2026 15:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1792536593; bh=utolcjwaaJaPzYwJQo9ya2LOeTJaqLosq4TA9Cq4IIo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iy65iNq278aR/8Qr5ADRvjS5ek17DIwYRx5fL1DcFwSqjuxUK3E/82pYbuRw8AJRv
+	 LW+A9rVlT44ugB3MLub2pWp75rqYgsVz57A99bXDD0t1WBYfyxBKd1q7eFc3vOG4BJ
+	 8mE7Bsb9YISf28302wWCSS0gQPVnGGFFsFBqp1L0=
+Date: Tue, 20 Oct 2026 23:49:45 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, David Sterba <dsterba@suse.com>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Simon Glass <sjg@chromium.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Nick Terrell <terrelln@fb.com>, Will Deacon <will@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
+	linux-integrity@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>, patches@lists.linux.dev,
+	Piotr =?iso-8859-1?Q?Kr=F3l?= <piotr.krol@3mdeb.com>,
+	Ross Philipson <ross.philipson@gmail.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Song Shuai <songshuaishuai@tinylab.org>
+Subject: Re: [PATCH v2 12/15] arm64: drtm: Update the linker script for
+ EFI_STUB_DRTM
+Message-ID: <atfwCcRfC6rWFywH@e129823.arm.com>
+References: <0-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
+ <12-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -107,71 +82,193 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=X63Hu2Te c=1 sm=1 tr=0 ts=6ad7b7aa cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=i0EeH86SAAAA:8
- a=1ZqOMbZaXgEuhprhJ6sA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: Ia0JIwvxgpSWbtDkRhI4dPoRvql5U3OQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIwMDA3NCBTYWx0ZWRfX6CxIfm/eOhQP
- +/wUaq+FQGOqNArpfZIrUA+k9rkfHNtq3LEC/MDGsUMQm3qiFtctCKcsB3g0dqzV/HMTrSQIcHS
- kh45avWcDz/fa+RP2uRW8fGU108iYPrT3oaL1/s8VqCXcyTI5mX9UO7rDq0gQiB05j54tUmphC5
- M3UcJKnVRjGR5yF0kTH+AndvbRuqhLZdXHW5xBZ63UpJUlNFZ1AmQFZZ7EjQIaYbCuxgzixRrQ4
- eA1AxoIEmsZQy6ehSvq9n5ynjA3GOuarZ2tJhvCrpsIWZZUbqTsIBLwtl23nBpUqhDTFfw9xvEL
- QBTaUenCPMupL6l8hjKV2oZW8fZ1wD/GoA5VHnl9m0fQzGO+tv8xrL/dlgroHuaczSHOq+fqX5E
- cpLrzXoAs3f5D20wkmuN/fXp+2uRCw2Ftp5wPit+Q/mAZN0Rv9mp3+/u1kRTBMxoWYlDJGKGZh2
- LBmMkOCw1SrNQ0gUpWw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIwMDA3NCBTYWx0ZWRfX/pCk1z+OIKUf
- 8bZpWSGlRHh+7LvRdNSDPEBz4dEG1doO2AZda9JjErBmhtY1k+w0Jzx8QJ2wYxxGwVf3bi3lXKC
- 57cA1acf9WI/uIkewDh2r98mkDuuQnM=
-X-Proofpoint-GUID: gj5Wz7vSF5n4aqUBRYZGldP83-pRH86l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-20_03,2026-10-19_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 adultscore=0 malwarescore=0
- clxscore=1015 spamscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610200074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
 
-On Tue, 2026-10-20 at 10:37 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> On x86, if CONFIG_OF_FLATTREE is enabled, the kernel uses the device tree
-> implementation of ima_get/free_kexec_buffer(). However, x86 passes the IM=
-A
-> buffer location through setup_data, not through the device tree, so the
-> buffer is never found and the IMA measurement list is not carried over
-> across kexec.
->=20
-> Introduce CONFIG_HAVE_IMA_KEXEC_OF (which selects CONFIG_HAVE_IMA_KEXEC)
-> and select it for the architectures that pass the IMA buffer location
-> through the device tree, via of_kexec_alloc_and_setup_fdt() (arm64,
-> powerpc and riscv). Build the device tree implementation of
-> ima_get/free_kexec_buffer() only if the new option is enabled.
->=20
-> Select the new option also on LoongArch, to preserve the current behavior
-> and avoid a link failure. LoongArch does not pass the buffer location to
-> the next kernel yet; this will be addressed separately.
->=20
-> Finally, don't select it for x86, and use x86's own setup_data-based
-> implementation regardless of CONFIG_OF_FLATTREE.
->=20
-> Fixes: b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kex=
-ec")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Hi,
+
+> Implement the link layout that CONFIG_EFI_STUB_DRTM requires. This maps
+> vmlinux into the Dynamic Launch Measured Environment (DLME) defined by the
+> spec.
+> 
+> Broadly, Image fits into the spec defined DLME region memory layout in
+> this order:
+>  - Program headers and padding up to _stext. EFI can write to these while
+>    loading the stub so they do not have a stable measurement.
+>  - All the boot-time immutable data, including .text, .data, .init
+>    and so on (measured)
+>  - Data written by the EFI stub
+>  - .bss, padding and other 0'd data up to _end
+>  - The "DLME Data" written by the launch process. This is a datastructure
+>    the post launch kernel will parse to get trusted information about th
+>    launch.
+> 
+> New linker symbols are added to mark these areas and their offsets are
+> placed into the efi_image_info so both stubs can get them.
+> 
+> The spec's design of the DLME was intended to fit a typical OS image like
+> this, with two areas that are unmeasured and an inner measured region.
+> 
+> Linux zeroes the unmeasured area of .bss/etc after the DRTM launch so it
+> also reaches a known value. The DLME data is written by the launch and is
+> trusted. The EFI stub data is either ignored or will have to be sanitized.
+> 
+> Add a section for the unmeasured data before the PECOFF padding. This is
+> an allocated section so it is zero'd in the image and is only 64 bytes in
+> my builds. There is a high chance it gets absorbed into the padding
+> region.
+> 
+> The post-launch kernel will have to reserve the "DLME Data" before
+> starting the allocator since it falls outside the linker map. This will
+> happen in the first series to consume this data.
+> 
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
->=20
-> v2:
-> - Reworded the commit message (no code changes), suggested by Mimi
+>  arch/arm64/include/asm/image.h  |  8 +++++
+>  arch/arm64/kernel/vmlinux.lds.S | 64 ++++++++++++++++++++++++++++++++-
+>  2 files changed, 71 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/image.h b/arch/arm64/include/asm/image.h
+> index b18ce23a2cba7f..36afe95ffa7544 100644
+> --- a/arch/arm64/include/asm/image.h
+> +++ b/arch/arm64/include/asm/image.h
+> @@ -5,7 +5,11 @@
+>  
+>  #define ARM64_IMAGE_MAGIC	"ARM\x64"
+>  
+> +#ifdef CONFIG_ARM64_DRTM
+> +#define EFI_IMAGE_INFO_SIZE	40
 
-Thanks, Roberto.
+Small nit. I know according to #13, This should be 40 with drtm_entry
+and arm64_drtm_handoff. but in this patch, should EFI_IMAGE_INFO_SIZE
+be 24 and be change to 40 at #13?
 
-The patch and now the patch description look good.  Can we get some tags?
+> +#else
+>  #define EFI_IMAGE_INFO_SIZE	8
+> +#endif
+>  
+>  #define ARM64_IMAGE_FLAG_BE_SHIFT		0
+>  #define ARM64_IMAGE_FLAG_PAGE_SIZE_SHIFT	(ARM64_IMAGE_FLAG_BE_SHIFT + 1)
+> @@ -62,6 +66,10 @@ struct arm64_image_header {
+>   */
+>  struct efi_image_info {
+>  	u64 code_size;
+> +#ifdef CONFIG_ARM64_DRTM
+> +	u64 drtm_measured_start;
+> +	u64 dlme_measured_size;
+> +#endif
+>  };
+>  static_assert(sizeof(struct efi_image_info) == EFI_IMAGE_INFO_SIZE);
+>  
+> diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+> index 8305b47995954b..5c14decf0dd4d3 100644
+> --- a/arch/arm64/kernel/vmlinux.lds.S
+> +++ b/arch/arm64/kernel/vmlinux.lds.S
+> @@ -190,10 +190,24 @@ SECTIONS
+>  
+>  	.head.text : {
+>  		_text = .;
+> +#ifdef CONFIG_ARM64_DRTM
+> +		/* DEN0113 R314010: The DLME region must start at a 4KB aligned address. */
+> +		ASSERT((_text & (SZ_4K - 1)) == 0,
+> +		       "DLME region is not 4 KiB aligned");
+> +#endif
+>  		HEAD_TEXT
+>  	}
+>  	.text : ALIGN(SEGMENT_ALIGN) {	/* Real text segment		*/
+>  		_stext = .;		/* Text and read-only data	*/
+> +#ifdef CONFIG_ARM64_DRTM
+> +		__drtm_measured_start = _stext;
+> +		/*
+> +		 * DEN0113 R314020: The DLME image must start at a 4KB aligned
+> +		 * address. This happens always because SEGMENT_ALIGN is big.
+> +		 */
+> +		ASSERT((__drtm_measured_start & (SZ_4K - 1)) == 0,
+> +		       "DLME measured start is not 4 KiB aligned");
+> +#endif
+>  			IRQENTRY_TEXT
+>  			SOFTIRQENTRY_TEXT
+>  			ENTRY_TEXT
+> @@ -285,6 +299,11 @@ SECTIONS
+>  		EFI_IMAGE_INFO(
+>  			/* code_size */
+>  			EFI_IMAGE_INFO_OFFSET(__inittext_end);
+> +#ifdef CONFIG_ARM64_DRTM
+> +			EFI_IMAGE_INFO_OFFSET(__drtm_measured_start);
+> +			/* dlme_measured_size */
+> +			EFI_IMAGE_INFO_ENTRY(__drtm_measured_end - __drtm_measured_start);
+> +#endif
+>  		)
+>  	}
+>  	.exit.data : {
+> @@ -348,6 +367,44 @@ SECTIONS
+>  		__mmuoff_data_end = .;
+>  	}
+>  
+> +	/*
+> +	 * DRTM layout for DEN0113 as it relates to the link layout, refer
+> +	 * to Figure 8 in 1.4b. In that language:
+> +	 *  "Free Space 1" is the PE header and padding between _text and
+> +	 *        __drtm_measured_start (_stext)
+> +	 *  "DLME Image" is from __drtm_measured_start to __drtm_measured_end
+> +	 *  "Free Space 2" is kernel efi data/bss/etc till __drtm_dlme_start
+> +	 *  "DLME Data" is a memory sized "Minimum Size of DLME data"
+> +	 *        and is retained after boot for use by the kernel
+> +	 *
+> +	 * Thus, the DRTM_PARAMETERS follow from that:
+> +	 *   DLME Region Address = _text's PA ie the start of Image
+> +	 *   DLME Region Size = DLME Data Offset + "Minimum Size of DLME data"
+> +	 *   DLME Image Start Offset = __drtm_measured_start - _text
+> +	 *   DLME Image Size = __drtm_measured_end - __drtm_measured_start
+> +	 *   DLME Data Offset = __drtm_dlme_start - _text
+> +	 *   Normal World DCE region address = PA of __drtm_dlme_start +
+> +	 *                                  "Minimum Size of DLME data"
+> +	 *
+> +	 * The EFI stub will place any optional "Normal World DCE" region
+> +	 * immediately after the "DLME data". It is only used internally by the
+> +	 * FW during the launch and has no effect on the link layout.
+> +	 */
+> +#ifdef CONFIG_ARM64_DRTM
+> +	__drtm_measured_end = .;
+> +
+> +	/*
+> +	 * Writable EFI stub state. When DRTM is being used the stub's mutable
+> +	 * data cannot reside in the normal .init.data because that section
+> +	 * will be measured.
+> +	 */
+> +	.unmeasured.data : {
+> +		*(.unmeasured.data)
+> +		*(.init.efidata .init.efidata.*)
+> +		*(.init.efibss .init.efibss.*)
+> +	}
+> +#endif
+> +
+>  	PECOFF_EDATA_PADDING
+>  	__pecoff_data_rawsize = ABSOLUTE(. - __initdata_begin);
+>  	_edata = .;
+> @@ -370,10 +427,15 @@ SECTIONS
+>  
+>  	. += SZ_4K;		/* stack for the early C runtime */
+>  	early_init_stack = .;
+> -
+>  	. = ALIGN(SEGMENT_ALIGN);
+>  	__pecoff_data_size = ABSOLUTE(. - __initdata_begin);
+>  	_end = .;
+> +#ifdef CONFIG_ARM64_DRTM
+> +	/* DEN0113 R314030: The DLME data must start at a 4KB aligned address. */
+> +	__drtm_dlme_start = .;
+> +	ASSERT((__drtm_dlme_start & (SZ_4K - 1)) == 0,
+> +	       "DLME data is not 4 KiB aligned")
+> +#endif
+>  	__pi__end = .;
+>  
+>  	STABS_DEBUG
+> -- 
+> 2.43.0
+> 
+> 
 
-thanks,
-
-Mimi
+-- 
+Sincerely,
+Yeoreum Yun
