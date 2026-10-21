@@ -1,74 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792571903;
-	b=ssv0JY8p7O5ZeBtoTlmnUzsLNXGUARA8G1a50PebzqpbYu2ABDP90JzrOp3bYiuf75OX
-	 uAumKoLX7iahmOoLIOx63rNQKn99HM4Qo2icjfgseHI8TYEK1r3hL3tu9PxmJERIsL/18
-	 pRvE3iikHXJhlar46k+jl3y3MSRDn9R2cUl1aGiqDvmFRfC9p6KKFKvaSsoGc/pF/J/9G
-	 +QQchWn2P3gEz4JqIRJWDkxcXRmsQJPup2IdkjXqh5dmcacv2ylfWXJttPXNl3oGl6ZKH
-	 p9So2/feLuZxr/FRcIpF5x4Cskh2w5Hh8H8dlUu6uQJN2tz+8dBFGSFmykcOxcV3kfw==
+	t=1792572793;
+	b=fZ2CcDQSpnHHo1T1vgASLxmMlXVwhKOLJj8psttVveXqH/XkpRqDlI8vu4bJJmOEpOpT
+	 42lytWGRICqCkmqn+NeqEAWhjSLdoxy0dy+gF71QVgBaYL33+7Ub46MlN9NmaXh2DiDOW
+	 8imeumCJZwQ120OKj2nCDe4jswxAEoHqS/4rKVKlKv818iTQwMCgSh4238i+Kx2YfH1du
+	 RVFK6Mw9M8XVWk99+UagutdSR3bfKoe56I72kTPzf0wofJDa0EyK+Ra9XRJO5xEZWAm/e
+	 CPfDHLHSy0xpzSbuEs6lOVbv79RoufR39iAQNb4dwST4TkDY56vqZNiqvrTF3nULTCA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792571903;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=AOzqjtOMrdyYNSpa99+/UPGhu5nVwE5WpHEubCFaf5I=;
-	b=OC2bIAQvLQLk01ZqnE37TmjxXEWScgUZu/O3ceBntDCcB8BIUN0mE8gORzlH1S5LE8pG
-	 hyk+8FRBo23CJhft/+hrgoTbHtyQs4tdGjf1DPJs2t9UBe2q/TZHwXRvSHpQGSnykzovf
-	 N5zTOeKdexGoSJmOCkIl8BIQHY4pGxgqwiNIt1FO2dSpLK/OGLzyAjJMIwCmkOj5znJEg
-	 /QbENL6EpTU1MY49M+gE2qqGY3QTbdcBrnxnWsqUJlcOOGNsZa+dEcczAV41myfNe7iId
-	 mE+o3gecJz2j+dZNXw3IJc8FCjrmsQRc9mAOQQGlC4XrLyx1o6wWFTqvDpCIhQmEgnQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792572793;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=azsroOQy0D9NBLxIw8305L+Q5mbMoQP0E8Zku8I6kL8=;
+	b=sLcQ/5RtUt0+xYwqUhYbdkC2H+xMbuHF+ouCCZ4GcsHs6i6quS4UaSwVOcrnKRtS5auq
+	 xlHE3oIS8mxIRm20Lh2buCIusPpBjEAiZNZkNhsmBdZiAzDrzRWKflY+W1CFfCXGVZElx
+	 dHOwhMWVaWh/pTQZuqVuQIq3Q3pSqwHSI+TR/B696KFiuYHkwdWGfRhhvGluLdl5WGRun
+	 lpFRPiwin7/KZ7EYZwQGVBzJqf6/zNQL5xVHkwISWJngZsAnagm3AQeSJkSeouGikWcii
+	 memHTT9Qxo2/qic+f7mMClVxrqbBdM+cp/JeAgjZUUOIREOp1mm5YDDtLfu5VUM6Sxg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=earth.li;
-	spf=pass smtp.mailfrom=earth.li;
-	dkim=pass header.d=earth.li header.i=@earth.li header.a=rsa-sha256 header.s=the header.b=U3WKM5qY;
-	arc=none smtp.remote-ip=93.93.131.124
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=n4HxuxQC;
+	arc=none smtp.remote-ip=209.85.210.171
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D56606A31A;
-	Wed, 21 Oct 2026 08:38:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91D56606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007AB606A31E
+	for <linux-integrity@vger.kernel.org>; Wed, 21 Oct 2026 08:53:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 007AB606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=earth.li header.i=@earth.li header.a=rsa-sha256 header.s=the header.b=U3WKM5qY
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=AOzqjtOMrdyYNSpa99+/UPGhu5nVwE5WpHEubCFaf5I=; b=U3WKM5qYuUTXR4j3PnsdOXCn8d
-	hUOrdeBn8f28fXuqP8owg8bfXv0XP52dwZmKyFCp7/uDoH8ijZigjM4ST7QKm2B8oGxJdV8R28Ojh
-	weF4yGa/cnqEZhQ+tw0f05NmOz4DlcXcmYCo3TOlVHY0dkNDWesFksDJo5SHkACyjTo8wZJ3+TF76
-	FIEmLKlO0haAZjrmihdwsrjSU24hNEXF8/1DRXRM2UNHYMatnRoIm+pDBmtB9pLmkYd4GIFpMwuNs
-	olG5oBlqmNEma0F+AVEP9RWpkBh/8bEDcDeKB6W+AfW5CuALH/tv3LvI/KfmXzKmJK615WqYzsReS
-	+VVBXHRA==;
-Received: from noodles by the.earth.li with local (Exim 4.98.2)
-	(envelope-from <noodles@earth.li>)
-	id 1xJRpX-00000000gFP-2wKS;
-	Wed, 21 Oct 2026 09:37:51 +0100
-Date: Wed, 21 Oct 2026 09:37:51 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-	chenhuacai@kernel.org, kernel@xen0n.name, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, npiggin@gmail.com, chleroy@kernel.org,
-	pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, tglx@kernel.org, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, robh@kernel.org,
-	saravanak@kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	zohar@linux.ibm.com, noodles@fb.com,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v2] kexec: Select ima_get/free_kexec_buffer() with
- CONFIG_HAVE_IMA_KEXEC(_OF)
-Message-ID: <ath534EEbFntir8j@earth.li>
-References: <20261020083727.1906495-1-roberto.sassu@huaweicloud.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=n4HxuxQC
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-8a06c60065fso340895b3a.1
+        for <linux-integrity@vger.kernel.org>; Wed, 21 Oct 2026 01:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792572792; x=1793177592; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=azsroOQy0D9NBLxIw8305L+Q5mbMoQP0E8Zku8I6kL8=;
+        b=n4HxuxQCqnew/uzBCFBXl9JM/FUybwmzHZedUalx6HnPy+gFSnup1v1oIqINM9mG8d
+         59xRtEIvffxG6LLWjFm8AUXTAmrL4WUHJF3SN+E/cQ5eQH6RUWLqkQvLGTSsx8u5P+2i
+         S2rtHo16giWUSAKVEdIghcH7CB4oNU/mzZkNwqrjm0kGw0fbfBsnEh80sxE8ZaLlNufS
+         +upD6IyYCtJRrvSuHt0tvukfn0Jm33m3QQj0cUvSifqRlAGyyiV33PJjHKeIitHk4rF3
+         bO/w37mjmImsru0WB1Pgsus/ktsL+0vo1QW8KyeVsUozxup5sumLfhP928ov82sVx5vF
+         7yWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792572792; x=1793177592;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=azsroOQy0D9NBLxIw8305L+Q5mbMoQP0E8Zku8I6kL8=;
+        b=HOwi1bFAgr2XiQK7QNtbMQXguVj3bDHqUO1NRexlDTWogWChbBkjsFzr2wtwTggw4C
+         dNveYXTeZBVu0Vb/vNi7abhUG46sDdy9v2O14A8K2M13ZB9r+hDwbs9M7jJsQ5+D9QcA
+         c4akYYG881g+n+cOngazD1uJYEtU8+e/WVCiRnUREFsH5Ai2yHaONsN9LE/oypqzZZB3
+         IwpUFgbXidL8HOvIS30XHBFBk9UUL+3boEjuRHg9t84ekT5hLgfr/tZZaH7pEFoOMmJW
+         BibC0H91A44vd7xnZZJNzUe6TzPIExTjyk3Zn35MASgzojDyG69BSmQahJ3zCAMbQU5N
+         20tg==
+X-Forwarded-Encrypted: i=1; AKwUvByrJqACly7HxqKZBUo7Lk3RqsErD2BzA4p3MaeBeDX3NUsph/OlfME4YCQ/0Lg3zNV0Qa/FgCR3OE/l7g0AoRU=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIuPoz7Bcs0ysdi2G51m7f6a9HVkqMKhIlfTo9uoWi11UyEZkgE
+	ENzkIdds0KtGNZFrH5Gv6znbYwT7H8QdSGqy9orYpreahXryv5JEqeh3DCLcGwz4tIY=
+X-Gm-Gg: AYBFou2IzdyRP5xC7p1WXCCQ4vgXJTizKesHr3wLrN90BShnyY3hW1Ed+sJDTs4Dal7
+	lx/AXw3fZ/SlsDCVJCWERgG+qCn0oScwH+mg9KO6ZF2ty2HdJ5ojDRCinnlE+KpJtsK1+fjzjIj
+	uIrayKKvdQw3NEsWWEpa1mNJnwOWtxKAoNkzwpnil41V0I++t38Lw3jrnOKT1yYXWaWrCmQve+n
+	FLiSY/B6ZgHOUbBJIZYyV7ItHBOtnvZsTi9g0wOJy49Cc6+T3Zr5P+R7RCAJm3IjjCRkdheBHJC
+	HmCo1VVREh1Fk3bav80kqTZPxoj4o67ikwFzhIZA+3acbkaIJkhjZWhFav3CrIJwO5D7r9TUCBm
+	frGjhUrlhaDZJaNcEM1quoUxE2egzdEbWwB86qHVaJVfBdn/DMU8JLLtTT91f6VwFT1PlJjeKJN
+	d3ks9u2MB5QgfvlfqU8psQTKRCc8BjqQe2LSn7k4USs4H3Z7Pd0q3hRXd0fiZPFeaSq3x0avASo
+	59g847WO4eAWzw6/wuSyOOhBKLlekuVgR9mGLin5v8Daziq1zbHOOnQ2PQYdGe3Kyb5UjIH+N3o
+	4vc8b6kQRwI4XNqXwNWeb7OGa4GPSCGrmGY8iQ==
+X-Received: by 2002:a05:6a00:810:b0:8a0:2b8f:ba7b with SMTP id d2e1a72fcca58-8a089b82570mr1155273b3a.0.1792572792205;
+        Wed, 21 Oct 2026 01:53:12 -0700 (PDT)
+Received: from 675-reply.eml (awork131052.netvigator.com. [219.76.131.52])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a0895d8e70sm611023b3a.35.2026.10.21.01.53.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Oct 2026 01:53:11 -0700 (PDT)
+From: Yuqi Xu <xuyuqiabc@gmail.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Yuqi Xu <xuyuqiabc@gmail.com>, linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, Jerry Snitselaar <jsnitsel@redhat.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, stable@vger.kernel.org, Vega <vega@nebusec.ai>, Ren Wei <weir@nebusec.ai>, xuyq21@lenovo.com
+Subject: Re: [PATCH v2 1/1] tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation
+Date: Wed, 21 Oct 2026 16:49:34 +0800
+Message-ID: <179257257405.72348.17698648428918034727@gmail.com>
+In-Reply-To: <ateJA_WanjASrIUM@kernel.org>
+References: <cover.1790568982.git.xuyuqiabc@gmail.com> <9d27c4513a3c6fc32f9574ba192cd3bfcb2bac98.1790568982.git.xuyuqiabc@gmail.com> <arwssp0czGg9XKv7@kernel.org> <arw9CHc4mIOm5C6Q@kernel.org> <20260930033300.30295-1-xuyuqiabc@gmail.com> <ar8hhrjQQw_yfghj@iki.fi> <ateJA_WanjASrIUM@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -78,163 +96,35 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261020083727.1906495-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 20, 2026 at 10:37:27AM +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> On x86, if CONFIG_OF_FLATTREE is enabled, the kernel uses the device tree
-> implementation of ima_get/free_kexec_buffer(). However, x86 passes the IMA
-> buffer location through setup_data, not through the device tree, so the
-> buffer is never found and the IMA measurement list is not carried over
-> across kexec.
-> 
-> Introduce CONFIG_HAVE_IMA_KEXEC_OF (which selects CONFIG_HAVE_IMA_KEXEC)
-> and select it for the architectures that pass the IMA buffer location
-> through the device tree, via of_kexec_alloc_and_setup_fdt() (arm64,
-> powerpc and riscv). Build the device tree implementation of
-> ima_get/free_kexec_buffer() only if the new option is enabled.
-> 
-> Select the new option also on LoongArch, to preserve the current behavior
-> and avoid a link failure. LoongArch does not pass the buffer location to
-> the next kernel yet; this will be addressed separately.
-> 
-> Finally, don't select it for x86, and use x86's own setup_data-based
-> implementation regardless of CONFIG_OF_FLATTREE.
-> 
-> Fixes: b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kexec")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Hi Jarkko,
 
-Reviewed-By: Jonathan McDowell <noodles@meta.com>
+On Tue, Oct 20, 2026 at 06:30:11PM +0300, Jarkko Sakkinen wrote:
+> OK, so now that I was writing summary of TPM pull request changes, I
+> came into conclusion that this is not a bug fix, unless you can show
+> from TCG specifications that this is possible spec allowed behaviour.
 
-I think my original intent when adding the ACPI x86 passthrough was to 
-ensure I didn't break anything for anyone who'd been trying to use OF 
-with x86 and pass it through, but if it wasn't even wired up there then 
-that's not a concern.
+I cannot. Part 1 identifies a PCR bank by its hash algorithm, so one
+hash is one bank. In the TCG reference implementation, TPM2_PCR_Allocate
+keeps only the last selection when the same hash appears more than once,
+and TPM2_GetCapability(TPM_CAP_PCRS) returns that allocation. A
+conformant TPM will not report a duplicate.
 
-> ---
-> 
-> v2:
-> - Reworded the commit message (no code changes), suggested by Mimi
-> 
->  arch/arm64/Kconfig      | 2 +-
->  arch/loongarch/Kconfig  | 2 +-
->  arch/powerpc/Kconfig    | 2 +-
->  arch/riscv/Kconfig      | 2 +-
->  arch/x86/kernel/setup.c | 2 +-
->  drivers/of/kexec.c      | 4 ++--
->  kernel/Kconfig.kexec    | 4 ++++
->  7 files changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index b5a51b0ef944..4b7e248b6c91 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1697,7 +1697,7 @@ config ARCH_SUPPORTS_KEXEC_FILE
->  config ARCH_SELECTS_KEXEC_FILE
->  	def_bool y
->  	depends on KEXEC_FILE
-> -	select HAVE_IMA_KEXEC if IMA
-> +	select HAVE_IMA_KEXEC_OF if IMA
->  
->  config ARCH_SUPPORTS_KEXEC_SIG
->  	def_bool y
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 2067d1f2ad7a..b5420d482da4 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -690,7 +690,7 @@ config ARCH_SELECTS_KEXEC_FILE
->  	depends on KEXEC_FILE
->  	select KEXEC_ELF
->  	select RELOCATABLE
-> -	select HAVE_IMA_KEXEC if IMA
-> +	select HAVE_IMA_KEXEC_OF if IMA
->  
->  config ARCH_SUPPORTS_CRASH_DUMP
->  	def_bool 64BIT
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 2580e27e4328..096c6061893b 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -643,7 +643,7 @@ config ARCH_SELECTS_KEXEC_FILE
->  	def_bool y
->  	depends on KEXEC_FILE
->  	select KEXEC_ELF
-> -	select HAVE_IMA_KEXEC if IMA
-> +	select HAVE_IMA_KEXEC_OF if IMA
->  
->  config PPC64_BIG_ENDIAN_ELF_ABI_V2
->  	# Option is available to BFD, but LLD does not support ELFv1 so this is
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index f8e26c4bed2b..161bf8a65beb 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -1118,7 +1118,7 @@ config ARCH_SUPPORTS_KEXEC_FILE
->  config ARCH_SELECTS_KEXEC_FILE
->  	def_bool y
->  	depends on KEXEC_FILE
-> -	select HAVE_IMA_KEXEC if IMA
-> +	select HAVE_IMA_KEXEC_OF if IMA
->  	select KEXEC_ELF
->  
->  config ARCH_SUPPORTS_KEXEC_PURGATORY
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index cda6adb9f69c..bc17e353c099 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -421,7 +421,7 @@ static void __init add_early_ima_buffer(u64 phys_addr)
->  #endif
->  }
->  
-> -#if defined(CONFIG_HAVE_IMA_KEXEC) && !defined(CONFIG_OF_FLATTREE)
-> +#ifdef CONFIG_HAVE_IMA_KEXEC
->  int __init ima_free_kexec_buffer(void)
->  {
->  	if (!ima_kexec_buffer_size)
-> diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
-> index 029903b986cb..724f29fef0c0 100644
-> --- a/drivers/of/kexec.c
-> +++ b/drivers/of/kexec.c
-> @@ -116,7 +116,7 @@ static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_HAVE_IMA_KEXEC
-> +#ifdef CONFIG_HAVE_IMA_KEXEC_OF
->  /**
->   * ima_get_kexec_buffer - get IMA buffer from the previous kernel
->   * @addr:	On successful return, set to point to the buffer contents.
-> @@ -196,7 +196,7 @@ static void remove_ima_buffer(void *fdt, int chosen_node)
->  	size_t size;
->  	const void *prop;
->  
-> -	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
-> +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC_OF))
->  		return;
->  
->  	prop = fdt_getprop(fdt, chosen_node, "linux,ima-kexec-buffer", &len);
-> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> index 15632358bcf7..c6ed60f04ea4 100644
-> --- a/kernel/Kconfig.kexec
-> +++ b/kernel/Kconfig.kexec
-> @@ -17,6 +17,10 @@ config KEXEC_ELF
->  config HAVE_IMA_KEXEC
->  	bool
->  
-> +config HAVE_IMA_KEXEC_OF
-> +	bool
-> +	select HAVE_IMA_KEXEC
-> +
->  config KEXEC
->  	bool "Enable kexec system call"
->  	depends on ARCH_SUPPORTS_KEXEC
-> -- 
-> 2.43.0
+> So I can keep the commit but would remove fixes and bug related tags
+> from this. It is essentially hardening and safety measure but not a
+> bug fix.
 
-J.
+Please do. Drop Fixes:, Cc: stable, Reported-by:, and Closes:. The code
+change can stay as hardening.
 
--- 
-... "You are in a twisty little maze of lookup tables, all different." --
-    Joe Zeff, The Scary Devil Monastery
+> Do you have something to say that I might have missed?
+
+Only that the commit is not on the current master after the rebase. I
+can send a v3 without those tags if that is easier than reapplying it
+yourself.
+
+Thanks,
+Yuqi
+
