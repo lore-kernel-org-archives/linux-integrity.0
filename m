@@ -1,76 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792578116;
-	b=NL8ZpqZCWWwYYFAZoHYONQvHTrjJ09JyOIcJWYDNMqW4NcqVVRHJtR6mshvcfn6xXTW/
-	 5K7ttWzjWPAbK+2ufHIYXrJjzhaQpeU2tPcQGUjCNfbrwnUjwLO5X861cWLUvJm2f1Ie6
-	 cd0x7u0edN2SpdLWWefE0Mq6hC8uXaHNhpVd3nXSJg1+Xg8eTG0AEnwZBJGS2WDbqS5Qt
-	 KS45fbYnkOkbV5cfHNVjQm/lcg9BBpqSGyfcZUQtrBWqD/bvDpTil5Bhd17yFid/q5Nfl
-	 +fIK2p7KqPRYuNXwDPXKGxoYStzV4f5NAwcF8+e7oUjKE53YXyHuMxluFKkdx4qPODQ==
+	t=1792578249;
+	b=yMsDSqIXu1B84SqZ/LEv0lqoE/+4BCSs83EaTdKFGkFoRFiMOuPvSWeZsQzoK2EZWVUu
+	 PE2nvGugw+/DdOkeZ9TODButM4U5Z0diydJqj4sbFUcKdr2T7qEOaLXnpLsy3a6en/knS
+	 tLIDMGReHEOvg1d4y8jiAh6/8XSOIQr6x0g0hHkDZBEuF/sAEfLxM+ZsqxmAeH7mjv3/d
+	 4XYAapVz/DA9QTLeJbAhgXTyqhsDp7XOf1GLl/kAseI6xxrL1sWDmpy7Gh8Vyrw9SkGTi
+	 TMvWiFuwsvRj6FgM7xhN/ImxKa/dQI4emWsh/jgUegy0Mu3ezFYqJ+um6ArxwMBNBbQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792578116;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792578249;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=IzO1E6ikKD8tl2Wsl1moqCKEq1l/nX4FZiTYItV58uI=;
-	b=Na30fbzbmF9ffbf88MZXidvz/GwP0bvyyaD5DJk/Q175LC/IAkZyAsAw9tbrBeHJXGew
-	 Yj9KBnaxHHKLm4e+o3xU3WHlgccBbjGC/vR5XkxsaDOEw/KiR2OV8Rer6hQiN0T36I6VV
-	 b7GZ1oBOsEmadAlzHtTKZxFP071Vtj1g3VMS/Ez+QR3ez3BVmy4lcQ3G26HCEXxiB+hsw
-	 oQbDef1Xa03LNaoDIQdKyN64ZILCgsOYNCVtf99Zq+QowwesxjDx8vdwrSrSVUaOwlZGz
-	 nsFCXFOEpna5ytlOKlJOg89WjYA1ebqNAN1bCyNDjeyclaf8lFc8+D1q7N2uPX8DcOA==
+	bh=qYDypIT7QE1F/eBnrsyHEhw9MO0/8jcAkyVwmN8UTzo=;
+	b=l0AIedGKmYnSXTOFsPkwaAcQRG9d/jdBVyHF2687oKHCyTkl/5heMRK6f0FWdRUfskg5
+	 mxh5p51kubT1ij5rj81fJBArBnieEpoduNdE1HmR4+9kxpW30V2wMFv1vmUPoOvHXdnoz
+	 89zmChrTkg3OFmOZCf7Qy7YxgM7Gh4i9xs6AJhNYhQXSKGcJiFEC05ubkD0K+4/nNJdCM
+	 j/6Sn0IACoFdZleIUl4bqtB3GXMYjUDqyBdddxraW2WxLGpqJqk72xrw9wsMwIMP3cmoP
+	 vZ0SVf3aoF3TzaoxK06x2RN07jvV9z1bt9UtaH3frhXEZY2qoW107HldTo45/dW0ufw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mxIJkEAE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fgVuAH6R;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812FE606A31A;
-	Wed, 21 Oct 2026 10:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 85D96606A32A;
+	Wed, 21 Oct 2026 10:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mxIJkEAE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A92D1F000C9;
-	Wed, 21 Oct 2026 10:21:37 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fgVuAH6R
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9BE531F000CA;
+	Wed, 21 Oct 2026 10:24:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792578116;
-	bh=IzO1E6ikKD8tl2Wsl1moqCKEq1l/nX4FZiTYItV58uI=;
+	s=k20260515; t=1792578249;
+	bh=qYDypIT7QE1F/eBnrsyHEhw9MO0/8jcAkyVwmN8UTzo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mxIJkEAEUemoHzqFpjGOGsISTWbamBRSUja5/+PShimgeDu5pEKvopKkpU417cjQS
-	 LUqwYcw1SBOPpayMExd/35Gnzu6vWNYtpIRwMBn1YzbAVoItArpZDVk3V/2yxpBUSt
-	 9fzVhM7CM1JzxX/30rMD4LM/SMeQgvPK71uLA9cJ6KKuCcL9byzvEuq3NKJpBNSfkI
-	 hOZZhVe1KN8bfJmLl2/aV98mPzJLBOsp6PiULbCuee+h9exCxuOQwZCmfAA20lj/Y5
-	 rZglUOVWEtzU9bw0QJBCz7xQiasZhWom0scGxlDmBqafUSH/ovyAfRSFdg3IQhiHli
-	 c6Wa6I1EvnH2g==
-Date: Wed, 21 Oct 2026 12:21:35 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Cai Xinchen <caixinchen1@huawei.com>
-Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, corbet@lwn.net, skhan@linuxfoundation.org, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com, 
-	memxor@gmail.com, martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev, 
-	jolsa@kernel.org, emil@etsalapatis.com, ihor.solodrai@linux.dev, 
-	rdunlap@infradead.org, gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
-	johan@kernel.org, dlemoal@kernel.org, hch@lst.de, axboe@kernel.dk, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, dhowells@redhat.com, code@tyhicks.com, 
-	linkinjeon@kernel.org, sj1557.seo@samsung.com, yuezhang.mo@sony.com, 
-	hirofumi@mail.parknet.co.jp, cel@kernel.org, jlayton@kernel.org, neil@brown.name, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, hyc.lee@gmail.com, 
-	miklos@szeredi.hu, amir73il@gmail.com, senozhatsky@chromium.org, 
-	chenxiaosong@chenxiaosong.com, kpsingh@kernel.org, matt@bobrowski.net, rostedt@goodmis.org, 
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, john.johansen@canonical.com, 
-	georgia.garcia@canonical.com, zohar@linux.ibm.com, roberto.sassu@huawei.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, stephen.smalley.work@gmail.com, 
-	omosnacek@gmail.com, casey@schaufler-ca.com, takedakn@nttdata.co.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, xiujianfeng@huawei.com, nanx95726@gmail.com, djwong@kernel.org, 
-	lujialin4@huawei.com, bpf@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, exfat@lists.linux.dev, 
-	linux-nfs@vger.kernel.org, ntfs@lists.linux.dev, linux-unionfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 -next 01/18] fs: pass struct path to notify_change()
-Message-ID: <20261021-nanotechnologie-gebadet-gepaukt-52a950759f0a@brauner>
-References: <20261015125425.3246251-1-caixinchen1@huawei.com>
- <20261015125425.3246251-2-caixinchen1@huawei.com>
+	b=fgVuAH6RN7jNUQ6qR+SgyDBAnt8REfpRA0GBNGvKj9x9SY040MEqFioc8qqpOTQTd
+	 LADBiBp2jk4P+dyuYDSatkuMoMFbvVq4mMlg+bl2jdNlbLcMlKdl4fw2hTg3GqBpga
+	 bn7DO+gh0ueFUvy9Wk2aPhNsE4L0Dxbh7i9g1FsLSVuuqP+F+j9Ji7azfIN/ZsZ5ZP
+	 brGvqJHDIfIvCyKqAfuMSSIjq/C4bdQlHt1xzCvPBL0o5u67Sp8VUEugcpUMNjh+JM
+	 yHmJo25FXNJyahCUTwug8RDzEiM0AqEXc/ZOFBQ5Z9LUjn44798VTsOzqoZzSPq23L
+	 fKqOBDY/286/w==
+Date: Wed, 21 Oct 2026 13:24:05 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Yuqi Xu <xuyuqiabc@gmail.com>
+Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	stable@vger.kernel.org, Vega <vega@nebusec.ai>,
+	Ren Wei <weir@nebusec.ai>, xuyq21@lenovo.com
+Subject: Re: [PATCH v2 1/1] tpm: reject duplicate PCR banks in
+ tpm2_get_pcr_allocation
+Message-ID: <atiSxTr7A4CaUo25@kernel.org>
+References: <cover.1790568982.git.xuyuqiabc@gmail.com>
+ <9d27c4513a3c6fc32f9574ba192cd3bfcb2bac98.1790568982.git.xuyuqiabc@gmail.com>
+ <arwssp0czGg9XKv7@kernel.org>
+ <arw9CHc4mIOm5C6Q@kernel.org>
+ <20260930033300.30295-1-xuyuqiabc@gmail.com>
+ <ar8hhrjQQw_yfghj@iki.fi>
+ <ateJA_WanjASrIUM@kernel.org>
+ <179257257405.72348.17698648428918034727@gmail.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -80,19 +68,46 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261015125425.3246251-2-caixinchen1@huawei.com>
+In-Reply-To: <179257257405.72348.17698648428918034727@gmail.com>
 
-On Thu, Oct 15, 2026 at 08:54:07PM +0800, Cai Xinchen wrote:
-> notify_change() takes a struct mnt_idmap and a struct dentry even
-> though all of its callers either already hold a struct path (or a
-> struct file) or have to pass &nop_mnt_idmap because no idmapped
-> mount is involved.  Switch the helper and its declaration to take a
-> struct path instead and derive the idmap and dentry from it.
+On Wed, Oct 21, 2026 at 04:49:34PM +0800, Yuqi Xu wrote:
+> Hi Jarkko,
+> 
+> On Tue, Oct 20, 2026 at 06:30:11PM +0300, Jarkko Sakkinen wrote:
+> > OK, so now that I was writing summary of TPM pull request changes, I
+> > came into conclusion that this is not a bug fix, unless you can show
+> > from TCG specifications that this is possible spec allowed behaviour.
+> 
+> I cannot. Part 1 identifies a PCR bank by its hash algorithm, so one
+> hash is one bank. In the TCG reference implementation, TPM2_PCR_Allocate
+> keeps only the last selection when the same hash appears more than once,
+> and TPM2_GetCapability(TPM_CAP_PCRS) returns that allocation. A
+> conformant TPM will not report a duplicate.
+> 
+> > So I can keep the commit but would remove fixes and bug related tags
+> > from this. It is essentially hardening and safety measure but not a
+> > bug fix.
+> 
+> Please do. Drop Fixes:, Cc: stable, Reported-by:, and Closes:. The code
+> change can stay as hardening.
+> 
+> > Do you have something to say that I might have missed?
+> 
+> Only that the commit is not on the current master after the rebase. I
+> can send a v3 without those tags if that is easier than reapplying it
+> yourself.
 
-No, the idmap needs to be passed separately. The whole point is that
-during path lookup mnt->mnt_idmap can change. So mnt->mnt_idmap is taken
-of the mount at the time it was checked and passed down to the
-filesystem so that the VFS and the filesystem are guaranteed to see the
-same idmap.
+Thanks for quick reaction. I can still get it to the pull request.
+
+This was just a question of taxonomy. I think it is otherwise
+useful to have this validation in place (i.e. not disregarding
+the change overall).
+
+> 
+> Thanks,
+> Yuqi
+> 
+
+Br, Jarkko
