@@ -1,64 +1,76 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792578249;
-	b=yMsDSqIXu1B84SqZ/LEv0lqoE/+4BCSs83EaTdKFGkFoRFiMOuPvSWeZsQzoK2EZWVUu
-	 PE2nvGugw+/DdOkeZ9TODButM4U5Z0diydJqj4sbFUcKdr2T7qEOaLXnpLsy3a6en/knS
-	 tLIDMGReHEOvg1d4y8jiAh6/8XSOIQr6x0g0hHkDZBEuF/sAEfLxM+ZsqxmAeH7mjv3/d
-	 4XYAapVz/DA9QTLeJbAhgXTyqhsDp7XOf1GLl/kAseI6xxrL1sWDmpy7Gh8Vyrw9SkGTi
-	 TMvWiFuwsvRj6FgM7xhN/ImxKa/dQI4emWsh/jgUegy0Mu3ezFYqJ+um6ArxwMBNBbQ==
+	t=1792578331;
+	b=EjVzvbXI2YAzzrCLsIYrfiWEnd927BfHxKr3trAVqtA0xeUH1X+eY+ZQ1tNmQ3/oZkd/
+	 AG6Rvngehp2HdbB6EBonC6VPmHMZzSOXETGaIjq26xWm/q0yBcFeF1qHDxx1/UIZ3I3D+
+	 c+KoYKbiTwjqnvGMdwegLkRdjWMC2j4bqjZyAv3Y9g6ZxOGMRhl9FtHHvRJ4FXwAleb2E
+	 f/8UKmzHMwmX/BmfSz1Bp2elPrNlryd3/Umz/s+7XVGaUWow0rdSCbYxixeJ5koIbMd5S
+	 1WsRw1qGpd9BSWZ6OJEuUmouul55SxUcpEuCK95De5AM/rqx85QPKe0sLZYtVOdFxVw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792578249;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792578331;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=qYDypIT7QE1F/eBnrsyHEhw9MO0/8jcAkyVwmN8UTzo=;
-	b=l0AIedGKmYnSXTOFsPkwaAcQRG9d/jdBVyHF2687oKHCyTkl/5heMRK6f0FWdRUfskg5
-	 mxh5p51kubT1ij5rj81fJBArBnieEpoduNdE1HmR4+9kxpW30V2wMFv1vmUPoOvHXdnoz
-	 89zmChrTkg3OFmOZCf7Qy7YxgM7Gh4i9xs6AJhNYhQXSKGcJiFEC05ubkD0K+4/nNJdCM
-	 j/6Sn0IACoFdZleIUl4bqtB3GXMYjUDqyBdddxraW2WxLGpqJqk72xrw9wsMwIMP3cmoP
-	 vZ0SVf3aoF3TzaoxK06x2RN07jvV9z1bt9UtaH3frhXEZY2qoW107HldTo45/dW0ufw==
+	bh=fyUFCbuePzC+XG2QW79bsjnDsYBX6lH465Zgu9TmAmA=;
+	b=T2aptLONDZ2m5Bod8KFCpux1s6M9OaOa1yPs22mnoS5ue0+JTk1mN0AnlVruz1JdNdjn
+	 KD9IO4KYJJyJAXQHgBhVaRFTDfaSCx9MGomCYtaD9fze25gP5h4wPjoICXDw5B0FkjLnG
+	 Vxl+ptGIJe3wpnkY7i6mKdzZcSE8WozuQaWKTGgAiD3ImJYPHrHD35yWs6/Pkr8oC9IlF
+	 rLpYm4t4wUI5AVjaAWUHwbM2zDC5cvQaX3bk6tUsIYdjUobyk7L1UBUXbhA/B5/xwqQsn
+	 rBg3fzJU42xxXsK970nb2+gAtg4Di8dKSVJymu4mO4lJ6I9uNmdO51icOjAzRRKa4hQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fgVuAH6R;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WN+IUwrT;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 85D96606A32A;
-	Wed, 21 Oct 2026 10:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB99606A319;
+	Wed, 21 Oct 2026 10:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fgVuAH6R
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9BE531F000CA;
-	Wed, 21 Oct 2026 10:24:08 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WN+IUwrT
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B4A41F000C9;
+	Wed, 21 Oct 2026 10:25:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792578249;
-	bh=qYDypIT7QE1F/eBnrsyHEhw9MO0/8jcAkyVwmN8UTzo=;
+	s=k20260515; t=1792578330;
+	bh=fyUFCbuePzC+XG2QW79bsjnDsYBX6lH465Zgu9TmAmA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fgVuAH6RN7jNUQ6qR+SgyDBAnt8REfpRA0GBNGvKj9x9SY040MEqFioc8qqpOTQTd
-	 LADBiBp2jk4P+dyuYDSatkuMoMFbvVq4mMlg+bl2jdNlbLcMlKdl4fw2hTg3GqBpga
-	 bn7DO+gh0ueFUvy9Wk2aPhNsE4L0Dxbh7i9g1FsLSVuuqP+F+j9Ji7azfIN/ZsZ5ZP
-	 brGvqJHDIfIvCyKqAfuMSSIjq/C4bdQlHt1xzCvPBL0o5u67Sp8VUEugcpUMNjh+JM
-	 yHmJo25FXNJyahCUTwug8RDzEiM0AqEXc/ZOFBQ5Z9LUjn44798VTsOzqoZzSPq23L
-	 fKqOBDY/286/w==
-Date: Wed, 21 Oct 2026 13:24:05 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Yuqi Xu <xuyuqiabc@gmail.com>
-Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jerry Snitselaar <jsnitsel@redhat.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	stable@vger.kernel.org, Vega <vega@nebusec.ai>,
-	Ren Wei <weir@nebusec.ai>, xuyq21@lenovo.com
-Subject: Re: [PATCH v2 1/1] tpm: reject duplicate PCR banks in
- tpm2_get_pcr_allocation
-Message-ID: <atiSxTr7A4CaUo25@kernel.org>
-References: <cover.1790568982.git.xuyuqiabc@gmail.com>
- <9d27c4513a3c6fc32f9574ba192cd3bfcb2bac98.1790568982.git.xuyuqiabc@gmail.com>
- <arwssp0czGg9XKv7@kernel.org>
- <arw9CHc4mIOm5C6Q@kernel.org>
- <20260930033300.30295-1-xuyuqiabc@gmail.com>
- <ar8hhrjQQw_yfghj@iki.fi>
- <ateJA_WanjASrIUM@kernel.org>
- <179257257405.72348.17698648428918034727@gmail.com>
+	b=WN+IUwrT7l8rUPNHcaU/+gEKsExM+ioOu7ktOtPja5M+dDNUVwHb0vzRVzDdLmi2l
+	 ZVZx7zVWlmJhAl69UxYI+zhszNbxVxTNXOBiS7d6CtNd6WfNLIPJPJhmVTj0hz17Wh
+	 CBPrxhvYRreyd+T8w2TaPEcsFSkV4dKf9ocMHO00y4EhqsJSxfLpthpPmknHsz6GHD
+	 XVMxmeCP5wmxvrqe1pag4NI9ASSec8djC8iso0wCeNRusCl3OXQPYTQT30aPNOVjPM
+	 aOLdakMoHfKRaCd3xb8lP0LDs+OVib+4+C4N3+fUQQocX68feX4bzSiBxNtciCBsuG
+	 N0l+7t93qoF8A==
+Date: Wed, 21 Oct 2026 12:25:10 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Cai Xinchen <caixinchen1@huawei.com>
+Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, corbet@lwn.net, skhan@linuxfoundation.org, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com, 
+	memxor@gmail.com, martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev, 
+	jolsa@kernel.org, emil@etsalapatis.com, ihor.solodrai@linux.dev, 
+	rdunlap@infradead.org, gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
+	johan@kernel.org, dlemoal@kernel.org, hch@lst.de, axboe@kernel.dk, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, dhowells@redhat.com, code@tyhicks.com, 
+	linkinjeon@kernel.org, sj1557.seo@samsung.com, yuezhang.mo@sony.com, 
+	hirofumi@mail.parknet.co.jp, cel@kernel.org, jlayton@kernel.org, neil@brown.name, 
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, hyc.lee@gmail.com, 
+	miklos@szeredi.hu, amir73il@gmail.com, senozhatsky@chromium.org, 
+	chenxiaosong@chenxiaosong.com, kpsingh@kernel.org, matt@bobrowski.net, rostedt@goodmis.org, 
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, john.johansen@canonical.com, 
+	georgia.garcia@canonical.com, zohar@linux.ibm.com, roberto.sassu@huawei.com, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, stephen.smalley.work@gmail.com, 
+	omosnacek@gmail.com, casey@schaufler-ca.com, takedakn@nttdata.co.jp, 
+	penguin-kernel@i-love.sakura.ne.jp, xiujianfeng@huawei.com, nanx95726@gmail.com, djwong@kernel.org, 
+	lujialin4@huawei.com, bpf@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, exfat@lists.linux.dev, 
+	linux-nfs@vger.kernel.org, ntfs@lists.linux.dev, linux-unionfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 -next 00/18] landlock: Add READ_METADATA and
+ WRITE_METADATA access rights
+Message-ID: <20261021-neugierig-abgemacht-umbenannt-c77d1addf517@brauner>
+References: <20261015125425.3246251-1-caixinchen1@huawei.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -68,46 +80,28 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <179257257405.72348.17698648428918034727@gmail.com>
+In-Reply-To: <20261015125425.3246251-1-caixinchen1@huawei.com>
 
-On Wed, Oct 21, 2026 at 04:49:34PM +0800, Yuqi Xu wrote:
-> Hi Jarkko,
+> - The hooks consistently take struct path rather than struct file.  The
+>   VFS call sites involved (chmod(2), chown(2), utimensat(2), xattr(2)
+>   and ACL syscalls) operate on paths, and several of them (lstat(2),
+>   lchown(2), llistxattr(2), ...) have no struct file to begin with.
 > 
-> On Tue, Oct 20, 2026 at 06:30:11PM +0300, Jarkko Sakkinen wrote:
-> > OK, so now that I was writing summary of TPM pull request changes, I
-> > came into conclusion that this is not a bug fix, unless you can show
-> > from TCG specifications that this is possible spec allowed behaviour.
-> 
-> I cannot. Part 1 identifies a PCR bank by its hash algorithm, so one
-> hash is one bank. In the TCG reference implementation, TPM2_PCR_Allocate
-> keeps only the last selection when the same hash appears more than once,
-> and TPM2_GetCapability(TPM_CAP_PCRS) returns that allocation. A
-> conformant TPM will not report a duplicate.
-> 
-> > So I can keep the commit but would remove fixes and bug related tags
-> > from this. It is essentially hardening and safety measure but not a
-> > bug fix.
-> 
-> Please do. Drop Fixes:, Cc: stable, Reported-by:, and Closes:. The code
-> change can stay as hardening.
-> 
-> > Do you have something to say that I might have missed?
-> 
-> Only that the commit is not on the current master after the rebase. I
-> can send a v3 without those tags if that is easier than reapplying it
-> yourself.
+> - struct inode_operations->setattr still receives (idmap, dentry, attr).
+>   Only the VFS boundary (notify_change()) and the LSM hook layer see the
+>   path, which keeps the refactor contained to fs/attr.c and the LSM
+>   infrastructure instead of touching every filesystem.
 
-Thanks for quick reaction. I can still get it to the pull request.
+I have no problem with that provided:
 
-This was just a question of taxonomy. I think it is otherwise
-useful to have this validation in place (i.e. not disregarding
-the change overall).
+* all hooks take a const struct path argument
+* idmaps are passed separately so that VFS and filesystems are
+  guaranteed to see the same idmap
+* nobody gets any guarantees whatsoever wrt to path->mnt aka vfsmount
 
-> 
-> Thanks,
-> Yuqi
-> 
-
-Br, Jarkko
+  layout and implementation details might change tomorrow and mounts are
+  subtle beasts so the security layer gets to keep pieces if it does
+  things that the VFS hasn't explicitly sanctioned as a guaranteed
+  property. Things continue to be in flux.
