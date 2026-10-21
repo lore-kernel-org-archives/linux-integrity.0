@@ -1,80 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792592284;
-	b=gNq/OF6vyi5mNwemciGN0yg23wa4HMtSb0D7Dl2uZqVems3q6gJVyP/eqTMy1gTAU1m4
-	 MKLjJTpydF+90z6rsFMml6O98/jJS8mYgU2SVpSkFME8Gfz/lWkK1VFnKrQqDkuYbQu/M
-	 66x73zc+XDLBY1dRGuhKs/p6ERsWYao9aLMZ86CWVloPd31ZKXR1vlaNSF4Lw1kY2oQoA
-	 RDFUViTtZvbJJWPD0awfAJp+uQlc0mMqG1u7JvGlqypr9ALdyqEC73ar2TwqnURQhzHcp
-	 KaTz+7VN6g4T6l7Q7k/7cokR3NtfdYj4m3d02+YZtAawFZ9NlUE/8DZLzhrlmtuFgYQ==
+	t=1792592568;
+	b=ZRk4/bMZwz4xVrjO/viBYO/4uqktv2Prv5pGr4nCnBqXxoeNpw6vwuLNyWxV8exiZYjN
+	 6IGQi6tc0CjPZ2uFlvAKupKd92atf6ruUEc5DeclptspmBowKvJZer92xqcXGeF7Ug2pM
+	 pPWD9iSzw9/Gf7CgST4lBM92E6esYnhtJza7RrR5TR2Epbm7/pDkW4/C0u2HcxLB5/jse
+	 5ind7rxGjjlpYAGq6jJZk2Z5pJFUx+6XWTHBPsRkMIuhHcXQA9gHrKVMguL4C+IPI+0aW
+	 6PdvqgSO+JtYUAAQQx1Y//RKJQmxodVwPzUeKiwyVmnwvrf6NVVx5HTnuWUcHDXzZOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792592284;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=viVPNiO1h9d6x4944NBVmE7eQfOCbzUS1zFJo8DFT18=;
-	b=rPm6PI+bwK866T/vSpm48o4wK93CmFqHc0RMZzsvJOIE/0pW9daW0hIN3rJjv81f6Z0f
-	 TTuoKSJv2Tvj8TycNtLLBljnx7CcKN5Lm2DshO2TbM5pJ1EgkqCuy1iv6jWU7Tk6N0xkE
-	 EfDW2TKr0D84t4d5sAmhfHvVLvT3S//ZJiAcSYDxQTOjhjS3O4E3DezSiNnDVeprgAre9
-	 L4TehuxsABkt1v19xDhTdX3c9DG983HwzaRweNLjhR+QlyL4mD12ewADFcWQJJeM/bOou
-	 9mAWcIiEPhibuY6jzmdZyiO543N7dK/Er/mly45lyXWvdgXcust65+vC14iUrEUK0Gw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792592568;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition:X-Mailer;
+	bh=ealE+2iqS8S/UaHnqwRQZ/xETA6Ub79rakl0qAH5nlc=;
+	b=HIcUS1Uaxa6Ndw9sefgYrLgR9cIa7ZQT/eKpRMMH1CSFfP/WIVgquCSIf7CWtmQRMFpI
+	 QgboyJtYsPenBZYzORZZ9eKz9Y25xgZjr6EgLjxf7dCMRCkMoOAaj6UALHBG8zy6enkHe
+	 SU0IgyNGfX1hwB/ZpyoHWbjdQcNtW7MRUiis2H2et4Qg6ggcFaSiQ+by5Z6ZH66yHSER3
+	 hIgEJNj3lP1u6RU8h3qU2UWjFh3KQo84FLhdEvEy7yM0pRBQIGqXCSsmg8BpSEpgSVJKk
+	 Z6kV0yY9wBLB6j92F9EwzL1Lj3hdNxNS4ZHZP9p9NRInNR7ndb0Lcj1ioeaW1sCsB9w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=GSL4SX2q;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7B4606A31B;
-	Wed, 21 Oct 2026 14:18:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F7B4606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ws6JXbR5;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id AA88E60A261F;
+	Wed, 21 Oct 2026 14:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=GSL4SX2q
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D04116F8;
-	Wed, 21 Oct 2026 07:17:59 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A87AC3F7D8;
-	Wed, 21 Oct 2026 07:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1792592282; bh=35GT5enIgjR3G0mGLGcskElDVX2rz4mcaIAbm4cF2TQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GSL4SX2qf4CN5QXvB+wvj8b0xDfdgXdSaWJenkWv2OXP6uHcg2mMSaUEenfCanmqw
-	 waL3JQZHkksN2EplpGp9cTP9K2BYk/qHOT/mNylNJEhugn51c9sqozipMSVMbXJNVU
-	 WD/XpwXx8b5tuTFXHOJje2t23dUHt2NZNquBmofc=
-Date: Wed, 21 Oct 2026 15:17:56 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, Alexandre Ghiti <alex@ghiti.fr>,
-	Albert Ou <aou@eecs.berkeley.edu>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, David Sterba <dsterba@suse.com>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Simon Glass <sjg@chromium.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Nick Terrell <terrelln@fb.com>, Will Deacon <will@kernel.org>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
-	linux-integrity@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>, patches@lists.linux.dev,
-	Piotr =?iso-8859-1?Q?Kr=F3l?= <piotr.krol@3mdeb.com>,
-	Ross Philipson <ross.philipson@gmail.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Song Shuai <songshuaishuai@tinylab.org>
-Subject: Re: [PATCH v2 15/15] efi/arm64: Implement ARM64 DRTM in the stub
-Message-ID: <atjJlBqysQmVVwI2@e129823.arm.com>
-References: <0-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
- <15-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
- <athzBHFwyp0bFEu9@e129823.arm.com>
- <20261021140649.GO3008132@nvidia.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ws6JXbR5
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id AC0BD1F000CA;
+	Wed, 21 Oct 2026 14:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792592567;
+	bh=ealE+2iqS8S/UaHnqwRQZ/xETA6Ub79rakl0qAH5nlc=;
+	h=Date:From:To:Cc:Subject;
+	b=Ws6JXbR5pSLBkeIFksdBInn5pZBRmjOpByTTBnTpLoVZRvg91XE/awqvqU8Kqgc83
+	 yIQLa/PexJWVLiIr4oEyA9htSTC8nMr7E+160xSVkTsfd8iCicSTBEiYH6UowohY9Z
+	 GXzsiIjVziW2ogQvo+n6072P5lamrlD6GWJ5nKuG/9emLXaBK7v8NLkR0cBwLX20LT
+	 zOxAJltlKhb167E6uqbAcSVw0fppl+gboKmueasYH6ZQ2gVrbxKn+VI/EeYM5Qvozv
+	 +BRpQ5vVUrqeMNCcEqqYck+69GxHqSXV0fBq1CTQQPIAGHIY5oHNCsECJoSl4YbDoD
+	 ermm9hUND8bgg==
+Date: Wed, 21 Oct 2026 17:22:43 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Eric Biggers <ebiggers@kernel.org>, Kyle Zeng <kylebot@openai.com>,
+	keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [GIT PULL] KEYS: changes for v7.4-rc1
+Message-ID: <atjKs7PTN8CgndJg@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -86,43 +63,122 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261021140649.GO3008132@nvidia.com>
+X-Mailer: aerc
 
-On Wed, Oct 21, 2026 at 11:06:49AM -0300, Jason Gunthorpe wrote:
-> On Wed, Oct 21, 2026 at 09:08:36AM +0100, Yeoreum Yun wrote:
-> > > +	image_size = le64_to_cpu(header->image_size);
-> > > +	measured_offset = info->drtm_measured_start;
-> > > +	measured_size = info->dlme_measured_size;
-> > > +	entry = info->drtm_entry;
-> > > +	dlme_start = image_base + image_size;
-> > > +	dlme_end = dlme_start + drtm_cfg.dlme_data_size;
-> > > +	dce_end = dlme_end + drtm_cfg.nw_dce_size;
-> > 
-> > Suppose user boot the kernel via decompressed Image which is the
-> > part of artifact of compressed image and use the drtm option (e.g.
-> > booting via UEFI shell with decompressed Image).
-> 
-> Yep, it works fine:
-> 
-> EFI stub: DRTM: interface version 1.4
-> EFI stub: DEBUG: DRTM: TPM algorithm 0xc, TPM hashing unavailable, PCR schemas 0x1
-> EFI stub: DEBUG: DRTM: minimum DLME data 73728 bytes, Normal-world DCE 0 bytes
-> EFI stub: Booting Linux Kernel...
-> EFI stub: Generating empty DTB
-> EFI stub: Exiting boot services...
-> EFI stub: DEBUG: DRTM: will launch, selected launch features 0x0
-> 
-> Notice there is no "Decompressing Linux Kernel"
-> 
-> > Since the drtm extra memory is allocated only in efi_zboot_entry(),
-> > I think the drtm extra memory wouldn't be allocated so it would corrupt
-> > memory while setting the laucn parameter or by DRTM...
-> 
-> Patch "efi/libstub: Have efi_kaslr_relocate_kernel() handle
-> extra_size" handles the Image case.
+The following changes since commit c03c1a14507dfaf8b856c2608f9ac216021fc222:
 
-Thanks. I think i misread that patch. :)
+  Linux 7.3 (2026-10-18 13:14:58 -1000)
 
--- 
-Sincerely,
-Yeoreum Yun
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-v7.4-rc1
+
+for you to fetch changes up to 722658cac48a6ba49f5506fd74d010ad9dbb2f05:
+
+  keys/trusted_keys: reuse TPM version in option handling (2026-10-20 18:15:40 +0300)
+
+----------------------------------------------------------------
+KEYS: changes for v7.4-rc1
+
+HIGHLIGHTS
+==========
+
+A patch that Kyle Zeng submitted addresses a critical bug and complements
+the ongoing rhashtable migration. The commit in question is de891c73c1cf
+("keys: make keyring indexes independent of kernel addresses").
+
+The index value for the  associative array has been calculated with the
+following formula:
+
+	mult_64x32_and_fold(description + type address + domain address)
+
+By creating a sequence of dummy keys (e.g., "A", "B", "C", ...), it is
+trivial to form a group of equations with a predictable hash function, and
+ultimately break KASLR.
+
+Kyle's solution is based on an ephemeral SipHash key and an atomic 64-bit
+counter, which is encapsulated to a key_index_id(). This function is then
+used to assign identifiers for types and domains, and since the IDs are
+unique for each power on, they are as unique as memory addresses are.
+
+With these ingredients the index value calculation can be changed into
+form, which is not leaking any kernel addresses:
+
+	SipHash(description + type id + domain id)
+
+This is exactly what the Kyle's commit does.
+
+FEATURES AND IMPROVEMENTS
+=========================
+
+- TPM fields were moved from trusted_key_options to the TPM backend.
+  They cost memory for non-TPM backends.
+- A TPM trusted key now caches tpm_is_tpm2() at the root of each call
+  chain, and passes the result as a parameter. This decreases the amount
+  of I/O traffic given that tpm_is_tpm2() starts and stops the chip via
+  tpm_try_get_ops() and tpm_put_ops().
+
+BUGS
+====
+
+- A TPM trusted key corrupted the return value of a failed key unsealing
+  operation if the pcrlock feature was used.
+- A TPM 2 trusted key allocated an off-by-four too large buffer for the
+  decoded ASN.1 blob coming from keyctl add trusted.
+- Sometimes a TPM 2 trusted key rejected created keys based on the
+  TPM2_Create response size, treating them as too large. Now it correctly
+  checks the extracted TPM2 key blob size.
+- The keyctl reject operation raced with keyctl restrict_keyring because
+  keyring->sem was not held in key_reject_and_link() before accessing
+  keyring->restrict_link.
+- keyctl_describe_key() was not holding key->sem while accessing its
+  fields, which can lead to use-after-free of a retired key type.
+- find_keyring_by_name() and procfs code were reading the UID from
+  key->user->uid instead of key->uid. The latter is the cached value and
+  is meant to protect against a use-after-free caused by keyctl chown.
+- search_process_keyrings_rcu() did not properly RCU-dereference the
+  authorization key payload, which could cause a null dereference if the
+  payload was revoked.
+- keyctl_read_key() checked key->type->read without holding key->sem,
+  which can lead to use-after-free if the type is retired. Based on my
+  suggestion, this was addressed in __keyctl_read_key(), which already
+  did take key->sem.
+
+----------------------------------------------------------------
+Adrian Martinez (1):
+      KEYS: Fix key_reject_and_link() race with keyring restriction
+
+Cen Zhang (5):
+      keys: Protect the type name while describing a key
+      keys: Avoid the owner account dereference in named keyring lookup
+      keys: Check the authorization payload in process keyring searches
+      keys: Avoid owner account dereferences in /proc/keys
+      keys: Protect the read method check against type removal
+
+Kyle Zeng (1):
+      keys: make keyring indexes independent of kernel addresses
+
+Srish Srinivasan (4):
+      keys/trusted_keys: return immediately after TPM unseal failure
+      keys/trusted_keys: move TPM-specific fields into struct trusted_key_tpm
+      keys/trusted/tpm2: Validate TPM2_Create object sizes separately
+      keys/trusted_keys: reuse TPM version in option handling
+
+Stefano Garzarella (1):
+      KEYS: trusted: Fix blob allocation size in tpm2_key_decode()
+
+Thomas Huth (1):
+      security: keys: Fix comment of search_process_keyrings_rcu()
+
+ include/keys/trusted-type.h               |  11 ---
+ include/keys/trusted_tpm.h                |  14 +++
+ include/linux/key-type.h                  |   1 +
+ include/linux/key.h                       |   5 +
+ security/keys/key.c                       |  13 ++-
+ security/keys/keyctl.c                    |  15 +--
+ security/keys/keyring.c                   | 152 +++++++++++++++--------------
+ security/keys/proc.c                      |   4 +-
+ security/keys/process_keys.c              |   7 +-
+ security/keys/trusted-keys/trusted_tpm1.c | 154 ++++++++++++++++--------------
+ security/keys/trusted-keys/trusted_tpm2.c |  94 ++++++++++--------
+ 11 files changed, 258 insertions(+), 212 deletions(-)
