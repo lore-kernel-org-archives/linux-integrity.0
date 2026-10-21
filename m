@@ -1,80 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792563288;
-	b=LE9tIWyCLnWeWd4IOB0VNNfCcfnB8BOpc9Bovq3KHJnwFJa3w5sfG73+5w9leTLgGQgM
-	 mH+vnsHKwCe4TW/lSfWSEekSGzvE7rjcT2e90Fmoxr8evN8ckO9tCboukhMslu95SruyQ
-	 55HAy9lfByhUf9ftrb24+HIPfiTNv7/RnhiHCmlFAbhNzvvbKdEea/702T03YEDqErPal
-	 pggYllND0oIzPolQ1IwOKnBOuJ4DHx1sjRe8xabrMhbdz+z6nzTJFDG4S9vft00dNmwGd
-	 RZ/t02ZYPgq4pxkd4y9iHRZ0Mt0EdPCWdqNRncFTk1foEMgjTHJtA10z5Goz9t8W7iA==
+	t=1792568970;
+	b=Zyhw7kZa/o5cNUx7vGJNIWhRUEkdy+fFRAkxrftdMKsXlozPRzxq+7KZhpFF4Ju1R9/+
+	 0QFhc9PmiunKUY4yYB2By24kKNB1V9JNc/PXcZVndw703D80OLIgtOCiOYifQEpb/bB1c
+	 zaFaFLD2TrDtAJVLWwdrPmnkowVXJf0xejJ5Gb5ucaxyFKXwSPD+9C6yqCiQLzhKtlfHY
+	 PAFLCSQpVU52Fb4r7bU4gL5qgtZAZAtwAju0+rA+z9reBEqaRtq/BmrrGBD3t0P1hRrzq
+	 IOXQ5pHRV7r9FevGM9U4veHnK3vlPatpQCa9nACL3cZcWEF1IEBuk7K70MO8cX0rLDg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792563288;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=3x3TamlaaK9V9PCuBZqg1dttpYbp4NHVNda75j19VEs=;
-	b=2EfzwPCVgBJbenG5UjSPTXtM7BeNXjTOiDr5tTyLo+VzRTzhs/hUNOX/wpPAb3QhR0IR
-	 dbamqTfTjrL4umUpZBj38lnFrQt06yNhF9nnKgSaoCK0YSTqYZPoC2hBVCaQ9zaOzQW8h
-	 DaxQknZ7BLQ03uS6Hs1PWExOUKZqABmACHhlmvK1A5HZqlJjC9JGmPvRiJPz/xC1eI8Ig
-	 Ysyihlf7SY8kx4coOC/TMBlyxB8rjs5ip0Qdlz/07A8IVEP44TPOM/uV7cs1sQpjJVuNH
-	 8wCZk3z+HbiUA24isuo4hw2w0fyK1MLiSr/VC7zt9nicZEmIgOb/6b5Xxrz3yAfR3AQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792568970;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Mw9ALp5m6wk+v40aZBRs95cwBAwuR1QaIazcbE7LyXQ=;
+	b=xPDdJsEQ/V0Yo9UHHI5nBvw5+odlz8yW+pgxXZG8ekmqYeCLPgPKKemilCpy9rsrPWtM
+	 mL7Y5zq/98yABdb4QJzKqdyTw/0x+EXrHwA2khSVYuqsyoeSp7BVEz3PMeafa4sgEzw1Y
+	 pw0TbZaBLijojI1kIrd+9VdcDGzZIkKmw1ham2Sdeg4mPMga/2w5rAoci2zStBR8V4g2M
+	 U1J3yJ01nrR3DRI/I/YEMiaiAi/nM9NNDzrdKEU0Du6/aXL495SjVs0jnH9c70985YL0i
+	 AUNypS28FRnVkYEOf/NLcnS+4fFvWkNrheE7XqvFsPPy8kSd2DcJGnJcGcijaoadg/w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Dz1W2m1m;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F35606A32D;
-	Wed, 21 Oct 2026 06:14:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 39F35606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MTpDnlQO;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 0B9F2606A31A;
+	Wed, 21 Oct 2026 07:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Dz1W2m1m
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF9A815A1;
-	Tue, 20 Oct 2026 23:14:37 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D69D3F673;
-	Tue, 20 Oct 2026 23:14:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1792563281; bh=bY7eaKmWXeEGJZPv0klJ3mm9fvB9sa6YQ58K0dGT+DQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dz1W2m1mtqieAvvcHZ0PElJP5ck781BRAil8keCt0J0xDmnmsvOtE2z2M/5OD8bJT
-	 x0mY2JIMQy/68/SPz8OHAETC2GSRyy6i0mXuMcfrF0pwBi7AW/wwQj2YV7ClSyJ7P8
-	 z7NHuQtFqmTF4JQhakFU6b9pfZaA/t3mKW3YduKY=
-Date: Wed, 21 Oct 2026 07:14:33 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, Alexandre Ghiti <alex@ghiti.fr>,
-	Albert Ou <aou@eecs.berkeley.edu>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, David Sterba <dsterba@suse.com>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Simon Glass <sjg@chromium.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Nick Terrell <terrelln@fb.com>, Will Deacon <will@kernel.org>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
-	linux-integrity@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>, patches@lists.linux.dev,
-	Piotr =?iso-8859-1?Q?Kr=F3l?= <piotr.krol@3mdeb.com>,
-	Ross Philipson <ross.philipson@gmail.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Song Shuai <songshuaishuai@tinylab.org>
-Subject: Re: [PATCH v2 15/15] efi/arm64: Implement ARM64 DRTM in the stub
-Message-ID: <athYSbJXA96DZK-X@e129823.arm.com>
-References: <0-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
- <15-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
- <atf4ONRM3xbs877y@e129823.arm.com>
- <20261020233435.GJ3008132@nvidia.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MTpDnlQO
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 086E41F000C9;
+	Wed, 21 Oct 2026 07:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792568969;
+	bh=Mw9ALp5m6wk+v40aZBRs95cwBAwuR1QaIazcbE7LyXQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=MTpDnlQOpJ5O/IXlzsIQN/HhAQvO4OdgtMBaN6SEtfIfE1hth364NrneDgPzjmPDj
+	 JpCJ2l1A2vjS86ClRaG79NTWDYxEKx01PxJRrDR6/+Gu0fbVwK+QlWw3Z7MX+yxNFf
+	 s1gew//0fW9SahPGm3lipgOyxGZDA91358P3XTKyTGHY9WMDrJjHCLLVZ1ETap5/4C
+	 XEthzrj2YmVP05kACZxHr0uEaxpK8tMEXtn6VVqqH439EnKWmLPOssbrprGYdScp/I
+	 Fh9rVEYIoK/ZrGVV+j8Q6ixWQsoZVOIVIhZmu4jlPGBycL/9PC8SERkoiUmzTtH+nM
+	 WIj5MHMcTo2Ww==
+Date: Wed, 21 Oct 2026 10:49:25 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
+Cc: Jens Wiklander <jenswi@kernel.org>,
+	Jens Wiklander <jens.wiklander@oss.qualcomm.com>,
+	Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
+	Sumit Garg <sumit.garg@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-arm-msm@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] Add TPM support via Qualcomm TEE TPM TA
+Message-ID: <athuhfkfGPZp_YXT@kernel.org>
+References: <20261019-tpm_qcom_driver-v4-0-6889b9804ba7@oss.qualcomm.com>
+ <atYZXRLf3YPZhiNB@kernel.org>
+ <8896d867-dfba-4d63-a0f0-5686c572b262@oss.qualcomm.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -86,48 +65,41 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261020233435.GJ3008132@nvidia.com>
+In-Reply-To: <8896d867-dfba-4d63-a0f0-5686c572b262@oss.qualcomm.com>
 
-On Tue, Oct 20, 2026 at 08:34:35PM -0300, Jason Gunthorpe wrote:
-> On Wed, Oct 21, 2026 at 12:24:40AM +0100, Yeoreum Yun wrote:
-> > One small question...
+On Wed, Oct 21, 2026 at 11:21:33AM +0530, Kuldeep Singh wrote:
+> > Applying this pulls tons of TEE patches:
 > > 
-> > [..snipped..]
-> > 
-> > > +void efi_drtm_launch(void)
-> > > +{
-> > > +	if (efi_drtm_policy == EFI_DRTM_OFF)
-> > > +		return;
-> > > +
-> > > +	/*
-> > > +	 * No cache maintenance is required before the launch. v1.4B R42130 in
-> > > +	 * Table 22 "DCE preamble requirements" requires the DRTM_PARAMETERS to
-> > > +	 * be accessible as Normal Write-Back Cacheable, Inner Shareable memory,
-> > > +	 * so the DCE reads them coherently with the writes made above.  R45220
-> > > +	 * in Table 30 "DCE requirements for the DLME" then has the DCE clean
-> > > +	 * and invalidate the whole DLME region to the Point of Coherency before
-> > > +	 * it measures the DLME image, which covers both the Image itself and
-> > > +	 * the handoff struct placed in the DLME region. Thus once we jump into
-> > > +	 * the kernel with MMU and caches off the CPU will see everything the
-> > > +	 * stub wrote.
-> > > +	 */
-> > > +	arm_drtm_dynamic_launch(drtm_cfg.params_addr);
-> > 
-> > After launching, How to get eventlogs for measurement of DLEM if
-> > tpm_read_log_efi() is used? Doesn't it need to concatenate those
-> > event logs from DRTM eventlog in returned DLEM data?
+> > Applying: tee: qcomtee: Track the object invocation context
+> > Applying: tee: Add kernel client object invoke helper
+> > Applying: tee: qcomtee: Allow object invokes from kernel clients
+> > Applying: tee: Export uuidv5 generation for TEE backends
+> > Applying: tee: qcomtee: Add support for registering QTEE services on TEE bus
+> > Applying: firmware: qcom: Add support for TEE based EFI-var client driver
+> > Applying: arm64: defconfig: Enable UefiSecApp TEE client driver for Qualcomm SoCs
+> > Applying: tee: qcomtee: Register qcom.tz.tpm service for discovery
+> > Applying: tpm: Introduce Qualcomm TPM driver
+> > Applying: MAINTAINERS: Add Qualcomm TPM driver entry
 > 
-> My plan is a future series will return them as a discrete log bundle
-> through attestation subsystem. All of the logs will be available
-> consistently that way, CCGL, the EFI and ACPI ones..
+> Yes, first 5 are tee patches prerequisite for tpm series as mentioned in
+> cover letter too and this series can only be merged once Jens can pick
+> dependent series[1] in linux-next.
 > 
-> And it will be logically linked to the ROT the DRTM uses in some
-> future ROT agile DRTM flow. So we can tell the difference between a
-> TPM bare metal launch into PCRs and something like a realm launch into
-> REMs.
+> Since, v7.4 merge window going to start soon so i doubt Jens can pick
+> for v7.4.
+> 
+> Jens, Any plan/timeline you are aiming to pick series[1]?
+> I see it's mostly reviewed with no other relevant feedback to be addressed.
 
-Make sense. Thanks!
+Maybe it is better to pick also TPM patches through your tree when
+you choose to so that this will go in-sync.
 
--- 
-Sincerely,
-Yeoreum Yun
+> 
+> [1]
+> https://lore.kernel.org/lkml/20261015-qcom_uefisecapp_migrate_qcomtee-v5-0-1460691b35d3@oss.qualcomm.com/
+> 
+> -- 
+> Regards
+> Kuldeep
+
+Br, Jarkko
