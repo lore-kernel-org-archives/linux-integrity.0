@@ -1,96 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792777031;
-	b=hm5dK/dhbtXTCqK8C6dEfbYdH85csz9Y6J88YCsvRAEXE1Qs/n0+JVdWUhetQOrGcim5
-	 YUIklRmc+bi86ygsf8/ZWgw1DsFMLnBs2Vga6k38PhnSMlE8V8iN+GeoXdmI2H7G18Ka4
-	 BG1vdhKTZXLantGlhDakQopJ9vltaTxQn5RF8Q/mFhd/X4WqVx4C+GzCnNGSmzOCZpe6x
-	 epQap04xmQM9syBACBeDIWg0bq8jovS97CrkwIfw/yBFxVATHgRYZ50+162V6zQsLFC8g
-	 9wNJL8LoI+RHVM9HDspNW3qwoipXhFCF1Rfi5jzVstMue8WtB6WyuQ79DE7Yy/ePoNg==
+	t=1792777776;
+	b=cocSV9vBc+pGanioWfEMuv/FRcZPDR4kLRqFbMUDAgg0VKDTDWqoqPqR/5ohIDpQAPfR
+	 a1x4l1c36PfoJB7ELO0MIlI+xQXr7u4//wi38OUiOnO/8FrM9O6ftsaLGaM9u7xg7uKhn
+	 qu5AkTWdMRUiEVNBhvejXhdkdLJq6wL54Gej37TIQbzdWnea1jGJwUjpGpLFSy/l5qZdQ
+	 sPff+IVMgNN5QhfgKxvmqBBBP6iXxHKHUIIz4yL/69NACaSXYHS8PrlVLD5B51ozILQBX
+	 IUWOmAeyBzbDgBasFcqLVFKsSmqMRhwqlmzHoONmn7+0pRLzqBHqnaVbOojIMfhl4uw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792777031;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
-	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
-	 MIME-Version:User-Agent:X-TM-AS-GCONF:X-Proofpoint-Reinject:
-	 X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=4lrUHgigAU7t4jU4wOsI7FGddN6psw/EiYbWIPfZgcY=;
-	b=cwyxxVMBG6Z4IVfFj8TvasW4juP8k8xPvrIVm1OHh/CUa3Nl88WA/vslEQ2+BV1r9x/4
-	 hbwS6iJVWjZ040QFPuVIKtImEnCSTfWwlKCFx7UNaLNmuj3Zem/wrgrzbJLw5iKG5wVBb
-	 /x5tXnlW5bB+OQn0rdIDJG/cdYazLwv7sUV2gyNHs43SuPsTmN9D+aSNu7hmF2MDB5Wa8
-	 ZoL3mlfhFR95h8hwm4tbLMS+rbMZygVmBKf61wo7oJ826fjGNqL9HhQGS/4nJ5ijA2D9B
-	 fuFbi4NzgDNvRdamIGAPBX4HdCMyEhzr97CLIF3ziDaWNGITYC+3z1fPTl7aat8Hb6Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792777776;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=33tWk6OCF2KeTpoJqlGGB7ThoHd5/cgrTclvZjwIIdU=;
+	b=ZgYjrpixQ3JGAe6ccVHwUV1w8ZfnPUaiy/Y2CmTREdhxxmOLnrNa0gLUu4l98zkTPsv6
+	 vsBfBBqTdM70+Jg74DisVKjPV+FL9AL1UzXkdocznwhhI4ZZ/JZ7Oq2jEvWTOXv5Yx/ta
+	 0U6gDIIDaHYqekEyAXjB31Q4LZXSuIk0Rg8J/Xh4Wgye5fMHt/2OX2yYmoTIDAfXANH8e
+	 OPHlKvOvZrw0FTBCp/GIvFCzKC0yGmfuPGtwdyTv74zbry5AMAdMkTDO6lymFdCGQPCtB
+	 Q0jq5ncwwTDeCRpGd2IVcewFtcJbws47dyq1l1Bg5oDPYnIq5JgZpjuBJWQqQ7kEffA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.ibm.com;
-	spf=pass smtp.mailfrom=linux.ibm.com;
-	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=lDy6mSgE;
-	arc=none smtp.remote-ip=148.163.158.5
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YIQuMMxK;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEAB606A332;
-	Fri, 23 Oct 2026 17:37:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EFEAB606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 68461606A31B;
+	Fri, 23 Oct 2026 17:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=lDy6mSgE
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69NGqAfa3495798;
-	Fri, 23 Oct 2026 17:36:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=4lrUHg
-	igAU7t4jU4wOsI7FGddN6psw/EiYbWIPfZgcY=; b=lDy6mSgE6M81vAyyVwTsFQ
-	ilOrUFhtcQBqDxKJaBItFFCsrE9EAZVHogTG1mqWL6pZ/T5OotCbkNrY4OnI3WOo
-	FvtYtvGmXE0Znbgomlfgb150Fji5tO3Lg4ft75X1xACdlIzV6Hf1hDz3VdOwsUgG
-	9CPLn2qMtKtDoDsXVHD4N1qA/Wu4Mpd5c7uxhVG1wGxnN9ZWK1eNpCB2hr3752LO
-	/Glq/U4aY7CC608Hs7pi+Y1nPc688e6h1MEguRiq3ovRKkVWRjafDmqXHeDpWTlO
-	vJv080YQ5jhc5LxLT7Gp0IB7I8pEAP/iF7CYnzKFUY3vh8/DCSMDVIVkUoLeIenw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hdw5b60g6-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 23 Oct 2026 17:36:19 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 69NEL7st2203391;
-	Fri, 23 Oct 2026 17:36:18 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4hekdgn63w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Oct 2026 17:36:18 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 69NHaIC826477258
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Oct 2026 17:36:18 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E520258043;
-	Fri, 23 Oct 2026 17:36:17 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6EF9158059;
-	Fri, 23 Oct 2026 17:36:17 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.71.77])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 23 Oct 2026 17:36:17 +0000 (GMT)
-Message-ID: <9336bd484bcd0af6e9c88b7b546434e5081ab449.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 2/2] ima: audit failure to supply detached data for
- modsig
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: =?ISO-8859-1?Q?J=E9r=E9my?= Jean <Jeremy.Jean@oss.cyber.gouv.fr>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261021210145.1851396-5-Jeremy.Jean@oss.cyber.gouv.fr>
-References: <20261021210145.1851396-2-Jeremy.Jean@oss.cyber.gouv.fr>
-	 <20261021210145.1851396-5-Jeremy.Jean@oss.cyber.gouv.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 23 Oct 2026 13:36:17 -0400
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YIQuMMxK
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6D9541F01825;
+	Fri, 23 Oct 2026 17:49:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792777776;
+	bh=33tWk6OCF2KeTpoJqlGGB7ThoHd5/cgrTclvZjwIIdU=;
+	h=Date:From:To:Cc:Subject;
+	b=YIQuMMxKCB9t8Y8MYu7N+SuJ+J1La+t+z1hpD5c0tRz1C/d2cQPAJYiM2MozadDok
+	 DXck5DFXbDr/DQxAG8TqoBehJw6tiF7L8a8siG6Y/EJBSDjjrHi+YshXn7AcLfTA+f
+	 YLSp8fGL1veYw4QdRN/HZ+Nx7IUB0pMrBmEn3/7lY6xOlnhU3xAbxM6rJK2QPmAjgM
+	 AXsbd2X+eIILNxpCnrNvtjWYEoXD+u10YRJMwAWmhCq6YxsG5SZAgN/6TS6TtaEnXW
+	 wjGN1b2OreAOcRKfl8kmaWzpxPTo9BMvGJmDq94qjrefLHgrMzPCT8dkNyfCFTGq+M
+	 0+b/oK5O3pESQ==
+Date: Fri, 23 Oct 2026 20:49:31 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] TPM DEVICE DRIVER changes for v7.4-rc1
+Message-ID: <atueK3rp8d95-Uaj@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -100,70 +56,109 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=X63Hu2Te c=1 sm=1 tr=0 ts=6adb9b13 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=GaSaRxANBN9W-jNe9hgA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: OrV3gAhpVpIG-PKFR9LnFV8kpeTb4ZUT
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIzMDA2NyBTYWx0ZWRfXwxp/vzOpJTCf
- e7nwaMF1cblMr/ub8qjblSYklg1NAevh4u2F5ovAMw/C34RGP/M5Pm+aFDRPjB0FmmdFPg5VB/d
- u1sIGxou15WyB4vgjaaUGrV3qqwPxp6ciNoWDcZJHZDuRFpjHssVoFrAzDl9nYBwFxSixz+Homu
- XJCm7viG++cfqXZhz7NfHBVfio9+joBlrkJcCPLaIpJzMvU4JbmX2aN8E5cB7+WjK2JyhXOwdnX
- 9gHsYx0a2yru9DnhIIVXS3Vk7ATm/t/iRVfT/2Zz91rSGabQ9jUDwpKfG2edJvody1cvVE/jLjy
- b1TG2LCwTgXIGRUfgfEAX9UGJksIgDW1+WcXESVioRU8dRRQMI8n5bvxeQHvppwkJFiqzC7QRAN
- XGyZfEQX0nZ8KJKkaAlFHZTJiiIShCNHB5vX3teuWUcWAdCvtnggWeqPYEhLggOffMy4CD9d4pf
- y2gXb8ZIK3mfpo1QOXA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIzMDA2NyBTYWx0ZWRfX3OTOR6VGcpHO
- /ZiutZ6P2g7TJp9lg8WEGUGyBTovVcLdjnRgTPXH38FIgLfqcGDwUCKgdb5TpZWLnHlEEAG2uaf
- n+Dp55d1a7jEj0gMZS+E2tZrP7cXxec=
-X-Proofpoint-GUID: qVbbx57hl5ozePcaZYpVDWpH0aEliLsL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-23_04,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 adultscore=0 malwarescore=0
- clxscore=1015 spamscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610230067
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 2026-10-21 at 21:01 +0000, J=C3=A9r=C3=A9my Jean wrote:
->=20
+I double-checked that this is now in-sync with linux-next.
 
-> @@ -326,15 +329,20 @@ int ima_collect_measurement(struct ima_iint_cache *=
-iint, struct file *file,
->  	if (!result)
->  		iint->flags |=3D IMA_COLLECTED;
->  out:
-> -	if (result) {
-> +	if (result || modsig_result) {
->  		if (file->f_flags & O_DIRECT)
->  			audit_cause =3D "failed(directio)";
-> =20
->  		take_dentry_name_snapshot(&filename, file->f_path.dentry);
-> =20
-> -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
-> -				    filename.name.name, "collect_data",
-> -				    audit_cause, result, 0);
-> +		if (modsig_result)
-> +			integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
-> +					    filename.name.name, "collect_data",
-> +					    "failed-modsig", modsig_result, 0);
-> +		if (result)
-> +			integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
-> +					    filename.name.name, "collect_data",
-> +					    audit_cause, result, 0);
+I'll address this issue permanently by implementing linux-next
+validation to my script that prepares the PR, as that would
+have prevented this from happening.
 
+The following changes since commit a1c2b1da93f5f612aa7a33190c4900c98e51f6da:
 
-Frederick Lawler's patch updated integrity_audit_msg() to include errno.  T=
-hese
-calls need to be updated.
+  Merge tag 'for-linus-tsm' of https://github.com/jgunthorpe/linux (2026-10-22 10:41:18 -1000)
 
-Mimi
+are available in the Git repository at:
 
-> =20
->  		release_dentry_name_snapshot(&filename);
->  	}
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpm-v7.4-rc1-rebased
+
+for you to fetch changes up to 071aa806f00cf2948ce8082102d5f64515f53215:
+
+  tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation (2026-10-23 00:59:21 +0300)
+
+----------------------------------------------------------------
+[GIT PULL] TPM DEVICE DRIVER changes for v7.4-rc1
+
+I had to revise my pull request because it came out with a stale tag.
+Apologies for that. While at it I refined my scripts to not have coherency
+issues.
+
+All the content remains the same with no changes but I noticed one entry
+missing from the list in the next section, so I added that.
+
+FEATURES AND IMPROVEMENTS
+=========================
+
+- tpm_crb behaviour was improved by putting the chip into an idle state for
+  each transmission. This improves firmware behavior as the kernel now
+  better cancels its state as if it had never touched it in the first
+  place.
+- One spurious (but harmless) wmb() was dropped from tpm_pm_resume().
+- tpm_tis_i2c now requests the optional reset control and deasserts it
+  before communicating with the TPM.
+- SIMPLE_DEV_PM_OPS was replaced with DEFINE_SIMPLE_DEV_PM_OPS across the
+  whole driver stack.
+- Validate during driver initialization that no duplicate banks are
+  received. It's unlikely corruption but since it happening would
+  cause oops I decided to retain it as a sanity check.
+
+BUGS
+====
+
+- tpm2_probe() misinterpreted a transport error on TPM2_GetCapability
+  as the chip not being probed, and the chip was detected as a TPM 1 chip.
+  This can happen in reality only in the extremely rare case of bus
+  corruption. Despite the odds, a fix was landed, as it is still
+  technically a legit bug fix.
+- It is not really worth the time and energy to go into details as tpm_nsc
+  is a somewhat legacy driver, but one null pointer dereference bug and
+  another causing use-after-free were fixed.
+- read() of /dev/tpm{,rm}0 with zero size caused a pending response to be
+  consumed. This was fixed simply by an immediate return.
+
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+----------------------------------------------------------------
+Alexander Sverdlin (1):
+      tpm: tpm2_probe: propagate transport errors
+
+Li Jun (2):
+      char: tpm: Use SIMPLE_DEV_PM_OPS for ibmvtpm power management
+      tpm: use DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr()
+
+Mario Limonciello (1):
+      tpm: Call cmd_ready/go_idle for each command transmission
+
+Pei Xiao (3):
+      tpm: tpm_nsc: fix NULL pointer dereference on init failure
+      tpm: tpm_nsc: stop using the cleanup callback as dev.release
+      tpm: fix zero-length read discarding the pending response
+
+Richard Lyu (1):
+      tpm: Remove ineffective wmb() from tpm_pm_resume()
+
+Stefano Radaelli (1):
+      tpm: tis_i2c: Deassert optional reset line before probing
+
+Yuqi Xu (1):
+      tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation
+
+ drivers/char/tpm/tpm-chip.c          | 24 ------------------------
+ drivers/char/tpm/tpm-dev-common.c    |  3 +++
+ drivers/char/tpm/tpm-interface.c     | 28 ++++++++++++++++++++++------
+ drivers/char/tpm/tpm2-cmd.c          | 21 ++++++++++++++++++++-
+ drivers/char/tpm/tpm_atmel.c         |  4 ++--
+ drivers/char/tpm/tpm_i2c_atmel.c     |  4 ++--
+ drivers/char/tpm/tpm_i2c_infineon.c  |  4 ++--
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  4 ++--
+ drivers/char/tpm/tpm_ibmvtpm.c       |  5 +----
+ drivers/char/tpm/tpm_infineon.c      |  7 +++----
+ drivers/char/tpm/tpm_nsc.c           | 12 ++++++++----
+ drivers/char/tpm/tpm_tis.c           |  4 ++--
+ drivers/char/tpm/tpm_tis_core.h      |  2 --
+ drivers/char/tpm/tpm_tis_i2c.c       | 16 ++++++++++++++--
+ drivers/char/tpm/tpm_tis_i2c_cr50.c  |  4 ++--
+ drivers/char/tpm/tpm_tis_spi_main.c  |  4 ++--
+ drivers/char/tpm/tpm_tis_synquacer.c |  4 ++--
+ 17 files changed, 87 insertions(+), 63 deletions(-)
