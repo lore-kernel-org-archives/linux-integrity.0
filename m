@@ -1,52 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792777776;
-	b=cocSV9vBc+pGanioWfEMuv/FRcZPDR4kLRqFbMUDAgg0VKDTDWqoqPqR/5ohIDpQAPfR
-	 a1x4l1c36PfoJB7ELO0MIlI+xQXr7u4//wi38OUiOnO/8FrM9O6ftsaLGaM9u7xg7uKhn
-	 qu5AkTWdMRUiEVNBhvejXhdkdLJq6wL54Gej37TIQbzdWnea1jGJwUjpGpLFSy/l5qZdQ
-	 sPff+IVMgNN5QhfgKxvmqBBBP6iXxHKHUIIz4yL/69NACaSXYHS8PrlVLD5B51ozILQBX
-	 IUWOmAeyBzbDgBasFcqLVFKsSmqMRhwqlmzHoONmn7+0pRLzqBHqnaVbOojIMfhl4uw==
+	t=1792782805;
+	b=D0UsxJb3G7AYPLqnjuUkduUGRYZh/fpIzoj5MbWhbcb3kmP3f+KuzWBrrMI+nFrsOsnI
+	 MNuJoKpd8v/bDXdAlXxywiHQZCSIrYtpsD1bppDoDwjj7IVVPcfsEdabk8fyFnVW2wZJ6
+	 bIDf3iLR0juQcdunOgWKq9Dz5uhMGM0q8IzqYhQYDdsnzc2kGrzAWTWtWcGyyTJqjQluy
+	 +Er87A1M4mNYyOGSQ6xPptNbSwLTe5QVaKYCSXIk97URaTvA1ZeKjkxwz6tN72Y3jXozs
+	 5ByLp0IxWuccbr2LSQ41I2b6XGFf7cjpMdK6JxFLykHi+7tWFa7Gmd9ZIvwAElb+uMQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792777776;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792782805;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=33tWk6OCF2KeTpoJqlGGB7ThoHd5/cgrTclvZjwIIdU=;
-	b=ZgYjrpixQ3JGAe6ccVHwUV1w8ZfnPUaiy/Y2CmTREdhxxmOLnrNa0gLUu4l98zkTPsv6
-	 vsBfBBqTdM70+Jg74DisVKjPV+FL9AL1UzXkdocznwhhI4ZZ/JZ7Oq2jEvWTOXv5Yx/ta
-	 0U6gDIIDaHYqekEyAXjB31Q4LZXSuIk0Rg8J/Xh4Wgye5fMHt/2OX2yYmoTIDAfXANH8e
-	 OPHlKvOvZrw0FTBCp/GIvFCzKC0yGmfuPGtwdyTv74zbry5AMAdMkTDO6lymFdCGQPCtB
-	 Q0jq5ncwwTDeCRpGd2IVcewFtcJbws47dyq1l1Bg5oDPYnIq5JgZpjuBJWQqQ7kEffA==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=UYatpzYJ+kSKQ7a2QtrULywNxP41+vz2UBzDQ0wdRcY=;
+	b=vcF2CjzUTvUFt2n1eWmDXcQCscCMPAkugRjj8g1koJRsIJzGO+lKlMTd8JSCFbSyelKM
+	 mxONnRP1auGVuHXu1GiCXFBpsp+wzXGCn/ewtQFsgjNz3txZtfzGry4nvBLmjoBzh0zdT
+	 IWRXdRcb6qubOi+zne9qRDT2E8xtLrYfBebiI8jThWJ2SVIsbNEBEsxPHxn4W0/hWqQ1h
+	 BrfHsBuahhtn17wUFAOL+i23q2inNaMKXAByo5LgCILsAzDkOxGfQEPRrdgWmPz9ql17s
+	 3c775a0rwYwva2aXYPRY5d8m4o4PZbBkjgoWdmisFjTlA/oJdsnmvNpJMXFQ8PuuJWg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YIQuMMxK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bo33bFvx;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 68461606A31B;
-	Fri, 23 Oct 2026 17:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id EFDAB606A31A;
+	Fri, 23 Oct 2026 19:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YIQuMMxK
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6D9541F01825;
-	Fri, 23 Oct 2026 17:49:35 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bo33bFvx
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E11A21F01825;
+	Fri, 23 Oct 2026 19:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792777776;
-	bh=33tWk6OCF2KeTpoJqlGGB7ThoHd5/cgrTclvZjwIIdU=;
-	h=Date:From:To:Cc:Subject;
-	b=YIQuMMxKCB9t8Y8MYu7N+SuJ+J1La+t+z1hpD5c0tRz1C/d2cQPAJYiM2MozadDok
-	 DXck5DFXbDr/DQxAG8TqoBehJw6tiF7L8a8siG6Y/EJBSDjjrHi+YshXn7AcLfTA+f
-	 YLSp8fGL1veYw4QdRN/HZ+Nx7IUB0pMrBmEn3/7lY6xOlnhU3xAbxM6rJK2QPmAjgM
-	 AXsbd2X+eIILNxpCnrNvtjWYEoXD+u10YRJMwAWmhCq6YxsG5SZAgN/6TS6TtaEnXW
-	 wjGN1b2OreAOcRKfl8kmaWzpxPTo9BMvGJmDq94qjrefLHgrMzPCT8dkNyfCFTGq+M
-	 0+b/oK5O3pESQ==
-Date: Fri, 23 Oct 2026 20:49:31 +0300
+	s=k20260515; t=1792782804;
+	bh=UYatpzYJ+kSKQ7a2QtrULywNxP41+vz2UBzDQ0wdRcY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=bo33bFvx3nsY8ZLDnNxvcXGn1Cd7du9x7GGa1GKoyMORhBmKw9pudA5o4wDXizf6U
+	 6InbcbHrF7avS/4peOAX7mGdfxzyRTGmIbQBynH4jPFQEbmAbZKvqEoUY6Wr/RipJo
+	 i6nLhKJDV/wfa5DgicIBashJ71n7GCAliUcykeEBGLPMBG/K6C/uK70Or36WfqZm1R
+	 +UB+1B2/t9zH0oEOsFIDKHshUZHZvZQvt5C79Fj3QDf24vnGQHDy5+Vbt9DC9BaXSP
+	 dTVsMNMSw/PVQFHHwYocCyrxN4MsPUfQJv0O0jvPE4AWr8iAa30YI0el7xcviUIMa2
+	 Op7DRejXbs9MA==
+Date: Fri, 23 Oct 2026 22:13:20 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] TPM DEVICE DRIVER changes for v7.4-rc1
-Message-ID: <atueK3rp8d95-Uaj@kernel.org>
+To: Matthew Garrett <matthewg@nvidia.com>
+Cc: mjg59@srcf.ucam.org, keyrings@vger.kernel.org,
+	James.Bottomley@hansenpartnership.com,
+	linux-integrity@vger.kernel.org, rafael@kernel.org,
+	linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [RFC] Make hibernation work with lockdown
+Message-ID: <atux0EFb_euN6pM3@kernel.org>
+References: <20261008132532.1155166-1-matthewg@nvidia.com>
+ <att9OPPi0sPqt_CW@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -58,107 +61,36 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <att9OPPi0sPqt_CW@kernel.org>
 
-I double-checked that this is now in-sync with linux-next.
+On Fri, Oct 23, 2026 at 06:28:56PM +0300, Jarkko Sakkinen wrote:
+> Now I have finally all priority stuff out of the way. I'll start by
+> refining my test harness to always have regular hibernate enabled and
+> fully working. Once I get that out of the way this patch set should
+> become low-effort to test.
 
-I'll address this issue permanently by implementing linux-next
-validation to my script that prepares the PR, as that would
-have prevented this from happening.
+We have some luck with this actually.
 
-The following changes since commit a1c2b1da93f5f612aa7a33190c4900c98e51f6da:
+At work I've been doing a bootc based operating system for vLLM workloads
+and for no any particular good reason I converted my test environment to
+build bootc/UKI based hybrid ISO images. It's exactly like any other
+live ISO.
 
-  Merge tag 'for-linus-tsm' of https://github.com/jgunthorpe/linux (2026-10-22 10:41:18 -1000)
+As the next step I'll expand the bootc OS installer that I did to have an
+option for hibernate so that it does partition layout and all the wiring
+required. I can then integrate that to my test environment and test it
+in a libvirtd VM.
 
-are available in the Git repository at:
+It's not as tedious as it sounds :-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpm-v7.4-rc1-rebased
+There would be faster routes but this is the only one that is not a
+tower of cards. I'll just shovel it through.
 
-for you to fetch changes up to 071aa806f00cf2948ce8082102d5f64515f53215:
+I'd figure that it's also modelling quite well any possible production
+environment where this feature might be ever used (reproducible build,
+read-only rootfs, bootc container).
 
-  tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation (2026-10-23 00:59:21 +0300)
+1. https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/
+2. https://github.com/puu-os/installer
 
-----------------------------------------------------------------
-[GIT PULL] TPM DEVICE DRIVER changes for v7.4-rc1
-
-I had to revise my pull request because it came out with a stale tag.
-Apologies for that. While at it I refined my scripts to not have coherency
-issues.
-
-All the content remains the same with no changes but I noticed one entry
-missing from the list in the next section, so I added that.
-
-FEATURES AND IMPROVEMENTS
-=========================
-
-- tpm_crb behaviour was improved by putting the chip into an idle state for
-  each transmission. This improves firmware behavior as the kernel now
-  better cancels its state as if it had never touched it in the first
-  place.
-- One spurious (but harmless) wmb() was dropped from tpm_pm_resume().
-- tpm_tis_i2c now requests the optional reset control and deasserts it
-  before communicating with the TPM.
-- SIMPLE_DEV_PM_OPS was replaced with DEFINE_SIMPLE_DEV_PM_OPS across the
-  whole driver stack.
-- Validate during driver initialization that no duplicate banks are
-  received. It's unlikely corruption but since it happening would
-  cause oops I decided to retain it as a sanity check.
-
-BUGS
-====
-
-- tpm2_probe() misinterpreted a transport error on TPM2_GetCapability
-  as the chip not being probed, and the chip was detected as a TPM 1 chip.
-  This can happen in reality only in the extremely rare case of bus
-  corruption. Despite the odds, a fix was landed, as it is still
-  technically a legit bug fix.
-- It is not really worth the time and energy to go into details as tpm_nsc
-  is a somewhat legacy driver, but one null pointer dereference bug and
-  another causing use-after-free were fixed.
-- read() of /dev/tpm{,rm}0 with zero size caused a pending response to be
-  consumed. This was fixed simply by an immediate return.
-
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-----------------------------------------------------------------
-Alexander Sverdlin (1):
-      tpm: tpm2_probe: propagate transport errors
-
-Li Jun (2):
-      char: tpm: Use SIMPLE_DEV_PM_OPS for ibmvtpm power management
-      tpm: use DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr()
-
-Mario Limonciello (1):
-      tpm: Call cmd_ready/go_idle for each command transmission
-
-Pei Xiao (3):
-      tpm: tpm_nsc: fix NULL pointer dereference on init failure
-      tpm: tpm_nsc: stop using the cleanup callback as dev.release
-      tpm: fix zero-length read discarding the pending response
-
-Richard Lyu (1):
-      tpm: Remove ineffective wmb() from tpm_pm_resume()
-
-Stefano Radaelli (1):
-      tpm: tis_i2c: Deassert optional reset line before probing
-
-Yuqi Xu (1):
-      tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation
-
- drivers/char/tpm/tpm-chip.c          | 24 ------------------------
- drivers/char/tpm/tpm-dev-common.c    |  3 +++
- drivers/char/tpm/tpm-interface.c     | 28 ++++++++++++++++++++++------
- drivers/char/tpm/tpm2-cmd.c          | 21 ++++++++++++++++++++-
- drivers/char/tpm/tpm_atmel.c         |  4 ++--
- drivers/char/tpm/tpm_i2c_atmel.c     |  4 ++--
- drivers/char/tpm/tpm_i2c_infineon.c  |  4 ++--
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  4 ++--
- drivers/char/tpm/tpm_ibmvtpm.c       |  5 +----
- drivers/char/tpm/tpm_infineon.c      |  7 +++----
- drivers/char/tpm/tpm_nsc.c           | 12 ++++++++----
- drivers/char/tpm/tpm_tis.c           |  4 ++--
- drivers/char/tpm/tpm_tis_core.h      |  2 --
- drivers/char/tpm/tpm_tis_i2c.c       | 16 ++++++++++++++--
- drivers/char/tpm/tpm_tis_i2c_cr50.c  |  4 ++--
- drivers/char/tpm/tpm_tis_spi_main.c  |  4 ++--
- drivers/char/tpm/tpm_tis_synquacer.c |  4 ++--
- 17 files changed, 87 insertions(+), 63 deletions(-)
+Br, Jarkko
