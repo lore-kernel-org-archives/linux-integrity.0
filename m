@@ -1,58 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792737102;
-	b=TS5548k+iAHufYgIiUYXNqKtGMyUZMoZTRO1guZIi/hgpZjcOx86YjNPP5dv6SQZ+GaH
-	 Gsy0D+V7+SJ2kyDKSpTg8/cAYO6TK5/dQuBPBxEPW2tAeZ5Hsn6PzazkKmjWI7kFDM0XO
-	 NV7kRDn0183vM6V+VgIdSmA0XHDyb/8VGRm3vc/LKshW0fJ8fpUsshTjIYmNiIB0nBy9+
-	 ntmL9VJs9sNtB67REuvR7XL7piv1S+1iUDKDs6oOqTvZuuUhVmDJWqn1SZ7gkceeh2ssU
-	 Gtx9WGMPWbQyf/UpgSP4YVsWgInhp7NI4GgX7MOrRwX1bnuDSjvOTKfTDGTL6jw/jzw==
+	t=1792767910;
+	b=na96CYN+1os+FdN2gJwi/9u4Cz6sWEOESX8JoTMMq+LDBS0ZR4w9QINCBLKUZP50BRmU
+	 EffSEyPmLkpixH7b/OPCqRh5KAOe1qR4mDUkbwHJ/7b0PoGlgEgxyp+FOmUkbB2u36/Vk
+	 FyVjzkIB4DfPmPpjfODvTkK9OamO40rPmvYTQ3++zzeD5oLDMtWjh+bqTlDBFDxFodzwr
+	 BG1ng7z9jxLdCzTF8OxKrLhfgQ671hTTsJiIllxzS7q0mkLicPbk+1vyORe4+vLxZJ7YZ
+	 FXHDtkrXXVGACWXSFp1aTUI8HLpvXy5n70+ai0kx3zJaFYxggZScvBjR3bbK9Yf4WEA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792737102;
-	h=DMARC-Filter:dkim-signature:Received:Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:CC:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-	bh=33tGxL4pQ37PAm6R2PA7y86/iQoPs+fP5QCASbIaiW4=;
-	b=xn1+RmYFdw7qrRYR9dl4JePRPxfSHmmoUuaMKbgZZPOQAU8LUTVS6MbyGc47mZGqmVMA
-	 9hTK5GHmkortqh/zmUl090slU7WW19KEOc/khfyQt8XE7JZiE8qgBaiDJ/eO1Kti9f0PI
-	 qzcEO95xoZzoJor2hANil8Yo/0sqFeiN0KWxzcn3SFcHtjmeHStqPTepLi10yjPOZ3IWO
-	 evsgaKf9GmrBjAUeMMfcNX8c+IgzgehralFgEcmf/hjRqa7AKO7RQhQKOBzZPP8OdZdl2
-	 ei84XwgD2c79KBKlc4HQnYg9BlEbzOf+pFLcu4BNZQKHr6kX0qNZr0u6HsvLcXsVqiQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792767910;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=ZVcQPkNDOWQoPE4j6sKMTOGILAcsS100wFswAEPnnCE=;
+	b=r8fOd2URlv2to3hGrZORCDWratWmeVzevtKgDRJ0vtPDeLiGxo5cuWKQY1CNFvTSwB13
+	 H5DJJ609NYR/HrsPKFz4Vry3jrrGn6B9uImSUj9QCCPboI/j1lWMlf9BemtMoe5RMPCB/
+	 PVpEHLewndKyqegQdmuLyFzT/guUTo6X+MSDVz26TtD7Fl/y1FUb27/FZEoytAr5iQW99
+	 uOvmspI5ZMb6mf9JEkDrGgb/hj6+kMUaRhfKBjSWb7nyJYN1CHz+ox0yh4kRvC9Nk3Km8
+	 8XkYMuNmwVi548HgOtzdDavgQDEkoFThsQjROIP8jLJDnyGmmF/eKVtlCgVuRRlCxuQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=huawei.com;
-	spf=pass smtp.mailfrom=huawei.com;
-	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=fjsQ8MHy;
-	arc=none smtp.remote-ip=113.46.200.222
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kNbLw9QV;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2176606A31B;
-	Fri, 23 Oct 2026 06:31:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C2176606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 54E1E606A31F;
+	Fri, 23 Oct 2026 15:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=fjsQ8MHy
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=33tGxL4pQ37PAm6R2PA7y86/iQoPs+fP5QCASbIaiW4=;
-	b=fjsQ8MHyFLg2DKpb+rChWOhrQ6Agx+aJ4B3WloBfzhk5I42lfFR8N28XAuSRbTqFZgHgChm3O
-	4OwNSVOJK87cDrNiMupTVhF9pAM7IdBGhA0OswOr1fHmf/8LmJiA8sNJ5JxoASQ+9LC7G7GDo6P
-	DlcW4ZEJB+N+XLWejTOA2kU=
-Received: from mail.maildlp.com (unknown [172.19.163.163])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4j9tTJ5rsczLlWr;
-	Fri, 23 Oct 2026 14:31:32 +0800 (CST)
-Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 10C6B40594;
-	Fri, 23 Oct 2026 14:31:36 +0800 (CST)
-Received: from [10.67.110.140] (10.67.110.140) by
- whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Fri, 23 Oct 2026 14:31:29 +0800
-Message-ID: <a2832263-3e3b-4d05-98bd-dc006d5be689@huawei.com>
-Date: Fri, 23 Oct 2026 14:31:28 +0800
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kNbLw9QV
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 3D28B1F031E4;
+	Fri, 23 Oct 2026 15:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792767910;
+	bh=ZVcQPkNDOWQoPE4j6sKMTOGILAcsS100wFswAEPnnCE=;
+	h=Date:From:To:Cc:Subject;
+	b=kNbLw9QVGkwIqha06HXuIE1qx3/sPWm3crthpNsEFtXABD1DX6jiGNzyyuojxxI3t
+	 RvnosSeYYzfKNJ4JoS+yXRmah8LFp+x3M53TxYBtkYTdltgn9VX2BtG6RFjllDRHRy
+	 wEPMhdGS1KCyBu/nFy2Hx2wLEmzzzV5ghQ3fABqGp57HIw2EhKzDo+d8ww939J8Ys5
+	 q6De6EZoL89k+cLa6bcoecz0R7PR55yAcLK6g3aA3FE7dDw7yS0dxGTM6kUcKy//E+
+	 R+kZcTus7SOt5ZVK91zkwnOGG4hqgsxVFKUp7xicFdZszcTh6sXeMKMGOpTtDb9sGn
+	 i4coKAhD94K/Q==
+Date: Fri, 23 Oct 2026 18:05:05 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] TPM DEVICE DRIVER changes for v7.4-rc1
+Message-ID: <att3oe9CYJjuykq0@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -62,66 +56,93 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next 01/18] fs: pass struct path to notify_change()
-To: Christian Brauner <brauner@kernel.org>
-CC: <mic@digikod.net>, <gnoack@google.com>, <paul@paul-moore.com>,
-	<jmorris@namei.org>, <serge@hallyn.com>, <corbet@lwn.net>,
-	<skhan@linuxfoundation.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <eddyz87@gmail.com>, <memxor@gmail.com>,
-	<martin.lau@linux.dev>, <song@kernel.org>, <yonghong.song@linux.dev>,
-	<jolsa@kernel.org>, <emil@etsalapatis.com>, <ihor.solodrai@linux.dev>,
-	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-	<dakr@kernel.org>, <johan@kernel.org>, <dlemoal@kernel.org>, <hch@lst.de>,
-	<axboe@kernel.dk>, <viro@zeniv.linux.org.uk>, <jack@suse.cz>,
-	<dhowells@redhat.com>, <code@tyhicks.com>, <linkinjeon@kernel.org>,
-	<sj1557.seo@samsung.com>, <yuezhang.mo@sony.com>,
-	<hirofumi@mail.parknet.co.jp>, <cel@kernel.org>, <jlayton@kernel.org>,
-	<neil@brown.name>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
-	<tom@talpey.com>, <hyc.lee@gmail.com>, <miklos@szeredi.hu>,
-	<amir73il@gmail.com>, <senozhatsky@chromium.org>,
-	<chenxiaosong@chenxiaosong.com>, <kpsingh@kernel.org>, <matt@bobrowski.net>,
-	<rostedt@goodmis.org>, <mhiramat@kernel.org>,
-	<mathieu.desnoyers@efficios.com>, <john.johansen@canonical.com>,
-	<georgia.garcia@canonical.com>, <zohar@linux.ibm.com>,
-	<roberto.sassu@huawei.com>, <dmitry.kasatkin@gmail.com>,
-	<eric.snowberg@oracle.com>, <stephen.smalley.work@gmail.com>,
-	<omosnacek@gmail.com>, <casey@schaufler-ca.com>, <takedakn@nttdata.co.jp>,
-	<penguin-kernel@i-love.sakura.ne.jp>, <xiujianfeng@huawei.com>,
-	<nanx95726@gmail.com>, <djwong@kernel.org>, <lujialin4@huawei.com>,
-	<bpf@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-	<driver-core@lists.linux.dev>, <linux-block@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <netfs@lists.linux.dev>,
-	<ecryptfs@vger.kernel.org>, <exfat@lists.linux.dev>,
-	<linux-nfs@vger.kernel.org>, <ntfs@lists.linux.dev>,
-	<linux-unionfs@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
-	<linux-integrity@vger.kernel.org>, <selinux@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>
-References: <20261015125425.3246251-1-caixinchen1@huawei.com>
- <20261015125425.3246251-2-caixinchen1@huawei.com>
- <20261021-nanotechnologie-gebadet-gepaukt-52a950759f0a@brauner>
-Content-Language: en-US
-From: Cai Xinchen <caixinchen1@huawei.com>
-In-Reply-To: <20261021-nanotechnologie-gebadet-gepaukt-52a950759f0a@brauner>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- whupemk100010.china.huawei.com (7.152.184.41)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for the explanation, you are right.  I will restore the idmap as 
-a separate argument
+The following changes since commit 722658cac48a6ba49f5506fd74d010ad9dbb2f05:
 
-On 10/21/2026 6:21 PM, Christian Brauner wrote:
-> On Thu, Oct 15, 2026 at 08:54:07PM +0800, Cai Xinchen wrote:
->> notify_change() takes a struct mnt_idmap and a struct dentry even
->> though all of its callers either already hold a struct path (or a
->> struct file) or have to pass &nop_mnt_idmap because no idmapped
->> mount is involved.  Switch the helper and its declaration to take a
->> struct path instead and derive the idmap and dentry from it.
-> No, the idmap needs to be passed separately. The whole point is that
-> during path lookup mnt->mnt_idmap can change. So mnt->mnt_idmap is taken
-> of the mount at the time it was checked and passed down to the
-> filesystem so that the VFS and the filesystem are guaranteed to see the
-> same idmap.
+  keys/trusted_keys: reuse TPM version in option handling (2026-10-20 18:15:40 +0300)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpm-v7.4-rc1
+
+for you to fetch changes up to 836952696d0260cca1de6d3300cd8fcd5687fe67:
+
+  tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation (2026-10-21 13:20:58 +0300)
+
+----------------------------------------------------------------
+tpm: changes for v7.4-rc1
+
+FEATURES AND IMPROVEMENTS
+=========================
+
+- tpm_crb behaviour was improved by putting the chip into an idle state for
+  each transmission. This improves firmware behavior as the kernel now
+  better cancels its state as if it had never touched it in the first
+  place.
+- One spurious (but harmless) wmb() was dropped from tpm_pm_resume().
+- tpm_tis_i2c now requests the optional reset control and deasserts it
+  before communicating with the TPM.
+- SIMPLE_DEV_PM_OPS was replaced with DEFINE_SIMPLE_DEV_PM_OPS across the
+  whole driver stack.
+
+BUGS
+====
+
+- tpm2_probe() misinterpreted a transport error on TPM2_GetCapability
+  as the chip not being probed, and the chip was detected as a TPM 1 chip.
+  This can happen in reality only in the extremely rare case of bus
+  corruption. Despite the odds, a fix was landed, as it is still
+  technically a legit bug fix.
+- It is not really worth the time and energy to go into details as tpm_nsc
+  is a somewhat legacy driver, but one null pointer dereference bug and
+  another causing use-after-free were fixed.
+- read() of /dev/tpm{,rm}0 with zero size caused a pending response to be
+  consumed. This was fixed simply by an immediate return.
+
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+----------------------------------------------------------------
+Alexander Sverdlin (1):
+      tpm: tpm2_probe: propagate transport errors
+
+Li Jun (2):
+      char: tpm: Use SIMPLE_DEV_PM_OPS for ibmvtpm power management
+      tpm: use DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr()
+
+Mario Limonciello (1):
+      tpm: Call cmd_ready/go_idle for each command transmission
+
+Pei Xiao (3):
+      tpm: tpm_nsc: fix NULL pointer dereference on init failure
+      tpm: tpm_nsc: stop using the cleanup callback as dev.release
+      tpm: fix zero-length read discarding the pending response
+
+Richard Lyu (1):
+      tpm: Remove ineffective wmb() from tpm_pm_resume()
+
+Stefano Radaelli (1):
+      tpm: tis_i2c: Deassert optional reset line before probing
+
+Yuqi Xu (1):
+      tpm: reject duplicate PCR banks in tpm2_get_pcr_allocation
+
+ drivers/char/tpm/tpm-chip.c          | 24 ------------------------
+ drivers/char/tpm/tpm-dev-common.c    |  3 +++
+ drivers/char/tpm/tpm-interface.c     | 28 ++++++++++++++++++++++------
+ drivers/char/tpm/tpm2-cmd.c          | 21 ++++++++++++++++++++-
+ drivers/char/tpm/tpm_atmel.c         |  4 ++--
+ drivers/char/tpm/tpm_i2c_atmel.c     |  4 ++--
+ drivers/char/tpm/tpm_i2c_infineon.c  |  4 ++--
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  4 ++--
+ drivers/char/tpm/tpm_ibmvtpm.c       |  5 +----
+ drivers/char/tpm/tpm_infineon.c      |  7 +++----
+ drivers/char/tpm/tpm_nsc.c           | 12 ++++++++----
+ drivers/char/tpm/tpm_tis.c           |  4 ++--
+ drivers/char/tpm/tpm_tis_core.h      |  2 --
+ drivers/char/tpm/tpm_tis_i2c.c       | 16 ++++++++++++++--
+ drivers/char/tpm/tpm_tis_i2c_cr50.c  |  4 ++--
+ drivers/char/tpm/tpm_tis_spi_main.c  |  4 ++--
+ drivers/char/tpm/tpm_tis_synquacer.c |  4 ++--
+ 17 files changed, 87 insertions(+), 63 deletions(-)
