@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792834842;
-	b=CVmRovjV4sK6ajMZmI31wsky9v1Y/PG3nz5sFgMl3qbkq0Lb/2A722NLi/KRUbSBjcBt
-	 QCWGgNbKg+lcFBQ0Z1QQJOPdHC6Rk2I/yHtZ+mpypJAJl1YUzHdwFNw8eTXobwpJLTAJ+
-	 eWcJBgcfhb4Nudtu+bXZSq+1NFVLI/68di9M94YbjS4nvr4NHuorkyGr9VQ4Psdl5mpxS
-	 vu9Cm6bZnUAzMQwyRb0tHuQEJAyG8fYXNMwV76yMRYSJ7thEvVpTbYhna1NaiCkPbzCnu
-	 x76Bbqt6A8iFVB9zdqXm4uqJN8zzudd/DvD692la3+NyobLRe3A0QPHrDJdtbB61EcA==
+	t=1792849651;
+	b=yRQ6K1+0IQSsmHuOOcjpAg09nRfI4lFziCocCmnFuC172rpEVKvbnZMCaXa0mnPphh3l
+	 zINnXgvdUPM3Z+cEX5c+s/LfQlnEhCOwJ4JfIltiJrut27yKlrhZjqDJL3cKVKf4Zeb64
+	 1yRyQytnOxOImwlGW43fAiKPUB7g0nvgOKIuTzmIk4s3nWXNWekEpW3pz7Q29Fhtua7H/
+	 5i+zvrKyN1FF0JO38m/01PyvLEJn2Vsb4ji3XSp18l2VLbiOajDhJD65t7uWz/d+jl8uu
+	 BoDeg0giJ+UgacKpjsn8TvIRKa3yRzP9m0PJkvmzFc53ynBkLlH7PJ15Y79W4AZWURg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792834842;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792849651;
 	h=DMARC-Filter:DKIM-Signature:Received:MIME-Version:Date:From:To:Cc:
 	 Subject:In-Reply-To:References:User-Agent:Message-ID:X-Sender:
 	 Content-Type:Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:
 	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
 	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
-	bh=r6p8uVYKDetOaXSZkkbXs6nfwrN9YCw9AiqQm77o3SI=;
-	b=L7PXzw0MshsL7Kb6np48DObu08poBFq4JeqvY/iiiAoLGiGSoAxXOz8fo++gTm+eo1rr
-	 VHPNpE/NRBtZo3IOJlRUf5lziQQFLuQuAh4iZQ7NOZ1uvwsSx3Bcvm9P2xvcDxVWwHxgI
-	 2etAd5sEOlLuo550O/pt7pM5DEQImPcA6lawuH6sHwNrmExFUKd48n9Wz6D+YuU5BRGeS
-	 jF9BKj8gM2EGs4iBS4MrTctfZ96dqDvRWpN2mIhPApdrg7sHZ8CyQGogCJqDcpYpQ5wS+
-	 oQHJSthVGRCMgjz1eRFTWySEkTQSdOxMjgJzk3MFmXSzFQ1ecYYWuC7IJ66uAsrc7zA==
+	bh=pPBs3xrtR4T4D2lWZ+67aGijmLWPIIJarhkwTdzpy/Q=;
+	b=S8/cEspZUHcAg8IMB5q5WTj+VaVNyshRvf8LoU6ivisei8jAOPH2cUgQ8B1qGILlg+aC
+	 RIYuWQAJ/E9GBiXO4WFb2dd4iIN0jtQwjdtBzHPHTywOwr10dGvWc9RI/phJsIum0U4Rn
+	 aJ0uFvX5Iio2eMWywfA43mmEwKlT53r1ppvaeSD0Grq8EXBX2WHIxYqIRWuZQ98W5gKBc
+	 Q55fpC+yBf4Huj8upDeKUR739UYeo5S6b2l6P0kzVOizdkF6C6nHsJ9g0b/Xrj0ZU0tYa
+	 bpwMgKmdAAJ7V8fEOzMN796L8vVbUWk0WqxI3YYisyzwv/4NuvULM/6FiDW30XjjC9g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.cyber.gouv.fr;
 	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
-	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=ocMcZJpG;
+	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=XckZgYqe;
 	arc=none smtp.remote-ip=51.159.188.251
 Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70A8606A331;
-	Sat, 24 Oct 2026 09:40:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C70A8606A331
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0A7606A31A;
+	Sat, 24 Oct 2026 13:47:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1D0A7606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=ocMcZJpG
+	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=XckZgYqe
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
 	Message-ID:References:In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:
 	Reply-To:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=r6p8uVYKDetOaXSZkkbXs6nfwrN9YCw9AiqQm77o3SI=; b=ocMcZJpG85PXlbEbSsTOldbePd
-	0uSGjzfT17GKFbYwsR5/BUvT47JgF/SQTJ/8UvaioE0dLDU1qdm1mlfQkTsXNtDiZ+WpFQJHinwKQ
-	yBnUcXkO6bjMJiBw05d90YDljtYyZ9KBpIOqbG5i4RPsdYXss0TaUpFCeZ3MrD+PHeNt7eZPeiHDj
-	ewumTrltld+06hDAZOSqcAAf96OJgg4HGicibqReDpslgu310/IFPzAVo6vNJTycDq0AKdjmhHNRQ
-	3YX9pTSCQ9prNzBd+GBZzF3F+TTPShuHgwRKVv24vCg3YPbLMND4sDRTix4VgBLXQg4IS2jUKwGwH
-	68V1dWAw==;
-Received: from [::1] (port=50492 helo=pf-012.whm.fr-par.scw.cloud)
+	bh=pPBs3xrtR4T4D2lWZ+67aGijmLWPIIJarhkwTdzpy/Q=; b=XckZgYqej/AwwA83bB9G8PSH8x
+	B2irdoMwfyhmxTydy72C3bwWvlya4vdOtsW5NOMwDjpN0TXSJgdwLUtPlF59EaBtT/a2uVZJ7/1Lv
+	ro9wxK75mPN7h51h1xW+zyzf8B63+DuHdy4Lsgnrlf4fBbxcehLOy40dVVld7Dvk5s4xgjWD3xyVu
+	/gql9qemQwUvlvOyPbu2X0eQtrYmctNApiEn2EXCUiz2gWCbH1Wztzi/l3gbOTl9ABWJXeKiW13qp
+	30avuO1Xgcr6uwizJ/ilGG1aOc7IwJolyjMGlk+qdR+RS3HuCESWZUCWBBMV7ap88I9XtL2NBi+HR
+	j0VR2wcA==;
+Received: from [::1] (port=52414 helo=pf-012.whm.fr-par.scw.cloud)
 	by pf-012.whm.fr-par.scw.cloud with esmtpa (Exim 4.100.1)
 	(envelope-from <jeremy.jean@oss.cyber.gouv.fr>)
-	id 1xKYEz-0000000FPh6-2fvw;
-	Sat, 24 Oct 2026 11:40:40 +0200
+	id 1xKc5q-00000004iKa-2P5N;
+	Sat, 24 Oct 2026 15:47:28 +0200
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -60,21 +60,21 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Date: Sat, 24 Oct 2026 11:40:39 +0200
+Date: Sat, 24 Oct 2026 15:47:27 +0200
 From: =?UTF-8?Q?J=C3=A9r=C3=A9my_Jean?= <jeremy.jean@oss.cyber.gouv.fr>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] ima: audit failure to supply detached data for
- modsig
-In-Reply-To: <9336bd484bcd0af6e9c88b7b546434e5081ab449.camel@linux.ibm.com>
-References: <20261021210145.1851396-2-Jeremy.Jean@oss.cyber.gouv.fr>
- <20261021210145.1851396-5-Jeremy.Jean@oss.cyber.gouv.fr>
- <9336bd484bcd0af6e9c88b7b546434e5081ab449.camel@linux.ibm.com>
+To: =?UTF-8?Q?J=C3=A9r=C3=A9my_Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] ima: discard modsig when detached data cannot be
+ supplied
+In-Reply-To: <20261024093918.2929374-2-Jeremy.Jean@oss.cyber.gouv.fr>
+References: <20261024093918.2929374-1-Jeremy.Jean@oss.cyber.gouv.fr>
+ <20261024093918.2929374-2-Jeremy.Jean@oss.cyber.gouv.fr>
 User-Agent: Roundcube Webmail/1.6.19
-Message-ID: <77df0a0e445253254a15b4ad37388f6b@oss.cyber.gouv.fr>
+Message-ID: <b7b59b3fb2f0977808ecf5bd32970782@oss.cyber.gouv.fr>
 X-Sender: jeremy.jean@oss.cyber.gouv.fr
 Content-Type: text/plain; charset=UTF-8;
  format=flowed
@@ -90,43 +90,23 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On 2026-10-23 19:36, Mimi Zohar wrote:
-> On Wed, 2026-10-21 at 21:01 +0000, Jérémy Jean wrote:
->> 
+On 2026-10-24 11:39, Jérémy Jean wrote:
+> ima_collect_modsig() supplies the file contents to the parsed PKCS#7
+> message as detached data. If the message already contains embedded 
+> data,
+> pkcs7_supply_detached_data() returns -EINVAL, but IMA ignores the 
+> error.
+> ima_modsig_verify() then verifies the embedded data instead of the file
+> being appraised.
 > 
->> @@ -326,15 +329,20 @@ int ima_collect_measurement(struct 
->> ima_iint_cache *iint, struct file *file,
->>  	if (!result)
->>  		iint->flags |= IMA_COLLECTED;
->>  out:
->> -	if (result) {
->> +	if (result || modsig_result) {
->>  		if (file->f_flags & O_DIRECT)
->>  			audit_cause = "failed(directio)";
->> 
->>  		take_dentry_name_snapshot(&filename, file->f_path.dentry);
->> 
->> -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
->> -				    filename.name.name, "collect_data",
->> -				    audit_cause, result, 0);
->> +		if (modsig_result)
->> +			integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
->> +					    filename.name.name, "collect_data",
->> +					    "failed-modsig", modsig_result, 0);
->> +		if (result)
->> +			integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
->> +					    filename.name.name, "collect_data",
->> +					    audit_cause, result, 0);
+> Make ima_collect_modsig() report whether the file data was supplied,
+> and discard the modsig if it was not.
 > 
-> 
-> Frederick Lawler's patch updated integrity_audit_msg() to include 
-> errno.  These
-> calls need to be updated.
+> Fixes: 15588227e086 ("ima: Collect modsig")
 
-Indeed, thanks for this.
-I have just sent out a new version to take this and your other remark 
-into
-consideration.
+The public instance of Sashiko raised some relevant feedbacks for 1/2
+that my local Sashiko run did not see.
+I will address them in a new version.
 
-Best,
+Regards,
 Jérémy
