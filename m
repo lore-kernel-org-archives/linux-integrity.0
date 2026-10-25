@@ -1,103 +1,102 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792959553;
-	b=DBY3vJC0oKLqT35SVUHseKbIbY3z12n87kyCs0XiwLNRR/HkTpdbh8nb5pT1mvDsUWDS
-	 kmK4jtG2czcESj9nhzp5EDAX2+LzaurwbjEXwi7cDyRjpZ/HTVQS8Pds6NFKPGKV35JIs
-	 ogWECY/2HMymWeEBA8nMHX+2/14TzW6oF+uBlebpq3knkA/uS1qaw33UHHmVq1TeORwYK
-	 TCkeP6spqdhAudqWRIzCq+Na2eVLPKk4LMSRgR6OSnBnNFPO5bjjAKfopYF/PjCvcBg72
-	 qdQm/hYdG9855NmqUrzRIhGwGYOzn/lVqsqMA+rUzfXKYrRFIHm+6I/ps/AjTT6T9FQ==
+	t=1792959561;
+	b=B4nU8XykTEqRTLyL7vLVeQzn6pN3GEUrDgSiE4LUx1FJ159BxDODgc7ACz4MoSHlEnH4
+	 6hs88CE2XoFSx1jRjvCYbiwnM5PjSm+NHnN8fRfzKstMXQ6geGeltHWWqUlo8Ya2SuJN/
+	 dTbqIBue9IOXIiCikcjqlQhRsQqgMDP88MC28C0EyCNXFczem5BTfbh/1RHVL13+FeF0H
+	 WgCxCiMDwXB++tVmBQvDVUqezcwLdKoxh8PMUTPnGxL/PgMkeYxZYQXPgRUU2FuzVKAYy
+	 Uhzopn+4Ln4tXYDKIoXKX2qcJRqdBCefev8x9mBCOgv36Bn1b+YXUF/9V56mX7XNDMw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792959553;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792959561;
 	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
 	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 X-Received:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=jtzC8GOmAvHT3XfNpHE4tG+IxT92XswAdGYofHiX++Q=;
-	b=J+WxzQYLri2DQbEQwEwIIfgkkkFOURrizRGFT8y/2KEVJlr4EuyC507GHVkDvD5U0Vml
-	 8m4pIMfiOzOa+cWN2fLM6QLpViIqRGanGTnI/BlIxaRUPHgAN8t7pjcWeDJph+EjR8DG/
-	 EKCF0jf1C56maiSaxEjPb4n/KkEvYadgcNSAODqB88i0paC6r07ZC1aQbcBvChIzoQchl
-	 j2KTUJZbL0vZ+s2kxjXrTFs1q/le+XU+8PvIN/tlubgshaRsDHfhp85AVx9+fVtuEDGJV
-	 KXEWZyitI4LHOJx9i/Z+1XbrpDlP2zEwL5ZE7H/8SalaxA7ntEnknNR03a/i8jtSIEw==
+	bh=CDCto1XEIuD8+bFpZYgUHlrlM57aJmVNdz64GvF6tOs=;
+	b=UiufWU+wYWvQErkOb6zQztf5fwIOgbMJIraLR0j1fou5IxdZmD9rXB4jnjHZJ4k/d+lR
+	 //sg0JSXz+8JVKjhRNM35n8fTD8Fyx9d9rA4qDiXfq4giCwCkFpPeFdo8Wby5MuUqfJ8z
+	 IZB9tldinZ+bxfiOlaWluKXa+hBKJRhp+KznMQwEklXx5KC86vS+Jyoe1ulrj44JsS8aV
+	 4azjECfCrBaxnjB16+GjqPBvnswmaHsSlDp0nDCr4RcF7Mct1xGlz/LjCoqKEG5CNBZar
+	 ma3/KmOaji6yfsqO6OLTfinPK4bzEixYKXQQMIBoLidt318sifT/Co+ARXq6z5mnfpw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=redhat.com;
 	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=WM8O03fA;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=VUOjKEPd;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=IUKEZdcE;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=AHMIsp0k;
 	arc=none smtp.remote-ip=170.10.133.124
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1682606A329
-	for <linux-integrity@vger.kernel.org>; Sun, 25 Oct 2026 20:19:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1682606A329
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C8A606A31B
+	for <linux-integrity@vger.kernel.org>; Sun, 25 Oct 2026 20:19:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A0C8A606A31B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=WM8O03fA;
-	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=VUOjKEPd
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=IUKEZdcE;
+	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=AHMIsp0k
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1792959551;
+	s=mimecast20190719; t=1792959559;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jtzC8GOmAvHT3XfNpHE4tG+IxT92XswAdGYofHiX++Q=;
-	b=WM8O03fAlyploiq6vl1QIDFooK4igl7hHOdjKu0X6XccNQRX6uwNTtZOYpNzq9sAqrjZo8
-	y1LLsbq0Wb4UQ4KuCGhe6zozJvu8gYn5MgpVM0kd31keSaJg0TZQLkGXeoPjjB3Li6d0HX
-	U7MTrMfGriXyPJ7ceTyCEUIbYQHFAAQ=
-Received: from mail-dl1-f72.google.com (mail-dl1-f72.google.com
- [74.125.82.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=CDCto1XEIuD8+bFpZYgUHlrlM57aJmVNdz64GvF6tOs=;
+	b=IUKEZdcEHvZRc6wMK9lK9Dl6czKa2d1RHiMARgqwWycTWdWeOGV5RAHhV311+vudIPBN1g
+	coSiZx2e2jBE+bZQdBWqZbBcUz8eQAefmsTnRm1bT4nwpRgM2KecTgunfvYNQeaycWBvzC
+	U7bto9R0lvSjXNe0vCkLUR22vU6aGSI=
+Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com
+ [74.125.82.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-408-Om-Vr2JcPGCrYgnVLhUYcA-1; Sun, 25 Oct 2026 16:19:10 -0400
-X-MC-Unique: Om-Vr2JcPGCrYgnVLhUYcA-1
-X-Mimecast-MFC-AGG-ID: Om-Vr2JcPGCrYgnVLhUYcA_1792959549
-Received: by mail-dl1-f72.google.com with SMTP id a92af1059eb24-1663fb7e005so3085140c88.0
-        for <linux-integrity@vger.kernel.org>; Sun, 25 Oct 2026 13:19:10 -0700 (PDT)
+ us-mta-530-cLYzObtHO5KoNUn_Xi-uwA-1; Sun, 25 Oct 2026 16:19:18 -0400
+X-MC-Unique: cLYzObtHO5KoNUn_Xi-uwA-1
+X-Mimecast-MFC-AGG-ID: cLYzObtHO5KoNUn_Xi-uwA_1792959557
+Received: by mail-dl1-f69.google.com with SMTP id a92af1059eb24-169846a19aaso3162115c88.0
+        for <linux-integrity@vger.kernel.org>; Sun, 25 Oct 2026 13:19:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1792959549; x=1793564349; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1792959557; x=1793564357; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=jtzC8GOmAvHT3XfNpHE4tG+IxT92XswAdGYofHiX++Q=;
-        b=VUOjKEPdZjHCRl1eosDhwWnd7HgWKXSbWry5XZhowBHeTzbAEXyiQR0P7DK/h7oCG+
-         xV5etLjgn485u4IDz7HaTPtqoYUwnKnz9BuNOxGmqHI3vGWlWZWDQiljIbDhvQVX4Mqg
-         NmNBRrqxUDKDba2kHcxW+3cydRaG/wVBALP/Iwy6DUdwy38SwQv+RTxAC14LgqQoHvzh
-         9CBuMVgOBnJTrYT4EtSNYKDm+O5fiXBIaVBwKo0pRtMKOnjbdV76nITdD66sHvTeUkln
-         leAOJUvcw760TeLyy+RCC7NaSj1KACCE7mBvzyT56q6wkepmTOctwEUPkPkuwYUqxLaM
-         jHqw==
+        bh=CDCto1XEIuD8+bFpZYgUHlrlM57aJmVNdz64GvF6tOs=;
+        b=AHMIsp0ksQeXfpGMUFGahZbj8A7HbzH7z0y6o3DmxCHabN++KWh0zmdHRxTdVzCwvP
+         s9NnPskECYzJEyxjXkY9fotvoPBWteZfN2TK1zI8qcQ7yDd3Qnw5jKhKA2nyjXKZDlHz
+         dUnkz3JT5UAJClPTMTLj2RB7h9GcKgR1JSyBw/t+jctoiuNPqhAPuGbRChlDOOUhULZ0
+         INNkIuXelZCz2eqPsSV/1ZssdlviLLqU/XgPFWWTrmotmhDYHNUybwpwVkPQHpaA5CTy
+         moklGoFFkDngyD4K97ZbxdTjL3O+DXRpenlZ9azFY8Y8gTaoFCaWWRTUIxNBeMPqcrYf
+         KFGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792959549; x=1793564349;
+        d=1e100.net; s=20260707; t=1792959557; x=1793564357;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jtzC8GOmAvHT3XfNpHE4tG+IxT92XswAdGYofHiX++Q=;
-        b=GQVIXLjtb2x75kbT1DUaA3usMBhHhlkDs+1QJ22K9kpP41BXxv0KWjORytnMMdhuFc
-         aJkdBzlfHdmm/CdLnq89kshL/yqO5yT4BnfU1ULvktbWXwjow3fauovQ0raC2M7UpPJr
-         v3PX9T76k/j5yOEVrnjtTonOwxWLc+icflV/mMYSs8KX5k18qa0/W9ABgGOuvOsL+wZF
-         zgGfjSD8vzOYxknOF2jiXW935kWUQrVQSGD/oTOpssmc7sQavhZxsuXEUSEBHi9Y0V7A
-         pPDfNMjznQqSesOC1wY78spZO8KIeRV+c1OkEZ0g3LrNOsKATYFV5cubQ3vJIpfB8We2
-         Gd1w==
-X-Forwarded-Encrypted: i=1; AKwUvBww1vEzwPHfaG9XcdlToT/qFeb+X4T6tSkt5ErcwKjd9xhmSnbwW6rKLjQ3HQALaBlvlFhmvty1o6a6/lLnuCo=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIqCZgCcJBGcge1miRtn0+OtSnn4feo5v5+I7+B9AZ49Unng9FV
-	P531M9o6vSy0sbiO51iDJAuwz1tMLMDuER54FQVg4tgKHC7kj0UqbuIhKh+evI51+uODBww0rZb
-	1xlWpO+qFlCIz9k4aTe7uNim9la3xmNZM5XIhGb7e8fMSKI8xtIYPIy/gXnu1HnYrMZGb0YJ1fO
-	tgLA==
-X-Gm-Gg: AYBFou0s84VO2p1vegx+otDANhvUy53pedALVf2MkEY1tmi5+E6FamPGvPjf+PUuGP2
-	z44oPNyfccknr8HqVYXs5p8aftdefaDUDt107OECHiFJn0mT/bEsK1sqgaxYKJYdDrRpypeuih5
-	VSwNsVhRjxDmwgJahB9+eQ7yScR0uONhFNgRX5uIAA3nu3xYRCZpOMcAM+HlvNQ2mV3X0fwNSnR
-	Mq5SnAHOlj9pYwoEbN7yBHesyNi4xV4ebCaSn4Yrb2C7PLlDRWcY3LJTr47fnzPxIrk+gQsnvv2
-	tG3YfycVd7UJUJ/UoDM5cLKhVyzSKpdRY9DxiQHew5rJZoBFyk6ygXEEXM/5qtPlrI5Xg1ADkJ8
-	is50lfdUBs4vxvPlNmuecX0NUcgYCCp3phgCUIMKn
-X-Received: by 2002:a05:7022:c43:b0:16c:6459:35b1 with SMTP id a92af1059eb24-19935fcbbfdmr6156283c88.28.1792959549096;
-        Sun, 25 Oct 2026 13:19:09 -0700 (PDT)
-X-Received: by 2002:a05:7022:c43:b0:16c:6459:35b1 with SMTP id a92af1059eb24-19935fcbbfdmr6156258c88.28.1792959548453;
-        Sun, 25 Oct 2026 13:19:08 -0700 (PDT)
+        bh=CDCto1XEIuD8+bFpZYgUHlrlM57aJmVNdz64GvF6tOs=;
+        b=gB/9/O80tuIfm1y2WIvGC95gwOzzqEaLBDA6WHxyDdL9+a2d5HTAWuJ0rbFIHhf30p
+         hLC9uXTz0Z8uQic4mnSLDnxs5rPiBNiiX18hzbRLV6GIoNFqJ7rq8ybXK3FVYV3o7cPL
+         iP1WUwhdzt2/LBHOdkkhm76kWKsXU6iQXn/rIWJ/Ewwl6xPDY29h+jex+JNamKyQPpM+
+         Pn7fwEvBwq8PTQdbalzjN/W8gyhlOcQwkxhVxConzuB/5/6xdiwzRqKxJesfJzNnDgt6
+         FUDWPsxcGV1Xp5DBpJRM3FHWg4QhAJcJ+RP7XerNM/GPdrWJjZ7WB/59jaQd9w4g8FFT
+         ETDw==
+X-Forwarded-Encrypted: i=1; AKwUvBwoLfUNbtxp1gMWeD8Vtlrwow9mk7UnRukmmSK47kXrVfCldqlycP0mkiAyZpfvB1N7bzZ72GOlHv+zeRtcg0c=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKhJK+43j8RUr2v9AHo++Yf0hz3YBdggujs49JEI1noaOkGC76i
+	M2DzgZqTVm4z7HWdiwciIK47iNaQBoG2F4KBye4IfNkrPrpFWU3tnLbsoSy500lEJO4FpxzrNom
+	U3ysAVKN7PJ/yJlPyAKCXLRiV9k7axXf4/SuaKb1o2g/CSpUSTc7/ES500eRuljS7cv+m/g==
+X-Gm-Gg: AYBFou16gG2mMiWA4ccMd59ApaFbmxBSrJDWJql1rush9BLnfAsIDV4LC3rnQ3YJ1Je
+	rf9QUvxiu3yJA24scMIjexf+kR4oAdIJCrxaLvyPEYzO9/UmOydkfch1b8MTqd/e6kf8AZGHmYK
+	3ndcA7D1jYxWpmPpnQwaSfpTk3yyXX+3orbyKwi69qF7VGUNJp8jBmLzbqLbV27rxkLZt6q2vdl
+	Vi5yjH9IJQd97vHee/pnvitAAc6o0XagcO1hITbmqu5TObkFmxIiJ786oR5Qt1er3QBe9Cp/H3p
+	SiBP4yuavMev3BtaeF7Q8V8qQ6bOjfEWGwXxE9t1Y2tMeHMz1h7knYkXcmdiITnJ2dyIJvoBabP
+	RCGKfUxU0+b5cyyjVfVOtu8QpJhPMoz6aJZ7iWHpQ
+X-Received: by 2002:a05:701b:42c5:20b0:143:4450:e1e6 with SMTP id a92af1059eb24-19935fcae7cmr7287994c88.35.1792959557043;
+        Sun, 25 Oct 2026 13:19:17 -0700 (PDT)
+X-Received: by 2002:a05:701b:42c5:20b0:143:4450:e1e6 with SMTP id a92af1059eb24-19935fcae7cmr7287925c88.35.1792959555500;
+        Sun, 25 Oct 2026 13:19:15 -0700 (PDT)
 Received: from fedora.armenon-thinkpadp16vgen1.bengluru.csb ([49.47.195.13])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-19894d59f90sm17656169c88.3.2026.10.25.13.19.05
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-19894d59f90sm17656169c88.3.2026.10.25.13.19.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2026 13:19:08 -0700 (PDT)
+        Sun, 25 Oct 2026 13:19:14 -0700 (PDT)
 From: Arun Menon <armenon@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -105,9 +104,9 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
 	Peter Huewe <peterhuewe@gmx.de>,
 	Jason Gunthorpe <jgg@ziepe.ca>,
 	Arun Menon <armenon@redhat.com>
-Subject: [PATCH v4 1/6] tpm_crb: Add register definitions of TPM CRB chunking fields
-Date: Mon, 26 Oct 2026 01:48:53 +0530
-Message-ID: <20261025201859.221991-2-armenon@redhat.com>
+Subject: [PATCH v4 3/6] tpm_crb: Add start_cmd parameter to tpm_crb_start wrapper
+Date: Mon, 26 Oct 2026 01:48:55 +0530
+Message-ID: <20261025201859.221991-4-armenon@redhat.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261025201859.221991-1-armenon@redhat.com>
 References: <20261025201859.221991-1-armenon@redhat.com>
@@ -124,58 +123,62 @@ Content-Transfer-Encoding: 8bit
 
 From: Arun Menon <armenon@redhat.com>
 
-Post-quantum cryptographic (PQC) algorithms can require buffer sizes that
-exceed the physical capacity of the TPM's Command/Response Buffer (CRB).
-To support these larger payloads, the TPM 2.0 CRB specification [1]
-allows for data chunking when the physical MMIO window is smaller than
-the required buffer size.
+The current implementation of tpm_crb_start() is limited to triggering
+the CRB_START_INVOKE bit. To support command and response chunking, the
+driver must be able to send other control bits, like
+CRB_START_NEXT_CHUNK, using the same platform-specific paths.
 
-To support this protocol, the TPM driver must be able to detect the
-chunking capability, and signal the backend using specific start
-method flags, also known as the control area start register bits.
-
-As per sections 6.4.2.2 and 6.5.3.9 of the specification document [1]
-Add 2 new bit flags to the existing enum crb_start and add the
-capability bit.
-- CRB_INTF_CAP_CRB_CHUNK: A capability bit used to detect if the backend
-  supports chunking.
-- CRB_START_NEXT_CHUNK: A control bit to signal the TPM to consume the
-  current command buffer, or to get the next chunk from the response
-  buffer.
-- CRB_START_RESP_RETRY: A control bit to signal retransmission of a
-  response buffer.
-
-[1] https://trustedcomputinggroup.org/wp-content/uploads/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p07_rc1_121225.pdf
+This commit adds the start_cmd parameter to tpm_crb_start() so the
+caller can specify which command to send.
 
 Signed-off-by: Arun Menon <armenon@redhat.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- drivers/char/tpm/tpm_crb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/char/tpm/tpm_crb.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index ceb4100ba400..d76f9e30f036 100644
+index 9a2f512b4ae3..31f530744e90 100644
 --- a/drivers/char/tpm/tpm_crb.c
 +++ b/drivers/char/tpm/tpm_crb.c
-@@ -57,12 +57,18 @@ enum crb_ctrl_sts {
+@@ -446,7 +446,7 @@ static int tpm_crb_smc_start(struct device *dev, unsigned long func_id)
+ }
+ #endif
  
- enum crb_start {
- 	CRB_START_INVOKE	= BIT(0),
-+	CRB_START_RESP_RETRY = BIT(1),
-+	CRB_START_NEXT_CHUNK = BIT(2),
- };
+-static int tpm_crb_start(struct tpm_chip *chip)
++static int tpm_crb_start(struct tpm_chip *chip, u32 start_cmd)
+ {
+ 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 	int rc = 0;
+@@ -457,16 +457,16 @@ static int tpm_crb_start(struct tpm_chip *chip)
+ 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER ||
+ 	    priv->sm == ACPI_TPM2_MEMORY_MAPPED ||
+ 	    !strcmp(priv->hid, "MSFT0101"))
+-		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
++		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
+ 	if (priv->sm == ACPI_TPM2_START_METHOD ||
+ 	    priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD)
+ 		rc = crb_do_acpi_start(chip);
+ 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC) {
+-		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
++		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
+ 		rc = tpm_crb_smc_start(&chip->dev, priv->smc_func_id);
+ 	}
+ 	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
+-		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
++		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
+ 		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, chip->locality);
+ 	}
+ 	return rc;
+@@ -497,7 +497,7 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz, size_t len)
+ 	/* Make sure that cmd is populated before issuing start. */
+ 	wmb();
  
- enum crb_cancel {
- 	CRB_CANCEL_INVOKE	= BIT(0),
- };
+-	rc = tpm_crb_start(chip);
++	rc = tpm_crb_start(chip, CRB_START_INVOKE);
+ 	if (rc)
+ 		return rc;
  
-+enum crb_intf {
-+	CRB_INTF_CAP_CRB_CHUNK = BIT(10),
-+};
-+
- struct crb_regs_head {
- 	u32 loc_state;
- 	u32 reserved1;
 -- 
 2.54.0
 
