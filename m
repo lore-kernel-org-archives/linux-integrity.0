@@ -1,53 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792961777;
-	b=2ufjzRjLDrx+6jhp83WIs7rwAi3+FbmkkYBo7xSZxkqsMrrTvjn5pwVzZF5UTiHH97/9
-	 cJRmhgFwcx6Ghrwri/zvr7hEXAcaXtt5H74iaP0EBBd97XpSRjvjufJbqlunqYGbEcsyE
-	 M7zEqM8cVh3EVcBvNyNpK+LMyXqCyPdphPOxw/1yqdtQ3voy/PnDoE6sF6kfK9ERuNCrp
-	 et8qx+zV9R7TgOVbbyCK3zM8Jl89gIIjcSghJLtkGiPVdTG4ApCAILnKEvr0ouuHQZ94M
-	 Ir89+7AJChIkw7QqbBl9QbcVtXl250EUjCkSQhPkXXIdl/dtD272nkAwrPrfCjMYIoA==
+	t=1792961949;
+	b=AzHUR7+7njkr5dBgxyO5r0tLz4f9LzhG5tqQbBIvmebfb8geOwqhcuQLt8lT1e2ozlfm
+	 zx/6WQEWnp5kYhwut2qauk4QJ/GNjRfhjj5MdGSpiCwSG5zYye2SHk4QK0Kmvxwbnrh8x
+	 8rI6tsSnNORpi/lCS37zOzDoPSl9c/PhyPSmMvZBJQQRPzecRD2JSHhb6HpIL0DdtZ1ub
+	 DZEEK+bwF4gc3Z1NMBK4SOElgRwTVUrt6xAzxODHeseQcrHWhbMM5tNU95/oldAXYAzWW
+	 t6/+obxpigKlEc0ZIrwgXk/uEBhNm6tBPf3tsQkTihzWSNcRg517qd/xhlhp02nep+w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792961777;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792961949;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=npO4joq8A1mMPraF3T+YJaHa043AOy3tDWB575QexfQ=;
-	b=RuLnhGgRtyeHrTPhN+/Cse2210HQzuCmpL6xzO/E/uULRSqhVALK2ZoSehCYOk+iW+Ed
-	 tzpgWKdM2dzJ5XaMX4kTJt2aldZOnnS9w2UCnI3U4THjVFydy2HxDWZEkLPQDdFSZHPVW
-	 QZjUa5CVbrGbdO79oGQs5o/gq/yGXBZIuzasoD8BXuFyoS0ccykHz38CKS4YADdN0KnBz
-	 ppeYC1kYwH9hVgAuCAdKbhOO74sUloIhcGJvKWOP7D2H4ory5ueu3rBhsVOT5UJjBv5bw
-	 Z1Ll6Z8A5SSlemdWTc01iAO4OQDXcPjTtZvHuVOhOBVkZtWv37ZbNTpl7gWc0u0U0Pg==
+	bh=KGV9PGyefYQEXPmzyqN4rLFVcnJ/AanP4m6aiT1xkR4=;
+	b=ctQAsSg2NsLfNo32D1tFYg2xuJ8fKyPuHVrgGt2AvFMhsWT7/VKGNPLs+0KxQLDU3hyS
+	 Ab6yOdfuBbkqArgEfE1E/nKReVJn8fhscKeDHQLaN8xu2BdUY2WHHcrx7HBxloi1tj0oa
+	 pov2BC2aTtQY99pK0kY46j5cwQVPdPpUnlOBu3RBelkY+5vtjgfLvj57Zat87hwHcal7R
+	 XRfjgYsfPHU6ki1ARKMD4Me6rFblftork1WktQ+aNa2TQol3rDLXCLzLwMRAizT8pgZdi
+	 Cr7PN7+z8S5G7r6KomA8eDipFb9MxwUSkuhDgEmvqQ5guynYHeeEjY//QsPbKqbhK4g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Exn0q3sP;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ewmm4BKG;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 55013606A31A;
-	Sun, 25 Oct 2026 20:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 23926606A31A;
+	Sun, 25 Oct 2026 20:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Exn0q3sP
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6E70A1F01825;
-	Sun, 25 Oct 2026 20:56:16 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ewmm4BKG
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 3667C1F01829;
+	Sun, 25 Oct 2026 20:59:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792961777;
-	bh=npO4joq8A1mMPraF3T+YJaHa043AOy3tDWB575QexfQ=;
+	s=k20260515; t=1792961948;
+	bh=KGV9PGyefYQEXPmzyqN4rLFVcnJ/AanP4m6aiT1xkR4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Exn0q3sPYuMvSFM6C/+u7OzZIbjoMoYxVG3gF1mOvq4mVoadWuR0852/FBAx4609K
-	 3NIQQmRdqhNdEf6ZM6qLyh355Ieiz77ZB7LBpmD5kptdyTI/aUhLJTcleJ0lnesnYM
-	 L/7AIDnsVdSwR9EUt+LcbddAoZNR6jzWSkByULfacx1xfe1i0NR14rmZux53fiDufD
-	 is+RLNbFdg0RFibsIS8AhAnyM+mFpMyO4vh43mfDnYmImV4O/g35jzVVM0FGEuPp92
-	 VphbkwQnZJeDk39NdTkw4+suJrLZvR/BvEe78utooOP93FVtNDwG2aROvufThkY5io
-	 6ANCrOcECqv1A==
-Date: Sun, 25 Oct 2026 22:56:13 +0200
+	b=Ewmm4BKGrzRwTlQYtOi10aRtz9cED9zEvCczhcx0N+r+gGLDCPcYV/C63Nl7iErNL
+	 QrAsK3sbq2zh6EBprLI1jfhQOsPtEaUDuXYET1Iuv6hdhJt2lR3gyZ6IMzPYxyC8L/
+	 zFevRJrY6dtOK58yqoi5bvGtlGv4VTtC8SWyQ6LE7cIRSJpgN4xMtym2yRTveaf1Ho
+	 cOcoD7wF9FSbdHeqQoDfswVwnheFZDFS0KfZEEBjFkhy+FMmj+/87BUt18R1ALZIfW
+	 K3UDORxtp0VrWy5HPp+V496n71OV239xTF+2yGQBIyHZrs974FlWUpSwexutHxECda
+	 kEbivq8EnVDUA==
+Date: Sun, 25 Oct 2026 22:59:05 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Arun Menon <armenon@redhat.com>
 Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
 	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH v4 2/6] tpm_crb: Split start method into a separate header
-Message-ID: <at5s7esFgxkTF8u6@kernel.org>
+Subject: Re: [PATCH v4 5/6] tpm: Increase TPM_BUFSIZE to 8kB for chunking
+ support
+Message-ID: <at5tmTYX7ZjO_Q2m@kernel.org>
 References: <20261025201859.221991-1-armenon@redhat.com>
- <20261025201859.221991-3-armenon@redhat.com>
+ <20261025201859.221991-6-armenon@redhat.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -59,15 +60,41 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261025201859.221991-3-armenon@redhat.com>
+In-Reply-To: <20261025201859.221991-6-armenon@redhat.com>
 
-On Mon, Oct 26, 2026 at 01:48:54AM +0530, Arun Menon wrote:
-> -	/* The reason for the extra quirk is that the PTT in 4th Gen Core CPUs
-> -	 * report only ACPI start but in practice seems to require both
-> -	 * CRB start, hence invoking CRB start method if hid == MSFT0101.
-> -	 */
+On Mon, Oct 26, 2026 at 01:48:57AM +0530, Arun Menon wrote:
+> From: Arun Menon <armenon@redhat.com>
+> 
+> The size of the command is checked against TPM_BUFSIZE early on before
+> even sending it to the backend. We therefore need to increase the
+> TPM_BUFSIZE to allow support for larger commands.
+> 
+> For now, 8KB seems sufficient for ML-KEM and ML-DSA algorithms and it is
+> also order-1 safe.
+> 
+> Signed-off-by: Arun Menon <armenon@redhat.com>
 
-OK, it came from here and is probably my comment. Still, it should be
-put to more appropriate format.
+In what timeline? Or is it out of spectrum timeline?
+
+> ---
+>  include/linux/tpm_command.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/tpm_command.h b/include/linux/tpm_command.h
+> index fc446a1282e2..4ad11068b090 100644
+> --- a/include/linux/tpm_command.h
+> +++ b/include/linux/tpm_command.h
+> @@ -434,7 +434,7 @@ struct tpm2_context {
+>   */
+>  
+>  #define TPM_DIGEST_SIZE		20	/* Max TPM v1.2 PCR size */
+> -#define TPM_BUFSIZE		4096
+> +#define TPM_BUFSIZE		8192
+>  
+>  /*
+>   * SHA-512 is, as of today, the largest digest in the TCG algorithm repository.
+> -- 
+> 2.54.0
+> 
 
 Br, Jarkko
