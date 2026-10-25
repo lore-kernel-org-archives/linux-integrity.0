@@ -1,102 +1,102 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792959561;
-	b=B4nU8XykTEqRTLyL7vLVeQzn6pN3GEUrDgSiE4LUx1FJ159BxDODgc7ACz4MoSHlEnH4
-	 6hs88CE2XoFSx1jRjvCYbiwnM5PjSm+NHnN8fRfzKstMXQ6geGeltHWWqUlo8Ya2SuJN/
-	 dTbqIBue9IOXIiCikcjqlQhRsQqgMDP88MC28C0EyCNXFczem5BTfbh/1RHVL13+FeF0H
-	 WgCxCiMDwXB++tVmBQvDVUqezcwLdKoxh8PMUTPnGxL/PgMkeYxZYQXPgRUU2FuzVKAYy
-	 Uhzopn+4Ln4tXYDKIoXKX2qcJRqdBCefev8x9mBCOgv36Bn1b+YXUF/9V56mX7XNDMw==
+	t=1792959563;
+	b=kmW2Sz2lcTrT4faESCs3gv35Wmn4frjkuheBakN8llGqoIQzkQBmsDJe71qvVbpRgElz
+	 9C9F/rvm69n+q7zccW+L5G633m6k1ggULprbcX4DXHvKn6YNL8UUM9aCBUlN09S2m6+KD
+	 YMhIivv2Tvueha/bItxvriEqpA9RV57zT/LaEI2pOWBtGsG83uNaSQaewbcFPcEyQ1ovU
+	 FJvDNgmCZKFd7j67gGmUxLXGpD80KpMC55byxseVydRWD4yTiS5SyOiXWwpSLsgLeNLqD
+	 lCADWRMqZRkKyXx2QKKYB3kB7kYPHJDJJF3Cf42Y8sR6JIgsyZ8e/f+5rsp83R2Hp/w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792959561;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792959563;
 	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
 	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 X-Received:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=CDCto1XEIuD8+bFpZYgUHlrlM57aJmVNdz64GvF6tOs=;
-	b=UiufWU+wYWvQErkOb6zQztf5fwIOgbMJIraLR0j1fou5IxdZmD9rXB4jnjHZJ4k/d+lR
-	 //sg0JSXz+8JVKjhRNM35n8fTD8Fyx9d9rA4qDiXfq4giCwCkFpPeFdo8Wby5MuUqfJ8z
-	 IZB9tldinZ+bxfiOlaWluKXa+hBKJRhp+KznMQwEklXx5KC86vS+Jyoe1ulrj44JsS8aV
-	 4azjECfCrBaxnjB16+GjqPBvnswmaHsSlDp0nDCr4RcF7Mct1xGlz/LjCoqKEG5CNBZar
-	 ma3/KmOaji6yfsqO6OLTfinPK4bzEixYKXQQMIBoLidt318sifT/Co+ARXq6z5mnfpw==
+	bh=ZVwblgn8BYaO2Yir+1yQyjgwaD83vNJgvPl88UMx6rY=;
+	b=3xI0qaJtx387cFSO+gfzI50p7uim7B5CDNFnR9U3PFQwVksTYbLj3JphVX6NC9qR6Asm
+	 gnOdIFayE4l0Xi7LLH3q2ap7pySRoJVdktFo74zB9r9Jz2X0j7wvTALlYX60mx8Q18Gw4
+	 X4wLwUkEyipSjuk3aH5iYmIgsjHUacWg6b4lKr21t1AsYRPzIdwAMckV+hsU0oMDWUbtb
+	 8WkS6aS26lRPduhQhS8K28ojfvp7sO6q3KPxcK+vEC63bkV/65wAboRKvDMyO+ncETjgb
+	 CzadboccSEdJXwINTKMhNrKYLIfcgZ4DIKGCt+CUOMVBEqKKLTA5yqzdMD8IAnvWHrw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=redhat.com;
 	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=IUKEZdcE;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=AHMIsp0k;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=SJd77E3n;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=jlwOd8Xn;
 	arc=none smtp.remote-ip=170.10.133.124
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C8A606A31B
-	for <linux-integrity@vger.kernel.org>; Sun, 25 Oct 2026 20:19:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A0C8A606A31B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D129E606A328
+	for <linux-integrity@vger.kernel.org>; Sun, 25 Oct 2026 20:19:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D129E606A328
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=IUKEZdcE;
-	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=AHMIsp0k
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=SJd77E3n;
+	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=jlwOd8Xn
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1792959559;
+	s=mimecast20190719; t=1792959562;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CDCto1XEIuD8+bFpZYgUHlrlM57aJmVNdz64GvF6tOs=;
-	b=IUKEZdcEHvZRc6wMK9lK9Dl6czKa2d1RHiMARgqwWycTWdWeOGV5RAHhV311+vudIPBN1g
-	coSiZx2e2jBE+bZQdBWqZbBcUz8eQAefmsTnRm1bT4nwpRgM2KecTgunfvYNQeaycWBvzC
-	U7bto9R0lvSjXNe0vCkLUR22vU6aGSI=
-Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com
- [74.125.82.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ZVwblgn8BYaO2Yir+1yQyjgwaD83vNJgvPl88UMx6rY=;
+	b=SJd77E3n7NngTgRCIXfrgyW97B/uaLwthf782qZ+ndmoVJ1ux2gHdV/cuP+VmBK86Jw0JC
+	BB/17CHqALBPJ+xznWjDAREXqagD+sJQFf9aftJy8UZX3VAp1eyXudZTYEZTVXllHkWEUw
+	jPFjIjNGojdvAIUze93quUIQD//8O74=
+Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com
+ [74.125.82.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-530-cLYzObtHO5KoNUn_Xi-uwA-1; Sun, 25 Oct 2026 16:19:18 -0400
-X-MC-Unique: cLYzObtHO5KoNUn_Xi-uwA-1
-X-Mimecast-MFC-AGG-ID: cLYzObtHO5KoNUn_Xi-uwA_1792959557
-Received: by mail-dl1-f69.google.com with SMTP id a92af1059eb24-169846a19aaso3162115c88.0
-        for <linux-integrity@vger.kernel.org>; Sun, 25 Oct 2026 13:19:18 -0700 (PDT)
+ us-mta-326-xraVU1xJMRy8aZ37ItPhQQ-1; Sun, 25 Oct 2026 16:19:20 -0400
+X-MC-Unique: xraVU1xJMRy8aZ37ItPhQQ-1
+X-Mimecast-MFC-AGG-ID: xraVU1xJMRy8aZ37ItPhQQ_1792959559
+Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-36637676140so4075550eec.0
+        for <linux-integrity@vger.kernel.org>; Sun, 25 Oct 2026 13:19:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1792959557; x=1793564357; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1792959559; x=1793564359; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=CDCto1XEIuD8+bFpZYgUHlrlM57aJmVNdz64GvF6tOs=;
-        b=AHMIsp0ksQeXfpGMUFGahZbj8A7HbzH7z0y6o3DmxCHabN++KWh0zmdHRxTdVzCwvP
-         s9NnPskECYzJEyxjXkY9fotvoPBWteZfN2TK1zI8qcQ7yDd3Qnw5jKhKA2nyjXKZDlHz
-         dUnkz3JT5UAJClPTMTLj2RB7h9GcKgR1JSyBw/t+jctoiuNPqhAPuGbRChlDOOUhULZ0
-         INNkIuXelZCz2eqPsSV/1ZssdlviLLqU/XgPFWWTrmotmhDYHNUybwpwVkPQHpaA5CTy
-         moklGoFFkDngyD4K97ZbxdTjL3O+DXRpenlZ9azFY8Y8gTaoFCaWWRTUIxNBeMPqcrYf
-         KFGQ==
+        bh=ZVwblgn8BYaO2Yir+1yQyjgwaD83vNJgvPl88UMx6rY=;
+        b=jlwOd8XnuqKh2GG30zzpHkq+EuKbi/rJtT/yRKaQRrxdUHLwev75bLz6lUhjUnLOE5
+         aeIM0rmZ4UTsCXlfC7bdBnp1IRGILMEQ3K17QTyM+Bg28clk7atVBphLNT557kpS8qfC
+         fwXDUspvymtdmEOKMwfLkE4OKQ/99XfMLNxkkWdSdjGmks2EtO2AMHQ9sIXBCz143+9N
+         5vnPjUg0+8+wrvzIypqx3B+70HvZTl6AUiCHvvDenwJxqPnARQHqbVWJSwTMFq/pQsMG
+         bylnojweWal+Xw67HjQpOheMesAfHoIew8Ze572dPOWoY3D4ZFNoZTFiDElPXffVbu1f
+         e06Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792959557; x=1793564357;
+        d=1e100.net; s=20260707; t=1792959559; x=1793564359;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CDCto1XEIuD8+bFpZYgUHlrlM57aJmVNdz64GvF6tOs=;
-        b=gB/9/O80tuIfm1y2WIvGC95gwOzzqEaLBDA6WHxyDdL9+a2d5HTAWuJ0rbFIHhf30p
-         hLC9uXTz0Z8uQic4mnSLDnxs5rPiBNiiX18hzbRLV6GIoNFqJ7rq8ybXK3FVYV3o7cPL
-         iP1WUwhdzt2/LBHOdkkhm76kWKsXU6iQXn/rIWJ/Ewwl6xPDY29h+jex+JNamKyQPpM+
-         Pn7fwEvBwq8PTQdbalzjN/W8gyhlOcQwkxhVxConzuB/5/6xdiwzRqKxJesfJzNnDgt6
-         FUDWPsxcGV1Xp5DBpJRM3FHWg4QhAJcJ+RP7XerNM/GPdrWJjZ7WB/59jaQd9w4g8FFT
-         ETDw==
-X-Forwarded-Encrypted: i=1; AKwUvBwoLfUNbtxp1gMWeD8Vtlrwow9mk7UnRukmmSK47kXrVfCldqlycP0mkiAyZpfvB1N7bzZ72GOlHv+zeRtcg0c=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKhJK+43j8RUr2v9AHo++Yf0hz3YBdggujs49JEI1noaOkGC76i
-	M2DzgZqTVm4z7HWdiwciIK47iNaQBoG2F4KBye4IfNkrPrpFWU3tnLbsoSy500lEJO4FpxzrNom
-	U3ysAVKN7PJ/yJlPyAKCXLRiV9k7axXf4/SuaKb1o2g/CSpUSTc7/ES500eRuljS7cv+m/g==
-X-Gm-Gg: AYBFou16gG2mMiWA4ccMd59ApaFbmxBSrJDWJql1rush9BLnfAsIDV4LC3rnQ3YJ1Je
-	rf9QUvxiu3yJA24scMIjexf+kR4oAdIJCrxaLvyPEYzO9/UmOydkfch1b8MTqd/e6kf8AZGHmYK
-	3ndcA7D1jYxWpmPpnQwaSfpTk3yyXX+3orbyKwi69qF7VGUNJp8jBmLzbqLbV27rxkLZt6q2vdl
-	Vi5yjH9IJQd97vHee/pnvitAAc6o0XagcO1hITbmqu5TObkFmxIiJ786oR5Qt1er3QBe9Cp/H3p
-	SiBP4yuavMev3BtaeF7Q8V8qQ6bOjfEWGwXxE9t1Y2tMeHMz1h7knYkXcmdiITnJ2dyIJvoBabP
-	RCGKfUxU0+b5cyyjVfVOtu8QpJhPMoz6aJZ7iWHpQ
-X-Received: by 2002:a05:701b:42c5:20b0:143:4450:e1e6 with SMTP id a92af1059eb24-19935fcae7cmr7287994c88.35.1792959557043;
-        Sun, 25 Oct 2026 13:19:17 -0700 (PDT)
-X-Received: by 2002:a05:701b:42c5:20b0:143:4450:e1e6 with SMTP id a92af1059eb24-19935fcae7cmr7287925c88.35.1792959555500;
-        Sun, 25 Oct 2026 13:19:15 -0700 (PDT)
+        bh=ZVwblgn8BYaO2Yir+1yQyjgwaD83vNJgvPl88UMx6rY=;
+        b=ysD1CoRNMOxGvts4rfdK6PkaPpDsX4eN8Z5DrTQ05L4rD4CDnM6FFNt0/4LMe8QGOg
+         SEf9o3rr4wenQxRfri1ySMAhM/6jCA42ttCoNpQdaN1v+uzLgJnv3DXV1e1AQCMeWtnM
+         vVs4Ks1EoGEvuG+zLAlYBd6HXxpCTzkQwu1px4CIPkJiMRYMSqOtu6RZdJdXVcb2hX+5
+         ao5Tv9DzmhMK9xQrgqJPt4E/AnL5pzhxgOb9K9m0DPnk2acO2PzViHyWeraaeMqH9HL/
+         LvGvYJYdthCT+hTmHI17mN/0nId82YNwCHCYtd2AFySS+zbz0makfgsXm7TxkJCDvQGP
+         EiEQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz1RVrlOWwG87bebr5KJuFq3H7EILqhEv2EFKtoKafpi99gpe3HYXVkvNQRtWzBjjcQazqMFfQFVHGGRUIDujY=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLDR5+dMc9tSeambhdkA3eMWVvnl96UHtx+2E/w/rKU6Uk+rprn
+	m1WQC1WzmV50iJKTH7lVYrphRMdU8WMj6RzEs56PrHKQbmwntj7tIkrIIc1mCFukr4OMedry5aq
+	Gnw7TAJ95q/FV7Xx6K/yxbqu1DbLb2JJioU7Y9XJvdNCaqDNyDDazC4hRVpBzr7epZwLgbA==
+X-Gm-Gg: AYBFou3nzP4MT4b3AUzTUY29dZ4nnkwOmLtdDPSQMjA4cBUW+msEBEh38KX7oAroRBl
+	QXKsU9s6GYemzZ17jXpV7TKnL/Jz7X0n6SlNSntM31P/CsJXDjVfqRUX+L73YZlaciqF8/qDoi9
+	DKM9WAL2MXIXJzbv200CHhqOlSSNC4lxNSb7RhzKZBLdE1QbWiE8U6EVJxom/9EKSfMDsSQtGMP
+	vYLXAlnB1SgubitAUysN3pghLYQf+HJLOocWpKgl8gDbVf03uFZR7fOGZJdna+Nl5a7jBcEGQIB
+	8dxXXqcGc2hs8uCl1UNXRCONS3amIcNi+3weTLWwmmJzhR7L1Gw7gk3GEbVpy56JT9TuW03XPzK
+	+VBhB1xu+L0sHBv24Nq7ocZGLt4BJIVq7LRSrH9KM
+X-Received: by 2002:a05:7022:b057:20b0:19a:ace1:793b with SMTP id a92af1059eb24-19aace17b02mr6777430c88.18.1792959559182;
+        Sun, 25 Oct 2026 13:19:19 -0700 (PDT)
+X-Received: by 2002:a05:7022:b057:20b0:19a:ace1:793b with SMTP id a92af1059eb24-19aace17b02mr6777387c88.18.1792959558551;
+        Sun, 25 Oct 2026 13:19:18 -0700 (PDT)
 Received: from fedora.armenon-thinkpadp16vgen1.bengluru.csb ([49.47.195.13])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-19894d59f90sm17656169c88.3.2026.10.25.13.19.12
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-19894d59f90sm17656169c88.3.2026.10.25.13.19.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2026 13:19:14 -0700 (PDT)
+        Sun, 25 Oct 2026 13:19:18 -0700 (PDT)
 From: Arun Menon <armenon@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -104,9 +104,9 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
 	Peter Huewe <peterhuewe@gmx.de>,
 	Jason Gunthorpe <jgg@ziepe.ca>,
 	Arun Menon <armenon@redhat.com>
-Subject: [PATCH v4 3/6] tpm_crb: Add start_cmd parameter to tpm_crb_start wrapper
-Date: Mon, 26 Oct 2026 01:48:55 +0530
-Message-ID: <20261025201859.221991-4-armenon@redhat.com>
+Subject: [PATCH v4 4/6] tpm: tis_i2c: Use local 4KB buffer to limit memory usage
+Date: Mon, 26 Oct 2026 01:48:56 +0530
+Message-ID: <20261025201859.221991-5-armenon@redhat.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261025201859.221991-1-armenon@redhat.com>
 References: <20261025201859.221991-1-armenon@redhat.com>
@@ -123,61 +123,52 @@ Content-Transfer-Encoding: 8bit
 
 From: Arun Menon <armenon@redhat.com>
 
-The current implementation of tpm_crb_start() is limited to triggering
-the CRB_START_INVOKE bit. To support command and response chunking, the
-driver must be able to send other control bits, like
-CRB_START_NEXT_CHUNK, using the same platform-specific paths.
+The global increase of TPM_BUFSIZE to 8KB is necessary to support
+Post-Quantum Cryptography (PQC) payloads. However, applying this increase
+to the tpm_tis_i2c driver is unnecessary and wasteful due to physical
+transport limitations as pointed out in [1]
 
-This commit adds the start_cmd parameter to tpm_crb_start() so the
-caller can specify which command to send.
+This commit introduces a local buffer limit that is used in the i2c
+driver.
+
+[1] https://sashiko.dev/#/patchset/20260324071803.324774-1-armenon%40redhat.com?patch=8319
 
 Signed-off-by: Arun Menon <armenon@redhat.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- drivers/char/tpm/tpm_crb.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/char/tpm/tpm_tis_i2c.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 9a2f512b4ae3..31f530744e90 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -446,7 +446,7 @@ static int tpm_crb_smc_start(struct device *dev, unsigned long func_id)
- }
- #endif
+diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
+index cde0b093ed58..4667eef15ff1 100644
+--- a/drivers/char/tpm/tpm_tis_i2c.c
++++ b/drivers/char/tpm/tpm_tis_i2c.c
+@@ -55,6 +55,8 @@
+ #define TPM_INTF_CAPABILITY_ZERO 0x0FFFF000
+ #define TPM_I2C_INTERFACE_CAPABILITY_ZERO 0x80000000
  
--static int tpm_crb_start(struct tpm_chip *chip)
-+static int tpm_crb_start(struct tpm_chip *chip, u32 start_cmd)
- {
- 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
- 	int rc = 0;
-@@ -457,16 +457,16 @@ static int tpm_crb_start(struct tpm_chip *chip)
- 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER ||
- 	    priv->sm == ACPI_TPM2_MEMORY_MAPPED ||
- 	    !strcmp(priv->hid, "MSFT0101"))
--		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
- 	if (priv->sm == ACPI_TPM2_START_METHOD ||
- 	    priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD)
- 		rc = crb_do_acpi_start(chip);
- 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC) {
--		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
- 		rc = tpm_crb_smc_start(&chip->dev, priv->smc_func_id);
- 	}
- 	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
--		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
- 		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, chip->locality);
- 	}
- 	return rc;
-@@ -497,7 +497,7 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz, size_t len)
- 	/* Make sure that cmd is populated before issuing start. */
- 	wmb();
++#define TPM_I2C_BUFSIZE 4096
++
+ struct tpm_tis_i2c_phy {
+ 	struct tpm_tis_data priv;
+ 	struct i2c_client *i2c_client;
+@@ -233,7 +235,7 @@ static int tpm_tis_i2c_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+ 	int ret;
+ 	u16 wrote = 0;
  
--	rc = tpm_crb_start(chip);
-+	rc = tpm_crb_start(chip, CRB_START_INVOKE);
- 	if (rc)
- 		return rc;
+-	if (len > TPM_BUFSIZE - 1)
++	if (len > TPM_I2C_BUFSIZE - 1)
+ 		return -EIO;
+ 
+ 	phy->io_buf[0] = reg;
+@@ -341,7 +343,7 @@ static int tpm_tis_i2c_probe(struct i2c_client *dev)
+ 	if (!phy)
+ 		return -ENOMEM;
+ 
+-	phy->io_buf = devm_kzalloc(&dev->dev, TPM_BUFSIZE, GFP_KERNEL);
++	phy->io_buf = devm_kzalloc(&dev->dev, TPM_I2C_BUFSIZE, GFP_KERNEL);
+ 	if (!phy->io_buf)
+ 		return -ENOMEM;
  
 -- 
 2.54.0
