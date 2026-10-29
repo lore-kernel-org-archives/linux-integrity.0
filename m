@@ -1,103 +1,103 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793297780;
-	b=miGIEgShs1WRgH/UsYEq1AGVOWf1RGmgRxwV5ekkAouK+RkaSfqKN71qJfZ8EFCGhWeg
-	 mQbxh/9Baxoq0ABHnvjXagtBOpbUPYK7f9AXPVRyIFDKNIdDcFg7rVDN9cp8F+t9+/b5w
-	 tDIeqdbdEfTXU1amlKCj21HzY015kRabzmiDSN5YvBDA8JveRgIFrhhREGPOq9JRxgaNy
-	 aBVVzsFZGYjUj1T59OTx5d1dnxLSu9+U2i0zWD1v++9MYvzEkLzWA4vFEXYI5yH7wTpbv
-	 i2qpA9IdN/DhpF2q48na3uraE+LNPJYs2iWGnfhmfnQK9CmwuGoYh3Nd+vQyhsuMb4w==
+	t=1793297787;
+	b=pejrr+zOkTfEX2spkjjtB5p9De5fTS6SDgmKrOR0CKxSQ8TKg+yoeWiGTwJinCbEHwq+
+	 +qFKC6ibnXZ6ZhAxxpdZ2LzBHC4UAtkaBDTkHSjZEQ0yskZcJivl/BG1kcUnS4NESr8Qt
+	 StKNC7bg/o6wS7ihx4eY7lSPPG6DVrmRpoYXHkOfy7D00HgYOPURpwxEw6OtX2sEFnCCa
+	 iV5/9iAksH9xd4TxJHy3TqdrqP89UlpbceH7/QaT+vlhQbXJZO6tTFKmG2Ov0cOmD392s
+	 MuaX5jaBr1eSQYFxpFFReDWKHFlkX7PjnlKUmIy0170tz8GQwgGPidiQ/I5FbVWCp5w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793297780;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793297787;
 	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
 	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 X-Received:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=2tS3eXI+GYtBaGafTHoSTalVWek/DeALoJUQz18kIds=;
-	b=KAkLu0baDB2kzhQTriE2If7AnG4+iSpWUlAL3/v5BzmaoluFqsddyX3nYq/TUjQo5dRQ
-	 T5aHEVK7Swe50TDX1EyHubSjvOAKWMkLNAAK4Sn1ufdY3/Z0L9jv9Jw4a2579388KBBwD
-	 pl+cQj1xiq/AK2qCADqwMaRL2Ca1ttM2Qqsqpo2Vd3kyzt5r6T1Sy6xJhvJd5vx5L3XqJ
-	 141fHWcLF4CQXDpj4zjbbvpKt54pujpOFhkiO2102+veKe05lE0+N5M0rmdg+ebYLz6V5
-	 XomuT1vmruUPdxtcnJJ5PAkTBm5o26ol6HNjwTbiKC6lHmQIr9ThpsZNB5Q8f7JQG2w==
+	bh=+i6F46/tXcylsBNxFPdwtmDz3b/c8K1JJTOkI+5K2yM=;
+	b=ZwkMBFT/LU+x03nPxaGC+VX0EVdxGs+Z07yvmjGlPOgXMNyJLLFBrWRf3ABtdxl6LUQA
+	 lRyLsGFVWNsXe9vjpAXsF+bCQnx0CEq8oyndPs+0KMSkjbb6X2dbdsJo5YdHmX8xvL8qT
+	 s5QtFW8g3SnPFU6sSVGJ8JiVdOmY6/cnrBHI6LkAgVBQF2mWmNX3MSbHhpZy4yrXs1pu6
+	 y3JuKIFYi6KirE6pJFOKMwyOxLj9wkgsghwJ2UM7jI+1ioj2LSF5DPWcy80DV9Zr1tPTG
+	 lfdhNnw4lNy7TnCaleQZtUxTG80kOIhuz5izoZuyBwu0ZQpYcojbJUUTzQwtWrsQSiw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=redhat.com;
 	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=RodfbLdd;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=gO6svSDM;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TixSZE9w;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=XHcpRs4v;
 	arc=none smtp.remote-ip=170.10.133.124
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D342606A324
-	for <linux-integrity@vger.kernel.org>; Thu, 29 Oct 2026 18:16:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6D342606A324
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC904606A33E
+	for <linux-integrity@vger.kernel.org>; Thu, 29 Oct 2026 18:16:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DC904606A33E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=RodfbLdd;
-	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=gO6svSDM
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TixSZE9w;
+	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=XHcpRs4v
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1793297778;
+	s=mimecast20190719; t=1793297785;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2tS3eXI+GYtBaGafTHoSTalVWek/DeALoJUQz18kIds=;
-	b=RodfbLddFfRjWJht+X1PgqQ7OLrYg/N4iYLxLkvL9+m+vdeBkIdrhEgK8Qv/k0aULztwM6
-	eJVK9fsDmkpxn6y0I3UI7GGcPXqHudmi85ykbD3t4vp9ostMUa1odQYFsYzjd4i7E24WLs
-	nax1fVdFL/8eVE7P6s3denyGajuYc/I=
-Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com
- [74.125.82.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=+i6F46/tXcylsBNxFPdwtmDz3b/c8K1JJTOkI+5K2yM=;
+	b=TixSZE9whhYEqHcDYsFX2pBfJDD86ZMFtfLK9kqL6jvx62FB0LYxb5E2eue5OD5uzjiCbo
+	XgY20YBdRrLLcP6nCkrFYh0g0E+RclUfbeuraDnv8DA+t+DqpKSibnFD3XiFyfBXMrNNDA
+	tjNAc7pISOkQQsWwnpv80i/lNPYUkcg=
+Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com
+ [74.125.82.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-364-qlcZAh9FO6uv1wGy8yBoHw-1; Thu, 29 Oct 2026 14:16:11 -0400
-X-MC-Unique: qlcZAh9FO6uv1wGy8yBoHw-1
-X-Mimecast-MFC-AGG-ID: qlcZAh9FO6uv1wGy8yBoHw_1793297770
-Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-3692c5b061bso6556548eec.1
-        for <linux-integrity@vger.kernel.org>; Thu, 29 Oct 2026 11:16:10 -0700 (PDT)
+ us-mta-458-lyVaBMUiMLCTtFyXiHHHKQ-1; Thu, 29 Oct 2026 14:16:17 -0400
+X-MC-Unique: lyVaBMUiMLCTtFyXiHHHKQ-1
+X-Mimecast-MFC-AGG-ID: lyVaBMUiMLCTtFyXiHHHKQ_1793297776
+Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-3698bd5392cso887433eec.1
+        for <linux-integrity@vger.kernel.org>; Thu, 29 Oct 2026 11:16:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1793297770; x=1793902570; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1793297776; x=1793902576; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=2tS3eXI+GYtBaGafTHoSTalVWek/DeALoJUQz18kIds=;
-        b=gO6svSDMstJKXH79YN3eBGIaWp1QpExra+J3d5VqdakTzUhZZRgDJ4bNjiKtpLUDrZ
-         s2BtVDldJSCp4Q6OjBJUrtW/7xzoOuemLLXUh/ekswHVUPEmazLyjv323WCqXuiQ6Kwl
-         1qySxlZ5RvHGAjidCv0/O00sbV+i6wyMkqgeNXLBE1jxnIuG50cFbogSNuISElFmbmmg
-         hr+hcFJ0M/c3wcR4vZzVyQQenhalo7aqN0RLGnGq3zRkb6WeBOLYwWl1zTDp4M+wloyd
-         N1RiNeIM/mCiPEjNnp+NUysRixZ4K8FVBxQRF13UBbPycyWi0O74VucLBtuET5OQWDfl
-         cxUQ==
+        bh=+i6F46/tXcylsBNxFPdwtmDz3b/c8K1JJTOkI+5K2yM=;
+        b=XHcpRs4v9e6IKkcg6yPQuamvVd/wXUkndgLdANzw9E3bm2a6nd6YIhzQLmpTlFh1zP
+         rTdXmw9Vkhu4CTiKtv67rrh9VezQGgD1J9KagbhfsrWrDKnERbqlugSObI8I1xIgA/IJ
+         0x5Lzk3H4zSheH39PE+eVupp/XmJT6kjey10ln9NKUpA1WQxIhbjyTDRJvBOyMxf4MPK
+         AxmwgFF30WVoICjLJBsRNXin9e3+buNAZl/HPVGeYUzxvGfQRxj2go52C+H/bjVVLxFf
+         0hsher/8gzcxCuzdTUFlxg4c4tD7W7OWRa8ehXGl8ddAIEki7frvTmiaFQZLorBImmDs
+         hS8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793297770; x=1793902570;
+        d=1e100.net; s=20260707; t=1793297776; x=1793902576;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=2tS3eXI+GYtBaGafTHoSTalVWek/DeALoJUQz18kIds=;
-        b=2sMqzEd+/xwzwhOTPLm6Ji9LG1sMwRAvFSCc9iixI/J44raLeBcEEYy7p4RI6+IoLC
-         jJe9sCwXg7qIfUgA5RSAsXmNKAgzydqqhZ+p2+VRLH9/FsXeeUDnaGnE49yRjWYkUs4o
-         LxqVZQPmSvty/f37YI3hDCJW7hrS5JhUJyp6riam0QkIK3CG0VIgWCX/gD+y/4kGP6Ia
-         iyNVR5MOtgDC9Cl8aI0a+LsiTI8a016mWyhn73fhxQM6HKJ0bINxfj0ggSZXaZEqR2/c
-         3nLiQ6O9jHNqenBk0FCp8QCsc4BN3H3ihFBJe2E/6CIOzz+hzBd3Cv9vAV8p0xDI3ow5
-         sDyw==
-X-Forwarded-Encrypted: i=1; AKwUvBwnwSo0ojve5m49TAzp/ghoD4jUBYO+6eDJec09fN3MJKzJHpPGPgRovhLDT5M7A1/fF585n/ggZevMP3oRcDw=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIwc8JuOKwGn+zDG0rgUgPpYVz3+nqI+jtNFdZPeQGE/PsbOzz/
-	8XEE5HPtSS7zet2XLcqfeYlVgn6KSpYkomsjgJq/MhCPwwLDotiQ3utSOghRWCLcWfuVrztc/Ej
-	V2jz19fpEBwVGpGcGNa9+PJFsaZXxEv7wvsAprTrpn5KjfjYrpKH5BvgReZoyZ+MfPq9mww==
-X-Gm-Gg: AYBFou2HUQ7qRLmyaawF3yJxSe57+QTV95F8HQSaXTbckD+r0nYqI+x5gF94Jfmbfxi
-	BHuG8Hk48+amkpLp1ljioHCyEu/XNnid9Iwb+OtGApOEvPD9E0NQaTWVTQbnApgUvjapdupm707
-	JIQxENPhpxNXGQI2ShKJIv+re2TQJ/df8XTnWQMQh5bDVQqARqfOP9aF99Yc9f+TlyZStB97FpV
-	Zndu+NsdxRsHrTrnpVarKYbdGfFa5ycO+5Pr37Pgx9FPyLxviD/LG6Q9jE3vYzPnsiwoLJxr6gG
-	o0jDl30g1k1cM0O3Yvbk4jTaMeyfsq53DaCovFhpiftp3gTD8i0dwVuaAEPlNKwmimlx5KUwnVE
-	+jYAPjSBpGxhvVocHRHyRjuM8pDfa+0MaEavwy3Xtx2590xD/4WaA/g3ZaRE6b7RsCqlzUVOucR
-	U7QJiuf6h11W0znw==
-X-Received: by 2002:a05:693c:6092:b0:369:f3b8:2c54 with SMTP id 5a478bee46e88-36a423f0f70mr215487eec.30.1793297769680;
-        Thu, 29 Oct 2026 11:16:09 -0700 (PDT)
-X-Received: by 2002:a05:693c:6092:b0:369:f3b8:2c54 with SMTP id 5a478bee46e88-36a423f0f70mr215455eec.30.1793297769000;
-        Thu, 29 Oct 2026 11:16:09 -0700 (PDT)
+        bh=+i6F46/tXcylsBNxFPdwtmDz3b/c8K1JJTOkI+5K2yM=;
+        b=KmKgW76Md66NZs3AsYaQ+rJ1Wx8Cm/QQKZHKSiDSY8z0vOut44pR3g2aMY+9uPV4oI
+         o6SsnnfzdPCzRss8aatD8H5KqFODR94wzCu4Nc9l1PFDLHCmyzi9io/bKZLzGMIkNktA
+         DrhzRcsBvSwDEcyB1s5Ek/4so8WyYSznJK17ARVgEzFvKez9YVXUHaWFsTRg7mGeoe7d
+         c2fhTUf2vcZfUpsAIdgm4djKMuMX7+8XT1kY1+zRNGJoRpOsTEhxhu37PUfQgRsVTqRi
+         pDKIKek23buzMJwhgdEiQCNRyWizm8oh7HsGypaOnP909e3irBwF9w8hJj8VChkNWJMc
+         pBTQ==
+X-Forwarded-Encrypted: i=1; AKwUvBykzNL+RK+vk3CUnWVonj6v6zEZUbTkcKZWLYr5UIRJWU9vxdbLtt0lgjScBWDi1RJH1ZGThWYWSSoSF/5lzQk=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJSbniJ1GkDo9vIlLkPJbMEtE10XoU1axMwSG7AL8/c/RnjrZhc
+	GPWUo4denpeieDs928eQnHPz73GBCLuwh5JMhdWBnq3OvE8o3xRofSiAFQJQsPQSQ2Y6BInPIB1
+	4bYyth1V/zuXNpkdgrUOeegTuGETvIN/Im9lwqEQXI+Q4WS0gav1EQHYmm2tvKZqI5MMmtg==
+X-Gm-Gg: AYBFou1llhGqybC0HNAcqO9CAhaawZ2jmZdmCRXd01MzieZHokKcwnqvj7dTbt1NEad
+	19HTg5CiNMd6Bv3FVYkAHD9MJfEp/6VE9ZO0vbgK19EjLVIdTSMPg8amqrmLxMgLWXlT4xJkxvh
+	ImUSHcLxyy+ToAs+mevW8hJfXl6vEbBrArM1o1yg7nQzEbE2CIULCQcnGapHsiTRxHRixJQx0S7
+	3UkRC3aofTiIdGgFubALMqW4PBDyiPYRr4CIredtrOZs1QDEHyb/9Hz/Lh35O3pV/DsZJ4+sAqx
+	5iVGgIPPVjOcQ38maOhXOI/X3KII361Iwjd8WAsuxeiSfKExLJh3sESV3KiDe7iEOIUPBfeSAHs
+	gyXwUsxPZ6GhimON3c7+3RD2LJHwPntgwY4ro2iHlkkZikpHgSPKECBPjpEomF9/9hXtO4voQMJ
+	NGTqW7TcOkUnBpZA==
+X-Received: by 2002:a05:7301:301c:b0:367:a092:3c73 with SMTP id 5a478bee46e88-36a3002ed72mr4310886eec.12.1793297775974;
+        Thu, 29 Oct 2026 11:16:15 -0700 (PDT)
+X-Received: by 2002:a05:7301:301c:b0:367:a092:3c73 with SMTP id 5a478bee46e88-36a3002ed72mr4310858eec.12.1793297775404;
+        Thu, 29 Oct 2026 11:16:15 -0700 (PDT)
 Received: from fedora.armenon-thinkpadp16vgen1.bengluru.csb ([49.47.195.13])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a428af4e6sm259163eec.4.2026.10.29.11.16.06
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a428af4e6sm259163eec.4.2026.10.29.11.16.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 11:16:08 -0700 (PDT)
+        Thu, 29 Oct 2026 11:16:14 -0700 (PDT)
 From: Arun Menon <armenon@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -105,9 +105,9 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
 	Peter Huewe <peterhuewe@gmx.de>,
 	linux-integrity@vger.kernel.org,
 	Arun Menon <armenon@redhat.com>
-Subject: [PATCH v5 3/7] tpm_crb: Add start_cmd parameter to tpm_crb_start wrapper
-Date: Thu, 29 Oct 2026 23:45:37 +0530
-Message-ID: <20261029181541.99505-4-armenon@redhat.com>
+Subject: [PATCH v5 5/7] tpm: Increase TPM_BUFSIZE to 8KB for chunking support
+Date: Thu, 29 Oct 2026 23:45:39 +0530
+Message-ID: <20261029181541.99505-6-armenon@redhat.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261029181541.99505-1-armenon@redhat.com>
 References: <20261029181541.99505-1-armenon@redhat.com>
@@ -124,62 +124,48 @@ Content-Transfer-Encoding: 8bit
 
 From: Arun Menon <armenon@redhat.com>
 
-The current implementation of tpm_crb_start() is limited to triggering
-the CRB_START_INVOKE bit. To support command and response chunking, the
-driver must be able to send other control bits, like
-CRB_START_NEXT_CHUNK, using the same platform-specific paths.
+TPM_BUFSIZE limits the TPM2 command the kernel builds before handing
+it to a chip driver's send() callback. TPM 2.0 Library Part 3:
+Commands v185 adds ML-DSA key objects and the ML-KEM
+TPM2_Encapsulate()/TPM2_Decapsulate() commands (sections 14.10,
+14.11) [1]. NIST FIPS 204, Table 2, gives the largest ML-DSA
+parameter set, ML-DSA-87, a 4896-byte private key and a 2592-byte
+public key [2].
+Loading such a key pair with TPM2_Load, plus header, handle and session,
+comes to roughly 7.7KB - more than the current 4096-byte TPM_BUFSIZE.
 
-This commit adds the start_cmd parameter to tpm_crb_start() so the
-caller can specify which command to send.
+Raise TPM_BUFSIZE to 8192 bytes. It covers this command with
+headroom, and keeps every kzalloc(TPM_BUFSIZE, ...) call in the TPM
+stack at an order-1 page allocation rather than a higher order.
+
+This matches the largest parameter set defined today. NIST has already
+published PQC families with larger keys and signatures than ML-DSA
+(e.g. FIPS 205/SLH-DSA), so a future algorithm could exceed 8192 bytes.
+CRB chunking, added later in this series, does not change that; it only
+lets an already-built command cross a smaller MMIO window in pieces,
+it does not change how large a command the generic stack can build.
+
+[1] https://medias.cdn.trustedcomputinggroup.org/production/Trusted_Platform_Module_2_0_Library_Part_3_Commands_Version_185_pub_87a5c10230.pdf
+[2] https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf
 
 Signed-off-by: Arun Menon <armenon@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- drivers/char/tpm/tpm_crb.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ include/linux/tpm_command.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 148ef5c487ce..30ca8192d3a8 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -446,7 +446,7 @@ static int tpm_crb_smc_start(struct device *dev, unsigned long func_id)
- }
- #endif
+diff --git a/include/linux/tpm_command.h b/include/linux/tpm_command.h
+index fc446a1282e2..4ad11068b090 100644
+--- a/include/linux/tpm_command.h
++++ b/include/linux/tpm_command.h
+@@ -434,7 +434,7 @@ struct tpm2_context {
+  */
  
--static int tpm_crb_start(struct tpm_chip *chip)
-+static int tpm_crb_start(struct tpm_chip *chip, u32 start_cmd)
- {
- 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
- 	int rc = 0;
-@@ -459,16 +459,16 @@ static int tpm_crb_start(struct tpm_chip *chip)
- 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER ||
- 	    priv->sm == ACPI_TPM2_MEMORY_MAPPED ||
- 	    !strcmp(priv->hid, "MSFT0101"))
--		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
- 	if (priv->sm == ACPI_TPM2_START_METHOD ||
- 	    priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD)
- 		rc = crb_do_acpi_start(chip);
- 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC) {
--		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
- 		rc = tpm_crb_smc_start(&chip->dev, priv->smc_func_id);
- 	}
- 	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
--		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
- 		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, chip->locality);
- 	}
- 	return rc;
-@@ -499,7 +499,7 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz, size_t len)
- 	/* Make sure that cmd is populated before issuing start. */
- 	wmb();
+ #define TPM_DIGEST_SIZE		20	/* Max TPM v1.2 PCR size */
+-#define TPM_BUFSIZE		4096
++#define TPM_BUFSIZE		8192
  
--	rc = tpm_crb_start(chip);
-+	rc = tpm_crb_start(chip, CRB_START_INVOKE);
- 	if (rc)
- 		return rc;
- 
+ /*
+  * SHA-512 is, as of today, the largest digest in the TCG algorithm repository.
 -- 
 2.56.0
 
