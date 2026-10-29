@@ -1,63 +1,142 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.169
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793250311;
-	b=Rsb07ZgVirwtSoVb4rvqvSuOP4BmpiZxZaEAFq2uy9fru/E+ZtdmPGWKTW3ujNt91JP1
-	 PhzwW7t11D+mpXJi6y0xS9MaH4E1/mbfU3gSHUvDJv0laTNuMTag1WIMuDLw5R/itwnfc
-	 cyFyxej6QqlekAefg+Gu62BlZ7BPdjVUXwAu1wDsH8kZT19GWnt5NpJuJk3Yv0BRaoSh5
-	 4ZIuVZT6052ZVio2+rEHw6RJRykigl3K4x7WXjxoAwIapBk2z/POhtOu9DPgklsUWl6nI
-	 lAK3Y9S1DN7vIIOwHrs1pNPUlVj+gUk0xcnFiyGpN48BjnDLtmhhTDJFxKIirLFh0ZA==
+	t=1793264153;
+	b=WySjmX3cMAsuBxq51zrKnSSRN9A+brHAdFYWQF+CLS9jPGqUehbCRX8QsovewpHiFz2e
+	 i7PlaaOp0yyN6UqfEY6ll2GAJXUqcP50rMWOufEM8KWcukWTN+oP4CBeT8z8DiO7xybuX
+	 uRBbzzbpf+aGPRw8Zk3hO61eDnf3J3yxvLWGaXHuBNtcxOm7DYHDO2PVDhFWSPv45+76B
+	 LBIrvZVDMMd35b6PiaR62SIbv4X8LMJXJqCXVjl1uKDP/ljIRdmGwZg+kHucFbTr1GiVB
+	 HGDRY5zkgjjWLgTyXu4HszpO8QBb288subb7WTvo+XPCSKUIwezVSzAp/d6AuT50ykA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793250311;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=fZDwQ6kGiBz8hBwCxjfRm0G3nIJfWu4QxIfmNtwLuik=;
-	b=nzbduXKV0Y6ny36c9e/IbWNz86VG7vNGKijqxoruFDiRf+oNfw7cS1+IBqmv0sp/3xN8
-	 3ehoVWc4lv8MIZwwuvUFXAlgiwAsdkkltDZseTF9NncPpOzSnC3+rqN0T6Oh9WqRp0yUS
-	 NcqnCgLPXt+UblQqzl8exyAPEJYDozunocZa1ZedqbpTlLpOb4xvRkUvRqVU6n1dLet6V
-	 r7jG2BWYlQ/yX0t/FGW7/OV9t6iftWy13IwPq2qCLcjcoeq+LwNTuu+neNqPZPyAbXJt/
-	 ESJw8QvjSSnewioyqtf9pnqtElvzoJWeG2DdG6fEdfVE1eEPMGX3yynN22ZDM7xo/iA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793264153;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=YYDnw0w3VJ1m8RLFL/nZJuly2Onkx72MVUQSXk8vs44=;
+	b=d1IOteza/3DbGv3rhjtxUqBXe4lx8Sfk5Ez1aXVncPlXc09ADQluT5Bu/R9qAlSBMVtX
+	 7FLCuZVLXx4pPkkrlk3PYW8kAEPJUCsF8ThpZChYGv0ZiqhB1zzejoBQdKSPM07UPL67b
+	 PDEsrbAF2trda8574CuS9wn1ouV8soP+xLEKTfPHw1vQIk3bSEk/jptUSC10aVaUzEeOS
+	 p5QUxfJtXwS5Jb2xiSNI84A0H85SbHq+cw9Iwncpee1u0YwS0l7eWs6uQpfdiolF/q+L5
+	 UmVaacmxLN01t0oiLPWPdiDeY7LQSO0QNmmcXK00eD0Ma9Kj0/iwM/lDpWLFESpvBIQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c53v2q9l;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DLptjGD4;
+	arc=none smtp.remote-ip=74.125.82.169
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 82F47606A31A;
-	Thu, 29 Oct 2026 05:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0396606A320
+	for <linux-integrity@vger.kernel.org>; Thu, 29 Oct 2026 08:55:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F0396606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c53v2q9l
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BA87F1F01825;
-	Thu, 29 Oct 2026 05:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793250311;
-	bh=fZDwQ6kGiBz8hBwCxjfRm0G3nIJfWu4QxIfmNtwLuik=;
-	h=From:To:Cc:Subject:Date;
-	b=c53v2q9lhKn/O7SnV03A9TUFaCyJEERfHMbEPI4vquNse/bQxk1ie0xThfDS9X144
-	 atCdkIIDrfsUFwUuRprbe3bhi8nvibAXWhd4oWl6p8BxcrsxedGpH/JPCOhtGKWCfl
-	 SqoN+cJOweCazFHUfPbu4tlzRX+af7pMtyj6Wcl6Yv1P6WMxXzY/0MCX0sUmUY8pIQ
-	 wZK78C3el3XnyM5AmGu/KM1qgWZZimE24C77R6A2coh8tYKKrjS9U73Z7eHRnrIvd0
-	 xAXWvVaI/5qUjzQGQuVwndFTFiEZ2y+Zlc32tm7ee6siq6EVl4GwMvIBmmnIkCiJac
-	 4dnWhMZYDaumg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>,
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DLptjGD4
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-369f33df08eso3510998eec.0
+        for <linux-integrity@vger.kernel.org>; Thu, 29 Oct 2026 01:55:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793264152; x=1793868952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=YYDnw0w3VJ1m8RLFL/nZJuly2Onkx72MVUQSXk8vs44=;
+        b=DLptjGD46znSG6byzVrIUXtEd0wYp2ocot16hHp52y7rmlSFqfhMJlc6i2rtkGMNBC
+         Lgp16RnFrXpaOvusnzJqL0Eh7tb8mrb+2S6ryqC4/zFcjcyLv9hWVwYn3Ct8znpb1mAY
+         so8I8+u8h95CImV2pByyPmF8cmpo1oCNQNz8QowMRx103M7m3wqfPNJaNdCOnyzam9aC
+         s0Ew2+a8RHtNJQMbBZr3Fuyn6iie3/gbNdgGgCe1hA1aD+U7IEXr99AgA0mAo/8Z543B
+         gQLUedJ85qZ4m2DMMLVn/f/dF2yt6LCZfyLT6jtXnVAoOe+nA0P/YgtA+MtL7Neibt5k
+         lprw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793264152; x=1793868952;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=YYDnw0w3VJ1m8RLFL/nZJuly2Onkx72MVUQSXk8vs44=;
+        b=v0FNtcvVb9Xcuc50WwfRNMfK9JW3Y7qr/O/Ur5v7ARZ+f7RzNEF2gbsLTeCyybSjoO
+         OIqvngopVP9luwPtuaLMiI6OpB7QpDDV+a6qXQHBa0bzvplVmLhp7BJY09uVPOuoGRon
+         fF4kbVha3B/B9wLLF3kkvqPC/5Oi0IMSU1vDkHCG3W/4h6HMKyf0Yi8OIgZtDzJ+Fsu3
+         48BvGYl3dNebMpZ1Tys1Qyzjso4+lMh5QfZaQ9teNroy0yX/7dfext0d7gWvUCdpubIX
+         KrlDX4Dsqp+xGgzu4webJoefteWgVswY+qG5kyDRy2kgFUk6+MaMJBMQR+fUQ4HKdLTJ
+         FRpQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxI7kUFtmqeCDtuqQ/8rCqLE6SJ7xmZDGi/roXZEYlr/Dl2IUAUuu0Me7g0Fq56hl3C0Oi3xQ9nlhs9CgEeN3s=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKPpoAYNSAoUyXh6wZzMjFD9qobN4cIlk4DdSKYqBowR/lUWlvV
+	fbAn4LuQ9KyqZtFPpbkrc3kO1qzqe+z/Pt6dp1aW6rpo/o+AFFyG2jU=
+X-Gm-Gg: AYBFou1yIGH8fuwYhK3/zCIk4t5nU8VDdRb1KIlzcHtcxw1yfN6s0v9grMbCkBuLmpY
+	OCGrSdMdF0cBe6A7fuVL8Tz67/PiLQY5E9Xt6dWX5Z+l8EvxV5XJse4ZfuzYMlurzYTyIm2Td9q
+	U6fn7z//os0g4ROYhHp0ntl/XbZ5YMq09ZDUBTjmgvgfVvWmxx+P4Nnjvvdbdvv8R4kx++/Qk+O
+	VGZ/uwpKQ28Ed1K81NdRDYkKTKyq5xr5iFZiNdPCygg8bGgCjO3jIU83xDVoFL/ZPZHExs8qnNL
+	+XupEYqa3TI7QXaThpGcehRWfZub9brM8myLL2qQsyLavp7N0S0+tjBjcP+Z4TIkZqWntmgX9Af
+	NCyCa1NZcz51ZhEtIVsBXzo2YWkmtIiidnikJwb5sWkNEsmHz5TB5y9CyMbwK99IHEYBzqkZGYh
+	GCZWNMy0dlVEPf/e3hTUhzA1tZYP4GZARPFFJl8e/8QJqVUFJkO0/qeYE1kU4oSV/UAyP8uLB6T
+	KTabx6A2gACILFPcBuTsQAH8Lzmr9NST5I18tm1lqkGXdQvVE/YHhFKaT02TU6s/CmUtxEEC4nA
+	qT7H/VUcMiH6VLmOI1zMRTR/JYWpjurVJxKDsC+9h71jCvWbWRZVZA+poxMEW6BMCicDQPhBEjc
+	CKtAY33k=
+X-Received: by 2002:a05:7301:7c12:b0:35c:ba31:6fef with SMTP id 5a478bee46e88-36a2016c61dmr10086277eec.36.1793264151721;
+        Thu, 29 Oct 2026 01:55:51 -0700 (PDT)
+Received: from at-Standard-PC-Q35-ICH9-2009 ([27.60.20.232])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a23641e78sm16497937eec.0.2026.10.29.01.55.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Oct 2026 01:55:51 -0700 (PDT)
+From: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+To: 
+Cc: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Neal Gompa <neal@gompa.dev>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
 	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
 	Eric Snowberg <eric.snowberg@oracle.com>,
 	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS)
-Subject: [PATCH v3] KEYS: key_garbage_collector(): process in chunks
-Date: Thu, 29 Oct 2026 07:04:46 +0200
-Message-ID: <20261029050449.3346259-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-hwmon@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	mfd@lists.linux.dev,
+	platform-driver-x86@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [RFC PATCH 00/14] Add macsmc support for Intel Macs, replacing applesmc
+Date: Thu, 29 Oct 2026 04:51:57 -0400
+Message-ID: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
+X-Mailer: git-send-email 2.55.0
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -69,396 +148,121 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-key_garbage_collector() has a design that is not resistant enough for
-workqueue lockups. The duration scales up relative to the number of items
-in the serial tree, which causes a reoccuring theme of being guilty of
-causing workqueue lockups.
+applesmc is very old, and all of its code is lumped into one
+driver. Fan control, sensors, the light sensor, the motion
+sensor and the keyboard backlight in a single file
+with its own way of talking to the SMC. It is hard to extend
+and to support new machines.
 
-Resolve the problem by processing in chunks:
+This series adds Intel Mac support to the macsmc drivers that
+were written for Apple Silicon (the Asahi implementation).
+The SMC works the same way on both platforms, so we share a
+lot of code with Asahi. Only the way of talking to the SMC
+differs.
 
-1. Declare a static variable key_gc_work, which owns the garbage collection
-   in-flight state, and key_schedule_gc_work() for re-scheduling the work.
-2. Define KEY_GC_CHUNK_SIZE, set to 1024 keys, as the bound for the number
-   of items scanned and destroyed.
-3. Define KEY_GC_DESTROYING to mark resume to destruction without repeating
-   the RCU grace period. Drain the graveyard before advancing key-type
-   reaping.
-4. Define KEY_GC_REAP_REQUESTED for preserving full-pass requests across
-   the continuations.
+To make that work, patch 1 splits the macsmc driver into a
+common core and a backend. The existing RTKit code moves into
+its own backend. Patch 2 adds an ACPI backend for Intel Macs
+with I/O port, MMIO and interrupt support. After that, each
+function gets its own small driver using the standard kernel
+interfaces (hwmon, IIO, LEDs, power supply, RTC, watchdog),
+instead of one large driver doing everything.
 
-keygcbench results without the patch:
+On Intel Macs these drivers replace applesmc (hwmon, light
+sensor, motion sensor and keyboard backlight) and acpi-sbs
+(battery and adapter). They are mutually exclusive with the
+drivers they replace, so only one is used at a time.
 
-unused:   min=3016.754 avg=11859.097 max=28667.645 var=141391574.712
-expired:  min=0.015 avg=12758.165 max=21516.237 var=85158284.646
-combined: min=0.015 avg=12308.631 max=28667.645 var=113477010.596
+This is an RFC to get early feedback on the design. The macsmc
+split and the Intel Mac backend touch fundamental parts, so I
+would rather change them now if maintainers ask. After that I
+will test the series on more macsand send it upstream as a
+proper series.
 
-keygcbench results with the patch:
+The series is organised as follows:
 
-unused:   min=0.225 avg=13.991 max=853.100 var=858.700
-expired:  min=0.016 avg=30.442 max=2791.695 var=14187.539
-combined: min=0.016 avg=19.249 max=2791.695 var=5177.436
-
-Tests were performed with QEMU/KVM hosted by AMD 4650U (Zen 2) CPU.
-
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/tree/package/keygcbench
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3:
-- Added new tests results made by using keygcbench.
-- Added link to keygcbench.
-v2:
-- Fixed typo in the commit message.
-- Drop the local variable gc_state.
----
- security/keys/gc.c       | 151 ++++++++++++++++++++++++++-------------
- security/keys/internal.h |   1 -
- security/keys/key.c      |   2 +-
- 3 files changed, 102 insertions(+), 52 deletions(-)
-
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index eda445f815d4..ddf51879971c 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -10,16 +10,27 @@
- #include <keys/keyring-type.h>
- #include "internal.h"
-
--/*
-- * Delay between key revocation/expiry in seconds
-- */
--unsigned key_gc_delay = 5 * 60;
-+#define KEY_GC_CHUNK_SIZE 1024
-
- /*
-  * Reaper for unused keys.
-  */
- static void key_garbage_collector(struct work_struct *work);
--DECLARE_WORK(key_gc_work, key_garbage_collector);
-+
-+static struct {
-+	time64_t start;			/* expiry range start */
-+	time64_t end;			/* expiry range end */
-+	struct rb_node *cursor;		/* serial tree position */
-+	u8 state;			/* state flags */
-+	struct work_struct work;	/* work item */
-+} key_gc_work = {
-+	.work = __WORK_INITIALIZER(key_gc_work.work, key_garbage_collector),
-+};
-+
-+/*
-+ * Delay between key revocation/expiry in seconds
-+ */
-+unsigned int key_gc_delay = 5 * 60;
-
- /*
-  * Reaper for links from keyrings to dead keys.
-@@ -34,6 +45,7 @@ static unsigned long key_gc_flags;
- #define KEY_GC_KEY_EXPIRED	0	/* A key expired and needs unlinking */
- #define KEY_GC_REAP_KEYTYPE	1	/* A keytype is being unregistered */
- #define KEY_GC_REAPING_KEYTYPE	2	/* Cleared when keytype reaped */
-+#define KEY_GC_REAP_REQUESTED	3	/* Another complete pass was requested */
+  1      Split macsmc into a core and backends
+  2      ACPI backend for Intel Macs
+  3-6    New drivers: watchdog, IIO light and accelerometer,
+         keyboard backlight LED
+  7-9    RTC support for T2 Macs, a T2 detection flag, and
+         disabling the broken ACPI RTCs
+  10-11  Power supply support, replacing acpi-sbs
+  12-13  hwmon support for Intel Macs
+  14     ioctl for userspace access to SMC keys
 
 
- /*
-@@ -44,6 +56,20 @@ struct key_type key_type_dead = {
- 	.name = ".dead",
- };
+Tested-on: MacBookPro16,1 , iMac20,1 , MacBookAir4,2 , MacBookPro12,1 ,
+MacBookPro15,1
 
-+/*
-+ * Schedule a new GC pass or re-schedule an ongoing GC pass.
-+ */
-+static void key_schedule_gc_work(void)
-+{
-+	/*
-+	 * Order caller updates before setting KEY_GC_REAP_REQUESTED, given that
-+	 * set_bit() is unordered.
-+	 */
-+	smp_mb__before_atomic();
-+	set_bit(KEY_GC_REAP_REQUESTED, &key_gc_flags);
-+	schedule_work(&key_gc_work.work);
-+}
-+
- /*
-  * Schedule a garbage collection run.
-  * - time precision isn't particularly important
-@@ -57,7 +83,7 @@ void key_schedule_gc(time64_t gc_at)
+NOTE: Almost all drivers have been tested except the motion sensor
+driver as i was not able to find any device that had one.
 
- 	if (gc_at <= now || test_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags)) {
- 		kdebug("IMMEDIATE");
--		schedule_work(&key_gc_work);
-+		key_schedule_gc_work();
- 	} else if (gc_at < key_gc_next_run) {
- 		kdebug("DEFERRED");
- 		key_gc_next_run = gc_at;
-@@ -85,7 +111,7 @@ void key_set_expiry(struct key *key, time64_t expiry)
- void key_schedule_gc_links(void)
- {
- 	set_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags);
--	schedule_work(&key_gc_work);
-+	key_schedule_gc_work();
- }
+Atharva Tiwari (14):
+  treewide: Add backend for macsmc
+  platform/x86: add backend for macsmc in intel macs
+  watchdog: add driver for apple smc
+  iio/light: add new driver for macsmc
+  iio/accel: add driver for apple SMS
+  leds: add support for macsmc kbl
+  rtc: add support for x86 macs in macsmc-rtc
+  treewide: Add a flag to detect the Apple T2 chip
+  treewide: disable other rtc's in t2 macs
+  power/supply: add support for x86 macs in macsmc-power
+  acpi: disable battery and adapter for x86 apple machines
+  hwmon/macsmc: add more types
+  hwmon: add support for x86 macs in macsmc-hwmon
+  mfd/macsmc: add ioctl to access smc keys
 
- /*
-@@ -119,7 +145,7 @@ void key_gc_keytype(struct key_type *ktype)
- 	set_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags);
+ MAINTAINERS                                   |    2 +-
+ arch/x86/kernel/quirks.c                      |   37 +
+ drivers/acpi/acpi_tad.c                       |    4 +
+ drivers/acpi/sbs.c                            |   17 +-
+ drivers/acpi/x86/utils.c                      |    4 +
+ drivers/gpio/Kconfig                          |    2 +-
+ drivers/gpio/gpio-macsmc.c                    |   13 +-
+ drivers/hwmon/Kconfig                         |    7 +-
+ drivers/hwmon/macsmc-hwmon.c                  | 1126 ++++++++++++++++-
+ drivers/iio/accel/Kconfig                     |   10 +
+ drivers/iio/accel/Makefile                    |    1 +
+ drivers/iio/accel/macsmc-accel.c              |  248 ++++
+ drivers/iio/light/Kconfig                     |   11 +
+ drivers/iio/light/Makefile                    |    1 +
+ drivers/iio/light/macsmc-light.c              |  189 +++
+ drivers/leds/Kconfig                          |   11 +
+ drivers/leds/Makefile                         |    1 +
+ drivers/leds/leds-macsmc.c                    |   69 +
+ drivers/mfd/Kconfig                           |   15 +-
+ drivers/mfd/Makefile                          |    2 +-
+ drivers/mfd/macsmc-core.c                     |  362 ++++++
+ drivers/platform/x86/Kconfig                  |   10 +
+ drivers/platform/x86/Makefile                 |    1 +
+ drivers/platform/x86/macsmc-acpi.c            |  642 ++++++++++
+ drivers/power/reset/Kconfig                   |    2 +-
+ drivers/power/supply/Kconfig                  |    2 +-
+ drivers/power/supply/macsmc-power.c           |  751 ++++++++---
+ drivers/rtc/Kconfig                           |    2 +-
+ drivers/rtc/rtc-cmos.c                        |    4 +
+ drivers/rtc/rtc-macsmc.c                      |  126 +-
+ drivers/soc/apple/Kconfig                     |   14 +
+ drivers/soc/apple/Makefile                    |    2 +
+ .../macsmc.c => soc/apple/macsmc-rtkit.c}     |  185 ++-
+ drivers/watchdog/Kconfig                      |   11 +
+ drivers/watchdog/Makefile                     |    2 +-
+ drivers/watchdog/macsmc_wdt.c                 |  140 ++
+ include/linux/mfd/macsmc.h                    |  104 +-
+ include/linux/platform_data/x86/apple.h       |    5 +
+ .../platform_certs/keyring_handler.h          |    8 -
+ security/integrity/platform_certs/load_uefi.c |   38 +-
+ 40 files changed, 3786 insertions(+), 395 deletions(-)
+ create mode 100644 drivers/iio/accel/macsmc-accel.c
+ create mode 100644 drivers/iio/light/macsmc-light.c
+ create mode 100644 drivers/leds/leds-macsmc.c
+ create mode 100644 drivers/mfd/macsmc-core.c
+ create mode 100644 drivers/platform/x86/macsmc-acpi.c
+ rename drivers/{mfd/macsmc.c => soc/apple/macsmc-rtkit.c} (70%)
+ create mode 100644 drivers/watchdog/macsmc_wdt.c
 
- 	kdebug("schedule");
--	schedule_work(&key_gc_work);
-+	key_schedule_gc_work();
-
- 	kdebug("sleep");
- 	wait_on_bit(&key_gc_flags, KEY_GC_REAPING_KEYTYPE,
-@@ -134,7 +160,9 @@ void key_gc_keytype(struct key_type *ktype)
-  */
- static noinline void key_gc_unused_keys(struct list_head *keys)
- {
--	while (!list_empty(keys)) {
-+	unsigned int chunk = KEY_GC_CHUNK_SIZE;
-+
-+	while (!list_empty(keys) && chunk--) {
- 		struct key *key =
- 			list_entry(keys->next, struct key, graveyard_link);
- 		short state = key->state;
-@@ -178,54 +206,64 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
- static void key_garbage_collector(struct work_struct *work)
- {
- 	static LIST_HEAD(graveyard);
--	static u8 gc_state;		/* Internal persistent state */
-+	typeof(key_gc_work) *gc = &key_gc_work;
- #define KEY_GC_REAP_AGAIN	0x01	/* - Need another cycle */
- #define KEY_GC_REAPING_LINKS	0x02	/* - We need to reap links */
-+#define KEY_GC_DESTROYING	0x04	/* - We need to destroy keys */
- #define KEY_GC_REAPING_DEAD_1	0x10	/* - We need to mark dead keys */
- #define KEY_GC_REAPING_DEAD_2	0x20	/* - We need to reap dead key links */
- #define KEY_GC_REAPING_DEAD_3	0x40	/* - We need to reap dead keys */
- #define KEY_GC_FOUND_DEAD_KEY	0x80	/* - We found at least one dead key */
-
--	struct rb_node *cursor;
-+	unsigned int chunk = KEY_GC_CHUNK_SIZE;
- 	struct key *key;
--	time64_t new_timer, limit, expiry;
-+	time64_t expiry;
-
--	kenter("[%lx,%x]", key_gc_flags, gc_state);
-+	kenter("[%lx,%x]", key_gc_flags, gc->state);
-
--	limit = ktime_get_real_seconds();
-+	if (gc->state & KEY_GC_DESTROYING)
-+		goto destroy_keys;
-+	if (gc->cursor) {
-+		spin_lock(&key_serial_lock);
-+		goto continue_scanning;
-+	}
-+
-+	test_and_clear_bit(KEY_GC_REAP_REQUESTED, &key_gc_flags);
-+	gc->start = ktime_get_real_seconds();
-
- 	/* Work out what we're going to be doing in this pass */
--	gc_state &= KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2;
--	gc_state <<= 1;
-+	gc->state &= KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2;
-+	gc->state <<= 1;
- 	if (test_and_clear_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags))
--		gc_state |= KEY_GC_REAPING_LINKS;
-+		gc->state |= KEY_GC_REAPING_LINKS;
-
- 	if (test_and_clear_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags))
--		gc_state |= KEY_GC_REAPING_DEAD_1;
--	kdebug("new pass %x", gc_state);
-+		gc->state |= KEY_GC_REAPING_DEAD_1;
-+	kdebug("new pass %x", gc->state);
-
--	new_timer = TIME64_MAX;
-+	gc->end = TIME64_MAX;
-
- 	/* As only this function is permitted to remove things from the key
- 	 * serial tree, if cursor is non-NULL then it will always point to a
- 	 * valid node in the tree - even if lock got dropped.
- 	 */
- 	spin_lock(&key_serial_lock);
--	cursor = rb_first(&key_serial_tree);
-+	gc->cursor = rb_first(&key_serial_tree);
-
- continue_scanning:
--	while (cursor) {
--		key = rb_entry(cursor, struct key, serial_node);
--		cursor = rb_next(cursor);
-+	while (gc->cursor && chunk) {
-+		key = rb_entry(gc->cursor, struct key, serial_node);
-+		gc->cursor = rb_next(gc->cursor);
-+		chunk--;
-
- 		if (!test_bit_acquire(KEY_FLAG_USER_ALIVE, &key->flags)) {
- 			/* Clobber key->user after final put seen. */
- 			goto found_unreferenced_key;
- 		}
-
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
-+		if (unlikely(gc->state & KEY_GC_REAPING_DEAD_1)) {
- 			if (key->type == key_gc_dead_keytype) {
--				gc_state |= KEY_GC_FOUND_DEAD_KEY;
-+				gc->state |= KEY_GC_FOUND_DEAD_KEY;
- 				set_bit(KEY_FLAG_DEAD, &key->flags);
- 				key->perm = 0;
- 				goto skip_dead_key;
-@@ -239,24 +277,24 @@ static void key_garbage_collector(struct work_struct *work)
- 		if (expiry != TIME64_MAX) {
- 			if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
- 				expiry += key_gc_delay;
--			if (expiry > limit && expiry < new_timer) {
-+			if (expiry > gc->start && expiry < gc->end) {
- 				kdebug("will expire %x in %lld",
--				       key_serial(key), key->expiry - limit);
--				new_timer = key->expiry;
-+				       key_serial(key), key->expiry - gc->start);
-+				gc->end = key->expiry;
- 			}
- 		}
-
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2))
-+		if (unlikely(gc->state & KEY_GC_REAPING_DEAD_2))
- 			if (key->type == key_gc_dead_keytype)
--				gc_state |= KEY_GC_FOUND_DEAD_KEY;
-+				gc->state |= KEY_GC_FOUND_DEAD_KEY;
-
--		if ((gc_state & KEY_GC_REAPING_LINKS) ||
--		    unlikely(gc_state & KEY_GC_REAPING_DEAD_2)) {
-+		if ((gc->state & KEY_GC_REAPING_LINKS) ||
-+		    unlikely(gc->state & KEY_GC_REAPING_DEAD_2)) {
- 			if (key->type == &key_type_keyring)
- 				goto found_keyring;
- 		}
-
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3))
-+		if (unlikely(gc->state & KEY_GC_REAPING_DEAD_3))
- 			if (key->type == key_gc_dead_keytype)
- 				goto destroy_dead_key;
-
-@@ -269,7 +307,11 @@ static void key_garbage_collector(struct work_struct *work)
- 	spin_unlock(&key_serial_lock);
-
- maybe_resched:
--	if (cursor) {
-+	if (gc->cursor) {
-+		if (!chunk) {
-+			schedule_work(&key_gc_work.work);
-+			return;
-+		}
- 		cond_resched();
- 		spin_lock(&key_serial_lock);
- 		goto continue_scanning;
-@@ -281,12 +323,12 @@ static void key_garbage_collector(struct work_struct *work)
- 	 */
- 	kdebug("pass complete");
-
--	if (new_timer != TIME64_MAX) {
--		new_timer += key_gc_delay;
--		key_schedule_gc(new_timer);
-+	if (gc->end != TIME64_MAX) {
-+		gc->end += key_gc_delay;
-+		key_schedule_gc(gc->end);
- 	}
-
--	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
-+	if (unlikely(gc->state & KEY_GC_REAPING_DEAD_2) ||
- 	    !list_empty(&graveyard)) {
- 		/* Make sure that all pending keyring payload destructions are
- 		 * fulfilled and that people aren't now looking at dead or
-@@ -297,33 +339,42 @@ static void key_garbage_collector(struct work_struct *work)
- 		synchronize_rcu();
- 	}
-
-+	gc->state |= KEY_GC_DESTROYING;
-+
-+destroy_keys:
- 	if (!list_empty(&graveyard)) {
- 		kdebug("gc keys");
- 		key_gc_unused_keys(&graveyard);
-+		if (!list_empty(&graveyard)) {
-+			schedule_work(&key_gc_work.work);
-+			return;
-+		}
- 	}
-+	gc->state &= ~KEY_GC_DESTROYING;
-
--	if (unlikely(gc_state & (KEY_GC_REAPING_DEAD_1 |
-+	if (unlikely(gc->state & (KEY_GC_REAPING_DEAD_1 |
- 				 KEY_GC_REAPING_DEAD_2))) {
--		if (!(gc_state & KEY_GC_FOUND_DEAD_KEY)) {
-+		if (!(gc->state & KEY_GC_FOUND_DEAD_KEY)) {
- 			/* No remaining dead keys: short circuit the remaining
- 			 * keytype reap cycles.
- 			 */
- 			kdebug("dead short");
--			gc_state &= ~(KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2);
--			gc_state |= KEY_GC_REAPING_DEAD_3;
-+			gc->state &= ~(KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2);
-+			gc->state |= KEY_GC_REAPING_DEAD_3;
- 		} else {
--			gc_state |= KEY_GC_REAP_AGAIN;
-+			gc->state |= KEY_GC_REAP_AGAIN;
- 		}
- 	}
-
--	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3)) {
-+	if (unlikely(gc->state & KEY_GC_REAPING_DEAD_3)) {
- 		kdebug("dead wake");
- 		clear_and_wake_up_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
- 	}
-
--	if (gc_state & KEY_GC_REAP_AGAIN)
--		schedule_work(&key_gc_work);
--	kleave(" [end %x]", gc_state);
-+	if ((gc->state & KEY_GC_REAP_AGAIN) ||
-+	    test_bit(KEY_GC_REAP_REQUESTED, &key_gc_flags))
-+		schedule_work(&key_gc_work.work);
-+	kleave(" [end %x]", gc->state);
- 	return;
-
- 	/* We found an unreferenced key - once we've removed it from the tree,
-@@ -335,7 +386,7 @@ static void key_garbage_collector(struct work_struct *work)
- 	spin_unlock(&key_serial_lock);
-
- 	list_add_tail(&key->graveyard_link, &graveyard);
--	gc_state |= KEY_GC_REAP_AGAIN;
-+	gc->state |= KEY_GC_REAP_AGAIN;
- 	goto maybe_resched;
-
- 	/* We found a restricted keyring and need to update the restriction if
-@@ -353,7 +404,7 @@ static void key_garbage_collector(struct work_struct *work)
- 	 */
- found_keyring:
- 	spin_unlock(&key_serial_lock);
--	keyring_gc(key, limit);
-+	keyring_gc(key, gc->start);
- 	goto maybe_resched;
-
- 	/* We found a dead key that is still referenced.  Reset its type and
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index b7b622bc36a1..cca936f5015d 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -162,7 +162,6 @@ extern bool lookup_user_key_possessed(const struct key *key,
- extern long join_session_keyring(const char *name);
- extern void key_change_session_keyring(struct callback_head *twork);
-
--extern struct work_struct key_gc_work;
- extern unsigned key_gc_delay;
- extern void keyring_gc(struct key *keyring, time64_t limit);
- extern void keyring_restriction_gc(struct key *keyring,
-diff --git a/security/keys/key.c b/security/keys/key.c
-index e88548f1a704..5c2d0e3b49e6 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -670,7 +670,7 @@ void key_put(struct key *key)
- 			}
- 			/* Mark key as safe for GC after key->user done. */
- 			clear_bit_unlock(KEY_FLAG_USER_ALIVE, &key->flags);
--			schedule_work(&key_gc_work);
-+			key_schedule_gc(0);
- 		}
- 	}
- }
---
-2.47.3
+-- 
+2.55.0
 
