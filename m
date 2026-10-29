@@ -1,54 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793219577;
-	b=LmQfn0Hcb7HfDh2Kp+0uO3bx6mtmeV15YQGrdzfSkc69Y0bgJOtE5C042tFOS3+yeRrU
-	 uu2PuFZuuLMk43Hgswtx2srNngyz7d+K+lH/DIHMiZpMjryG21/OZpCichuOYjlm0dwCo
-	 OteIP5Knr/nt3S/zLCK8v17UokzlMEW5o2fWz894kExS4DsiJq6r2Jg6zP/U2Sus3YFpZ
-	 rPLNlhyn6cQgxdiEBgBITYNfs5rsqMknF5FDUk3XizvxMlLfNRCimmWJEbUtizIc7qtk3
-	 09qvTZioj4myrUa+jZO0PXQm7wt65CPmQdol3Sy1nLHXC+78/ncbNGvYJCgUYkCYz7g==
+	t=1793239404;
+	b=m6SxWvCdzvBLlWlkkp6o/xaZBLaTjYnpMsIvpOV18ArfmyMa33o+t3Tl+J4HOLuSAuL6
+	 957be2DmiSs55qZ4di57CZMe0s/7e7AvtueSAmz76CLinFHyRMzdITnWuIIMBJYzEORGT
+	 U+J7u3V0LkTXYBlUNH2lskRw37fBQRz9BjAyjmX2WLTYGELNGc0DjL9BGoEywRYBwOp2D
+	 pD1f9jUgRymxVLZlX2Uh3+qLl5EDU36FsbEG75J929ctLmKevHsXRKC/gX6TFnQSFD32T
+	 NUYBarLuhZ7FtRJzym4AB/njbtD7EgRVHiu/kR3oeiK7CgPACTR/MHk3RayParfWjyg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793219577;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793239404;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=9X+pCcekx/7Rlff7Kqi2J3DlR1/Mhd++k2xfF7L25Us=;
-	b=gvuh9upJfM/ppVGQjVJxsIagZ4otjCX5jjOUAUCvSIMP8euVH6cH4gZaZhuEdCQBlBN1
-	 sw19pfyqfG2cNs/AjbgM1NMj4adMzlfpQKVgq6xnhrykGmCfEBOIS42K7aimd8UWUTtH8
-	 /aoY+L3G+86Ij6wXyLA9mmT9L1lStQwIJaaqB42wlittZdh/YrOWvxJ7LxiZDNXV/xlz0
-	 CDNYGRTgBubPV12R6RcaPGjoCZtjp4kAzzEKpWKgF+iXPOmAStjHtXDDceuQfwxBDVhas
-	 QI/Wp7Tdw5RkUf974ZC58zF+pkzRF70sGZ6ffy7cfMTFHbrvJ6gIGdBmGjSlpUwFM5A==
+	bh=heCZ3eMofqJRMaoiKgFonBBuGwXdpA0ncbgdWxOVWmI=;
+	b=lWseqUZ0MM2sFYghyufyyO1/1pgGndSnN30iqTEGhaUH1pwmpZ8O8inevZRJaT7PVdym
+	 +k42ZT43sa70/HnmlbFnKVF69l9bDDSv72Xplf8AZiQz/3Lb1Ixd7GeV1iXNTP68qrXCc
+	 s5VEQTMToLX1YeFp3j+/LmvphoHu8TBJsa6q8Xf9/HFBF+TdBd35j3McoOANvqIuCZdm1
+	 yoQy5JBgMneKslO60aHwxbdNwT0gmb/cwTTb/8lqxCo4d/s4fCWN3RGq7TkLuGDxcmvtI
+	 FiTnfzPfmCq3oxd9ebKpqFoKORfKsf75V8JVdWBRK72wcElU6Hm1+QgapUh3fYd0Xwg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=frjp0mtt;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dqWHOhTT;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 5D03A606A31A;
-	Wed, 28 Oct 2026 20:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 39F0C60A3804;
+	Thu, 29 Oct 2026 02:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=frjp0mtt
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9D15B1F01825;
-	Wed, 28 Oct 2026 20:32:56 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dqWHOhTT
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 673CF1F031EB;
+	Thu, 29 Oct 2026 02:03:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793219577;
-	bh=9X+pCcekx/7Rlff7Kqi2J3DlR1/Mhd++k2xfF7L25Us=;
+	s=k20260515; t=1793239403;
+	bh=heCZ3eMofqJRMaoiKgFonBBuGwXdpA0ncbgdWxOVWmI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=frjp0mttVjhyleq4vIqg5I5lH0FWbMuSjV49m5JhQi6ZEk5GIPFEcCqTrvSBLMGHy
-	 Vx+CSxVP/hYgaVf8uyGn3L0iDDXS63YGyQ1kUPoxLXxN7L3Qu7T21IUDuWTwK4IpRS
-	 gtqb+GsgxlUthwGHH7GsueH6QrZCcCugpXNVEHrHaC8T3LeUZ4pUs6j9SKLUbyYS+3
-	 fvz/6WfSMefTcmy3XzxgJltDZdEHkTogcNZi7NtrIHeC3Bz3fFLI32cRGZQjfzZOUQ
-	 dbS8bjQDyGE3QfpOEunAujtt54EN6mY6YACQSHUls/7efFo+AsPZ2kls8l3m8thvwx
-	 blWyo0FlPuGSg==
-Date: Wed, 28 Oct 2026 22:32:49 +0200
+	b=dqWHOhTTcf6QIuZcK/x0TMs+EcUhDMPp11aPWuxXPxZnyr0IXjFBvYMG+LHgVZ8pe
+	 omDP4ow7pGQx3zhqQWu4Gh8ytUqqD3TlVrwTUR+oAVMK+ntDyPIvCRoYf8l4k1UYBD
+	 fE60x3cb9sdzKump8KVfJcVLpi6jwHu/DFdYgXTvaQ0XQetezeRL4yVqpShyLef1yo
+	 grFjlR7qvJktrnLPyjepzb7BUiqpXd0S9SeDVXrT/zIAhmbz6fkBveZm878qYfaeUC
+	 y1Fe1PBiheKQ28IYyF5rJRIVN91wbkzR419xzOCKXqty+ffSt6t1XvMT0Oh5ePxfBG
+	 Ezy7vNJAJjLzQ==
+Date: Thu, 29 Oct 2026 04:03:19 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Cc: linux-kernel@vger.kernel.org, pierluigi.p@variscite.com,
-	Stefano Radaelli <stefano.r@variscite.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] tpm: tis_i2c: Add reset delays for ST33KTPM2XI2C
-Message-ID: <auJb8drL7rpvNMyK@kernel.org>
-References: <20261028094504.4256-1-stefano.r@variscite.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] KEYS: key_garbage_collector(): process in chunks
+Message-ID: <auKpZ-BAJ3B18DiX@kernel.org>
+References: <20261028025306.2063007-1-jarkko@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -60,30 +64,17 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261028094504.4256-1-stefano.r@variscite.com>
+In-Reply-To: <20261028025306.2063007-1-jarkko@kernel.org>
 
-On Wed, Oct 28, 2026 at 10:45:04AM +0100, Stefano Radaelli wrote:
-> From: Stefano Radaelli <stefano.r@variscite.com>
-> 
-> The optional reset control is deasserted without a delay, and probe then
-> proceeds directly to the first I2C register access. Since reset-gpio
-> initializes its line asserted, this provides no guaranteed minimum reset
-> pulse width or recovery interval before communication starts.
-> 
-> Table 66 of the ST33KTPM-IDevID datasheet specifies a minimum reset pulse
-> width of 1 ms and up to 50 ms from reset release before the first command.
-> Choose a 2 ms assertion interval to provide margin above the minimum and
-> wait 50 ms after deassertion, before initializing the I2C guard times.
-> 
-> Associate these timings with the existing st,st33ktpm2xi2c compatible using
-> match data. Apply the delays only when a reset control is present. Preserve
-> the existing deassert-only sequence and the behavior of devices without
-> timing data or a reset control, without adding Device Tree properties.
+On Wed, Oct 28, 2026 at 04:53:04AM +0200, Jarkko Sakkinen wrote:
+> - x86-64: chunk max: 125 ms, total time increase: 5%
+> - aarch64: chunk max: 235 ms, total time increase: 6%
 
-"Pull the timings from the matched device entry. If they don't exist,
-fall back to the legacy behavior without delays. Update of_tis_i2c_match
-with the timings for st33ktpm2xi2c."
+Oops: those are for unused and expired on x86-64.
 
-I.e. the last paragraph has the language of a white paper.
+For emulated aarch64:
+
+- unused: chunk max: 388 ms, total time increase: 8.2%
+- expired: chuk max: 1372 ms, total time increase: 1.5%
 
 Br, Jarkko
