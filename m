@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793378985;
-	b=4vCYvHu8M/NOg9BusPWlAdyFqdCXxn30Cjdx6zAvS79X57KqK1CqCc0mdHobhTxIsVM8
-	 ioT5Bg1JjXJ8qlgx2rbKZ/WvgV+BPja5HCJHupWVVHZAwmy44K/sMWIs9LcqoWhON8cUZ
-	 j5ni0Arxody3x7GFITYu96zfxH/wEz5YPzZRT70AF95SlK3JZQziFkmUJqg91u7mi4Xb+
-	 PTmhbAiseZap48k6UJaAENyZqRJ/3HmE279od32OVG6AHXygID8fFWqCAfp6JuqXgAbGZ
-	 BKZ6d/yM51P+P09dXYaWVAywhHOHmPjuw/AQbX2YGey7zBL1YHe3U1UN/I4BxE2kJ3A==
+	t=1793390626;
+	b=1dpPyws2rTGae7TWbCtRDv0R8fq+O1YE5i9VSru09QUc6KYqdU1ff2qZCILk3oid+rqa
+	 eaK+CGKFTYx99w5vm6pejCYkkHKCnvyA4BvOPn9x1bMcEFY0egWlcz++3CBHMLR5OM5ru
+	 gJnRr8zQ7gP68bgatYvIN8chOjvIZ81vt1hvrKmbwnH1i4VbfuVfN7HkKo4Vs2HndEbC9
+	 mY22Jn8eYKDETfRaJtyKa5KJjIEmBCDMcuGk0F8NO0qB1bm3UZDjvv+g0q2rNjnEsfNf2
+	 k1y+vX3uM24GcZsscZyVqI/YDk2SCYFa75Y66HQOVp3iDRioHabc0T35TWpDtFfhJOg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793378985;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793390626;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=C1nnIuDkJo88uq0902CAY8XSm4PVZ67NbB/TQHtf+fY=;
-	b=vlkf9HSxajzrcVKl+Mf87vv3syuFgjhrs+PhXvNtoELUtKsvfFgnWCg5JtxH9rwwebDX
-	 K6OokBzUtEwqUx+w62J59bU1ZH87D/Vw3nEPFeLIG6o9//zOFa4i8Z4dbenSDPhvrGAaG
-	 tB010MliFYIzYfVUK0vRnSaBbVp4s/dL/qY8oyY75xRV4z3Ro1bBY3wdjGiSi3KW69kvr
-	 RvNol45L3VM3RwxnCdS6ru6ADjDl+XsBWLOWh07LLvfPXeFS2fiHOoaex+qjH+qsaew9C
-	 C02aBpnNqoML2yRf/MPqxFe4h6u89BKCMThA3LM9oI/H915APN7b9YucwXd5f8+O9Yw==
+	bh=LMrpGWdovgMZm3Jh+xDymgzpR6x6xtVPMjUx+UZI4Fc=;
+	b=g8/8Kn6sB4b0MjyR19iFQv63A4TzvfwV9tKBVbajXd4kHs+DtAU8qGYf+QxRRGI+3rdC
+	 c0SZr8qCXSc1ggWBTMoe9Cgouz+xiUJgUMKlC24rzyATdWRYZ4KVuglrMpFJa2J0WxAsv
+	 F2gPG2niG0Xu+vir72JNcSQxw2dreJ+OY42Z2kCTDTRaqmNr5UK1xcwaarvTgHIFcjI3K
+	 Dptw5HHlK0ohTRfJ3Gx/aH6N6W+RoBcbCeJDxpWMNLyQYq22dJuyXX0Z+dBc7Efxl4las
+	 ebugEqU0AXFZK6aqndqjK9fNJwle9avLuq6lrha17SL5O7RpZ6XAsM2UW6tAbkf0bJQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Lf4Av+u9;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f1TKrk6A;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 9DC4E606A31A;
-	Fri, 30 Oct 2026 16:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 58022606A31A;
+	Fri, 30 Oct 2026 20:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Lf4Av+u9
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B032E1F000C1;
-	Fri, 30 Oct 2026 16:49:44 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f1TKrk6A
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6DB5C1F000C1;
+	Fri, 30 Oct 2026 20:03:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793378985;
-	bh=C1nnIuDkJo88uq0902CAY8XSm4PVZ67NbB/TQHtf+fY=;
+	s=k20260515; t=1793390626;
+	bh=LMrpGWdovgMZm3Jh+xDymgzpR6x6xtVPMjUx+UZI4Fc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Lf4Av+u9KwgRLURTaREHHEy4oSVE81g6du+3bsAbEkFPM4j41TUYhEYNovvWCoSjs
-	 4hmUbaHxMI77QjW8M11vtL1S1VoOdaHJHgdVTFHGtaRUFN3+1/81Kp6gFrWpa1G/ql
-	 x4aqYsgTolJEzQP2seThSrGmVE9+m9Z2Gk3tf5qdOKX3P0iViqdZIavX7acjGdGFE1
-	 SjzyzGcV/axv3Je6keIq1DPCi9jwJjfB20WefmA1Mr7IRAmnzpbRJ4dvrHRbsYtmuE
-	 2YQXi79Ebz0BOH1xkWnOQ1rhBaadq75REyPdnySdfi8ikbkD1qInHKPs4j6x4g+rWn
-	 4wRo3lvi7w46Q==
-Date: Fri, 30 Oct 2026 18:49:38 +0200
+	b=f1TKrk6Aby/BGX2H16b9sfxyMcoJQgwIZ2DVnXbv1K2wZCv27aNccT8u41H8gMORa
+	 F8GU64l5tiid198wyLoIH78SlRdjy9ONQ/Q8X/OFNdjfUfOo/FCBm2aA0g31uCg6OZ
+	 TIm0ff0lXKR513MM9Vi4myfqAFZThFLTniJoRVPHWI6gm4OuE9MLOwvJndQjeUGjxp
+	 e328H9QD3LyQHyISQJVMTBRKJKgE6NsbPEqEcVnC4obxr1Sjwn/EmLUi/yibAG2XsN
+	 MXLpgGICEszd00QqpxOJ/JAKoSgdBDapA6JAFISN03MCEIcXXVbSpeyEUYXubzk1Wi
+	 BAhUiKcAWabBw==
+Date: Fri, 30 Oct 2026 22:03:42 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: David Howells <dhowells@redhat.com>
 Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
@@ -53,8 +53,9 @@ Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
 	open list <linux-kernel@vger.kernel.org>,
 	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>
 Subject: Re: [PATCH v6] KEYS: key_garbage_collector(): process in chunks
-Message-ID: <auTKovajh5MQlbre@kernel.org>
+Message-ID: <auT4HmJImLQHmsTk@kernel.org>
 References: <20261030160924.2919363-1-jarkko@kernel.org>
+ <auTKovajh5MQlbre@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -66,59 +67,24 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261030160924.2919363-1-jarkko@kernel.org>
+In-Reply-To: <auTKovajh5MQlbre@kernel.org>
 
-On Fri, Oct 30, 2026 at 06:09:23PM +0200, Jarkko Sakkinen wrote:
-> key_garbage_collector() has a design that is not resistant enough for
-> workqueue lockups. The duration scales up relative to the number of items
-> in the serial tree, which causes a reoccuring theme of being guilty of
-> causing workqueue lockups.
+On Fri, Oct 30, 2026 at 06:49:45PM +0200, Jarkko Sakkinen wrote:
+> Interesting :-) It has been idential other than block size change
+> for v4, v5 and v6 and updating benchmark result but this is the
+> first version with Sashiko feedback.
 > 
-> Resolve the problem by processing in chunks:
-> 
-> 1. Declare a static variable key_gc_work, which owns the garbage collection
->    in-flight state, and key_schedule_gc_work() for re-scheduling the work.
-> 2. Define KEY_GC_CHUNK_SIZE, set to 64 keys, as the bound for the number
->    of items scanned and destroyed.
-> 3. Define KEY_GC_DESTROYING to mark resume to destruction without repeating
->    the RCU grace period. Drain the graveyard before advancing key-type
->    reaping.
-> 4. Define KEY_GC_REAP_REQUESTED for preserving full-pass requests across
->    the continuations.
-> 
-> keygcbench results without the patch:
-> 
-> unused:   min=798.785 avg=4181.989 max=7565.193 var=11446068.927
-> expired:  min=0.003 avg=2404.971 max=4111.065 var=3061018.501
-> combined: min=0.003 avg=3115.778 max=7565.193 var=7172908.943
-> 
-> keygcbench results with the patch:
-> 
-> unused:   min=0.005 avg=0.125 max=79.590 var=1.088
-> expired:  min=0.002 avg=0.196 max=236.207 var=8.121
-> combined: min=0.002 avg=0.154 max=236.207 var=3.912
-> 
-> These results translate to:
-> 
-> - 93% drop in the combined variance.
-> - 2.2% increase in the total task time.
-> 
-> The value 64 for KEY_GC_CHUNK_SIZE was cherry-picked from the set {1, 2,
-> ..., 1024} by running the benchmark for each chunk size three times.
-> 
-> At the far left variance is 97% lower but at the same time total time
-> grows by 133%, when compared to the selected chunk size. The size was
-> picked based on getting a reasonable variance with a minimal throughput
-> decline.
-> 
-> Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their keytype is removed")
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/tree/package/keygcbench
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Looking into it...
 
-Interesting :-) It has been idential other than block size change
-for v4, v5 and v6 and updating benchmark result but this is the
-first version with Sashiko feedback.
+Couple of things:
 
-Looking into it...
+1. Sashiko reported issue, which would result key_gc_schedule_links()
+   call in the place of key_gc_schedule_work().
+2. I think it would be best if flags were set in the expired case
+   with a single atomic operation, which does not realize now when
+   key_gc_schedule_links()->key_gc_schedule_work() call path is
+   used.
+
+I'll address the both issues.
 
 Br, Jarkko
