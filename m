@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793391913;
-	b=NK9yk4ns9wcxu9VWwFNEkxDajdqzKV56ZHebl4axrtjKFfhJdmP55vp3gTvXNSKsEni0
-	 RCl4giDOFG6I76hFwPx/Q2TwVhSqRpoJSpgaDNH3mn1tqtkobELpjg144Gi4xvKBf9H1t
-	 rYp4IOmmfiLUW8MxTuMSfr0eqNPoO+5HvNfNMXKLPY37giF8wZrodLm0IDPUWvszswsOa
-	 SAcLZmPLZtCF47Kx9AgV2UxPROc1Q3yZg3Nu3dn6EmZOvMzcmFAZbK48On4iaT1R2yRqY
-	 L/q/aP0Y6onetrsul2AeIczwbKOpptyg1Baf8vftx6nO33IWMhK4PrRRmWWYuHKvd4w==
+	t=1793393662;
+	b=cKiKK6Mf2Z9OAv4v9IrPOjSXBWCcCZdQrWDxgXpCXrHUoHwWriiHYCHRLYMW53wKDAHP
+	 m2bHEu3wQ4iN28pTM6zUU4msTMpaqQTax9qfhjECGXYIQz7fXd59iU7jc1LG3ditvwln1
+	 B4+2yGql14srj4VuEdhoffxSYGE42ak57nZyxgZp0324aaCPsWjAJVOXt4RDOA8KNhk+X
+	 7i9LyvgHJST1XMXT52pifgxn+UZ54vObiaNBkBwX9wfk2nR/e6oSHw1/8LdrZtp1Nx5Ob
+	 dTLwTxaV3S8Ilnn/B7wbib9AEmWFqsWt7eB+qFNBgw+ysZlDHDgq1Y7XeaSCJEhpJtg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793391913;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793393662;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=h/U+ECWs6ncHBZnputdsBWyFSmNgSuregOvFky34moU=;
-	b=0+pzguyemzIimgl7OAWFKFWzczps5qeWH5/MttuujKNNVKTfLNABGyfl6gTZcxBCzsQW
-	 3F3aqXCxkwMOhlbYOXsw/y5MTJYMXj+ULJGxbAbMNGcb2GEEK8lSI6Oe2EFj5elUV1bJa
-	 fQYgQBC0ItZcNrCNj3WomubxHWqt00L3U91Eu7efqHiVK2hlqDyN2+tfkIRtG6Pbun9zo
-	 S3cxXFcrn/8s6fZjgZoGmvQ7PLS3FnKcACNTi6zg+XdLtQqa++SqXwdWXVv+P/h1iLiLQ
-	 ZV7HpoxxIoVhGX+fCKzSrfNCT7azFIud0MGTGjaqfyWxUHv+psUcB20I8vroNPcB9ew==
+	bh=qCervv7eb/iHyiJerXTtmo8FfBpq+tzA8F5cSzqXS7A=;
+	b=0hgxt5880h8orC8KVevIbsw/tXsyqV3Mj+66yCnvqSq0PpWQU6eRmUxiyyi/FijS8TBH
+	 rZ0pOmoMUJ+Upbbn1h8Up4nM/T+WJ0FnhxM7cOB4Xrw+urIHgD0ZC/hfMQSQK5M2d8OaT
+	 O3Ula3p9m3BStgjHKMZQ10oohJTkx025EY+2AHz6YPdQynMeifjSEALjkgCDIfXyOFQu0
+	 QAqdB3DTibLlxRWv3nzqeoTVKsiVZEaCxcj1NnjjP3++19zO/fcMyT1sIG7f+zNhUqP7n
+	 iUNG/MUzAHdqHd8oSxDpjw/uQSks0wXHy3cc24WRAWhgjcsWPnJV6mYHXenHYh3UDlQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lf8ooRua;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TpyBDpZy;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id B1F2C606A31A;
-	Fri, 30 Oct 2026 20:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 66065606A31C;
+	Fri, 30 Oct 2026 20:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lf8ooRua
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B2E181F000C1;
-	Fri, 30 Oct 2026 20:25:11 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TpyBDpZy
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B34131F00A15;
+	Fri, 30 Oct 2026 20:54:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793391912;
-	bh=h/U+ECWs6ncHBZnputdsBWyFSmNgSuregOvFky34moU=;
+	s=k20260515; t=1793393662;
+	bh=qCervv7eb/iHyiJerXTtmo8FfBpq+tzA8F5cSzqXS7A=;
 	h=From:To:Cc:Subject:Date;
-	b=lf8ooRuaR91hvzhcHx2dB4MZYxoY9H5lCArIaM8nGg4bEiUI8y2t+KjsKbk+Q6NSD
-	 jP3lJfHm61tRsZxx49u9qQq0nRmeDwpELuoPCQsUto7R96MP1w9hqZ5w4qpQRQ4h54
-	 F6nLALmWutpLgpgmGf0/xA9806RW+GQF9N0mQ0ia+M8Z5NnHle3dv4G3oFeXHPKMJp
-	 wzat/Tbwutxi7htsLQtZqd0UrZO0e/kiCdxOog6v0XbU3s6mdsC8CMJbgU0Bqd14wE
-	 U9qzMtjbami8dJ/K8tooKhqsvCK81+yvvrj4KFvEWCuZmafCXapVDxx+NrItv4wolL
-	 ZKa9Yr7r3uesQ==
+	b=TpyBDpZycoC4Tpblz+KL7GE+HybWv0yqUxx5dfdbB1pmba4zzE+orAaQP2u25Brp7
+	 338icqOMZUTnnD1+MWL2HXcxmfvqNl86J8E9ALqQEXuqKI4nEZu29S+7dXPaRYhyvA
+	 5kdLfySQUF1IzojiZn8jqGdxne+ouGoBZ/UYh9qL2K/ybD3SxvG5KYvvlfZ6n8VgaS
+	 4rxDsITJt9L9vbcjkVklNjBGTK9yv+eMt0J3PcTqsKzIKv4RVaYE6UDhq88ABGknQt
+	 Zla5VU03h93cwBocg76Ju+2cnIWpI5gYYZFgaEJQBOxeIgBJi1PuzlpxxmyVP9feRF
+	 KPOUED3uFWJdg==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: David Howells <dhowells@redhat.com>
 Cc: Eric Biggers <ebiggers@kernel.org>,
@@ -55,9 +55,9 @@ Cc: Eric Biggers <ebiggers@kernel.org>,
 	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
 	linux-kernel@vger.kernel.org (open list),
 	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS)
-Subject: [PATCH v7] KEYS: key_garbage_collector(): process in chunks
-Date: Fri, 30 Oct 2026 22:24:55 +0200
-Message-ID: <20261030202457.3058665-1-jarkko@kernel.org>
+Subject: [PATCH v8] KEYS: key_garbage_collector(): process in chunks
+Date: Fri, 30 Oct 2026 22:54:08 +0200
+Message-ID: <20261030205412.3138975-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -114,9 +114,15 @@ decline.
 
 Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their keytype is removed")
 Reported-by: syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c15de43f1e7fffbb7b9b
 Link: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/tree/package/keygcbench
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
+v8:
+- Call key_schedule_gc_work(false) from key_put() to avoid unnecessary
+  expired-link scans when freeing unreferenced keys, as reported by
+  Sashiko:
+  https://sashiko.dev/#/patchset/20261030202457.3058665-1-jarkko%40kernel.org
 v7:
 - Removed forgotten Closes tag for syzkaller.
 - Sashiko was right in that key_gc_schedule_links() should be called to
@@ -504,7 +510,7 @@ index b7b622bc36a1..33aa9bce3bb9 100644
 
  extern int key_task_permission(const key_ref_t key_ref,
 diff --git a/security/keys/key.c b/security/keys/key.c
-index e88548f1a704..fd5fecff989a 100644
+index e88548f1a704..dd7a72c09cc9 100644
 --- a/security/keys/key.c
 +++ b/security/keys/key.c
 @@ -670,7 +670,7 @@ void key_put(struct key *key)
@@ -512,7 +518,7 @@ index e88548f1a704..fd5fecff989a 100644
  			/* Mark key as safe for GC after key->user done. */
  			clear_bit_unlock(KEY_FLAG_USER_ALIVE, &key->flags);
 -			schedule_work(&key_gc_work);
-+			key_schedule_gc(0);
++			key_schedule_gc_work(false);
  		}
  	}
  }
