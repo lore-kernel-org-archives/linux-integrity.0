@@ -1,53 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793316625;
-	b=BfnyY/diBgU2a2SpMq4rkFoNVL0zwumKORYyrSBIDE+/m43K1zEr6jULkbYWup1ic2+s
-	 iVrj+7EmrzozwcTyOIf9YEHCw8sZ323TBLINhvlwxogA6tfnrTnJ0I62xTjaHCYzABP+k
-	 1hdtquN8ReYQkxLEMg+Jcyzg7d3OSmCziwP2MNK90VOyHKs6Zqn30/qYgEKXGSflLKR2s
-	 pMChuS7oT6559pYSL1KlbgyKfIcrWiyFaZ+V0x01RY5usZYO4m9KX7I2397jEP569S+a9
-	 RqXa0WkirD6shG1Vse08pNKL2+gsMsOxOdRnvWWuLgvbgFcsdzOPiYz3C+l+nqADmwQ==
+	t=1793370949;
+	b=EtW1OGKRgrqPpq5dtxmeRlekpT66WNCWDV1+5895PS/Ql9oPP5bo4waZCDTa8tP+NrIt
+	 UxmN0qFgnXhNh8r+TNKDMqdj8ZI+m5nmM2bfykz1SfjSv2eBkzr83ugOvH9WrgoE2KOM+
+	 fuT4EfF2ehB3+XnBKD9unYNR+a3BZtKPaAdqs0H7tzfDCYQcuDH5xuqeJxpYxqVpdMV2X
+	 uHxeJBBe/YwdwJrSt+1sZ12yBwIEhIX/2nSHx/9sWfzqG17hmVH8uzPhoWU7f9jrlDwRo
+	 T4EhgCmw/gsfoZ2Nbf/tKFoBFIJG3RgOGaUcbYXZt6teVttY59hBnQQzCcwD028PIOw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793316625;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=aVdetZY9Do9isKUPb6qz8CWfVwLqoRc2UCiZFRh14fY=;
-	b=5qYauMMfuCkbEZDeefhJJo44U7iH2gdaUhQ9VPtrIKP40WKz5blxOzWUbMZNDxRzJvRU
-	 Jm9wYCYl9EttdT/BqSUIJky3PG4sWPvqbJIQ3RLHJyLIuQhT5U3gjA2TepswmaYy2bWfy
-	 c9f+aJSLhKOHa6A9UqhA+gmwQvpri3vpSsTTNclNEcTYRchGCo9dCqWwcOKAseBZThk1H
-	 WgKJoH/h1gnv8A0EwjOHLKRS3dq2EvUe+GXo42kzwyye7IGeuBMVhiZrkjdtgMoqrHlOM
-	 XYfbSSu3GIqB6qRWfkYnPvyvcRDu+xSzcB8K25cFiy0mHiHBXAGfGM/ICOcVq36egHA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793370949;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
+	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
+	 Content-Type:Content-Transfer-Encoding:Date:MIME-Version:User-Agent:
+	 X-TM-AS-GCONF:X-Proofpoint-GUID:X-Proofpoint-Spam-Details-Enc:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=7XaX5yU1MuZsYfPEiCc0AYOOMAtv5l7Gnvv6ve5depg=;
+	b=lNQBp7XoAICRGRZMSf4mX2ka8QbfJNIsgY0rvLPTMYccbogFKF2U8Qa5HLAlU8/iUA8u
+	 FlvqjNn/qz5j7CBZ/nr66gIi96xpY5uDx7W39BYU9dJdH8k4ZMTaWGr6V1j1sjPfZwVmx
+	 QFXcaxp25TAQgg+TIxQG78jTo3hLuVQUGiVqlWK30E3qnLAuA4j3e58ABIWPqvnrsRPKH
+	 j/9UNIXaziVeF6iZQtiVTNoTjwBSLixBo4+zh7Px5Hp7krpWMMI7mCAl5sEQzic2msMdV
+	 TGC0KijfBQp158CgaKHHSllhjMPpCEzd34UyFIpEVX3DfEEd7FAc41q2lBZzxaUGoSA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DjB+DBzz;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=linux.ibm.com;
+	spf=pass smtp.mailfrom=linux.ibm.com;
+	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=oZmfKqzz;
+	arc=none smtp.remote-ip=148.163.158.5
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id C014F60A2610;
-	Thu, 29 Oct 2026 23:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF33606A31A
+	for <linux-integrity@vger.kernel.org>; Fri, 30 Oct 2026 14:35:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ACF33606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DjB+DBzz
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id DD9101F000C1;
-	Thu, 29 Oct 2026 23:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793316624;
-	bh=aVdetZY9Do9isKUPb6qz8CWfVwLqoRc2UCiZFRh14fY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DjB+DBzz3w8/CzjvBWnS1I46ATi/RbuQRPJU3RrRrx5/uHro5rHl8Ej9oL/ZcyosV
-	 9+rt4p9LbXTuAMGF6vGsFUGYlEqdsSnPHLspJf22yDR1zjH5YPo74jqnSMXFR2e02U
-	 5ZZ7z0foCNHY+myCoLEeiO/49LWsScEtO4lpO/Om5tESO4kYhMrMr9khL8rPC4P1/F
-	 MjT0uJDSQaieeyni95jp8WGlohonLvPoMTOycF2vaUsOVeza8AgXRR010gr96+e5rI
-	 lfZYa/7bwzBLwV9UlviGUAnk1vrNUktMO8AiSDCPlVwkbs9SLP/YXSUjOjQ/ot6Ku6
-	 rkvf1gNvUttTA==
-Date: Fri, 30 Oct 2026 01:30:21 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Arun Menon <armenon@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-	Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v5 0/7] tpm_crb: Add command and response buffer chunking
- support
-Message-ID: <auPXDdXZ8L8KOwUW@kernel.org>
-References: <20261029181541.99505-1-armenon@redhat.com>
+	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=oZmfKqzz
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69UBIQav1600267;
+	Fri, 30 Oct 2026 14:35:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=7XaX5yU1MuZsYfPEiCc0AYOOMAtv
+	5l7Gnvv6ve5depg=; b=oZmfKqzzUCjMqsSYfyM9Rm1c+tv1N5r/2AOHZfDhvgdQ
+	yXk0kpmv/bToSoX3GxhPlwyJfcwF7t2jmn4V+okbJBN5oAfoh1v9n0jlqTu4YSH/
+	geAZblMDBP1JokfYlfTsIZIJB1rJSMFXWVu2sK9Zh4HJsMLExvHV37LaNcy0M8Ak
+	FMiGaxiegy/JCmBZTq5g5g62JbZX+rY0O/nYUlWQXroEmU0pum9AGwqwAZSge+qY
+	zVN71EReKNrgoZ1U7vuu37+Xgap+pFcF5hGmTvNcaI80GVxcZ5hSJo/MPJ4MhDBX
+	fY8Nzb8ujX0WW12EdjkB6oVUUtgfM7ySbfAooCga6g==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hmeayu5xt-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 30 Oct 2026 14:35:21 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 69UEZ1I0691333;
+	Fri, 30 Oct 2026 14:35:21 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4hma543tmw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Oct 2026 14:35:21 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 69UEZKYW33358584
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Oct 2026 14:35:20 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4EFF35805B;
+	Fri, 30 Oct 2026 14:35:20 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A2C6058058;
+	Fri, 30 Oct 2026 14:35:19 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.90.173])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 30 Oct 2026 14:35:19 +0000 (GMT)
+Message-ID: <cde3798ee896e1538b38fc400cb02119ce54dc3e.camel@linux.ibm.com>
+Subject: [ANNOUNCE] ima-evm-utils v1.7 released
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: linux-integrity <linux-integrity@vger.kernel.org>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Bruno Meneguele
+	 <bmeneg@redhat.com>, Petr Vorel <pvorel@suse.cz>,
+        Vitaly Chikunov
+	 <vt@altlinux.org>,
+        Stefan Berger <stefanb@us.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 30 Oct 2026 10:35:19 -0400
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -57,93 +94,58 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261029181541.99505-1-armenon@redhat.com>
+User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: bzzXekdvdwrPBsTbA_qVIPcPTtM2q2qo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDMwMDA1NiBTYWx0ZWRfX2D5H1k51aR5L
+ QdqHpfrKYzpdr30R0ldSxsWdM2eeNiIQ2wxlRtyQH/Vxz09BXj3ky4uYjx0xMyMA1n0FdYRknBl
+ U8g/gW3r3A6gKD1p3S7OdWG8qGRc1bJ25I2oNv29VJJ2Gevc7db8WC39iFWbj21HW/w4yytdfth
+ Rm3b4/xEXeCqGRwibvUMq6zDwqCOsZT0oPRRPv/dJv+Gl7C9n87HNw89cZba+1B27WHHG9dqWtO
+ aVBHi6paFJJ3Kc+AY9lXHv71mMCemzsnGlvRl7Fv/9gJhQX2PiLU13egqXoJLZlc6yQB6i7iT9y
+ xj3pn2qGrPdZF1SNWocS2TRu6tV5HZxm2lqYz2O16dgev6vqwpepWQbbKtvWTaOSlYShv8hhCqJ
+ uWyf67Mu+ZPHf8zGXLfF7JaAUFiqsf+Waga4NiA6zWMMFPSxE3kaewgXAvaLENYBwp5kwwY025H
+ iO35nmAZisbN+HcU5ug==
+X-Authority-Analysis: v=2.4 cv=Ms3HeGae c=1 sm=1 tr=0 ts=6ae4ab29 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=NEAV23lmAAAA:8
+ a=HWrzk5iPIFjweBkEaMYA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDMwMDA1NiBTYWx0ZWRfX1H3xCaUKDROm
+ /ge0EtGmJD7wUr8D/jHsTNoWeAzWcDmwbQ5/jl10aFZOvb9xArd4JAN8N/8PfCk3isV0j3vm+lA
+ 1WuT3XRb11xzg+KnCQhgIKonAKnqU88=
+X-Proofpoint-ORIG-GUID: bzzXekdvdwrPBsTbA_qVIPcPTtM2q2qo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-30_04,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 impostorscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ spamscore=0 adultscore=0 clxscore=1011 lowpriorityscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610300056
 
-On Thu, Oct 29, 2026 at 11:45:34PM +0530, Arun Menon wrote:
-> The new version of TCG TPM v185 [1] supports sending data/commands in
-> chunks for the CRB (Command Response Buffer) interface. This is in line
-> with the initiative to support PQC algorithms.
-> 
-> This series implements the logic to send and receive larger TPM
-> cmd/rsp between the linux guest and the TPM backend in chunks.
-> Currently, the TPM CRB driver is limited by the physical size of the
-> MMIO window. When userspace attempts to send a payload that exceeds this
-> size, the driver rejects it.
-> 
-> This series introduces chunking support. The driver now checks the CRB
-> interface capability for CRB_INTF_CAP_CRB_CHUNK. If supported by the
-> backend, the driver will slice oversized commands into MMIO-sized
-> chunks, signalling the backend via CRB_START_NEXT_CHUNK, and finalizing
-> with CRB_START_INVOKE. Responses are also read back in a similar chunked
-> manner.
-> 
-> If the backend does not support chunking, the driver retains its legacy
-> behaviour and enforces the standard size limits.
-> 
-> This feature also requires the QEMU to interpret the data in chunks and
-> forward it to the TPM backend and subsequently dispatch the TPM response
-> in chunks back to the linux guest. This is implemented in [2] and
-> already merged into the mainline.
-> 
-> The whole series applied on top of for-next-tpm (including prerequisite)
-> can be found here:
-> https://github.com/armenon-rh/linux/tree/tpm-crb-linux
-> 
-> [1] https://trustedcomputinggroup.org/wp-content/uploads/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p07_Pub.pdf
-> [2] https://lore.kernel.org/qemu-devel/20260601215410.517009-1-stefanb@linux.ibm.com/
-> 
-> v5
-> --
-> - Split [PATCH v4 06/06] into 2. The preparation patch separates the
->   no-chunking send() and recv() from chunking.
-> - Fixed block comments to respect kernel's preferred multi-line style.
-> - Added citations to the TCG TPM and NIST FIPS documentations. Explained
->   the logic and newly introduced registers in brief in the git commit
->   message.
-> 
-> v4
-> --
-> - Rebased on master (or for-next-tpm, both point to the same commit).
-> - Resolved one conflict in PATCH v3 05/06, as TPM_BUFSIZE is declared in
->   include/linux/tpm_command.h.
-> 
-> v3
-> --
-> - Split patch 2, so that the code is cleaner.
-> - Re-order the buffer size adjustment patch.
-> - Rename crb_trigger_tpm to tpm_crb_start.
-> - Add dispatching logic in send and recv functions. Chunking is
->   separated from no-chunking for clarity.
-> - Increase TPM_BUFSIZE in the common file include/linux/tpm.h following,
->   [PATCH v9 11/11] tpm-buf: Implement managed allocations
->   https://lore.kernel.org/linux-integrity/20260125192526.782202-12-jarkko@kernel.org/
-> 
-> v2
-> --
-> - Add size checks before copying memory.
-> - Update TPM_BUFSIZE to 8KB.
-> - Commit messages updated to indicate motivation and logic of the change.
-> 
-> Arun Menon (7):
->   tpm_crb: Add register definitions of TPM CRB chunking fields
->   tpm_crb: Split start method into a separate header
->   tpm_crb: Add start_cmd parameter to tpm_crb_start wrapper
->   tpm: tis_i2c: Use local 4KB buffer to limit memory usage
->   tpm: Increase TPM_BUFSIZE to 8KB for chunking support
->   tpm_crb: Factor crb_send()/crb_recv() bodies into helpers
->   tpm_crb: Implement command and response chunking logic
-> 
->  drivers/char/tpm/tpm_crb.c     | 226 +++++++++++++++++++++++++++------
->  drivers/char/tpm/tpm_tis_i2c.c |   6 +-
->  include/linux/tpm_command.h    |   2 +-
->  3 files changed, 189 insertions(+), 45 deletions(-)
-> 
-> -- 
-> 2.56.0
-> 
+ima-evm-utils v1.7 was released on October 26 (commit 08723a20e00c, "Releas=
+e
+version 1.7"):
 
-Applied, thank you.
+https://github.com/linux-integrity/ima-evm-utils
 
-Br, Jarkko
+The main changes in this release are:
+
+- IMA and EVM signature v3 support (--v3).
+- ML-DSA post-quantum signing support. ML-DSA requires OpenSSL >=3D 3.5 and=
+ Linux
+7.2, and is limited to sigv3.
+- A significant reorganization of the tests: the tests requiring an IMA cod=
+e
+signing key were moved to a new tests/kernel subdirectory.
+
+I'd like to thank Stefan Berger for the signature v3 and ML-DSA support, Ro=
+berto
+Sassu for the new tests and testing changes, and the community in general f=
+or
+their help.
+
+Please refer to the NEWS file for the short summary and the git history for
+details of the ima-evm-utils v1.7 release.
+
+Mimi
