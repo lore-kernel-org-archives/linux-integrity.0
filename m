@@ -1,11 +1,11 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793390835;
-	b=iR+XJvEQ5mzKT24/Vf3c9SUWuF6Prm8xbEcR4VLMrzaODQEo4e8HBooRQq7dZ2g4VDY4
-	 P47qLDw+r/VAmXv+P7Stn+2KMW5b+npuaKXVTVeScCm9nn2VqHDFh2neWhEhTk2iJWqhV
-	 ECb7g43GcsH8jwlXhZOBJlJGmnSAr5N+UuSd6ReUXOSCMmOmrT907QSJD3l+fL4knuF5M
-	 NVZmJjzkC96T1rrXChr11cHec/15LNhl8yfa+vaPErLBGMfxYf/Nh50RIKZSQ/GKHpQmm
-	 hXQtRxrqWFtkBtAwtXG9hvBFOhntybj10GClNREWZzoCn2MUC+QHDjTV4MD4KndZFmQ==
+	b=V1hs7jbO0oxXHvty77dzrwEC6+jQegR/tv1DF209zSH0cvTP5kMSM4Z9wKHbnw0Zz8Ez
+	 uz7nUKkf2mCKSP2IaOVe51ZURvb+keGpcROW6jGWRmnF74NhwAHZeNF68Eu+auAAeSFlb
+	 XeAuaiDRF7ZuZ77dxCkfE2jI+owdlCyOtUXLxgcqHHI+AeYMm9BA/YdrVuTLTCIC5Xs7J
+	 BNMuTBMz5oksooZ+e2g5oY7Sldr0B7psFrwS8glRvPhybp/vCoaM7g+zOK39cPe/6HBMx
+	 x74qrTsuhbz1zhA+B1rtOEUxvdcbGUMUAvx7EiYrdB5KG2DsQ3hP3OvPbwpnv0eHoyQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793390835;
 	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
@@ -13,91 +13,91 @@ ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 X-Received:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=d+pX9N1kFcamoWGS6O2wutMA7nvNx4/Lu88LU4koO24=;
-	b=fVmd6cbLcR0VKhZDfbtVkqvIM/Apbo92HEM2syR1jzjptwUiXGKxLD0Ja3Fs82iyrNNd
-	 +syKpeGWBJZOBBhZ3dWqnQXXt1DVDGT8E7Rq6vL0s78COuA4r2l5KR8iJXc8X0k5FweIj
-	 3TqqOY9IkqCi7H8cHjWE80TFcfrT2pkEqgkf7pf/wsD2JFhRJaX4Dpuel9S95WE/jsFQ9
-	 2p5S3ZsfGCbh7HR/MN7gciwaLcB6RckxY+ygq174LIniu/aUelTCPprwVzzltD6XZKA2x
-	 zAJO/fbQifx48Deqx0Pn5NS5pd+TGsi0ywctt1DAyVG0Y46ayIZfSuPnqoZ6XtfSyVg==
+	bh=8reQ6REQEA2k8KRp1SWplSOof/sTUnH2B+t/FwFcDO0=;
+	b=z2AM8HlYS6pU9k6oghzxEUeAjyTbZ4+B1XeP7WxQ/esK3zD2a/omD31iDiSA+dUHy3mC
+	 cFqMDsCHg1F6IXq2opc7pB197ad95dM7sbn7q8gxRQOOf5Z23AcPTjoWCmElHjcppKyHU
+	 AeGReWJbXy7xmKS1l75HgeOP1KXycsAYMm3B6RaGpbIpyfbfL1j2xCYyT6+Iwd0nEZAGy
+	 RQlsuoPYAlxDEqwVhjSTibzbTnCJv+r13fOZZr/blr9iCub3luCnShAaLhj7CAAGbMpmM
+	 mDhwZeVu2ieBSOHM56OYoj5blFu/xQAS/V4TwYIpfCKXhDHMYgmXF78otpRlm4bFJgA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=redhat.com;
 	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b="SJw7m/c7";
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=Yh8fRN+b;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=X1Gb8Vkm;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=G42P3DKd;
 	arc=none smtp.remote-ip=170.10.129.124
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39602606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2A9606A32E
 	for <linux-integrity@vger.kernel.org>; Fri, 30 Oct 2026 20:07:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 39602606A323
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5D2A9606A32E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=SJw7m/c7;
-	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=Yh8fRN+b
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=X1Gb8Vkm;
+	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=G42P3DKd
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	s=mimecast20190719; t=1793390834;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d+pX9N1kFcamoWGS6O2wutMA7nvNx4/Lu88LU4koO24=;
-	b=SJw7m/c7jnKZ66XhnkVGN9OW7tg/tPsTVd4oRYdy/r+Eo/bu8xkQNH/HM5JTqhm8uAeJQb
-	mv12R+6ybms9fWSRCXi6zxmNHAB7gY3A9B0M5Ad255OsC/lOI0sBk4DWVRpGDId1rYrjet
-	vJv77bRTuw7u4HW0IjlnVXTc8H5GdAg=
-Received: from mail-dy1-f199.google.com (mail-dy1-f199.google.com
- [74.125.82.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=8reQ6REQEA2k8KRp1SWplSOof/sTUnH2B+t/FwFcDO0=;
+	b=X1Gb8VkmdkX9UjP0I3/GX4wul7NZ9U7xTTb7BKMwDZJxs5q0a9TBbf+dgiUtoFV/qmIqUr
+	ayhWLNgv7GB3c+XSfeqIY3lCCTwr4C3KUwvSmkYKAq7UfKXUphnYZpDoKogkNbB5FsaZ34
+	Rht8hM5ZzmL/issJiAI+XIe3MuowHWA=
+Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com
+ [74.125.82.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-499-2OETFeF3Pg-L2JKk86wMoA-1; Fri, 30 Oct 2026 16:07:12 -0400
-X-MC-Unique: 2OETFeF3Pg-L2JKk86wMoA-1
-X-Mimecast-MFC-AGG-ID: 2OETFeF3Pg-L2JKk86wMoA_1793390828
-Received: by mail-dy1-f199.google.com with SMTP id 5a478bee46e88-35c5aef2a74so4313715eec.0
-        for <linux-integrity@vger.kernel.org>; Fri, 30 Oct 2026 13:07:08 -0700 (PDT)
+ us-mta-3-Zjdy9gmNP2KJOaHT-rQMtw-1; Fri, 30 Oct 2026 16:07:12 -0400
+X-MC-Unique: Zjdy9gmNP2KJOaHT-rQMtw-1
+X-Mimecast-MFC-AGG-ID: Zjdy9gmNP2KJOaHT-rQMtw_1793390831
+Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-3662e7a9299so4058751eec.1
+        for <linux-integrity@vger.kernel.org>; Fri, 30 Oct 2026 13:07:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1793390828; x=1793995628; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1793390831; x=1793995631; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=d+pX9N1kFcamoWGS6O2wutMA7nvNx4/Lu88LU4koO24=;
-        b=Yh8fRN+bcSSi3jnFjAzjdvj888KIf6WI3gZqrdSJrdwJHGETbcD1r4JvP7uF6td9Op
-         TSlZAkkDEX43XE+FSj4HRJoKklbZkHslF5+7vDnqvAlzM76arX406Zr1NCHISsQFOn7n
-         +EAQnzl3B0MfZouA514AJNBLAteHqeOiskvHlXCNIFpS+gJRvr85MqMNd4dUZ5iwU18Q
-         54qpKhRBh86amUVXtOZ39TzqnhxKMgi0kncoSAIq0jiwT3N+Q8aA8lW6TAksddwn10Jb
-         P8yAiJ+iiJblTl4+rpMG/q4oZbrd8WnfCYTJ/I2DlTuUXDov3VmLmEgbOMiO6itvJoGj
-         GhyA==
+        bh=8reQ6REQEA2k8KRp1SWplSOof/sTUnH2B+t/FwFcDO0=;
+        b=G42P3DKdCFvNUBdSKukPkBS1/gUGuYd16ytyY53WBQ17DsWvHTlVVsy/gjVI5j1pig
+         S2wjsztn7VR1MflEXhc3NzZTw0CahoeHXmjBix8OzCMRA7WQ0/ZIJITX24qDyX7/HCKs
+         xHMcgZPgz3+sg/Z6U0l7RaZDaWPQED+phXHWAhNDosDG7CCq2QMWbQkRDS5+omeyRLKS
+         KGp4p1wYitgupqDacRi4QpUH4WqFESpux+39+tdTDU/A9fBEc6ryU6hkzIZ9S5Z2ytBj
+         ZfPSwt0lta7UUeAoKD7EA6cC/YyLiPv2Y3Nb+NT8GBU0ZmhIP/sZnYJlpW9V/RyZ34RP
+         G1ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793390828; x=1793995628;
+        d=1e100.net; s=20260707; t=1793390831; x=1793995631;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=d+pX9N1kFcamoWGS6O2wutMA7nvNx4/Lu88LU4koO24=;
-        b=Nu8+na0leyhllu3XnZuJGMzP/LYoyO2w/LvBO6cEJ5n+wpNAWbtFIhVP6X0nYTK1i+
-         ExLvZP8WkKabgt6iKlPrVlWYlxqAQq9EFeF2iNuy1eRe7ipxBRNYyMAJutHrBImZssR+
-         z7LtxFaaPXTGLkUlgdtbxUkFIvM1ycfeO4o4Y+ReekTKYu84h72GSV4jjPx5cHCNmq0z
-         wz4G1hLZGfDXzqZfo0np26H69TcA/4G6347MIAHAWpXyoMVSafucxenAX5pqCLrt+w5U
-         yS6JmTb6GbEjoIMfNXjd/vAoyaFPB03UM6IEuCvfx7mcO9AA5OgXGbdOTqgNBg6Uvubw
-         X5uQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzvNb5cYoeEB1Q/d6Mne5uapqMpzb+xgiY0V4726O3nyhaLcI9x9xCglvzC9AjB8wFfGB/2Q7jink9XCbwtAww=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKrcsv4OMA8P8zV7zTWYZUA2xH9oiWdo7d7oXl0kLLOgDZ3drFg
-	d5RPpeyhChoWPgLlv4duhSP8xuAVMjPPe7sT/Si9D2hxSJwpWHz+MWzjFc+zCyAEw9zQ1RmN1Uv
-	vP6VtgYJJ7myzDwp5AY6CatNwQ+pCjowXPJi6ZcbArUm3Xrk1E7mZesVPngYRmCxlNWU3OQ==
-X-Gm-Gg: AYBFou2vd11n8ahuhRHpnSzsHNthfMyocWmujPEysD5ObLOlHkhTKZK9r+DvMtYY5Kv
-	7WiuMgrTEW3HdvtNkt9/H1S8LzIr+7FFOzYh9J8BG8EZn1KUHcNsOP4RJquenMbMawDkIMiCJeM
-	soyW2mEytD4HZlZOV1WM3YCHKVBC8QF+IgXOshAxR+IdSFyFyrKeJaXvIlAYWi6JjKGYu/tMplV
-	HDeTyjVkPCsMnZkSXsKW1IGki4+MFFM7WLlrUZI8kjkyk5Sl3wsTvAER/5tCNE40MBUj0iaIW8C
-	Z8B+cwqe0kaqCxf84msQk0B/Um64+LtzuCOPTIsRcxLZXFkuSm/cw77TjxBEJGh+bTXiAh5s2Y5
-	0sMhFHZCjh1BngnYE7ahTs4XMhmL3ZOHPXRNu60TOsc1qOboGmj21K6T+eoBt7CsPCwGOEpU5kK
-	6tOc0mQU2rQ8FBlg==
-X-Received: by 2002:a05:7300:c8c3:b0:36a:1b62:da with SMTP id 5a478bee46e88-36a42340be0mr4770731eec.12.1793390827538;
-        Fri, 30 Oct 2026 13:07:07 -0700 (PDT)
-X-Received: by 2002:a05:7300:c8c3:b0:36a:1b62:da with SMTP id 5a478bee46e88-36a42340be0mr4770688eec.12.1793390826746;
-        Fri, 30 Oct 2026 13:07:06 -0700 (PDT)
+        bh=8reQ6REQEA2k8KRp1SWplSOof/sTUnH2B+t/FwFcDO0=;
+        b=VXbhwjXN5I3Ogo7kidZ/7OF6Aj2JAZalhYPXWjjyzPsJrtakoFXSxr6z3NeKPswkwI
+         eRgaycK2OfETdQq+zJKwrxJKV6UX0etDHqlOpplemKLx+8K7lX6ioARV/24wDMRfBHt/
+         KpgRSx5MliGdjh4+tEHOzcoxmfL2QczeTQ+EKBJaf1PYrHwxypWVWRjmSibz/0y9ZaQ6
+         Iwc/ZadDlDIaSjmgFUiQRG9m7U71c0mOHFlt5iy9K0zf/fN3Tt8a2+0ncQwVug6ngdb5
+         Ik89/KkXjCakt4Apdf0jbCPfHfK43gwjL51h9i/fQYidl11bfaZbegs67rZNNvdlfJJO
+         cbZg==
+X-Forwarded-Encrypted: i=1; AKwUvBzW2ANc+dP5lfOpNuxVvSpbSgu10Voe5vzeRMrFXyr8lW0WW9NXMo3kdpSWsioMIbyVNHEPyTjcBDrwOgCd+BU=@vger.kernel.org
+X-Gm-Message-State: AFq9FYI7FCGG/Ib1XuKx9K+akLMvfY6rWfjHCWCjLzvVL9YVtMRQV8XF
+	33OQScdKlclEU/13Vc7RreU1a/AmXugbQcxNj9xAf6oHfYOFA6RznyTpU2UmOvvBiH/PXxD4A3e
+	GtALWSTogCV1E0htjH8HMTGv/5dLV1mZ016O9aOq0+R2zKQdQSwLr7Du09y9LopZGbHTgtA==
+X-Gm-Gg: AYBFou1U90ptk59lxAGx4Wu+/MnQChBASDl83WXsFgwqV5594VaeF6arKssXLLnIJ0l
+	CMetS0cYdZC+issElOfS53oeEoIb4yIulcxcyJFoe4l7SXtss+HVuqr2SLNQDT5qkq8fNACF7z0
+	nHm3N3v/4ge6C2+uNaWlNE93oIq5cbgdySlLFW6k4aeGRNwp5lmRc59Th/jocOyKwaFcZbdekfu
+	vV/gMGH+nGgQQpp3YwjWPNK7WFiourlH6VWY1ZGlzZ5XRsvqc1QqVgw93d3xKXg9QUzoGtGUG4u
+	07ui2OJjENPYEYFmKki9oqNpI5cXkdM7MzXR7EJBXLGtBSbAaxcc5rcjV7IQODvXt3b8kSKFm4/
+	weZtaPn9ktWuZoM/423myLIgeOo66Q6B3AQmoMSCftbX50Qbutq0zv25bI4QtL6wfuFnePA3JuV
+	avVdOupy9YTsb49A==
+X-Received: by 2002:a05:693c:20d0:20b0:36a:112d:fae3 with SMTP id 5a478bee46e88-36a42435927mr4887080eec.40.1793390830816;
+        Fri, 30 Oct 2026 13:07:10 -0700 (PDT)
+X-Received: by 2002:a05:693c:20d0:20b0:36a:112d:fae3 with SMTP id 5a478bee46e88-36a42435927mr4887052eec.40.1793390830363;
+        Fri, 30 Oct 2026 13:07:10 -0700 (PDT)
 Received: from fedora.armenon-thinkpadp16vgen1.bengluru.csb ([49.47.195.13])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a42aa8999sm10581834eec.29.2026.10.30.13.07.03
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a42aa8999sm10581834eec.29.2026.10.30.13.07.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 13:07:06 -0700 (PDT)
+        Fri, 30 Oct 2026 13:07:09 -0700 (PDT)
 From: Arun Menon <armenon@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Huewe <peterhuewe@gmx.de>,
@@ -105,9 +105,9 @@ Cc: Peter Huewe <peterhuewe@gmx.de>,
 	linux-integrity@vger.kernel.org,
 	Jason Gunthorpe <jgg@ziepe.ca>,
 	Arun Menon <armenon@redhat.com>
-Subject: [PATCH v6 3/7] tpm_crb: Add start_cmd parameter to tpm_crb_start wrapper
-Date: Sat, 31 Oct 2026 01:36:45 +0530
-Message-ID: <20261030200649.357508-4-armenon@redhat.com>
+Subject: [PATCH v6 4/7] tpm: tis_i2c: Use local 4KB buffer to limit memory usage
+Date: Sat, 31 Oct 2026 01:36:46 +0530
+Message-ID: <20261030200649.357508-5-armenon@redhat.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261030200649.357508-1-armenon@redhat.com>
 References: <20261030200649.357508-1-armenon@redhat.com>
@@ -124,63 +124,53 @@ Content-Transfer-Encoding: 8bit
 
 From: Arun Menon <armenon@redhat.com>
 
-The current implementation of tpm_crb_start() is limited to triggering
-the CRB_START_INVOKE bit. To support command and response chunking, the
-driver must be able to send other control bits, like
-CRB_START_NEXT_CHUNK, using the same platform-specific paths.
+The global increase of TPM_BUFSIZE to 8KB is necessary to support
+Post-Quantum Cryptography (PQC) payloads. However, applying this increase
+to the tpm_tis_i2c driver is unnecessary and wasteful due to physical
+transport limitations as pointed out in [1]
 
-This commit adds the start_cmd parameter to tpm_crb_start() so the
-caller can specify which command to send.
+This commit introduces a local buffer limit that is used in the i2c
+driver.
+
+[1] https://sashiko.dev/#/patchset/20260324071803.324774-1-armenon%40redhat.com?patch=8319
 
 Signed-off-by: Arun Menon <armenon@redhat.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Link: https://lore.kernel.org/r/20261029181541.99505-4-armenon@redhat.com
+Link: https://lore.kernel.org/r/20261029181541.99505-5-armenon@redhat.com
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- drivers/char/tpm/tpm_crb.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/char/tpm/tpm_tis_i2c.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 148ef5c487ce..30ca8192d3a8 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -446,7 +446,7 @@ static int tpm_crb_smc_start(struct device *dev, unsigned long func_id)
- }
- #endif
+diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
+index 8bcbc84815fd..36f56ee75cd4 100644
+--- a/drivers/char/tpm/tpm_tis_i2c.c
++++ b/drivers/char/tpm/tpm_tis_i2c.c
+@@ -61,6 +61,7 @@ struct tpm_tis_i2c_reset_timings {
+ 	unsigned int assert_us;
+ 	unsigned int deassert_us;
+ };
++#define TPM_I2C_BUFSIZE 4096
  
--static int tpm_crb_start(struct tpm_chip *chip)
-+static int tpm_crb_start(struct tpm_chip *chip, u32 start_cmd)
- {
- 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
- 	int rc = 0;
-@@ -459,16 +459,16 @@ static int tpm_crb_start(struct tpm_chip *chip)
- 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER ||
- 	    priv->sm == ACPI_TPM2_MEMORY_MAPPED ||
- 	    !strcmp(priv->hid, "MSFT0101"))
--		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
- 	if (priv->sm == ACPI_TPM2_START_METHOD ||
- 	    priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD)
- 		rc = crb_do_acpi_start(chip);
- 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC) {
--		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
- 		rc = tpm_crb_smc_start(&chip->dev, priv->smc_func_id);
- 	}
- 	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
--		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		iowrite32(start_cmd, &priv->regs_t->ctrl_start);
- 		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, chip->locality);
- 	}
- 	return rc;
-@@ -499,7 +499,7 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz, size_t len)
- 	/* Make sure that cmd is populated before issuing start. */
- 	wmb();
+ struct tpm_tis_i2c_phy {
+ 	struct tpm_tis_data priv;
+@@ -240,7 +241,7 @@ static int tpm_tis_i2c_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+ 	int ret;
+ 	u16 wrote = 0;
  
--	rc = tpm_crb_start(chip);
-+	rc = tpm_crb_start(chip, CRB_START_INVOKE);
- 	if (rc)
- 		return rc;
+-	if (len > TPM_BUFSIZE - 1)
++	if (len > TPM_I2C_BUFSIZE - 1)
+ 		return -EIO;
+ 
+ 	phy->io_buf[0] = reg;
+@@ -349,7 +350,7 @@ static int tpm_tis_i2c_probe(struct i2c_client *dev)
+ 	if (!phy)
+ 		return -ENOMEM;
+ 
+-	phy->io_buf = devm_kzalloc(&dev->dev, TPM_BUFSIZE, GFP_KERNEL);
++	phy->io_buf = devm_kzalloc(&dev->dev, TPM_I2C_BUFSIZE, GFP_KERNEL);
+ 	if (!phy->io_buf)
+ 		return -ENOMEM;
  
 -- 
 2.56.0
