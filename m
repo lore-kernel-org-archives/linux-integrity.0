@@ -1,64 +1,126 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793393662;
-	b=cKiKK6Mf2Z9OAv4v9IrPOjSXBWCcCZdQrWDxgXpCXrHUoHwWriiHYCHRLYMW53wKDAHP
-	 m2bHEu3wQ4iN28pTM6zUU4msTMpaqQTax9qfhjECGXYIQz7fXd59iU7jc1LG3ditvwln1
-	 B4+2yGql14srj4VuEdhoffxSYGE42ak57nZyxgZp0324aaCPsWjAJVOXt4RDOA8KNhk+X
-	 7i9LyvgHJST1XMXT52pifgxn+UZ54vObiaNBkBwX9wfk2nR/e6oSHw1/8LdrZtp1Nx5Ob
-	 dTLwTxaV3S8Ilnn/B7wbib9AEmWFqsWt7eB+qFNBgw+ysZlDHDgq1Y7XeaSCJEhpJtg==
+	t=1793394616;
+	b=MeJnEltA5qzv7j/piT1G1j5ddDmGxQOKyDy63VX903EDfJNt/DQqDxXZf8bAl/f82e/o
+	 OV/OUt/53fkYdu4BJV6rfASz+FCyfY5fXT+RP2yDzMCvdBSfOL+z6VQg4c1rDxc1FE9Ix
+	 9Cb7c0R7AazAMY6gknbVAtJDUWP/36ucjtaMiXEw7A1Zo4rqyKvuHiapRQlUCdfeCids4
+	 mf8inJ5ZmAcUHQDy2xWG4gBUolpYAIqHShunY+GAUsHnOGVnv/7J+MHw69rZ4O1Aa62NG
+	 NVI9Ji+rH9cL29hWBGFHQvkesBqOQSJu7Lz1QBZCERB9Gdq+FiC4j7CfcVfgUAtF1dg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793393662;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793394616;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=qCervv7eb/iHyiJerXTtmo8FfBpq+tzA8F5cSzqXS7A=;
-	b=0hgxt5880h8orC8KVevIbsw/tXsyqV3Mj+66yCnvqSq0PpWQU6eRmUxiyyi/FijS8TBH
-	 rZ0pOmoMUJ+Upbbn1h8Up4nM/T+WJ0FnhxM7cOB4Xrw+urIHgD0ZC/hfMQSQK5M2d8OaT
-	 O3Ula3p9m3BStgjHKMZQ10oohJTkx025EY+2AHz6YPdQynMeifjSEALjkgCDIfXyOFQu0
-	 QAqdB3DTibLlxRWv3nzqeoTVKsiVZEaCxcj1NnjjP3++19zO/fcMyT1sIG7f+zNhUqP7n
-	 iUNG/MUzAHdqHd8oSxDpjw/uQSks0wXHy3cc24WRAWhgjcsWPnJV6mYHXenHYh3UDlQ==
+	bh=GEs52XSVkXr3Lysumh8vBcPCuRt3C+96FDYzKDRWk9o=;
+	b=dAgndekrIdJju4zRoAAqnbJ8Uw20ls653Fbm7q3k0kf9RMLhnZE+Azy4ctNUeUA4Cggz
+	 GWqPPKJYzWtnt6CKMdPhBGn9iVocKQo38Kn36eX35PCjukWIjsaXEm6K2c/YM7Xug2TM5
+	 U97LBLC8GvjytpOz1gOQCmXqgbnMrhdxA0Lbc8M2+1y31X4d3gn+nR7Ar7vFZszmu8A5h
+	 FjuFMxs47KPKyLv88e5/7nYcflYvlQRynNQRl2ltVU+KQ4/j/wpxzN1jKJcqe921rFiQd
+	 tgwxm34cf23aZsIzk/J0YRO8m4+cqeQmosXBEWwlf+ZB62WDvClXjbEKVrhrAjoDxTA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TpyBDpZy;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=arista.com;
+	spf=pass smtp.mailfrom=arista.com;
+	dkim=pass header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=T8Rv2qIG;
+	arc=none smtp.remote-ip=74.125.82.41
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 66065606A31C;
-	Fri, 30 Oct 2026 20:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0FF606A333
+	for <linux-integrity@vger.kernel.org>; Fri, 30 Oct 2026 21:10:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2A0FF606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TpyBDpZy
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B34131F00A15;
-	Fri, 30 Oct 2026 20:54:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793393662;
-	bh=qCervv7eb/iHyiJerXTtmo8FfBpq+tzA8F5cSzqXS7A=;
-	h=From:To:Cc:Subject:Date;
-	b=TpyBDpZycoC4Tpblz+KL7GE+HybWv0yqUxx5dfdbB1pmba4zzE+orAaQP2u25Brp7
-	 338icqOMZUTnnD1+MWL2HXcxmfvqNl86J8E9ALqQEXuqKI4nEZu29S+7dXPaRYhyvA
-	 5kdLfySQUF1IzojiZn8jqGdxne+ouGoBZ/UYh9qL2K/ybD3SxvG5KYvvlfZ6n8VgaS
-	 4rxDsITJt9L9vbcjkVklNjBGTK9yv+eMt0J3PcTqsKzIKv4RVaYE6UDhq88ABGknQt
-	 Zla5VU03h93cwBocg76Ju+2cnIWpI5gYYZFgaEJQBOxeIgBJi1PuzlpxxmyVP9feRF
-	 KPOUED3uFWJdg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com,
+	dkim=pass (2048-bit key, unprotected) header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=T8Rv2qIG
+Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-14fc585291cso1060410c88.1
+        for <linux-integrity@vger.kernel.org>; Fri, 30 Oct 2026 14:10:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=google; t=1793394614; x=1793999414; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=GEs52XSVkXr3Lysumh8vBcPCuRt3C+96FDYzKDRWk9o=;
+        b=T8Rv2qIGkZSI3KgoQ+cTGx4+bgXGd8WYNQ5lR46WQZvuOnZX3V48ggLUEp6l0WMJcv
+         6Ca2MKTHWA52a1MHs8UI6ldMUudkELX0cmFn6FkgsHJnKrDLna/soV7go2c8P3w2amlP
+         XIhPAlza8W7dTt/OCpYzvmD/gnS9By5nqF3GojGBOjwq3ERq+VYpPFeBPf6Q+hXW1NI5
+         VqjFQK3PmN5I5sj++Qu4mXAF6Sxdl/Wiho2uHHd3v45rLSzMFkXQCoWMrU2Bjtmj4pdR
+         b6xgxQA2Svnn5Pzcqh6vTiHg7erDcCWyAUIU1cHhMFgRpxw0KI3cvtR82scnZgm9oZNY
+         FgPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793394614; x=1793999414;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=GEs52XSVkXr3Lysumh8vBcPCuRt3C+96FDYzKDRWk9o=;
+        b=BZ/jFWxjbWTnR5WBmx4Hsiv/JRB5IkVnIM5MqYRhIJVR6Pgxs0ZXl8iHkA03CnHM9q
+         YHmZ8tA14ZpUvQ+KbbUHd6iPjKojae6J+a0mk0u54cCk7mwlEI48n3cb/y/c9Ca+mRpH
+         207QTc+IUgmt205e6MGtWOIQ6fMkm/PK3tBe4wBL/8GxymjsvushLc1ZPzG7xp36WktG
+         RiNhVhuHb3YeWdtfupwdp5fjE3TfinN5VTatUy8aXbE2uy6LS8ES0UAjNEOrmGz70TiX
+         Zo9iDdD7je6R1w9E5GaZ/UXfLwSdYgySZbVHw5FAHa3Hfc4fmMlZAjyXqBd2nktEVQCu
+         iFvQ==
+X-Forwarded-Encrypted: i=1; AKwUvBx+wuPoa6TNZjoY9bP9XszU6P0QDc+AodZaJOHmgoaeh0cMA/bA2uNinsWQMvn873u2Y4FCnRDkOgiJqYAGEl4=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKqw9VyDGm0cdXYFuIt3VHn9kpR35+JwBYoUVB3O643xsYhFN01
+	Oem4CXmmYl02xgdQLVhsvOuUD9AP+j6KRSWQYXU8AlBdQrkJHABMLoFKPRyJy+ZRmA==
+X-Gm-Gg: AYBFou295lH72wJjgsDLeYn/0VuNF9yKP60By8LsLQSOdqg3AR8/bYPjiuYzuFAejxt
+	JjYncUedZNhNF6IbkevyxZ4N+CGKppuYmVo9WHmpKdWfGaVowgQwgWYKh3iIjrLj6LRUGW9rFk3
+	u2heKuEj5q73KfjCpxUp+lwVFlt3GhAijtBprVSKVKgv8P5BaRcOBC9S0a9PXbu4Hm8SRwc43px
+	JOnyw3mrNbxZtYUTohysECMuhesRiP+x8rLfr0muhsI3a2Q4g5kP4q6Hvu2tgTVdKhaXWKy6tFP
+	dcFmANOuVMeRALah9nSTwb8LDDplolnfOUCNOOPiLHX4zYryqT3dz1pBeFdTSIt3eA1VldNLqXR
+	LtQeV176Qv5Pn5ghFM1Wie9Ne9wMLax59mmB2uF1vxVOAowHEDy3TFib15kdnzumHoh67g86uPB
+	BR6wBOUUpPLNP1cwV1SL9oZ8+/sOk+Y8Ob64qAh2tdB3peMQlakxWXn7fT83XqIB9PtJvxN8Ocs
+	0FKEVeSy4VcaAot4Ulc2c5oe7IkmrurkY8n63razHdqkTCju0z0l0xzzqGJrjt+cuXJp27jvQz8
+	yVSHB458F/JOT4ijxn1F7xsf4Kn+6KV0R+x5uYsI4gFE6H4KVQ0QlQqrZEeOmCj0NwpiST13/fg
+	n9GdxEeT8rxf99Nco0DvQ9xk=
+X-Received: by 2002:a05:7022:3f0d:b0:196:7742:3928 with SMTP id a92af1059eb24-1ac4fb0c862mr4604513c88.0.1793394613926;
+        Fri, 30 Oct 2026 14:10:13 -0700 (PDT)
+Received: from dannyhu-upstreamLinux.sjc.aristanetworks.com ([74.123.28.18])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1ac1abcf67csm9471777c88.21.2026.10.30.14.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 14:10:13 -0700 (PDT)
+From: Danny Hu <dannyhu@arista.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
 	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS)
-Subject: [PATCH v8] KEYS: key_garbage_collector(): process in chunks
-Date: Fri, 30 Oct 2026 22:54:08 +0200
-Message-ID: <20261030205412.3138975-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
+	Jan Kara <jack@suse.cz>,
+	Victor Kamensky <kamensky@cisco.com>,
+	Taras Kondratiuk <takondra@cisco.com>,
+	Tianxing Zhang <zhangtianxing3@huawei.com>,
+	Zheng Zengkai <zhengzengkai@huawei.com>,
+	zhoushuiqing <zhoushuiqing2@huawei.com>,
+	zhangguangzhi <zhangguangzhi3@huawei.com>,
+	Danny Hu <dannyhu@arista.com>,
+	Jason Yan <yanaijie@huawei.com>,
+	silviu.vlasceanu@huawei.com,
+	hpa@zytor.com,
+	arnd@arndb.de,
+	rob@landley.net,
+	james.w.mcmechan@gmail.com,
+	niveditas98@gmail.com,
+	pierre@arista.com,
+	julien@arista.com,
+	kbharathi@arista.com,
+	erosca@de.adit-jv.com,
+	alexandr.lobakin@intel.com,
+	jim_baxter@mentor.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	initramfs@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bug-cpio@gnu.org
+Subject: [PATCH v5 1/4] ima: skip algorithm availability check until initramfs unpacking is finished
+Date: Fri, 30 Oct 2026 14:09:40 -0700
+Message-ID: <20261030210944.2143778-2-dannyhu@arista.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20261030210944.2143778-1-dannyhu@arista.com>
+References: <20261030210944.2143778-1-dannyhu@arista.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -70,480 +132,80 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-key_garbage_collector() has a design that is not resistant enough for
-workqueue lockups. The duration scales up relative to the number of items
-in the serial tree, which causes a reoccuring theme of being guilty of
-causing workqueue lockups.
+With CONFIG_IMA_APPRAISE=y, restoring xattrs during initramfs unpacking
+can deadlock the kernel if the xattr being restored is signed with a hash
+that the kernel does not already have available. This occurs when the
+ima_inode_setxattr() hook calls crypto_has_alg(). crypto_has_alg() may
+synchronously request a module leading to a circular dependency where the
+userspace helper waits for initramfs unpacking to complete while initramfs
+unpacking waits for the userspace helper.
 
-Resolve the problem by processing in chunks:
+Guard this crypto availability check in validate_hash_algo() until
+initramfs unpacking is complete. This prevents the kernel from requesting
+a module during unpacking and allows security.ima xattrs to be restored
+even if the hash algorithm is unavailable in the running kernel.
+Essentially, this flag distinguishes restoration of existing metadata
+during initial population from setting/changing an xattr during runtime.
 
-1. Declare a static variable key_gc_work, which owns the garbage collection
-   in-flight state, and key_schedule_gc_work() for re-scheduling the work.
-2. Define KEY_GC_CHUNK_SIZE, set to 64 keys, as the bound for the number
-   of items scanned and destroyed.
-3. Define KEY_GC_DESTROYING to mark resume to destruction without repeating
-   the RCU grace period. Drain the graveyard before advancing key-type
-   reaping.
-4. Define KEY_GC_REAP_REQUESTED for preserving full-pass requests across
-   the continuations.
+A benefit of this approach is that once unpacking is complete, all
+subsequent xattr updates go through the same codepath as before which
+preserves the existing behavior during normal userspace operation.
 
-keygcbench results without the patch:
-
-unused:   min=798.785 avg=4181.989 max=7565.193 var=11446068.927
-expired:  min=0.003 avg=2404.971 max=4111.065 var=3061018.501
-combined: min=0.003 avg=3115.778 max=7565.193 var=7172908.943
-
-keygcbench results with the patch:
-
-unused:   min=0.005 avg=0.125 max=79.590 var=1.088
-expired:  min=0.002 avg=0.196 max=236.207 var=8.121
-combined: min=0.002 avg=0.154 max=236.207 var=3.912
-
-These results translate to:
-
-- 93% drop in the combined variance.
-- 2.2% increase in the total task time.
-
-The value 64 for KEY_GC_CHUNK_SIZE was cherry-picked from the set {1, 2,
-..., 1024} by running the benchmark for each chunk size three times.
-
-At the far left variance is 97% lower but at the same time total time
-grows by 133%, when compared to the selected chunk size. The size was
-picked based on getting a reasonable variance with a minimal throughput
-decline.
-
-Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their keytype is removed")
-Reported-by: syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c15de43f1e7fffbb7b9b
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/tree/package/keygcbench
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Danny Hu <dannyhu@arista.com>
 ---
-v8:
-- Call key_schedule_gc_work(false) from key_put() to avoid unnecessary
-  expired-link scans when freeing unreferenced keys, as reported by
-  Sashiko:
-  https://sashiko.dev/#/patchset/20261030202457.3058665-1-jarkko%40kernel.org
-v7:
-- Removed forgotten Closes tag for syzkaller.
-- Sashiko was right in that key_gc_schedule_links() should be called to
-  mark expiry [1]. I fixed up the call site and also added expired bool
-  parameter to key_gc_schedule_work() so that bits can be set in a single
-  atomic operation.
+ security/integrity/ima/ima_appraise.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-  https://sashiko.dev/#/patchset/20261030160924.2919363-1-jarkko%40kernel.org
-v6:
-- Removed syzkaller references, given feedback:
-  https://lore.kernel.org/keyrings/20261029234149.218-1-hdanton@sina.com/
-v5:
-- Benchmarked all the chunk sizes in {1, 2, ..., 1024} and cherry-picked
-  based on that the chunk size of 64.
-v4:
-- Added syzkaller link, as the resolution can be reasoned from the benchmark
-  results.
-v3:
-- Added new tests results made by using keygcbench.
-- Added link to keygcbench.
-v2:
-- Fixed typo in the commit message.
-- Drop the local variable gc_state.
- security/keys/gc.c       | 162 +++++++++++++++++++++++++--------------
- security/keys/internal.h |   3 +-
- security/keys/key.c      |   4 +-
- security/keys/keyring.c  |   2 +-
- 4 files changed, 107 insertions(+), 64 deletions(-)
-
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index eda445f815d4..ea2efde5f33f 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -10,16 +10,27 @@
- #include <keys/keyring-type.h>
- #include "internal.h"
-
--/*
-- * Delay between key revocation/expiry in seconds
-- */
--unsigned key_gc_delay = 5 * 60;
-+#define KEY_GC_CHUNK_SIZE 64
-
- /*
-  * Reaper for unused keys.
-  */
- static void key_garbage_collector(struct work_struct *work);
--DECLARE_WORK(key_gc_work, key_garbage_collector);
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 63b0cb957c65..1403f5653973 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -20,6 +20,14 @@
+ 
+ #include "ima.h"
+ 
++static bool ima_initramfs_populated __ro_after_init =
++	!IS_ENABLED(CONFIG_BLK_DEV_INITRD);
 +
-+static struct {
-+	time64_t start;			/* expiry range start */
-+	time64_t end;			/* expiry range end */
-+	struct rb_node *cursor;		/* serial tree position */
-+	u8 state;			/* state flags */
-+	struct work_struct work;	/* work item */
-+} key_gc_work = {
-+	.work = __WORK_INITIALIZER(key_gc_work.work, key_garbage_collector),
-+};
-+
-+/*
-+ * Delay between key revocation/expiry in seconds
-+ */
-+unsigned int key_gc_delay = 5 * 60;
-
- /*
-  * Reaper for links from keyrings to dead keys.
-@@ -34,6 +45,7 @@ static unsigned long key_gc_flags;
- #define KEY_GC_KEY_EXPIRED	0	/* A key expired and needs unlinking */
- #define KEY_GC_REAP_KEYTYPE	1	/* A keytype is being unregistered */
- #define KEY_GC_REAPING_KEYTYPE	2	/* Cleared when keytype reaped */
-+#define KEY_GC_REAP_REQUESTED	3	/* Another complete pass was requested */
-
-
- /*
-@@ -44,6 +56,21 @@ struct key_type key_type_dead = {
- 	.name = ".dead",
- };
-
-+/*
-+ * Schedule a new GC pass or re-schedule an ongoing GC pass.
-+ */
-+void key_schedule_gc_work(bool expired)
++static void ima_notify_initramfs_populated(void)
 +{
-+	unsigned long flags = BIT(KEY_GC_REAP_REQUESTED);
-+
-+	if (expired)
-+		flags |= BIT(KEY_GC_KEY_EXPIRED);
-+
-+	/* Publish all request flags together, after the caller's updates. */
-+	set_mask_bits(&key_gc_flags, 0, flags);
-+	schedule_work(&key_gc_work.work);
++	ima_initramfs_populated = true;
 +}
 +
- /*
-  * Schedule a garbage collection run.
-  * - time precision isn't particularly important
-@@ -57,7 +84,8 @@ void key_schedule_gc(time64_t gc_at)
-
- 	if (gc_at <= now || test_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags)) {
- 		kdebug("IMMEDIATE");
--		schedule_work(&key_gc_work);
-+		/* Catch expirations that became due during the scan. */
-+		key_schedule_gc_work(true);
- 	} else if (gc_at < key_gc_next_run) {
- 		kdebug("DEFERRED");
- 		key_gc_next_run = gc_at;
-@@ -79,15 +107,6 @@ void key_set_expiry(struct key *key, time64_t expiry)
- 	}
- }
-
--/*
-- * Schedule a dead links collection run.
-- */
--void key_schedule_gc_links(void)
--{
--	set_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags);
--	schedule_work(&key_gc_work);
--}
--
- /*
-  * Some key's cleanup time was met after it expired, so we need to get the
-  * reaper to go through a cycle finding expired keys.
-@@ -96,7 +115,7 @@ static void key_gc_timer_func(struct timer_list *unused)
- {
- 	kenter("");
- 	key_gc_next_run = TIME64_MAX;
--	key_schedule_gc_links();
-+	key_schedule_gc_work(true);
- }
-
- /*
-@@ -119,7 +138,7 @@ void key_gc_keytype(struct key_type *ktype)
- 	set_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags);
-
- 	kdebug("schedule");
--	schedule_work(&key_gc_work);
-+	key_schedule_gc_work(false);
-
- 	kdebug("sleep");
- 	wait_on_bit(&key_gc_flags, KEY_GC_REAPING_KEYTYPE,
-@@ -134,7 +153,9 @@ void key_gc_keytype(struct key_type *ktype)
-  */
- static noinline void key_gc_unused_keys(struct list_head *keys)
- {
--	while (!list_empty(keys)) {
-+	unsigned int chunk = KEY_GC_CHUNK_SIZE;
+ #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
+ static char *ima_appraise_cmdline_default __initdata;
+ core_param(ima_appraise, ima_appraise_cmdline_default, charp, 0);
+@@ -738,6 +746,22 @@ static int validate_hash_algo(struct dentry *dentry,
+ 		if (likely(xattr_hash_algo == ima_hash_algo))
+ 			return 0;
+ 
++		/*
++		 * IMA validates the crypto algorithm whenever the security.ima
++		 * xattr is set. Restoring xattrs during initramfs unpacking
++		 * can call crypto_has_alg() before unpacking has completed.
++		 *
++		 * If the algo is unavailable, crypto_has_alg() may
++		 * synchronously request a module. The userspace helper waits
++		 * for initramfs unpacking to finish and creates a circular
++		 * dependency.
++		 *
++		 * Skip the algorithm availability check until initramfs is
++		 * populated to avoid this deadlock.
++		 */
++		if (!ima_initramfs_populated)
++			return 0;
 +
-+	while (!list_empty(keys) && chunk--) {
- 		struct key *key =
- 			list_entry(keys->next, struct key, graveyard_link);
- 		short state = key->state;
-@@ -178,54 +199,64 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
- static void key_garbage_collector(struct work_struct *work)
- {
- 	static LIST_HEAD(graveyard);
--	static u8 gc_state;		/* Internal persistent state */
-+	typeof(key_gc_work) *gc = &key_gc_work;
- #define KEY_GC_REAP_AGAIN	0x01	/* - Need another cycle */
- #define KEY_GC_REAPING_LINKS	0x02	/* - We need to reap links */
-+#define KEY_GC_DESTROYING	0x04	/* - We need to destroy keys */
- #define KEY_GC_REAPING_DEAD_1	0x10	/* - We need to mark dead keys */
- #define KEY_GC_REAPING_DEAD_2	0x20	/* - We need to reap dead key links */
- #define KEY_GC_REAPING_DEAD_3	0x40	/* - We need to reap dead keys */
- #define KEY_GC_FOUND_DEAD_KEY	0x80	/* - We found at least one dead key */
-
--	struct rb_node *cursor;
-+	unsigned int chunk = KEY_GC_CHUNK_SIZE;
- 	struct key *key;
--	time64_t new_timer, limit, expiry;
-+	time64_t expiry;
-
--	kenter("[%lx,%x]", key_gc_flags, gc_state);
-+	kenter("[%lx,%x]", key_gc_flags, gc->state);
-
--	limit = ktime_get_real_seconds();
-+	if (gc->state & KEY_GC_DESTROYING)
-+		goto destroy_keys;
-+	if (gc->cursor) {
-+		spin_lock(&key_serial_lock);
-+		goto continue_scanning;
-+	}
-+
-+	test_and_clear_bit(KEY_GC_REAP_REQUESTED, &key_gc_flags);
-+	gc->start = ktime_get_real_seconds();
-
- 	/* Work out what we're going to be doing in this pass */
--	gc_state &= KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2;
--	gc_state <<= 1;
-+	gc->state &= KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2;
-+	gc->state <<= 1;
- 	if (test_and_clear_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags))
--		gc_state |= KEY_GC_REAPING_LINKS;
-+		gc->state |= KEY_GC_REAPING_LINKS;
-
- 	if (test_and_clear_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags))
--		gc_state |= KEY_GC_REAPING_DEAD_1;
--	kdebug("new pass %x", gc_state);
-+		gc->state |= KEY_GC_REAPING_DEAD_1;
-+	kdebug("new pass %x", gc->state);
-
--	new_timer = TIME64_MAX;
-+	gc->end = TIME64_MAX;
-
- 	/* As only this function is permitted to remove things from the key
- 	 * serial tree, if cursor is non-NULL then it will always point to a
- 	 * valid node in the tree - even if lock got dropped.
- 	 */
- 	spin_lock(&key_serial_lock);
--	cursor = rb_first(&key_serial_tree);
-+	gc->cursor = rb_first(&key_serial_tree);
-
- continue_scanning:
--	while (cursor) {
--		key = rb_entry(cursor, struct key, serial_node);
--		cursor = rb_next(cursor);
-+	while (gc->cursor && chunk) {
-+		key = rb_entry(gc->cursor, struct key, serial_node);
-+		gc->cursor = rb_next(gc->cursor);
-+		chunk--;
-
- 		if (!test_bit_acquire(KEY_FLAG_USER_ALIVE, &key->flags)) {
- 			/* Clobber key->user after final put seen. */
- 			goto found_unreferenced_key;
- 		}
-
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
-+		if (unlikely(gc->state & KEY_GC_REAPING_DEAD_1)) {
- 			if (key->type == key_gc_dead_keytype) {
--				gc_state |= KEY_GC_FOUND_DEAD_KEY;
-+				gc->state |= KEY_GC_FOUND_DEAD_KEY;
- 				set_bit(KEY_FLAG_DEAD, &key->flags);
- 				key->perm = 0;
- 				goto skip_dead_key;
-@@ -239,24 +270,24 @@ static void key_garbage_collector(struct work_struct *work)
- 		if (expiry != TIME64_MAX) {
- 			if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
- 				expiry += key_gc_delay;
--			if (expiry > limit && expiry < new_timer) {
-+			if (expiry > gc->start && expiry < gc->end) {
- 				kdebug("will expire %x in %lld",
--				       key_serial(key), key->expiry - limit);
--				new_timer = key->expiry;
-+				       key_serial(key), key->expiry - gc->start);
-+				gc->end = key->expiry;
- 			}
- 		}
-
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2))
-+		if (unlikely(gc->state & KEY_GC_REAPING_DEAD_2))
- 			if (key->type == key_gc_dead_keytype)
--				gc_state |= KEY_GC_FOUND_DEAD_KEY;
-+				gc->state |= KEY_GC_FOUND_DEAD_KEY;
-
--		if ((gc_state & KEY_GC_REAPING_LINKS) ||
--		    unlikely(gc_state & KEY_GC_REAPING_DEAD_2)) {
-+		if ((gc->state & KEY_GC_REAPING_LINKS) ||
-+		    unlikely(gc->state & KEY_GC_REAPING_DEAD_2)) {
- 			if (key->type == &key_type_keyring)
- 				goto found_keyring;
- 		}
-
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3))
-+		if (unlikely(gc->state & KEY_GC_REAPING_DEAD_3))
- 			if (key->type == key_gc_dead_keytype)
- 				goto destroy_dead_key;
-
-@@ -269,7 +300,11 @@ static void key_garbage_collector(struct work_struct *work)
- 	spin_unlock(&key_serial_lock);
-
- maybe_resched:
--	if (cursor) {
-+	if (gc->cursor) {
-+		if (!chunk) {
-+			schedule_work(&key_gc_work.work);
-+			return;
-+		}
- 		cond_resched();
- 		spin_lock(&key_serial_lock);
- 		goto continue_scanning;
-@@ -281,12 +316,12 @@ static void key_garbage_collector(struct work_struct *work)
- 	 */
- 	kdebug("pass complete");
-
--	if (new_timer != TIME64_MAX) {
--		new_timer += key_gc_delay;
--		key_schedule_gc(new_timer);
-+	if (gc->end != TIME64_MAX) {
-+		gc->end += key_gc_delay;
-+		key_schedule_gc(gc->end);
- 	}
-
--	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
-+	if (unlikely(gc->state & KEY_GC_REAPING_DEAD_2) ||
- 	    !list_empty(&graveyard)) {
- 		/* Make sure that all pending keyring payload destructions are
- 		 * fulfilled and that people aren't now looking at dead or
-@@ -297,33 +332,42 @@ static void key_garbage_collector(struct work_struct *work)
- 		synchronize_rcu();
- 	}
-
-+	gc->state |= KEY_GC_DESTROYING;
-+
-+destroy_keys:
- 	if (!list_empty(&graveyard)) {
- 		kdebug("gc keys");
- 		key_gc_unused_keys(&graveyard);
-+		if (!list_empty(&graveyard)) {
-+			schedule_work(&key_gc_work.work);
-+			return;
-+		}
- 	}
-+	gc->state &= ~KEY_GC_DESTROYING;
-
--	if (unlikely(gc_state & (KEY_GC_REAPING_DEAD_1 |
-+	if (unlikely(gc->state & (KEY_GC_REAPING_DEAD_1 |
- 				 KEY_GC_REAPING_DEAD_2))) {
--		if (!(gc_state & KEY_GC_FOUND_DEAD_KEY)) {
-+		if (!(gc->state & KEY_GC_FOUND_DEAD_KEY)) {
- 			/* No remaining dead keys: short circuit the remaining
- 			 * keytype reap cycles.
- 			 */
- 			kdebug("dead short");
--			gc_state &= ~(KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2);
--			gc_state |= KEY_GC_REAPING_DEAD_3;
-+			gc->state &= ~(KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2);
-+			gc->state |= KEY_GC_REAPING_DEAD_3;
- 		} else {
--			gc_state |= KEY_GC_REAP_AGAIN;
-+			gc->state |= KEY_GC_REAP_AGAIN;
- 		}
- 	}
-
--	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3)) {
-+	if (unlikely(gc->state & KEY_GC_REAPING_DEAD_3)) {
- 		kdebug("dead wake");
- 		clear_and_wake_up_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
- 	}
-
--	if (gc_state & KEY_GC_REAP_AGAIN)
--		schedule_work(&key_gc_work);
--	kleave(" [end %x]", gc_state);
-+	if ((gc->state & KEY_GC_REAP_AGAIN) ||
-+	    test_bit(KEY_GC_REAP_REQUESTED, &key_gc_flags))
-+		schedule_work(&key_gc_work.work);
-+	kleave(" [end %x]", gc->state);
- 	return;
-
- 	/* We found an unreferenced key - once we've removed it from the tree,
-@@ -335,7 +379,7 @@ static void key_garbage_collector(struct work_struct *work)
- 	spin_unlock(&key_serial_lock);
-
- 	list_add_tail(&key->graveyard_link, &graveyard);
--	gc_state |= KEY_GC_REAP_AGAIN;
-+	gc->state |= KEY_GC_REAP_AGAIN;
- 	goto maybe_resched;
-
- 	/* We found a restricted keyring and need to update the restriction if
-@@ -353,7 +397,7 @@ static void key_garbage_collector(struct work_struct *work)
- 	 */
- found_keyring:
- 	spin_unlock(&key_serial_lock);
--	keyring_gc(key, limit);
-+	keyring_gc(key, gc->start);
- 	goto maybe_resched;
-
- 	/* We found a dead key that is still referenced.  Reset its type and
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index b7b622bc36a1..33aa9bce3bb9 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -162,14 +162,13 @@ extern bool lookup_user_key_possessed(const struct key *key,
- extern long join_session_keyring(const char *name);
- extern void key_change_session_keyring(struct callback_head *twork);
-
--extern struct work_struct key_gc_work;
- extern unsigned key_gc_delay;
- extern void keyring_gc(struct key *keyring, time64_t limit);
- extern void keyring_restriction_gc(struct key *keyring,
- 				   struct key_type *dead_type);
- void key_set_expiry(struct key *key, time64_t expiry);
- extern void key_schedule_gc(time64_t gc_at);
--extern void key_schedule_gc_links(void);
-+void key_schedule_gc_work(bool expired);
- extern void key_gc_keytype(struct key_type *ktype);
-
- extern int key_task_permission(const key_ref_t key_ref,
-diff --git a/security/keys/key.c b/security/keys/key.c
-index e88548f1a704..dd7a72c09cc9 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -670,7 +670,7 @@ void key_put(struct key *key)
- 			}
- 			/* Mark key as safe for GC after key->user done. */
- 			clear_bit_unlock(KEY_FLAG_USER_ALIVE, &key->flags);
--			schedule_work(&key_gc_work);
-+			key_schedule_gc_work(false);
- 		}
- 	}
- }
-@@ -1189,7 +1189,7 @@ void key_invalidate(struct key *key)
- 		down_write_nested(&key->sem, 1);
- 		if (!test_and_set_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
- 			notify_key(key, NOTIFY_KEY_INVALIDATED, 0);
--			key_schedule_gc_links();
-+			key_schedule_gc_work(true);
- 		}
- 		up_write(&key->sem);
- 	}
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 5281da9d5bf7..40e3b2b6aca1 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -265,7 +265,7 @@ void key_remove_domain(struct key_tag *domain_tag)
- {
- 	domain_tag->removed = true;
- 	if (!key_put_tag(domain_tag))
--		key_schedule_gc_links();
-+		key_schedule_gc_work(true);
- }
-
- /*
---
-2.47.3
+ 		/* allow any xattr using an algorithm built in the kernel */
+ 		if (crypto_has_alg(hash_algo_name[xattr_hash_algo], 0, 0))
+ 			return 0;
+@@ -829,6 +853,7 @@ static struct security_hook_list ima_appraise_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(inode_set_acl, ima_inode_set_acl),
+ 	LSM_HOOK_INIT(inode_removexattr, ima_inode_removexattr),
+ 	LSM_HOOK_INIT(inode_remove_acl, ima_inode_remove_acl),
++	LSM_HOOK_INIT(initramfs_populated, ima_notify_initramfs_populated),
+ };
+ 
+ void __init init_ima_appraise_lsm(const struct lsm_id *lsmid)
+-- 
+2.51.0
 
