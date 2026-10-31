@@ -1,53 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793395482;
-	b=uAD9uFuP/vajCZrFQRP68n5ki4iBTM5ZRlYSrCMcSGzN0dut2iPh56/eKi1Rl17F8z4i
-	 JAct3my81hkSOy9Ea1Qi9D6lJqmac8yD4OAIrSfq3C743ML/ojyMr6ago6dDvNHHqchUA
-	 odaYHGS0rZP689xYlfUmBg+8DfLLCK314iCnHmNM94V6UcSkU6Mqf5YnAim/MCvrMSHUl
-	 pYEJAw77QEYGC5twFgcYskLiGywKtYSq7ZbTUqvOKCcvUsnUCi/365F+HdUjBdATj0Xwr
-	 NmQJtQy88RFTHoOJM1r0VioprJz8zM0CNSnRrl5nHe+qTDm0unUSnJBrZ9w5VLl0pOQ==
+	t=1793415669;
+	b=nqjezm6rtLFLcQ4i+Ijj35ohSai/5F0RafFknRvZMgoe/bPW+nmlkW6xQduXYNshdLoW
+	 3K5C0boOTJKZq5uIfPnq1JhEEDRP91fQfBUWfz7Tjkr6YDm4USbZ5mtfqduBrQ32953eN
+	 43O4HyU0IjzexKcSJaxYUCIftSmFEZOXb4G3jeshRCVArkUZjJNimK4ZTLqkhXFvN3zfo
+	 8Xa/Q1izhy0EEQ3CaAerDD9lnnvk1iZmfZRouHRjO9ZyyUYb/crx4GQFcqlDBa1/hTaUD
+	 GBZqHVKtp1z7THnb2bozgErdVJdyHMGyCRjIu4UBObbfNglWJOhzUn/oIfUr25629gQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793395482;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793415669;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=aQ0Es9+34HNHRUII6Yl2Wa2R6Euk+ARdRZIX1Dn+ouk=;
-	b=g6CBjeJnJ0LiamMEjXaf9c7ZS9cddsJuBN5CoCpjXuYctthxjCvia6zRnEeFg41nlW7m
-	 USzTTG6rA3/mML4qfpJqMD7iv7nDl+JQDF/BSb/m/08NyVQXHHbYWjgiJw3Tri/y5ElDu
-	 Czp7gUAVCQNkf3tSKH17HGqCQMPcCsmwwhR+GpbrX08fW8OUiAB9WZpd+w9EREYmD9XUd
-	 m8PpMuAA8QXD5xRcj2J8ciigLITz6+4oqAWd72BrmZldIrSkWrlfUD0mhLK1sp/LHPepc
-	 CTmtqsqjz8qGco3QnK12qnzNj1NMfP48JnJ3STj5x0yehBRO3YmNjhFaQTPZDbI192w==
+	bh=BngSBXTp+deGkFdRSOmECpX1qa4udSKk9eVqZM6ckQs=;
+	b=YSe2HFYYDU0qva1DgzWG2f2n4mytpx1Pn9jHjdsXrvvWnUdogd22BNaFy5vmHEmAxUSC
+	 2elthGW2RPJeYkXuM+iW00Eltu3B29AnmdPafixIaD51pM7CAQuWK9uAHZz2DCQ2wK7qH
+	 hWrokd/aYuTqpLiyFM7eMFvtz39p9pHtI9Fk8BQAyTIdi+VAHvH2kkTQJrwnY5tWXqSVj
+	 OibyvbGofX2+i5xbtMynQfmxFw6ci4S1qSIkx7Ac7gx5zB0L/29LSZ1durE7Uatyq6blo
+	 TKFGPmVJgDXeK9JuOrbvNsrwH4oNv21J5SJUAh1SjUKxwKbDd36SelDntatglUcIoyQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G3Jnuwg9;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K5tBDEg3;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 054E1606A98D;
-	Fri, 30 Oct 2026 21:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 65E29606A31A;
+	Sat, 31 Oct 2026 03:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G3Jnuwg9
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1A4A71F00A20;
-	Fri, 30 Oct 2026 21:24:40 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K5tBDEg3
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6155B1F000C1;
+	Sat, 31 Oct 2026 03:01:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793395481;
-	bh=aQ0Es9+34HNHRUII6Yl2Wa2R6Euk+ARdRZIX1Dn+ouk=;
+	s=k20260515; t=1793415669;
+	bh=BngSBXTp+deGkFdRSOmECpX1qa4udSKk9eVqZM6ckQs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=G3Jnuwg9ZEx8638kcTmNJ5bdVxPjENZEL/PfDOsNMj1OKb3H+nHd8VmfHs2h4/9M9
-	 k8u3JvLxq5bv1xTzRfXl2I/V99exQmsvGjSmNbtSBau1ejwkDt8l0WFwa6fiAuPqJv
-	 BDQKD2AU6Rz8OkAFlCJvP3FrHvTSgPDWmbqbjQqB45iXXjL0IaP9x/ZeTnJiTsw6u1
-	 M5kYeFHG2C7+CV1fATibE2E6cwo966qtrPNTFyXMU0rI3kEpAH8ZH1rKMcCVu++5HO
-	 Llq6UYRZDH/VG32ADiV7CTpvoXs3CuusZJF3WtOpsP0NNeU6IK0dSH8N7LdjfLTFh0
-	 ST/TwSq7CMeiQ==
-Date: Fri, 30 Oct 2026 23:24:38 +0200
+	b=K5tBDEg3PiRlab478XW6PS7L4wUZFmiKjSTa5yM23K+XR5iNzDS+zBV06lnLbqf13
+	 /zb5sNkIHZNfa+A1k0HIT7zUjUQyNYOgwmILdmgi2WdCepEhtM42cFKKwFcCYiDRdx
+	 ZfI8NzwC11B98IA4FyOGG9xNK3fCIWXABm/XLw9QydHm1VTYfy8kjvHnpr2j32ymMt
+	 6Hxhf20TsSWLlOD+MfUHJsW+ECBxBtcGz4UxKJ0JN/r23xwEnSikQYeroaJ0JtDYMz
+	 dLdO38ky/dpx3/4bHDxzQwpDfU5uRZ8Jt9KDHEY4DG6t6r657KhyyqUjy6WEQ2Vxlm
+	 rtmRfmMAHcgkQ==
+Date: Sat, 31 Oct 2026 05:01:04 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Arun Menon <armenon@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH v6 0/7] tpm_crb: Add command and response buffer chunking
- support
-Message-ID: <auULFhtOCLdNS69G@kernel.org>
-References: <20261030200649.357508-1-armenon@redhat.com>
+To: Matthew Garrett <matthewg@nvidia.com>
+Cc: mjg59@srcf.ucam.org, keyrings@vger.kernel.org,
+	James.Bottomley@hansenpartnership.com,
+	linux-integrity@vger.kernel.org, rafael@kernel.org,
+	linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [RFC] Make hibernation work with lockdown
+Message-ID: <auVZ8AvMXqqKXl7S@kernel.org>
+References: <20261008132532.1155166-1-matthewg@nvidia.com>
+ <att9OPPi0sPqt_CW@kernel.org>
+ <atux0EFb_euN6pM3@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -59,15 +62,34 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261030200649.357508-1-armenon@redhat.com>
+In-Reply-To: <atux0EFb_euN6pM3@kernel.org>
 
-On Sat, Oct 31, 2026 at 01:36:42AM +0530, Arun Menon wrote:
-> v6
-> --
-> -  Rebased on master and the sparse __iomem warning is fixed.
- 
-I appreciate the trouble, thank you.
+On Fri, Oct 23, 2026 at 10:13:20PM +0300, Jarkko Sakkinen wrote:
+ > As the next step I'll expand the bootc OS installer that I did to have an
+> option for hibernate so that it does partition layout and all the wiring
+> required. I can then integrate that to my test environment and test it
+> in a libvirtd VM.
+> 
+> It's not as tedious as it sounds :-)
+> 
+> There would be faster routes but this is the only one that is not a
+> tower of cards. I'll just shovel it through.
+> 
+> I'd figure that it's also modelling quite well any possible production
+> environment where this feature might be ever used (reproducible build,
+> read-only rootfs, bootc container).
+> 
+> 1. https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/
+> 2. https://github.com/puu-os/installer
 
-Now it is applied, will push soon.
+My kernel test build is now generating installable bootc container, and
+has hibernate working (not all changes have been pushed yet). Not being
+completely ad-hoc environment allows effortless testing, which is
+essential in order to get all of this eventually applied. 
+
+The next step is to test with the patches applied but without secure
+boot at first.
 
 Br, Jarkko
+
+
