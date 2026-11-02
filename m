@@ -1,58 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793621374;
-	b=R8Lj2Cal06GNEdA3gTRefGz73CEUz+VDl2o6pxkuRqochY8lpZPc9jPgxraO11hTt2F/
-	 CFgmLRGS43U8JOzDeMJiaLw4QK9lJ8cgaRfzjXJnejqlTLxAMZqHi/bizTK9/NStYgdiU
-	 BEzgQGRy24tmvbvTT82HhsLrg7AJGHnJBX+f5w/m5zu1X2ozDjRzteJ2Ie5XLEAEGdZ6t
-	 YlkdSokb12RJgLIGJpAGY4qOF7Ny+SO9+0x97c0yhnoEFLp3D/JfTC1Nlp5iixtB9U49c
-	 2b7J3Ty0OinrQd8basInfY2NrV/zGCDoZyPAA7T08tvzhM4ZqwEkWb62VqK5rV26tfg==
+	t=1793621747;
+	b=b81WoAA9FwpHMFASszqBOcdBN7mvrbLUg8hLuJJJTxFVdzMFioM3qCgautXlu240vxv4
+	 HKCsgjifyVCMuDCRHAysX6yHTGMNLGTt1KUcTQVd2SKK8mFV0W9Pugxi+y4DY/4nbL0w2
+	 ICL/2/FjjXYQG5kCjkB+fPs7irnd50uFOH1dOEq87+Mst7YMG4kbD4ANCnThSGZufRZjq
+	 kjIwJNjkRnB8BuQRPl4+rxlnsCalK09LhSN2XxrrSOADimfY56vO0Y8XHBvcMR+6sknmX
+	 d7i3eGC918qpnlN23l9FlMYaGAQ7ppJvZ7zE3knqFIVxuNz9oUc4Nv8v0mqjM5J75Ag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793621374;
-	h=DMARC-Filter:dkim-signature:Received:Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:CC:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-	bh=zDL/1MJP5TL90RnmLlT28rab6xGthMP97p8sOIl7EEQ=;
-	b=Z0VJ+OLjRcoyfkde1zEsa+ctvuAyVWy99tMoA90GYRIiA1ymqhLlkQiHHW0QGatW+Mr8
-	 kvJlMXc+6+xNBECmd2jGrTK9iZm36kQGKS03j+L1iPPh/85JzFi1YQJmFA5IO7g6mEvNL
-	 LKcZ270IYmki4wRPJXN3ZMMI8i6HkD8LP/lYvLEl0H59PmQ1IdZJpkMj/aWLc6JkOlbp+
-	 U03QDA7nDJLYxtfMjL1RO+VEIXnP9uPulEUuyI5V1l7dOAssW5HOaWtUWRepvruiQFDMq
-	 DU20I3sPq5tunqvUwVXWW5/0FlaiwCQ8S7Wfkg7VMfB3fBZc7l0t+IqOTmrchAnO58w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793621747;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=1fTN69QAXrwVYTqaRarUN9MUASWr/+dvtqMQWNVlarU=;
+	b=kRVvoMPp/iaXbnvRjQ8YMfXtr0VP2GhxrkCF5OsV9y9BK2pJOmr23plRf4nrEDqgzARh
+	 m3vXSQ8to/yXkk3YF1+xOpico/3Lar1S43PirU5R9OHm5YSPczbPCK36fY2v2/74o1RcS
+	 0akG6aa6R/L/b0a4a4hPw5HqTBLWEAv3KCLluzwVjttrqzDBYmSGbgWJBHx6FZav2/Il8
+	 0JDa0IJnrNcqLR9gPtbFev4FeL1m+ooJ+07SUyUFcs5UOpEmJcmvSVkdVkSfHWD2Qe0zG
+	 xXmoPk3mqodV7RBjD2Ctz7pGEM8cmocTdUH+4cMWXr5ZiDjL6L6g29/vackSZImvJlw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=huawei.com;
-	spf=pass smtp.mailfrom=huawei.com;
-	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=HvbIScFW;
-	arc=none smtp.remote-ip=113.46.200.216
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lArypeeC;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E63C606A324;
-	Mon,  2 Nov 2026 12:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3E63C606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 5C3BD60A260E;
+	Mon,  2 Nov 2026 12:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=HvbIScFW
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=zDL/1MJP5TL90RnmLlT28rab6xGthMP97p8sOIl7EEQ=;
-	b=HvbIScFWhWDTTwdBbxrP3FBKIxxzLq6vdCLd3CxwXmjXza36bZ9JLJ85pSqVCOL7Jc6SJzscn
-	xMecTl8mvn9SMF7bifpcbLHa9B1shrIXtYYwfOzFCGK44CxuVI26qzK2u2jvXMktjmxON+4PGet
-	nycjVKozzc+PHEVs2HJje/8=
-Received: from mail.maildlp.com (unknown [172.19.162.140])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4jJ9VD4qJZz1T4GW;
-	Mon,  2 Nov 2026 20:09:08 +0800 (CST)
-Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0AC8203C8;
-	Mon,  2 Nov 2026 20:09:25 +0800 (CST)
-Received: from [10.67.110.140] (10.67.110.140) by
- whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 2 Nov 2026 20:09:24 +0800
-Message-ID: <faee04cc-fb04-4e56-bfe4-1eae5b819137@huawei.com>
-Date: Mon, 2 Nov 2026 20:09:23 +0800
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lArypeeC
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6D2801F00A26;
+	Mon,  2 Nov 2026 12:15:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793621747;
+	bh=1fTN69QAXrwVYTqaRarUN9MUASWr/+dvtqMQWNVlarU=;
+	h=From:To:Cc:Subject:Date;
+	b=lArypeeCOSeIY4XN3qAoPMF7VYYBYM6D43BzO5IEZs/L7KzDOaaXkcmef6XIvZPgC
+	 5RlKTXtHkvzwqcjKasCCv/9KDx+cRZqqhaasERCwuMeXugK6gJgTL2AhLdMn7sySCO
+	 6rBfvk65PoUoLPOJQSKRnjf5l/4qNWQi3gNaqOPIApC7+Lag4slsQopI/1g+FwCf0H
+	 lJv8KwwGuUUd+LXWApACnWUOc8am2OEZgUVWHw9Mcb8xs810ACnE30K7npXBVtP2Ce
+	 D5eoKkyhin/09jlqMhL3dRhJmobxuZHsrmi791E+WgDyJc1sJpVJziAAPKSjkzTbrn
+	 CLY3r0xSXLtqA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>,
+	linux-integrity@vger.kernel.org,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [RFC PATCH 0/4] KEYS: sanitize the garbage collector behavior
+Date: Mon,  2 Nov 2026 14:15:11 +0200
+Message-ID: <20261102121518.1197453-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -62,48 +66,29 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ima: initialize the real inode attributes of the iint
- cache
-To: Mimi Zohar <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
-	<dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-	<amir73il@gmail.com>
-CC: <linux-integrity@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>, <lujialin4@huawei.com>
-References: <20261102024703.816178-1-caixinchen1@huawei.com>
- <cb3ef53e2e5c6d74051528c2b9b9c0a294d6c119.camel@linux.ibm.com>
-Content-Language: en-US
-From: Cai Xinchen <caixinchen1@huawei.com>
-In-Reply-To: <cb3ef53e2e5c6d74051528c2b9b9c0a294d6c119.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- whupemk100010.china.huawei.com (7.152.184.41)
 
-Hi Mimi. Thanks for review.
+1. Remove key_type_dead and replace it with the regular module semantics.
+2. Replace variable size workqueue items with fixed-size 64 key chunks.
 
-I mistakenly used integrity_inode_attrs_store. In the next version, I 
-will directly use
-memset to initialize the real_inode structure.
+The first change has user space visible effect: rmmod semantics will change
+from always succeeding into returning -EBUSY when keys or restrictions have
+the LKM pinned.
 
-I double checked b836c4d29f27. That commit also added real_ino and 
-real_dev to struct integrity_iinit_cache and started reading them in 
-process_measurement(). However, iinit_init_always() only reset 
-iint->version, leaving real_ino and real_dev stale. After 309e2b775da8, 
-these three variables are encapsulated into integrity_inode_attributes. 
-Therefore, I believe b836c4d29f27 is the appropriate Fixes tag. If I 
-have missed anything, please let me know.
+Jarkko Sakkinen (4):
+  KEYS: trusted: Disable sysfs bind attributes for TEE driver
+  KEYS: Pin the backing module for struct key_type
+  KEYS: Remove key_type_dead
+  KEYS: key_garbage_collector(): process in chunks
 
-On 11/2/2026 7:20 PM, Mimi Zohar wrote:
-> Thanks, Cai.
->
-> Instead of calling integrity_inode_attrs_store(), reset the entire real_inode
-> structure. The store sets dev and ino to the stacked inode’s values, but at
-> allocation time there are no valid real-inode attributes yet, so the fields
-> should be cleared. The patch only works because the stacked and real inodes
-> happen to be on different superblocks.
->
-> The Fixes: tag looks wrong. In b836c4d29f27, real_inode is an unsigned long
-> version and init_always() resets it fully.
+ include/linux/key-type.h                 |   6 +-
+ security/keys/gc.c                       | 249 ++++++++---------------
+ security/keys/internal.h                 |   7 +-
+ security/keys/key.c                      |  46 +++--
+ security/keys/keyring.c                  |  84 +++-----
+ security/keys/trusted-keys/trusted_tee.c |   1 +
+ 6 files changed, 148 insertions(+), 245 deletions(-)
+
+--
+2.47.3
+
