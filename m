@@ -1,82 +1,97 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793628164;
-	b=W34XfMZ+ntDB3o0tYnbLhOQ2nt2NnTp15XqQq7w4fx4af/GgllD7BNkQagDhgUP4bYVx
-	 q4Oqu2HVjUTYefZ+kDxKT7DORdvKTWfqCkbqbdMRaLBBhwCXNVtAars1Ozf5yFw95CYL0
-	 2jG8a7AsbydWt6Cw8hpoDh3ObZLAkgNZp+3G/oN7+FLDXOj0hrGsQMC5J1GJYmrLGQd3w
-	 +GpEJbR/TUwFz4WrepmwQXX5no8eeeZBGiD3HVF+9fWSlomXpeN5zIxleIHx7dNwm1pef
-	 +p1e5JlP7BIH1lyLzCpfAGof/Vd34YqKB7lC7zZamb004t/Y0jq9CZ/N5xbYa+7f/Fg==
+	t=1793631813;
+	b=Qao3lNCVT6jheKYXtuE1eDsrGvRjS2CLQcSmnwojMo3xTqCE+Ag5ynephxBeNSlefBf7
+	 LXd9HaqQmMqbJFcwmD21GhczTcYkUWCXtsCjHVtQpVihnZwn3z09hWSugZdV0EBectJc6
+	 dT8bcKz5O3aNUrnIwK06rgbKwxxkGc4M0o3CS75Kmn6CzjyyEUtYk+jKDVU1vnExZ3Utq
+	 bWrWje01P7J8FZ8OISqCa1Iz0MobqzICrGrbpx2XXcqknC9ZgaGia9FRgTOSzRWJhhhPw
+	 YBNDnHUtT/dg/CO0nwcEvE43MGekkRQuxrizOkgDGJjgl6Wr75Y70xSFqsb6xrkJqrw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793628164;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793631813;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
-	 Received:Received:Received:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-TM-AS-GCONF:
-	 X-Proofpoint-Reinject:X-Authority-Analysis:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=cNpPgmusTsUT/nCch8mbmLMMTgP0TQIZobL/6Lkhyy4=;
-	b=Iow0j59uV3RyrF1IJuuQo0UAO6QBGxf+nh8DFLrXSuMRwnbzeahansQmUl6xCztzGC82
-	 3ECMi/mR2UGCp43GGkacnwtJSWquwMs3g7qtnLW4y1JKkVwy9IhVUpXK9jOAOLDxUP2bv
-	 cZkjPzz4O84NfudqoYzaIBJRMFUO5yAIZPhq8LWjTxKkFfuShAesbnWxXvOlPIG75aonG
-	 ZIfNqQpJHQIznVgG6pldg43EfrLpJfoy2xLMYFJU/On7NnXrZ4Y15jgkqMQZCSe2RnL5p
-	 LfWFl01QP6QHCRnyMSn33XR/3dPlYvzsZ3SO4fzh7tXJAlaABNo1N66TkAY/5FKDMAg==
+	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
+	 MIME-Version:User-Agent:X-TM-AS-GCONF:X-Proofpoint-Reinject:
+	 X-Proofpoint-GUID:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-Spam-Info:X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=Ty7plVzP6jvaud7DoUmeGN556MPHdfwG2xwLmx4C47U=;
+	b=VA9KW7tcPniM0dPlToIdN1NPmWWwC0Jqc48y9/P+PAOWRa+i+NU3j6WfIHjTcVqU1NfU
+	 kDJot1sQ+6RnZ1jJS8FILuTWDFtNohmPa1byLlA8LMPkD/crEA8bQ6D+/FKLsvgqKc1en
+	 H9ssw7m1yC4phJznpnswaUnhgDOVPvLhoUvBVqpy64s3ukqsD69GCxLfVKVCoBsHc84J3
+	 oERyHlK5BNIT9y6eL+B0N8EXPwckNppKdUuyXxjrHswwkPrCWB03GgcscIZDkwp7Z1jil
+	 5nLxqwDbcxJ2b6/dNQJ6VPYOPB3piWrdq6glq1642BFxcT/US/wRY60qNnKTiZ9Wq2A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.ibm.com;
 	spf=pass smtp.mailfrom=linux.ibm.com;
-	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=eorhFOqh;
+	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=Rea0vsSj;
 	arc=none smtp.remote-ip=148.163.158.5
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785DB606A329;
-	Mon,  2 Nov 2026 14:02:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 785DB606A329
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2365F6099941;
+	Mon,  2 Nov 2026 15:03:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2365F6099941
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=eorhFOqh
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A2DENag2987661;
-	Mon, 2 Nov 2026 14:02:38 GMT
+	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=Rea0vsSj
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A2EEAG81949776;
+	Mon, 2 Nov 2026 15:03:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cNpPgm
-	usTsUT/nCch8mbmLMMTgP0TQIZobL/6Lkhyy4=; b=eorhFOqhcTnODDzZafK9ea
-	xN4H0htW9IGjYw7/kfZArtAsOzWgE2V90aC0knxWxSK1txIs3fNX15ZgCmxyUOmA
-	fOnBlx1TF1wCXWv8FagmhcU7H9uiZ7qab0tIdMJ0aanDhLPNUtyzUWPCQoyXrUsw
-	lXhYUe/dncRA7rG2FKTtcpTYJWfjKcWA3gSNCKLxLkEaypjhosKaI0DdcV8QFJMe
-	fnawllOiytbHWeTXefikMeM864ELchXzisGsylfXF05/ICRzDXPhGWAW3WnK2UWf
-	pDvZzEb+lqnwgobocEOf+PTkh9DqwTpRMbKykfrfhChHUEjE5QAj4cy5FxjeR5pg
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Ty7plV
+	zP6jvaud7DoUmeGN556MPHdfwG2xwLmx4C47U=; b=Rea0vsSjFenbA1EeCH25jI
+	RjotegPxVJ7fmYyRT+tBg2SGwE12PleDgewJ7lgSLOEhiiZwogugwNhqDh+JAyJ1
+	NB6pDzoYsa2QRFjRcmVr73OIR98oIpqJ85cTn+YBiQvUA8FPF/cMjgMa5KS+cZE7
+	wUhNM2WY239cD5k4KXyYA1TU2uLes4fI88cHWHV8FtyvmHup9bzWO3Y3HOjm1PXQ
+	jA//bD0PYtEXMca2XGWo4RJCwhupC3QptYBGqNkfhvQI+ePS8yMtHMtSDylJnPI/
+	I8m158tFcpni4Y1DfWCkpQ656nap1diOtdQwB/09N1zQoHrKlZ0Lyx+lVSRU7w6g
 	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hn7yrrqw4-1
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hn6rd16r1-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 02 Nov 2026 14:02:37 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6A2DpI3h932340;
-	Mon, 2 Nov 2026 14:02:36 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4hnunjx30q-1
+	Mon, 02 Nov 2026 15:03:05 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6A2Dp5CP1004818;
+	Mon, 2 Nov 2026 15:03:05 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4hntnpxj7g-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Nov 2026 14:02:36 +0000 (GMT)
+	Mon, 02 Nov 2026 15:03:05 +0000 (GMT)
 Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6A2E2Zx78585864
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6A2F34dr5505930
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 2 Nov 2026 14:02:36 GMT
+	Mon, 2 Nov 2026 15:03:04 GMT
 Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D4B4658067;
-	Mon,  2 Nov 2026 14:02:35 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 81F0258059;
+	Mon,  2 Nov 2026 15:03:04 +0000 (GMT)
 Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 317335805D;
-	Mon,  2 Nov 2026 14:02:35 +0000 (GMT)
-Received: from [9.47.158.153] (unknown [9.47.158.153])
+	by IMSVA (Postfix) with ESMTP id 33BBA58043;
+	Mon,  2 Nov 2026 15:03:03 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.119.18])
 	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  2 Nov 2026 14:02:35 +0000 (GMT)
-Message-ID: <1c0d3129-e1f7-40b0-81f5-9cf4c481aabb@linux.ibm.com>
-Date: Mon, 2 Nov 2026 09:02:34 -0500
+	Mon,  2 Nov 2026 15:03:03 +0000 (GMT)
+Message-ID: <ff1965b1cdaefa0d68b2da6050ebfddbb7b77ec1.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: initialize the real inode attributes of the iint
+ cache
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Cai Xinchen <caixinchen1@huawei.com>, roberto.sassu@huawei.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        amir73il@gmail.com
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        lujialin4@huawei.com
+In-Reply-To: <faee04cc-fb04-4e56-bfe4-1eae5b819137@huawei.com>
+References: <20261102024703.816178-1-caixinchen1@huawei.com>
+	 <cb3ef53e2e5c6d74051528c2b9b9c0a294d6c119.camel@linux.ibm.com>
+	 <faee04cc-fb04-4e56-bfe4-1eae5b819137@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 02 Nov 2026 10:03:02 -0500
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -86,105 +101,58 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] tpm: prolonged stall in vtpm_proxy_fops_release() on Linux
- 7.3
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-        =?UTF-8?B?6ZOu?=
- <fengaojigui88@gmail.com>
-Cc: peterhuewe@gmx.de, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org, syzkaller@googlegroups.com,
-        linux-kernel@vger.kernel.org
-References: <CAO-4RZ2EzuShr1dNEQt+CEjqan8SSyD=-E9g6RW1oocah+chcQ@mail.gmail.com>
- <aud4isATIt0JOOL_@kernel.org>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <aud4isATIt0JOOL_@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
 X-TM-AS-GCONF: 00
 X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=Mcr5KJ/f c=1 sm=1 tr=0 ts=6ae897fd cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+X-Proofpoint-GUID: _NHq7FX3kmrwWPAwX001zhjUKwWrO8n0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAyMDA1OCBTYWx0ZWRfXwOteJnMCZIb0
+ LLBiEieM+9+F2XmhoHdfr5IVHYKO9esk31p0tjvS6cnSgd60wCYUpZ33qDm+X12oowZ6iiJCIx4
+ FxY6qXUmGp5Vg2i8BFW3HOf3EnSwPEBumeJoZE7BrQF1i6CaqvgwUOrVySl7NZJ7Zo9Yb4hoHli
+ kgoJENatiywLf52N5lQYQTTby1qSmYvRT346wkp8pNPPfcXriNas/o+URBrF6vqtoBkLPqJTm7P
+ q6uNaTTknyzC8lGIegxf9smCO5rLMHM2w0vCShuWQ3DH2+wRIUSKuAadsaIvaKfdNu84cte8Y4+
+ qDemyGXPynWa7gnfUkT9mRijKQZRs9XVnsrzf03cpZKGKa33QpeCyAUz1U5k+7NwaXA4Vb/9Zms
+ OdpKlLBS8vsIwPQZE/fMSWtZij9J4NTVWCzdgc5b4X109Roly3SD++QTqf0lYyN6E8PkTD+qd3d
+ Qx5Kno25odQdbivsT3g==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAyMDA1OCBTYWx0ZWRfX3DQvcukzl8OB
+ Pl8NNSgM2XVOvlgSV1TCHRSGsWuQKRspVe0q/EZu6ISxPMx/x/NW2L8I9MoWdvxkhAd93RK3NI0
+ Ntb2/ex+VlE1rDeIMQ3579VypK3KIeI=
+X-Authority-Analysis: v=2.4 cv=QK391QLL c=1 sm=1 tr=0 ts=6ae8a62a cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
  a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=7h1wsfEz7Zp3rl062pYA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAyMDA1NCBTYWx0ZWRfXyLqXvQut3Vax
- EFF4IqZn1MszJy/QkV1ntvTfZ1dFbaLwIxvGfFAWdfxB8awBcqtU7DFDJFFyHi0mFbrpV+vvgrG
- +dZ/m2DMvIGr5B+PN+0Aqt3W3X8vVds=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAyMDA1NCBTYWx0ZWRfX1cOtdLeMcvW/
- S5e16pDw+lT2kHUjb64hFEnzeduz6kGQnCSCVsPBPXTXCvosQdvCrgeAnOIMG5A5RwpduthaK/5
- dgsqFNLXkPHrGTLU0Z90IkTNgih0TAZ3vc7yckmnU7N+obppFg/4yDjkZxkfJOdgP9IRy3obCvt
- ikZ1m26Wtpt6hxURSSYg4Qp6ISd1BbTkaobPTHb2euW2Sfg56eBDR/2u2XOc0nvDa2ih2/Kdmir
- Q8eRFP+Dwi5XRPibzy++GMNSjsO0kgv4TEQ2BesTPKkn1RnDfCURfSZg/V/m2xkRyVz/WVD82q3
- sgu1XwTWNidKUqJVz2shEEMeAQYlMPS6ALX0XcaB8OUYwpYeHjSvUoJIfTWv5o+TCLqXNGSOfrK
- lUIJ8V0rFHl1qhp1oLhtPdCb8ZKAkY/ARILTXs/JMQG1WhVmbITp3Ds4A9o4J5q5K5upfE+4URP
- yrPNsdssu2s2n9mhltA==
-X-Proofpoint-GUID: i-tWqe5cblnPEW_HXeswspYAshEjGrKU
-X-Proofpoint-ORIG-GUID: -xDvIwhHUkp1JqeTApZfCHZ72uhOJmMJ
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=VCljQN5vTxgyfkvg7k0A:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: e6gg_4qVH1JgqX4-hhkFqccnlpj6l1Rd
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-02_03,2026-11-02_02,2025-10-01_01
+ definitions=2026-11-02_04,2026-11-02_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- clxscore=1011 impostorscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2611020054
+ spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610300000
+ definitions=main-2611020058
 
+On Mon, 2026-11-02 at 20:09 +0800, Cai Xinchen wrote:
+> Hi Mimi. Thanks for review.
+>=20
+> I mistakenly used integrity_inode_attrs_store. In the next version, I=20
+> will directly use
+> memset to initialize the real_inode structure.
 
+Sounds good.
 
-On 11/1/26 12:36 PM, Jarkko Sakkinen wrote:
-> On Sun, Nov 01, 2026 at 09:22:30AM +0800, 铮 wrote:
->> Hi Peter, Jarkko and Jason,
-> 
-> Adding Stefan.
-> 
->>
->> I observed a task hang in vtpm_proxy_fops_release() while fuzzing the
->> vTPM proxy with syzkaller. I reproduced it on Linux 7.3.0: the campaign
->> observed the hang 4 times; replaying the stored sequence reproduced it
->> once in an automated replay and three times in manual replays. In every
->> case a process is blocked for 143+ seconds in
->> vtpm_proxy_fops_release() -> vtpm_proxy_work_stop() -> flush_work(),
->> while at the same time the sysrq-t dumps show a chip-register work
->> (vtpm_proxy_work -> tpm_chip_register() -> tpm_chip_start() ->
->> vtpm_proxy_request_locality()) running on the tpm-vtpm workqueue plus a
->> backlog of further queued chip-register works. Which queued work the
->> blocked release is waiting for is unconfirmed. All logs end while the
->> task is still blocked, so I cannot say how long the stall ultimately
->> lasts; I am not claiming a permanent deadlock.
->>
->> Environment
->> -----------
->> - Kernel: 7.3.0-kernsight-kasan #1 SMP PREEMPT_DYNAMIC, built 2026-10-20,
->>    x86_64. Vanilla 7.3.0 source tarball (sha256
->>    87363c24f10e06321eb362765521094e94471f6bff8bce2d6b3e40f39f004953),
->>    built with KASAN/KCOV. No TPM changes were made for this testing
->>    (drivers/char/tpm/ matches vanilla apart from build artifacts).
->> - Guest: QEMU/KVM, 4 vCPU, 6 GiB, 8 scratch virtio disks, 2 NVDIMM/pmem
->>    devices, 2 NUMA nodes (the syzkaller standard environment). A fresh VM
->>    was used for every reproduction run.
->> - Syzkaller: revision 853b104bb454141a5b0fc0e4218ec78e9f34ffb1+
->>    (2026-09-18). The "+" denotes local KernSight integration changes
->>    (seed ordering/state feedback: pkg/kernsight, prog/kernsight_*,
->>    syz-manager/kernsight_*, pkg/execbackend, snapshot support in vm/qemu).
->>    They do not change the TPM syscall descriptions or the executor
->>    semantics.
->> - Reproduction: the campaign observed the hang 4 times; replaying the
->>    stored programs reproduced it once in an automated replay, three
->>    times as a single 50-program sequence, and once with the two-step
->>    form above (one of the manual replays is captured only as a sysrq-t
->>    dump). Four runs on a bare fresh VM with a *different kernel command
+> I double checked b836c4d29f27. That commit also added real_ino and=20
+> real_dev to struct integrity_iinit_cache and started reading them in=20
+> process_measurement(). However, iinit_init_always() only reset=20
+> iint->version, leaving real_ino and real_dev stale. After 309e2b775da8,=
+=20
+> these three variables are encapsulated into integrity_inode_attributes.=
+=20
+> Therefore, I believe b836c4d29f27 is the appropriate Fixes tag. If I=20
+> have missed anything, please let me know.
 
-Four runs out of four?
+Okay.  In terms of backporting, clearing the field using memset() would wor=
+k,
+but still the field name changed.  So it won't apply cleanly.
 
->>    line* and without the scratch/pmem/NUMA layout recorded no hang --
-
-Does this mean that the 'scratch/pemem/NUMA layout' is required to 
-reproduce the hang?
-
->>    since the command line differs as well, these runs cannot attribute
->>    the effect to the device layout.
-
-What is 'device layout'?
-
+Mimi
