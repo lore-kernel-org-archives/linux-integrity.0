@@ -1,59 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793695326;
-	b=PXVOU4YlNnPYmj4NeM+bvLTqdEQm7IFWbW6C54q6QWwIFFFNxNzIXrlzTlUcuPooIvuB
-	 DeJeCvSzESRBPe3dsPzB2Yfh1zDyh2rd/mNpmn9bW7H3zh/QrISLNvPPdoy2dfEDhp6EP
-	 f/nzZXV+/gYC2li+0QA0EEz7O9DKqlA7zz8FOvzlSNKUWBx9FjMxpCJhiNXlbN9QOIxfi
-	 YzfLY40xI5MX74NJiETd1lz72lhtFkvP+HkDiTxt1uMomj2jYNQv3lutYv/L9zorui4P3
-	 8R4DJxDB4ysqvtYukr4fNENmp/MdTtXc2+NGD4jnzBYlBXG5nOTa9MFncYnPkWSTxfA==
+	t=1793700201;
+	b=QNdfpPqYba0uHdEnTdp+2Gr1+tE6w0eybTF6dihkpMw04a+oW1W5ZkJWNYDUmZfX8R/Y
+	 MR5tM4/Kc4ZGrzh93VFndLPrbgTe+oQCrXsGHVo/yN64SUJOXA21FaR8oZUlDZLyqfwdl
+	 DImf2/lo4ZAB8dBopfrhEruoMPTzoAd8ODWmGSq7Mk8EXsT9M4qiq4qd+Vkoh2vPyDAuZ
+	 rueE1KQTpf2zxIP88LcO7k9HP6ST9E7izvyIZvyuJ6rFTL/caWd529LfCJvp9peftcbQ5
+	 6gq2firH2TUUdY+FRsdvm/EYJwjDmMIL7gVDnVN2qIPPNHARG+1lAvAGykgVVSEeTgw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793695326;
-	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=LQtgJbqMUtgTAOSiSBIZQmE3kB6GQm4rRSSxiylbZ2Y=;
-	b=HEwUVBUuW2NfOVLEKoBSav/nhmzCf2Rgd+BSp6RRVSVSaE8GtwVm/OsvPqJt2DzCJRZ5
-	 2u2NEwV+08Lck9Q3ll/w5C6jXJneFKhQXhQY12NLY1FdNC8rOc1hPaUrZaLB3lsDhTUlO
-	 VsFufgEZvD9Ncy2NVUqCHuF1ean2T5igrYbP/KZPBc7Myu0J3vuYA/Wod1ytrNIcSynfo
-	 uqEsWiTDikbgxredLeV6d1/o2uLRRhQAQ9YZ+x97YwA7Axzf/S1KJNfCFzJILuAIJKSwA
-	 hnc97NaZfNQ/q+FKmIAJLhEMkPQoGbqqF7Xdxla+SNTsnozoMxQ8GMubXaX6Ri4sYzw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793700201;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:Received:Organization:From:In-Reply-To:
+	 References:To:Cc:Subject:MIME-Version:Content-Type:Content-ID:Date:
+	 Message-ID:X-Scanned-By;
+	bh=OTEmd9f41wMG+18kcGlnpl8UhbldgzXmqe8LN0msAw8=;
+	b=EWV8vc6wOw1m9vNfkKIB4SZ9cDATZi/DiTPO+ZWSUdnF1yyVbl0FQfSlXxidOf1XeXih
+	 p5Uh05ZfWWg/7XWnRPKhFM6f1dEHvCDKojgpx3lxLpFzrQutajXo8XJuFvk9pD1dNzoId
+	 jqUqMLq2NThwMOYiPRJr8wtOFejrbY8fpGwPfN51Gb+kaD1L2B5ovThyctdS3pFJi25ED
+	 9BnXm9nt/t7jNM8cyrRWiqPYClJ29/sFWJklNIGK0qKIgEsETcnFI/OyZYdiwbXhfgB3X
+	 XqzhF4Mi4NSRhQhFtnZIu6l+q9kuZUeqyA7ppo5HSm87frRmeHuHPRpOlvPRpdlnNbQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=xiaopeng.com;
-	spf=pass smtp.mailfrom=xiaopeng.com;
-	dkim=pass header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=goJHZ4CD;
-	arc=none smtp.remote-ip=115.124.28.170
-Received: from out28-170.mail.aliyun.com (out28-170.mail.aliyun.com [115.124.28.170])
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TQKtRuOi;
+	arc=none smtp.remote-ip=170.10.129.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8EE606D830;
-	Tue,  3 Nov 2026 08:42:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AC8EE606D830
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaopeng.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2E2606A81F
+	for <linux-integrity@vger.kernel.org>; Tue,  3 Nov 2026 10:03:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5A2E2606A81F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=goJHZ4CD
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xiaopeng.com; s=default;
-	t=1793695316; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=LQtgJbqMUtgTAOSiSBIZQmE3kB6GQm4rRSSxiylbZ2Y=;
-	b=goJHZ4CDH/fnhmAV2iPJaj0rxe4lydyoSDjHcYdXW6UKp+cbe32Shn6iwFaQpyNJqG0NLFRcDOTg9NBrJtrIA82t9/2ofJmu2+7n60d/Q8CRak9TrOQ0t/kN/oi8ZMYDUMzq32e087j+QjZ3uZf+DNkXhTuz/B6iCLAWDAAmgto=
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08949134|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.00814184-0.00866965-0.983189;FP=10179339250055005936|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033037028158;MF=zhugl3@xiaopeng.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.jvSBmFI_1793695315;
-Received: from DESKTOP-UL5U09E.xiaopeng.local(mailfrom:zhugl3@xiaopeng.com fp:SMTPD_---.jvSBmFI_1793695315 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Tue, 03 Nov 2026 16:41:56 +0800
-From: Guanglei Zhu <zhugl3@xiaopeng.com>
-To: peterhuewe@gmx.de,
-	jarkko@kernel.org
-Cc: jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liuc63@xiaopeng.com,
-	stable@vger.kernel.org
-Subject: [PATCH] tpm: eventlog: check the payload size before reading tag events
-Date: Tue,  3 Nov 2026 16:41:55 +0800
-Message-ID: <20261103084155.426783-1-zhugl3@xiaopeng.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TQKtRuOi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1793700200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OTEmd9f41wMG+18kcGlnpl8UhbldgzXmqe8LN0msAw8=;
+	b=TQKtRuOiHyl6VEFg7wSftBuYWh2V7nXCvEBwoqfgB+acIarc8pWjUDTm4Tqsn9/nyDVnFK
+	JfA1PiDvUj3QR6NugSvnFpKzgD5b3niwO/ssJqSGCbU2s2n7049K/qZHDbI3Dp6jntvH1D
+	7NVCAr285kinu93Jo6W7MlYHTRzvta8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-271-bVG1b6y6N5y4cdL06X-BMQ-1; Tue,
+ 03 Nov 2026 05:03:15 -0500
+X-MC-Unique: bVG1b6y6N5y4cdL06X-BMQ-1
+X-Mimecast-MFC-AGG-ID: bVG1b6y6N5y4cdL06X-BMQ_1793700192
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A20DB1955EA1;
+	Tue,  3 Nov 2026 10:03:11 +0000 (UTC)
+Received: from dhowells-thinkpadp1gen8.rmtgb.csb (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7D029195608B;
+	Tue,  3 Nov 2026 10:03:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20261103030226.2685251-1-jarkko@kernel.org>
+References: <20261103030226.2685251-1-jarkko@kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: dhowells@redhat.com, Eric Biggers <ebiggers@kernel.org>,
+    linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+    keyrings@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+    Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+    Eric Snowberg <eric.snowberg@oracle.com>,
+    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+    "Serge E. Hallyn" <serge@hallyn.com>,
+    linux-security-module@vger.kernel.org (open
+                         list:SECURITY SUBSYSTEM),
+    linux-kernel@vger.kernel.org (open list)
+Subject: Re: [RFC PATCH v2 00/11] KEYS: Sanitize the garbage collector
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -63,63 +87,20 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <641293.1793700187.1@dhowells-thinkpadp1gen8.rmtgb.csb>
+Date: Tue, 03 Nov 2026 10:03:07 +0000
+Message-ID: <641294.1793700187@dhowells-thinkpadp1gen8.rmtgb.csb>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The EVENT_TAG branch of get_event_name() casts the event payload to
-struct tcpa_pc_event and reads from it:
+Jarkko Sakkinen <jarkko@kernel.org> wrote:
 
-	pc_event = (struct tcpa_pc_event *)event_entry;
+> The first change has user space visible effect: rmmod semantics will change
+> from always succeeding into returning -EBUSY when keys or restrictions have
+> the LKM pinned.
 
-	switch (do_endian_conversion(pc_event->event_id)) {
-	...
-		for (i = 0; i < 20; i++)
-			d_len += sprintf(&data[2*i], "%02x",
-					pc_event->event_data[i]);
+Please don't do that.  That will cause the AF_RXRPC module to get pinned in
+place by outstanding connections that haven't timed out yet.
 
-The log iterators only verify that the event header plus the declared
-event_size stays within the log buffer; they do not require the
-payload of an EVENT_TAG entry to be large enough for the fields the
-branch reads. A truncated entry makes the branch read up to 20 bytes
-of event_data[] past the end of the entry, and, for the last entry in
-the log, past the end of the buffer itself.
-
-Skip entries whose payload cannot even hold the event id, and skip
-the 20-byte digest dump when the payload cannot hold the full
-tcpa_pc_event header plus the digest, so the branch never reads
-beyond the entry it is formatting.
-
-Fixes: 55a82ab3181b ("[PATCH] tpm: add bios measurement log")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guanglei Zhu <zhugl3@xiaopeng.com>
----
- drivers/char/tpm/eventlog/tpm1.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
-index 0397e3361020..f93a358a706e 100644
---- a/drivers/char/tpm/eventlog/tpm1.c
-+++ b/drivers/char/tpm/eventlog/tpm1.c
-@@ -178,6 +178,10 @@ static int get_event_name(char *dest, struct tcpa_event *event,
- 		}
- 		break;
- 	case EVENT_TAG:
-+		if (do_endian_conversion(event->event_size) <
-+		    sizeof(pc_event->event_id))
-+			break;
-+
- 		pc_event = (struct tcpa_pc_event *)event_entry;
- 
- 		/* ToDo Row data -> Base64 */
-@@ -203,6 +207,9 @@ static int get_event_name(char *dest, struct tcpa_event *event,
- 			name = tcpa_pc_event_id_strings[do_endian_conversion
- 							(pc_event->event_id)];
- 			n_len = strlen(name);
-+			if (do_endian_conversion(event->event_size) <
-+			    sizeof(struct tcpa_pc_event) + 20)
-+				break;
- 			for (i = 0; i < 20; i++)
- 				d_len += sprintf(&data[2*i], "%02x",
- 						pc_event->event_data[i]);
--- 
-2.50.1
+David
 
