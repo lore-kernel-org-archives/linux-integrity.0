@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793674965;
-	b=yUjl0nrsZBEVj2qJoWLEgQ8Fb/XN5CzmpUq1jxVEjOK9qAEFCIKbdUcRhdZ/hk2j5Ibv
-	 SgZZ6SvEYLR+2dcBkKQniUsd5df9TaaxLc6rbe6k8yju1rFEVZOetiIAHE22sEpc25eDC
-	 hZlF2EA2M8219VhA0Y6dZS4b5Ke5RUvnfMEiMMpvnC+LQ6ywxWjvc4MR5gfg5Ld6SMs/U
-	 Eev+ylgI54XParyBMa3IXIs2QI+7f9kj9qSD4JwTYKWlLxXZYAXDwCtfDKJpCM3UoYwIT
-	 hFqbitFC8RIc6+BYqp5n9Wte4d+DI4VzzDlrNn2iJuAYeFBEcSTtKcBEEHAE5yapFfg==
+	t=1793674973;
+	b=eHG1lJ4jQ5QTFX1gZDJM4XoiFemEimSSw38YtqAuOFE/62k7YIpcJpGfIlosOVn5T4GO
+	 uwqJ8MrU41OD+J/Y7ZkWo6iwAt6xIczwcnYpYUM7hSpyRsIQYxUoBtifWPJhoZkbEGajP
+	 oB2eiPVkfxZnmxslO+cHE7FRRUpXlfmxtMhO9r3c2ciH7fmBHopdVowl1gCFEZJXaJ66S
+	 MP1JhV31bd8PiVAK94aS6+pM7g5J2Ff/jNAfjbxnf0UqphMHHlYLfOTH0dBgwkVb7JeZq
+	 UBMMu3OITBUcttnt7I8eZa/HX95mj5lqeq2n2isGeIWCR4wJ0Wx3qwJQhOFUQxMlgug==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793674965;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793674973;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=HbeNZQv0ykKKYaZtsI32V97es7WUM1tUrBOIJGxvuu8=;
-	b=tL4BXApp41oeBhzHFhOVoSgirGzl7tZYCsiCq/dsZpybCc8ZQ5Ss3eCuuzgXxgW/qrcD
-	 1XPDpzpYGhdC90GfMO6LngWtoAHDvc2SE3XpGklfgVsp3baGtz+aq8alR6WpU679NUSma
-	 xijZnWsMC0CQO82NdZ/KmEXMkbry5zZZn8hIbPdJrrnG97z0dMHnK+wjZcktplfY/oKO/
-	 zajlRYEljnoBFS95iH9JJbZPK5VQmrfA7dp8k8CYXYDMNjDRK5kwKzLX9fq274SfczlPG
-	 QSlgTf6qGQ1V8L3U3dPUaPnn9xbOsv/FjZ7Jn6gnLtpZBlzOiTDMrzvvzfg6RnVhRjg==
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=LDDJ93BkO849C2mhgv5WGiNanef8BM3ODaG/2JsNB5A=;
+	b=K5GLy6Az3DPHTay6W1f5UUkKvKtZ+s/z51uuUdVkLu1MtHtuJw+Dm8tI3bqGCcmhcu0O
+	 gjFruTttxSZDQNWMGTr4hlEvoDjc9TWRPIoPUhafSjfwx8Duaj0faQ5PqONHRB5YIQtuN
+	 zpFnBKiTQTz6BNJIi4NWmw4BGLFpdQdZG9Uq77+Wl3/kYhWYPb+zPoE2Z+CTlFRgfN1qX
+	 k19FYUxmY1tst6roooJUzO+F3kY6bAv3XI1/C0tGkfpQyGIFo+1o3Chjo/6aKdH3cV/Q1
+	 vqPeA5eNNUfKd15FiMo9JPhAY7QoVOkMuZm0XeedHmJJFjohbpSYapZIrVEvF/K3hZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N1oSfw8w;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SQJWkRdI;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E0620606A32D;
-	Tue,  3 Nov 2026 03:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 34E45606A332;
+	Tue,  3 Nov 2026 03:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N1oSfw8w
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E38EB1F000C1;
-	Tue,  3 Nov 2026 03:02:43 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SQJWkRdI
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 4FC131F000C1;
+	Tue,  3 Nov 2026 03:02:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793674964;
-	bh=HbeNZQv0ykKKYaZtsI32V97es7WUM1tUrBOIJGxvuu8=;
-	h=From:To:Cc:Subject:Date;
-	b=N1oSfw8wxKawnxXp6ZXVy0Ok0/LzqHHY/c8iu3lx4CFovyEZKRL9RPCjdIsTD43pe
-	 NEDxbAlUmlcDUkagL+veb0KbQM3ZQQ1CKPBpMLNN9Sdwbf9sUbmGkhXvjlBiVkMi4X
-	 TfJoMBAX28oHBdSHn4DjKIk8l+uec5ShFZ7QZITM7FWQ5EPVybD2g8apT63Wg4hfkQ
-	 elP3qc+8w5qqXd2TICEFc53o1iljD3w+c9mh8+vTRpKagpWPLvl/z+bUfY7FLH5uyA
-	 eJPk9cpFBZnIDHw6b6DTTXNfEJfojoIgDQo8C9u631MjTtTbtGpc5QB+ay8awhotBi
-	 7jRFwAbNT1UwA==
+	s=k20260515; t=1793674972;
+	bh=LDDJ93BkO849C2mhgv5WGiNanef8BM3ODaG/2JsNB5A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=SQJWkRdIcjvAY4W8I1hKBDHFP+BiR81cLIPg9YWzvy4whukwNKfwQlFC/F+dnuBPm
+	 JDC3INvVchW4+cTJRN2+h7MS7EQO36Gv+hlobgituZzhXz+FsnYY8xS37YUUrIhM5w
+	 khhgdvxq2y9w7txWIVba/jbkE0Su7U/SGtn0M5Y5ymyBOcyBog1gw2rhvWFVIMTSqN
+	 +gumTBvv7MMoXjxOYdkrOLm0R6FDzGqIhd6KeZJvGhT/BzHDlQSc/G8cLc4WZka+VQ
+	 9V4MYyw/+t+Kz7ggGeNV32VYv2WhKwJJI+027cdjCdGvO9UDJKJhLttuTPZMYF6QDi
+	 fY3Tfkd+cinwg==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: David Howells <dhowells@redhat.com>
 Cc: Eric Biggers <ebiggers@kernel.org>,
@@ -46,18 +46,27 @@ Cc: Eric Biggers <ebiggers@kernel.org>,
 	Mimi Zohar <zohar@linux.ibm.com>,
 	keyrings@vger.kernel.org,
 	Jarkko Sakkinen <jarkko@kernel.org>,
+	stable@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
 	Eric Snowberg <eric.snowberg@oracle.com>,
 	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC PATCH v2 00/11] KEYS: Sanitize the garbage collector
-Date: Tue,  3 Nov 2026 05:02:05 +0200
-Message-ID: <20261103030226.2685251-1-jarkko@kernel.org>
+	Hannes Reinecke <hare@kernel.org>,
+	linux-nvme@lists.infradead.org (open list:NVM EXPRESS DRIVER),
+	linux-kernel@vger.kernel.org (open list),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [RFC PATCH v2 02/11] nvme-keyring: Add a missing key_put() call to nvme_tls_key_lookup()
+Date: Tue,  3 Nov 2026 05:02:07 +0200
+Message-ID: <20261103030226.2685251-3-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261103030226.2685251-1-jarkko@kernel.org>
+References: <20261103030226.2685251-1-jarkko@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -69,65 +78,28 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-1. Remove key_type_dead and replace it with the regular module semantics.
-2. Replace variable size workqueue items with fixed-size 64 key chunks.
+Call key_put() before returning -EKEYREVOKED, as the reference count gets
+incremented by key_lookup().
 
-The first change has user space visible effect: rmmod semantics will change
-from always succeeding into returning -EBUSY when keys or restrictions have
-the LKM pinned.
+Cc: stable@vger.kernel.org # v6.12+
+Fixes: 5bc46b49c828 ("nvme-tcp: check for invalidated or revoked key")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/nvme/common/keyring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-CHANGES
-=======
-
-v2:
-- Used v1 as a test probe for Sashiko to detect the corner cases instead of
-  trying to resolve even the known ones beforehand.
-- Converted the client subsystems to be compatible with the module pinning
-  semantics.
-
-VERSIONS
-========
-
-Jarkko Sakkinen (11):
-  KEYS: Add key_gc_flush() for draining RCU callbacks
-  nvme-keyring: Add a missing key_put() call to nvme_tls_key_lookup()
-  dns_resolver: Clear .dns_resolver cache when the last client unloads
-  NFSv4: Clear idmap keyring cache when the last client unloads
-  smb: client: Clear idmap/SPNEGO caches when the last session is
-    unloaded
-  s390/cert_store: Track subsystem keys instead of re-registering
-    key_type
-  KEYS: trusted: TEE: Disable sysfs bind attributes
-  KEYS: trusted: TEE: Synchronize session lifetime
-  KEYS: Pin the backing kernel module for a key type
-  KEYS: Remove key_type_dead
-  KEYS: key_garbage_collector(): process in chunks
-
- arch/s390/kernel/cert_store.c             | 161 ++++++-------
- drivers/nvme/common/keyring.c             |   1 +
- fs/afs/main.c                             |   4 +
- fs/nfs/dns_resolve.h                      |   7 +-
- fs/nfs/nfs4idmap.c                        |  21 ++
- fs/smb/client/cifs_debug.c                |   2 +-
- fs/smb/client/cifs_spnego.c               |   8 +
- fs/smb/client/cifsacl.c                   |   8 +
- fs/smb/client/cifsfs.c                    |   8 +-
- fs/smb/client/cifsglob.h                  |   2 +-
- fs/smb/client/cifsproto.h                 |   8 +
- fs/smb/client/misc.c                      |  19 +-
- include/linux/dns_resolver.h              |  13 +-
- include/linux/key-type.h                  |   6 +-
- include/linux/key.h                       |   2 +
- net/ceph/ceph_common.c                    |   7 +
- net/dns_resolver/dns_key.c                |  28 +++
- security/keys/gc.c                        | 266 +++++++++-------------
- security/keys/internal.h                  |   7 +-
- security/keys/key.c                       |  61 +++--
- security/keys/keyring.c                   |  85 +++----
- security/keys/trusted-keys/trusted_core.c |  15 +-
- security/keys/trusted-keys/trusted_tee.c  |  87 +++++--
- 23 files changed, 450 insertions(+), 376 deletions(-)
-
---
+diff --git a/drivers/nvme/common/keyring.c b/drivers/nvme/common/keyring.c
+index 32d16c53133b..87cb51e1f5a7 100644
+--- a/drivers/nvme/common/keyring.c
++++ b/drivers/nvme/common/keyring.c
+@@ -35,6 +35,7 @@ struct key *nvme_tls_key_lookup(key_serial_t key_id)
+ 	}
+ 	if (nvme_tls_psk_revoked(key)) {
+ 		pr_err("key id %08x revoked\n", key_id);
++		key_put(key);
+ 		return ERR_PTR(-EKEYREVOKED);
+ 	}
+ 	return key;
+-- 
 2.47.3
 
