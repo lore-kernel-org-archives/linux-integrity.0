@@ -1,113 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793723603;
-	b=PbnNzKm2LulK/mKnLXkd5h01VKslmHZ2dmXEmiAzkgX2xx4b0ZsSJjxdfZEVq/gqJ9nw
-	 45T8Q0WLdVDC4TZ2t2Xa0OM0xdqqQ/pCudRBvI4QMj/rofP3GQMI2hh45i2NK2uSgpo4A
-	 ++0QLdEP6wHPs0HdTLd5XZAXMmhBkvAAH/0zIbrYKUoLB0FtnlBhvRotvKOXtH5Dpi2ba
-	 xDZE5/qQrkWKtSwX4ooSaRcB7ZxrfFOjAwhtMpY8B/wUajQxg7nWQIgJ35P8hmGLUdqka
-	 FKZ8cxokyjb1OK1YK2mqHCs5pZLwZkMzTVVvfzTnIDCB2tepTCc0cZwawkJkUonhp6g==
+	t=1793725126;
+	b=Ybch91Qyi0pV/uRAq3RwU0AfJKuZfNBCRRz8UmYUyVHQ19HCHgzN/uruIdQbgi825k1z
+	 4F9Cx7Z7QJhuFmhGKlEMU7/noUEFVBehqWzd6VW2tQqJXVxEupbwxNFsAxiEvEi5oxXol
+	 KVAqGDAA2A+ieQ4NtNWaWL2C5om3QYX9LtqBY6fPvAFxOF08m7ZmUlpMvICiAVnaCZVfc
+	 I5DXRZTJEpYbPui2LlF255hlnAvTu0CHQKq43PDiytZAtIeP9YxXiSk1EoM+13mkerY4F
+	 8MQRbZhXh21aCQlIS/wdGMNoM4vztc2OtahDmHKSX4WjbLDf+brr3KKKsLgAuN/D1Tg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793723603;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=KNX4j1BmI6v/586ULUJdkOuJ92tPPScGDdWzbmLn3Po=;
-	b=yZk6drcKl8K73IRqGEgTy2JGNOXccQ2Rvdr1jMrMJTcILQQlPQfeNIX7YBy/FuANm+L9
-	 Vo0doTgvod/edGMxdUYVeBm8dP9aJfcKei6oe25v7JMe0FqXgUCHFEUEt2AumefRioTye
-	 z16jwYyyrxfPSsMA9FVX2LO1ModJRLsoJNMigMc0Vary++WD345yVIAjrRbwXAnTQvt1T
-	 8EDCajjbdEsTT3k+OsYxzUwojN2j+604iu84ANbVE9nblPezRT98WZji7uNjngyvejyqw
-	 JiIRchJSrYA+CtrsyhlpYsHWUCSR82UxZEFTza+5HcMHDqxUz+rIA7FrCOfWZZcLuuA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793725126;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=fK4HGLx2bl61G7BQj3adT/NL1+Sgt8o2Uq+I8Yh/8MY=;
+	b=ezbGj1I//qDFahpLsvyRcQt1RJ5I8QFBUby7tYuwbYFjCohOa9+BXfDIAwFCGiS5KQ5l
+	 OW2mwNlZFD099yvxhh62wyyOAYkibIz6NW6g1f48hd+aoe7wAdU6bdHE633XmmXDqHu/M
+	 5RxXXPJfQ0LbX0PejvPXl+uJknvveIIIuBkR8EolaUrERlpN/tlDkL/YVISiokXTEIR7t
+	 KT26M/sbdp8wBIt5I7I0XXUY/vrpR7nkUX0GJyqZREF6YY+cvA0j9jmTdqumDV4Do9AqV
+	 XsrBwJoSIgPlpnVjHSjMtoaR7dABhfxHK0irgXlhW7zgAKW8+NrJEUGLEj6CDRN0dZg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=mjwuQ6tS;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=gcZJ30C0;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c63b2jI9;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD62606A32C
-	for <linux-integrity@vger.kernel.org>; Tue,  3 Nov 2026 16:33:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2AD62606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id C5373606A332;
+	Tue,  3 Nov 2026 16:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=mjwuQ6tS;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=gcZJ30C0
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A3E9tfV4049725
-	for <linux-integrity@vger.kernel.org>; Tue, 3 Nov 2026 16:33:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KNX4j1BmI6v/586ULUJdkOuJ92tPPScGDdWzbmLn3Po=; b=mjwuQ6tS/VigZEq3
-	ogxeCgwHxzhqzyfJV4CTYOXLH8FY8s1MqudfValPEMNThuzrnds/+rtXHbSiYJ3x
-	Y1uIfLy+4LM7PhoodDOI3wPU8NgBQEenCPvUZWTazR9+FBt9xyZPLedZ+XQ5+fLW
-	CTY9qaiJu9SvfXB+MmHKMj9JHj2fBmPKE38GdLGIjZd0z0LbX/5bnNzYGRRN79H0
-	wRQj1c+gRehu5a2RnjhzjX2XEDiqelUyaH6tH+B6YgGvTSQBiZOC/697CGzjPJWO
-	5QGvoF8uEyNSjvha2TLgLPjUOBhC161Ti7dv6aTXwu1tY91TUyQyIX07qVEGo04A
-	ntxq4A==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hq3uy3uaw-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Tue, 03 Nov 2026 16:33:22 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93f20addba1so790226185a.1
-        for <linux-integrity@vger.kernel.org>; Tue, 03 Nov 2026 08:33:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793723601; x=1794328401; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=KNX4j1BmI6v/586ULUJdkOuJ92tPPScGDdWzbmLn3Po=;
-        b=gcZJ30C0/lvQ0so9zvM0d+CAht9HORPywW0r1gbKKqn7iYPJmoCAp6O61Tudf+fh5G
-         eln9rl4F36s8Nr4B3dX3k6TWrOSvtMnTrCq5jA8E8uPpHJ9ic62g7ORLcEgHhOgCJ/fF
-         XmruU8JXWeMnJYn6zHAz9qCGDuY63EFQafwTRfItWiXuqri1WHDOQy4B4XUwuDJFP6zJ
-         QHY5irie1ANacniLm0FgMGbYHho90KXfBG0wXNKvW856i8DkpKVywTQB+PP2QpjY5wwu
-         JSm9fke3AvZdcWNyBj6wsdv9GNoPMnJGWT2yKFenpiTc4BBhibnP7Jkf659hpVYDKWVi
-         ZMmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793723601; x=1794328401;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=KNX4j1BmI6v/586ULUJdkOuJ92tPPScGDdWzbmLn3Po=;
-        b=TqTHbXB+a46ScoIz/i1o+hzsVyD753l6mdi0Jxwz1LKcg6f8UXuMsEIqwUcaf2HsoZ
-         RtsLTVz6/ON0BUQW2j+nTfXePZHNIjkTrDulusG/GuEkvOP9erVnbMwWuoiSEwLcB4cc
-         zaDX3gv9cneUIfQVzOiCosJZ1RAEl9P3EM6JNlCqo5UUZwbgqA557GLWoT8rcN/hss/w
-         e8MBv05iazSutlr8zkR4Z2Pv/YECw3UL0u2EDl/9sAapClvrA0QAUNIynzRbwYGCngPC
-         5wr3ygZoeAJzVwUYhEiewxnVRR1hyWPr6EVIkOlCUPe/UlMC4VfC5aue7JtEb0lJBPrR
-         zLNA==
-X-Forwarded-Encrypted: i=1; AKwUvByREDTcOJ6of9paSvyF7xkL2qnmouFGer3SrP1dDq3Inddrqtei01lr36Sn63p9P+ZQQsmLT7lAuZljox7GNsg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9/nBIVtAQ2z2hKMxc0xd900OHTFR+h52fwQpIGR6Ru/VzwL/bZ
-	I3K2wEBScgfOdREjdKXyVzLLJE5qkhAjkExe7hqKyqpVMGy1DWnWx1e9+lhXK9KVShH2Sjes9eQ
-	IIdcfAXkgwgFeNfbFO3bGPxPYmH/RXxHPcTaqiuDp5b5izaIu2UkkSXWHjFtPeoPPy2E6EFk=
-X-Gm-Gg: AYBFou3694BHkGC74tpTilSO5PeIWCmCH75jgNAZ2oual9Soflk5Uasgr641zPaie56
-	4M1TTk1cws8kAiOIGaPvYe7P/Iks5ZvdL8vZ0u5QSntx//cFmSfQBf6G/TkhhqUaN50O9Q4YE/Q
-	MezVMjsTss/nl6bBve64rCIVVx5tQQMIdel0QuLeZ+OxnX/CtzFaspW3acXjyCDN8QPoPAJ5Vsc
-	8x4mCC6lU9W+T11rStHuUXLKsYZIpAQUzYkbIhF2xPQatZx74uP+ro5Jjueq0v2lovlQ4PJCYmW
-	G6Gv45/K9hywDqzibHnwST3oIEoBk+kdkydd8PrhTA2PNm5I03EMnNsKGR3BiFapOof4kZ0wVD5
-	u+3WSg1mKS+hSAktziHbZwZrCbuoci/rgikRGvY8o7jKziCmVsLN0xtSSN+lYzaNrLvUIGy9xnR
-	14YcJ0yY4TnoLdyUBtU9FqUjr/lC4U531Cr1VKqd3s51OHbpBeI4tcvgk5FVvwEwwG/+8d5Z2jl
-	oJ3Des7Qx5s/gU=
-X-Received: by 2002:a05:620a:a502:b0:945:ad43:1d59 with SMTP id af79cd13be357-945ad431d8dmr1008660885a.75.1793723601190;
-        Tue, 03 Nov 2026 08:33:21 -0800 (PST)
-X-Received: by 2002:a05:620a:a502:b0:945:ad43:1d59 with SMTP id af79cd13be357-945ad431d8dmr1008657185a.75.1793723600734;
-        Tue, 03 Nov 2026 08:33:20 -0800 (PST)
-Received: from [172.16.20.169] (h-79-136-84-34.A175.priv.bahnhof.se. [79.136.84.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4cebf3dcc9sm101883766b.53.2026.11.03.08.33.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Nov 2026 08:33:19 -0800 (PST)
-Message-ID: <2f6f80eb-57a4-406d-a041-8602805c7647@oss.qualcomm.com>
-Date: Tue, 3 Nov 2026 17:33:18 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c63b2jI9
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1AFCB1F00919;
+	Tue,  3 Nov 2026 16:58:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793725125;
+	bh=fK4HGLx2bl61G7BQj3adT/NL1+Sgt8o2Uq+I8Yh/8MY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=c63b2jI9+4FWVTZeH4ddFhEzy4MGXLeB8Xi9Vd1lTCnx117QG8qAcTH7UVak3bxZr
+	 Z5Q4/eIWLw13tisRUunP5XPhFNGy3cWJcRXSIDSS4k1+cFGCPc4PLnQL/zcaasJujs
+	 Ov2dRGFP5/zaJBQ7DELygJWFA151+x9ylnukDsDUSRFAyjd055WI55kOpfw6uBTcpM
+	 B3PDlZnEpTUqQ4s86CV5ng+HT7/ztQzOY/HEG8DxVM0G6JRyNUSIxNojHgeSCNfDS7
+	 1gNMup02LXU+5HVu1fYBiBqJ/+9g3/p1p9hG9EUfE8ZqJCyx3h+ONAMVsu0a4JA9aq
+	 r4vCd5tW+1NXQ==
+Date: Tue, 3 Nov 2026 18:58:41 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
+	Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 00/11] KEYS: Sanitize the garbage collector
+Message-ID: <auoSwRMIXLajVeWs@kernel.org>
+References: <aun4kXCJDtYomzpu@kernel.org>
+ <aunNj35KmcAC4ByH@kernel.org>
+ <20261103030226.2685251-1-jarkko@kernel.org>
+ <641294.1793700187@dhowells-thinkpadp1gen8.rmtgb.csb>
+ <669211.1793714419@dhowells-thinkpadp1gen8.rmtgb.csb>
+ <683284.1793719946@dhowells-thinkpadp1gen8.rmtgb.csb>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -117,102 +68,180 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] Add TPM support via Qualcomm TEE TPM TA
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-        Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
-Cc: Jens Wiklander <jenswi@kernel.org>,
-        Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-        Sumit Garg <sumit.garg@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-arm-msm@vger.kernel.org,
-        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-References: <20261019-tpm_qcom_driver-v4-0-6889b9804ba7@oss.qualcomm.com>
- <atYZXRLf3YPZhiNB@kernel.org>
- <8896d867-dfba-4d63-a0f0-5686c572b262@oss.qualcomm.com>
- <athuhfkfGPZp_YXT@kernel.org>
-Content-Language: en-US
-From: Jens Wiklander <jens.wiklander@oss.qualcomm.com>
-In-Reply-To: <athuhfkfGPZp_YXT@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 80F27mIs99x7LvlwTAgnbms62_Q8W66g
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAzMDA2NSBTYWx0ZWRfX0oyXQfzsge4d
- HguWaXbuHzHFwXrf9cSHnbJc0lq38EMYdCeOhXniHPo4ItROxvEQRgwY9WNP9Hkk3RgeKSzCaEK
- Qkg+cwDWFaDuZpk7Ky9rHKeyPYZrAhwMElOqRb+AXcckaMrmiFd9UoFz8X0KK5BjyQqNMx5uNCo
- 4E8s7b1LjdofelfrUm3Z9tPSZagOaLMDrQhDL6/H7MnKY4a1aad5WX3t5RPbMB879nqg1mElKu0
- VOAheBxquiMvGvdyOZde8KEo6Ov43IzPRy3FX5JDz2LOO+hcwxFdKwGPIj3JyC/hAFZjsYNnRou
- vCB5exhmnkrMz4hNQNUo6TH8kQpdtFqLQJss6/06wVDxR9QR+ERQX7MWyercvBA5COLqe7iJXJa
- riR0ljUdUJEy8FYy45eu6U+Br6ApJP3IMlO4b/Rz3hgdP05Scw/+ZIHxvPtqG4xwt4xYF29+KP8
- TZ99rarxezxi+2Lwk9w==
-X-Authority-Analysis: v=2.4 cv=VoG2kO2n c=1 sm=1 tr=0 ts=6aea0cd2 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=dMv3lA6PLLkT9/uWe4YCGw==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=ma1MJH4ChwW9rezZrwsA:9 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: 80F27mIs99x7LvlwTAgnbms62_Q8W66g
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAzMDA2NSBTYWx0ZWRfXzUMVGzcmLkF5
- 1CGeQyyEuDMklF/DJHGZGGTz7us7fYSoK1OOsj11ZzEbK10YbNzl0I5ZWA8p3BXI6Gu234tbs/v
- xiFRSGfQAdmYTmgNgNZu7FupoBGF4O8=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-03_03,2026-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 spamscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 impostorscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610300000
- definitions=main-2611030065
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <683284.1793719946@dhowells-thinkpadp1gen8.rmtgb.csb>
 
-Hi,
+On Tue, Nov 03, 2026 at 03:32:26PM +0000, David Howells wrote:
+> Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> 
+> > > Actually, it can be done if the rxrpc and rxrpc_s key types are moved out
+> > > into their own module upon which rxrpc.ko depends.
+> > 
+> > Hmm... I'll experiment with this, thanks. This was useful.
+> 
+> It's not entirely trivial.  I've attached a patch that makes a start on it,
+> but it needs access to bits of the security class implementations (rxkad and
+> rxgk).  Those bits only parse the key (and in the case of rxgk access the krb5
+> code), so in theory it should be possible to extract them out.
+> 
+> One thing that needs to be considered, though, is the security class selected
+> should really be up to the application, not merely switched on by the
+> security_id.  This is one of the reasons I would like to add an add_key2()
+> syscall that adds an additional parameter string argument.
 
-On 21/10/2026 09.49, Jarkko Sakkinen wrote:
-> On Wed, Oct 21, 2026 at 11:21:33AM +0530, Kuldeep Singh wrote:
->>> Applying this pulls tons of TEE patches:
->>>
->>> Applying: tee: qcomtee: Track the object invocation context
->>> Applying: tee: Add kernel client object invoke helper
->>> Applying: tee: qcomtee: Allow object invokes from kernel clients
->>> Applying: tee: Export uuidv5 generation for TEE backends
->>> Applying: tee: qcomtee: Add support for registering QTEE services on TEE bus
->>> Applying: firmware: qcom: Add support for TEE based EFI-var client driver
->>> Applying: arm64: defconfig: Enable UefiSecApp TEE client driver for Qualcomm SoCs
->>> Applying: tee: qcomtee: Register qcom.tz.tpm service for discovery
->>> Applying: tpm: Introduce Qualcomm TPM driver
->>> Applying: MAINTAINERS: Add Qualcomm TPM driver entry
->>
->> Yes, first 5 are tee patches prerequisite for tpm series as mentioned in
->> cover letter too and this series can only be merged once Jens can pick
->> dependent series[1] in linux-next.
->>
->> Since, v7.4 merge window going to start soon so i doubt Jens can pick
->> for v7.4.
->>
->> Jens, Any plan/timeline you are aiming to pick series[1]?
->> I see it's mostly reviewed with no other relevant feedback to be addressed.
-
-I'm sorry for the delay, I lost control over my inbox for a while. 
-Looking at [1] it appears some more is needed before it's ready.
+Thanks I'll investigate this.
 
 > 
-> Maybe it is better to pick also TPM patches through your tree when
-> you choose to so that this will go in-sync.
-
-Yes, that makes sense.
-
+> David
+> ---
+> commit 365e715b91b9b2ac3030f51c31ff4de8f24a4e19
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Tue Nov 3 14:15:39 2026 +0000
 > 
->>
->> [1]
->> https://lore.kernel.org/lkml/20261015-qcom_uefisecapp_migrate_qcomtee-v5-0-1460691b35d3@oss.qualcomm.com/
->>
->> -- 
->> Regards
->> Kuldeep
+>     rxrpc: Move key types to own module
+>     
+>     Move the rxrpc and rxrpc_s key types to their own module so that if keys
+>     pin the module that implements the type, they don't cause outstanding
+>     connections to make the module unremovable.
+>     
+>     Signed-off-by: David Howells <dhowells@redhat.com>
 > 
-> Br, Jarkko
+> diff --git a/net/Makefile b/net/Makefile
+> index 5b2dd7f07a85..f543097c89b9 100644
+> --- a/net/Makefile
+> +++ b/net/Makefile
+> @@ -30,7 +30,7 @@ obj-$(CONFIG_LAPB)		+= lapb/
+>  obj-$(CONFIG_CAN)		+= can/
+>  obj-$(CONFIG_BT)		+= bluetooth/
+>  obj-$(CONFIG_SUNRPC)		+= sunrpc/
+> -obj-$(CONFIG_AF_RXRPC)		+= rxrpc/
+> +obj-$(CONFIG_RXRPC_KEYS)	+= rxrpc/
+>  obj-$(CONFIG_AF_KCM)		+= kcm/
+>  obj-$(CONFIG_STREAM_PARSER)	+= strparser/
+>  obj-$(CONFIG_ATM)		+= atm/
+> diff --git a/net/rxrpc/Kconfig b/net/rxrpc/Kconfig
+> index 2cebb666dc07..ffd42d71f85a 100644
+> --- a/net/rxrpc/Kconfig
+> +++ b/net/rxrpc/Kconfig
+> @@ -3,6 +3,14 @@
+>  # RxRPC session sockets
+>  #
+>  
+> +config RXRPC_KEYS
+> +	tristate "RxRPC key types"
+> +	select CRYPTO
+> +	select CRYPTO_LIB_DES if RXKAD
+> +	select KEYS
+> +	help
+> +	  Say Y or M here to include support for rxrpc and rxrpc_s key types.
+> +
+>  config AF_RXRPC
+>  	tristate "RxRPC session sockets"
+>  	depends on INET
+> @@ -10,6 +18,7 @@ config AF_RXRPC
+>  	select CRYPTO_LIB_DES if RXKAD
+>  	select KEYS
+>  	select NET_UDP_TUNNEL
+> +	select RXRPC_KEYS
+>  	help
+>  	  Say Y or M here to include support for RxRPC session sockets (just
+>  	  the transport part, not the presentation part: (un)marshalling is
+> diff --git a/net/rxrpc/Makefile b/net/rxrpc/Makefile
+> index f994f9f30a29..196e0ce085ba 100644
+> --- a/net/rxrpc/Makefile
+> +++ b/net/rxrpc/Makefile
+> @@ -3,6 +3,7 @@
+>  # Makefile for Linux kernel RxRPC
+>  #
+>  
+> +obj-$(CONFIG_RXRPC_KEYS) += rxrpc_keys.o
+>  obj-$(CONFIG_AF_RXRPC) += rxrpc.o
+>  
+>  rxrpc-y := \
+> @@ -19,7 +20,6 @@ rxrpc-y := \
+>  	input_rack.o \
+>  	insecure.o \
+>  	io_thread.o \
+> -	key.o \
+>  	local_event.o \
+>  	local_object.o \
+>  	misc.o \
+> @@ -32,7 +32,6 @@ rxrpc-y := \
+>  	rtt.o \
+>  	security.o \
+>  	sendmsg.o \
+> -	server_key.o \
+>  	skbuff.o \
+>  	txbuf.o \
+>  	utils.o
+> @@ -45,5 +44,9 @@ rxrpc-$(CONFIG_RXGK) += \
+>  	rxgk_app.o \
+>  	rxgk_kdf.o
+>  
+> +rxrpc_keys-y := \
+> +	key.o \
+> +	server_key.o
+> +
+>  obj-$(CONFIG_RXPERF) += rxperf.o
+>  obj-$(CONFIG_KUNIT) += tests/
+> diff --git a/net/rxrpc/key.c b/net/rxrpc/key.c
+> index cbd26da44951..c353a4304788 100644
+> --- a/net/rxrpc/key.c
+> +++ b/net/rxrpc/key.c
+> @@ -893,3 +893,39 @@ static long rxrpc_read(const struct key *key,
+>  	_leave(" = %zu", size);
+>  	return size;
+>  }
+> +
+> +/*
+> + * initialise and register the RxRPC protocol
+> + */
+> +static int __init rxrpc_keys_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = register_key_type(&key_type_rxrpc);
+> +	if (ret < 0) {
+> +		pr_crit("Cannot register client key type\n");
+> +		goto error_key_type;
+> +	}
+> +
+> +	ret = register_key_type(&key_type_rxrpc_s);
+> +	if (ret < 0) {
+> +		pr_crit("Cannot register server key type\n");
+> +		goto error_key_type_s;
+> +	}
+> +
+> +	return 0;
+> +
+> +error_key_type_s:
+> +	unregister_key_type(&key_type_rxrpc);
+> +error_key_type:
+> +	return ret;
+> +}
+> +
+> +static void __exit rxrpc_keys_exit(void)
+> +{
+> +	unregister_key_type(&key_type_rxrpc_s);
+> +	unregister_key_type(&key_type_rxrpc);
+> +}
+> +
+> +module_init(rxrpc_keys_init);
+> +module_exit(rxrpc_keys_exit);
+> diff --git a/net/rxrpc/server_key.c b/net/rxrpc/server_key.c
+> index 3efe104b1930..b5e60a3364ad 100644
+> --- a/net/rxrpc/server_key.c
+> +++ b/net/rxrpc/server_key.c
+> @@ -42,6 +42,7 @@ struct key_type key_type_rxrpc_s = {
+>  	.destroy	= rxrpc_destroy_s,
+>  	.describe	= rxrpc_describe_s,
+>  };
+> +EXPORT_SYMBOL(key_type_rxrpc_s);
+>  
+>  /*
+>   * Vet the description for an RxRPC server key.
+> 
 
 
-Cheers,
-Jens
-
+Br, Jarkko
