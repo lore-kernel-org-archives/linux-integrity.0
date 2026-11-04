@@ -1,61 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=14.137.139.154
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793791582;
-	b=HpMrzUq8rKA7FMr/QOZVr+oXUlbXrmaRNifJISsbwpurwyHYIoyRxOgqYcjRUffEErZB
-	 AACbuBftS0fL6GopTbRoZtUNReJVKVVGDDjfLX/NuhuydLMz+NvkHlUnhLVTpcpH6QT17
-	 FrCqU156no4QDKpusCChhlA/m11V+vMl/ZQk04CNa3SAPdDOsSztaefnpFok9mNmubgxK
-	 wNVJ0TtTqIYOcdYoysnwaQlDuqgkxXQssL/vw7w6pnSjJSBdT+jJZUtrwbiDh+3p33unY
-	 yrzn7pdBGRb2cjhXo4xcINzPHxTYNXF72NI4lvgbRmSb1FN+SZybC3SO4tglrciogrA==
+	t=1793795666;
+	b=Hd+EODyhUvwLtHtTDJftCcQwWAxxybjAa+QImEDqe/s3XwZeq8ucmuIHsX4GoKXSJjhh
+	 B3PLHxcOrmMB6ibd+j8PNqXWymFKU9Oe3h+THENzbXVjbRozq7zc89zURpqA7qaDsSJoX
+	 RPQZh5wNAYZyTx8yk4ZHp9tNkpWYm0rUJHdkt0FeO1XeYu4qlBjSwpX616Itvno3S2aWv
+	 eoZfDAkwtvey0bdrwpl0gghuaCO/r8K1KD9RsYe3wHCtxw0Swwa3zhoUkFe61eEsb7d51
+	 X3pwG3mUPJd13mIA17u/goQDi4nauOTWLQ4P0//JxFp4ULfCCQuApsDbrNBf30KQIfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793791582;
-	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=BRUvR8bERFluoJz7SlfIieeBNJFya8f/PQSjh5QOrdo=;
-	b=rkwVFQQMNNnrGPWBNpIwYvmEw82ee1CPh4ylAkMfLLMpy+ZPJSjx+hi+BzVmosM+bO5W
-	 gwUTtLGm51TKsg/k6WZahprmIqMDWtJ6ymJa8IO/M/RVUFE9oQp1jEGMwlLa2VVaF+oiG
-	 YFqdVvMfpe4HaX7NZHsV6zRkOmQGZNWLc9zkyO+sxDxFOXavOTbJx2rHMsW33RNMSPgS1
-	 KEO81av+8+jgXnH390QTk8XPOy2pQ7QgfLnIBrVq9DPc0GrA9BlIv96CgNmXFd9bWsEN+
-	 6bLJRTD7xS3muNk+iID1lrGXFO306buISgmMll45zfmB/DKhTA8pG2If2qN16s6pfxw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793795666;
+	h=DMARC-Filter:Received:Received:Received:Message-ID:Subject:From:To:
+	 Cc:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version:X-CM-TRANSID:X-Coremail-Antispam:
+	 X-CM-SenderInfo;
+	bh=fbDHR1bhb6fo9f6gQs2i+yeEbU4uHrwRuAQ4UhfQaQQ=;
+	b=tBVEV1oJBlLKQolDAitFlGo0cKpVmvXXZFLMxh/iyuT1mwfi76O1b9e2RlqLXH7C2LcI
+	 qRLQP/LS37zMtRz7ZAyW79CHBwQQDalYoX6b46QL3+W8MtGAaRyLNRr9VZF0wTI4LlQRr
+	 3QyrNbpd6t4AaTbDSAlFvfNUkvt2RYvuKFGHKO7a7jQYFQkILPniWsCtUqzXZJraEjQkF
+	 VlDVn7H27xGk9CFfCht5KUhV1FR+TSgyk/E9gXxvmtrgC8okL7FNs344yAMz2mCXZnaoz
+	 sSS4MJrkzbJKyVRBduMUQsECVHoY8Bh5CPhQ1oLAbL4JNl47M7ZjBiwpmLwAN0dC4BQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=xiaopeng.com;
-	spf=pass smtp.mailfrom=xiaopeng.com;
-	dkim=pass header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=HhPCNqfL;
-	arc=none smtp.remote-ip=115.124.28.4
-Received: from out28-4.mail.aliyun.com (out28-4.mail.aliyun.com [115.124.28.4])
+	dmarc=none header.from=huaweicloud.com;
+	spf=pass smtp.mailfrom=huaweicloud.com;
+	arc=none smtp.remote-ip=14.137.139.154
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F45606A328;
-	Wed,  4 Nov 2026 11:26:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B8F45606A328
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaopeng.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=HhPCNqfL
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xiaopeng.com; s=default;
-	t=1793791575; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=BRUvR8bERFluoJz7SlfIieeBNJFya8f/PQSjh5QOrdo=;
-	b=HhPCNqfL0G90FIUlb1aHPtUfMKIYyXGhAc8F1DIqqbRKmdXP2cYaHrG9yQZQXXczvd+E4pCtzKHungfWmpD4DKlTBITrwt+sfASzUxPP4HsMdshGooYU8Y10FHWJO06+x36EhsNV+Rpm8o0J+jcCeMxygga0hJj0g44aVwbeEVo=
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08114079|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0805209-0.0665188-0.85296;FP=12488014602245263088|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033032065030;MF=zhugl3@xiaopeng.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.jwpn148_1793791574;
-Received: from DESKTOP-UL5U09E.xiaopeng.local(mailfrom:zhugl3@xiaopeng.com fp:SMTPD_---.jwpn148_1793791574 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Wed, 04 Nov 2026 19:26:15 +0800
-From: Guanglei Zhu <zhugl3@xiaopeng.com>
-To: peterhuewe@gmx.de,
-	jarkko@kernel.org
-Cc: jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liuc63@xiaopeng.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2] tpm: eventlog: check the payload size before reading tag events
-Date: Wed,  4 Nov 2026 19:26:13 +0800
-Message-ID: <20261104112613.58589-1-zhugl3@xiaopeng.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <ausQu4DY8WARe_2j@kernel.org>
-References: <ausQu4DY8WARe_2j@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3735D606A326;
+	Wed,  4 Nov 2026 12:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3735D606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4jKPxy1mxrzsklp;
+	Wed,  4 Nov 2026 20:33:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.218])
+	by mail.maildlp.com (Postfix) with ESMTP id B17FB4055C;
+	Wed,  4 Nov 2026 20:34:13 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by dep2_app2 (Coremail) with UTF8SMTPA id 2hC2B0A2QlA9JutqGi0MAA--.11855S2;
+	Wed, 04 Nov 2026 13:34:13 +0100 (CET)
+Message-ID: <c7c8104ca8734f52a50ac2cfd058d4ce95e1cdbc.camel@huaweicloud.com>
+Subject: Re: [PATCH] ima: hold ima_extend_list_mutex while locating the trim
+ position
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Weibin Liu <liuwb@xiaopeng.com>, linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, 
+	stable@vger.kernel.org, Zhu Guanglei <zhugl3@xiaopeng.com>
+Date: Wed, 04 Nov 2026 13:34:03 +0100
+In-Reply-To: <20261104053705.3967228-1-liuwb@xiaopeng.com>
+References: <20261104053705.3967228-1-liuwb@xiaopeng.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -65,78 +63,136 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:2hC2B0A2QlA9JutqGi0MAA--.11855S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFW8JrWfJw4DuFyDWF1xZrb_yoWrKF18pa
+	9a9Fy7Kr1kJrWxtw1xG3WfurWruw4kWFWUJrnrG3WDAFW3Jr1jvr13tw1Y9rn5CrZrtF1r
+	tF4aqrZ8Aa1qyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Jr0_Gr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANDWrqozefaQAAsg
 
-The EVENT_TAG branch of get_event_name() casts the event payload to
-struct tcpa_pc_event and reads from it:
+On Wed, 2026-11-04 at 13:37 +0800, Weibin Liu wrote:
+> ima_queue_delete_partial() looks up the queue entry at which the
+> measurement list has to be cut without holding ima_extend_list_mutex,
+> and only takes the mutex afterwards for __list_cut_position().  The
+> comment above the cut justifies this with "ima_fs.c enforces
+> single-writer exclusion".
+>=20
+> That exclusion does not cover the write() path.  ima_measure_lock()
+> registers measure_writer at open() time and even lets the same task
+> open the file again by incrementing measure_writer_extra_writes, while
+> _ima_measurements_write() never checks the caller's identity.  A
+> privileged task can therefore open several descriptors for the
+> measurement list and use them concurrently from its own threads.  Each
+> open() creates a separate struct file, so the f_pos_lock taken by
+> fdget_pos() does not serialize these writers (sharing a single
+> descriptor would be serialized there).
 
-	pc_event = (struct tcpa_pc_event *)event_entry;
+Yes, I assumed the good behavior of the privileged task, but you are
+right that it must be fixed.
 
-	switch (do_endian_conversion(pc_event->event_id)) {
-	...
-		for (i = 0; i < 20; i++)
-			d_len += sprintf(&data[2*i], "%02x",
-					pc_event->event_data[i]);
+> Two racing writers can then resolve the same, or an overlapping, trim
+> position, and the second one dereferences a queue entry that the first
+> one has already detached and handed to ima_queue_delete().  Depending
+> on the interleaving this corrupts the measurement list, reads freed
+> memory in __list_cut_position(), or frees the same entry twice.
+>=20
+> Reproducer: generate some tens of thousands of measurement records,
+> open() the measurement list for writing several times from one task,
+> then write "20000\n" from that many threads using one descriptor each.
+> KASAN reports a stack-out-of-bounds access in ima_queue_delete(),
+> called from ima_queue_delete_partial().
+>=20
+> Move the lookup into the same critical section as the cut, so that the
+> entry stays valid until it has been detached.  Holding
+> ima_extend_list_mutex also excludes ima_extend_list(), so the plain
+> list_for_each_entry() is sufficient and the RCU variant is no longer
+> needed.  Keep the existing error precedence (a short list returns
+> -ENOENT before the suspended check) and keep ima_queue_delete()
+> outside the mutex, since the trimmed list is already private.
 
-The log iterators only verify that the event header plus the declared
-event_size stays within the log buffer; they do not require the
-payload of an EVENT_TAG entry to be large enough for the fields the
-branch reads. A truncated entry makes the branch read up to 20 bytes
-of event_data[] past the end of the entry, and, for the last entry in
-the log, past the end of the buffer itself.
+Not enough, it does not protect against the read concurrent with
+replacing/cutting the list (originated from the same writer).
 
-The legacy PC Client spec defines the EV_EVENT_TAG payload as a
-TCPA_PC_EVENT - event_id, event_size and event-type-specific data -
-so a conformant entry carries the 8-byte header and the hash-type
-ids carry a full digest. The log itself, however, is an ACPI table
-the firmware leaves in memory: the TPM never measures the log, so
-the kernel cannot tell a conformant log from a corrupted one. The
-iterators already work on that assumption - they stop once the
-declared event_size runs past the buffer end - and the readers
-should apply the same rule to what they take off the payload.
+A reasonable way to solve the problem would be to introduce an rwsem,
+and wrap the write, read and lseek operations. This restores the
+assumptions the code was written with.
 
-Skip entries whose payload cannot even hold the event id, and skip
-the 20-byte digest dump when the payload cannot hold the full
-tcpa_pc_event header plus the digest, so the branch never reads
-beyond the entry it is formatting.
+We still need the current exclusion to avoid that a process deletes a
+staged list created by another process.
 
-Fixes: 55a82ab3181b ("[PATCH] tpm: add bios measurement log")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guanglei Zhu <zhugl3@xiaopeng.com>
----
-v2: fold the spec rationale from the list discussion into the commit
-    log, per review - what the legacy PC Client spec defines for the
-    tag payload, why the kernel cannot trust the log to conform, and
-    how the iterators already handle it.
+Thanks
 
- drivers/char/tpm/eventlog/tpm1.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Roberto
 
-diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
-index 0397e33..f93a358 100644
---- a/drivers/char/tpm/eventlog/tpm1.c
-+++ b/drivers/char/tpm/eventlog/tpm1.c
-@@ -178,6 +178,10 @@ static int get_event_name(char *dest, struct tcpa_event *event,
- 		}
- 		break;
- 	case EVENT_TAG:
-+		if (do_endian_conversion(event->event_size) <
-+		    sizeof(pc_event->event_id))
-+			break;
-+
- 		pc_event = (struct tcpa_pc_event *)event_entry;
- 
- 		/* ToDo Row data -> Base64 */
-@@ -203,6 +207,9 @@ static int get_event_name(char *dest, struct tcpa_event *event,
- 			name = tcpa_pc_event_id_strings[do_endian_conversion
- 							(pc_event->event_id)];
- 			n_len = strlen(name);
-+			if (do_endian_conversion(event->event_size) <
-+			    sizeof(struct tcpa_pc_event) + 20)
-+				break;
- 			for (i = 0; i < 20; i++)
- 				d_len += sprintf(&data[2*i], "%02x",
- 						pc_event->event_data[i]);
--- 
-2.43.0
+> Fixes: fcb0318a2969 ("ima: Support staging and deleting N measurements re=
+cords")
+> Cc: stable@vger.kernel.org # v7.2+
+> Signed-off-by: Weibin Liu <liuwb@xiaopeng.com>
+> Reviewed-by: Zhu Guanglei <zhugl3@xiaopeng.com>
+> Assisted-by: LLM
+> ---
+>  security/integrity/ima/ima_queue.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
+ima_queue.c
+> index 0f1b7e4113c4..cf8c164eea13 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -427,12 +427,16 @@ int ima_queue_delete_partial(unsigned long req_valu=
+e)
+>  	struct ima_queue_entry *qe;
+>  	int ret =3D 0;
+> =20
+> +	mutex_lock(&ima_extend_list_mutex);
+> +
+>  	/*
+> -	 * list_for_each_entry_rcu() without rcu_read_lock() is fine because
+> -	 * only list append can happen concurrently. No list replace due to the
+> -	 * staging/delete writers mutual exclusion.
+> +	 * The lookup and the cut have to be atomic with respect to other
+> +	 * writers: ima_fs.c serializes open(), but write() can run
+> +	 * concurrently on independently opened descriptors. Holding
+> +	 * ima_extend_list_mutex also excludes ima_extend_list(), so the
+> +	 * plain list traversal is sufficient.
+>  	 */
+> -	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+> +	list_for_each_entry(qe, &ima_measurements, later) {
+>  		size_to_remove +=3D get_binary_runtime_size(qe->entry);
+>  		num_to_remove++;
+> =20
+> @@ -441,18 +445,16 @@ int ima_queue_delete_partial(unsigned long req_valu=
+e)
+>  	}
+> =20
+>  	/* Not enough records to delete. */
+> -	if (req_value_copy > 0)
+> +	if (req_value_copy > 0) {
+> +		mutex_unlock(&ima_extend_list_mutex);
+>  		return -ENOENT;
+> +	}
+> =20
+> -	mutex_lock(&ima_extend_list_mutex);
+>  	if (ima_measurements_suspended) {
+>  		mutex_unlock(&ima_extend_list_mutex);
+>  		return -ESTALE;
+>  	}
+> =20
+> -	/*
+> -	 * qe remains valid because ima_fs.c enforces single-writer exclusion.
+> -	 */
+>  	__list_cut_position(&ima_measurements_trim, &ima_measurements,
+>  			    &qe->later);
+> =20
 
