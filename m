@@ -1,65 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.196
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793752218;
-	b=AhMpaf5cnUpc1xXuWo3OxsyOsPLHc/prSmlHzc6E72dvYTkRbAoIQ/OsW/5n2t+FMYvf
-	 Oi3fcKmFJuT62IqFeVWbgZoWUCju+0lwLbWe0gAGPhe8xnt0NXM9OVldp4Fut9MxFvwE9
-	 Y7woCoVeTObLRiao8rfMKLueMkcb7A5vF0WRfIodE7zsG1JvopcDGh0tz4xXWvIZU4E7U
-	 9IZl/rcapckzdELfGjrdDwavRleyUwBFXsjp+vseL1vADabKw/CYPfCmPBVHwfpwoQ4gr
-	 slFnoShqSBe9n1ax/a5SNVhLcmhgJiGR93CChPYijn+7tmFbdIXG6IKWRxq0JCu2xjA==
+	t=1793761094;
+	b=EbOl+q31U4jagy2lBAWTijMUBEfJIeMkIvumVvi4IrHFdE+hN/DD1saQQ+cDa6hP5/Uk
+	 iEzhvsm52UulCskslglp0VxSEXAmGhxjSWDyXSLbaLWlw3aTQAsqjpBv9VVcnHRqUqkQ4
+	 Uf2QCqO9NLcUP8sPIR7mydGzHo3z/NmhMw/ljOcdLyklWDtH2YSGgb2d8OKGTpaZLCHll
+	 uIiZTxuOpoRX+oIKpApl3r4YXq7vhJgC73FWnOAuhpt4ugVt7tRFB1Dd9MWI57/J3v6FD
+	 QIz9KweglTxN5Ef8qkZE/eBUxHYLowL7YVzgERNkgauGkezVcSP/KqoHz+zyFeshYnQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793752218;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=xDOGDJnKdbk9zvnxTD/OktB5rQV36xGxR0ci2chyUhQ=;
-	b=1nW/AnWYnoDdMpQdRqIPaleMNmDSiGWO5oqOR957Osm8LGwC9GwP+0hr6Xql1637I0Fb
-	 FixXk1EcK27wGfBHfbucm6wQ7Y/JqKbaJtEm8l1UDg7WrO1mTLu1d16V/lotuhvF9ABDk
-	 vzJZVd/GVKQ+BphZShg4QbF8HXewlpxdS2t3eJEG3I5uwVMoaMzVBy0iGyUTgw4GqkoEk
-	 jT/OSQtJ7Ml+ivMIa8P0V7ngoy7jpIwA04dnfVZrqsoSsVfkDLpRFhXs/BaW+4WIaLSrR
-	 1oepHix0glALbU6N6tPZWLZspAhF5ckMT+943cnweX/UhDl2dio5v/uKlXJ/ghWfKsA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793761094;
+	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
+	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=6K7mdgwtT1pUptQZb8V/YwrLp8kJMPOp/OKvTUNrc9w=;
+	b=qtZCfpIPLSxbHgXJtKorU0fXyWwa6OShbD5XIrgg3BixY1VJxZL1LW+Jon1sl8hF3cp6
+	 hYfpTbgJ1/+IWCHG92bZi1lezsvodZ8dtbV1ogTmTzPm0+5kwjTexAYhP+EgEcy0v/SnA
+	 RhrvJjUxI13Jgj3cOE+2ctWaRXyBJ6ecPyl1ol8+mBpQtPArCDAsOlDzTQ6ym3lsmjBQK
+	 tIUaaJVbY9s/bWY7ofETSdLC9qofBxC9NoOuNxMBX2aptEPbcvKEOgWtb95c2kvBvWcs1
+	 Q30Q5HgYdqF655sWGvKZBgPD+Rvm5w0nkpdW7Z/lVaXvPMACLu6IMEj67JSSJWs9Aqg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=et0f9bLr;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=xiaopeng.com;
+	spf=pass smtp.mailfrom=xiaopeng.com;
+	dkim=pass header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=KTm+tbmQ;
+	arc=none smtp.remote-ip=115.124.28.196
+Received: from out28-196.mail.aliyun.com (out28-196.mail.aliyun.com [115.124.28.196])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id BD6AD606A31B;
-	Wed,  4 Nov 2026 00:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ED5606A31B;
+	Wed,  4 Nov 2026 02:58:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 12ED5606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaopeng.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=et0f9bLr
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1C63D1F000C1;
-	Wed,  4 Nov 2026 00:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793752217;
-	bh=xDOGDJnKdbk9zvnxTD/OktB5rQV36xGxR0ci2chyUhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=et0f9bLrm5IkPuVzusZcF1wHDuyMd5GkAeXuTcmg/IU4wI6y6HbVXOdTsjTXvIpuB
-	 WKMlwA2rJkAjiTJaKZG40LNia7v96jYmTGRpb2nN/1LVRkh9A+VUIzSTj4PQ8C3HSB
-	 h0TVlXyyiD86HwKFD4eKfkhuYFOUr5lDMHKBOevn+mkTKsBdAHdSFrJARJTYewH6tm
-	 /eCll6gFnbVbTv8QFkrp6eI8ewMJlwySYxgJx2TW0R3+CiJ6wibQNYqkndEXWdncc0
-	 hHj2prtg3sFvJg7OC115kcYV1WN3NxVaSsmeFsHshlG1S2/9orL2m14UARngjW0CIl
-	 MS7tqvaVgHvFg==
-Date: Wed, 4 Nov 2026 02:30:13 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 00/11] KEYS: Sanitize the garbage collector
-Message-ID: <aup8lXNaqGbPAuWY@kernel.org>
-References: <aun4kXCJDtYomzpu@kernel.org>
- <aunNj35KmcAC4ByH@kernel.org>
- <20261103030226.2685251-1-jarkko@kernel.org>
- <641294.1793700187@dhowells-thinkpadp1gen8.rmtgb.csb>
- <669211.1793714419@dhowells-thinkpadp1gen8.rmtgb.csb>
- <683284.1793719946@dhowells-thinkpadp1gen8.rmtgb.csb>
- <auoSwRMIXLajVeWs@kernel.org>
+	dkim=pass (1024-bit key, unprotected) header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=KTm+tbmQ
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xiaopeng.com; s=default;
+	t=1793761090; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=6K7mdgwtT1pUptQZb8V/YwrLp8kJMPOp/OKvTUNrc9w=;
+	b=KTm+tbmQxOTe/7VPdO3EG+oghYyTmTR40kFWEi+jb5x8tc6EivVlypfVZu1GYUTI22d1GYXiFNIl70ZhqgOZwwC5P3Moy83UGfo08JEwCYk+i9s3TPad8rQgY2e+ntmHXYP1sJX5i4SHRt5AiZwiywQ6n/EgZPm0ioh2GF9nFf8=
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.3239649|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.128799-0.138537-0.732665;FP=17242777726901411837|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033037034184;MF=zhugl3@xiaopeng.com;NM=1;PH=DS;RN=6;RT=6;SR=0;TI=SMTPD_---.jwIggha_1793761089;
+Received: from DESKTOP-UL5U09E.xiaopeng.local(mailfrom:zhugl3@xiaopeng.com fp:SMTPD_---.jwIggha_1793761089 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Wed, 04 Nov 2026 10:58:10 +0800
+From: Guanglei Zhu <zhugl3@xiaopeng.com>
+To: jarkko@kernel.org
+Cc: peterhuewe@gmx.de,
+	jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liuc63@xiaopeng.com
+Subject: Re: [PATCH] tpm: eventlog: check the payload size before reading tag events
+Date: Wed,  4 Nov 2026 10:58:09 +0800
+Message-ID: <20261104025809.787723-1-zhugl3@xiaopeng.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <aunbAIcxu8XTW0Ph@kernel.org>
+References: <aunbAIcxu8XTW0Ph@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -69,48 +64,16 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <auoSwRMIXLajVeWs@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 03, 2026 at 06:58:45PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Nov 03, 2026 at 03:32:26PM +0000, David Howells wrote:
-> > Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > 
-> > > > Actually, it can be done if the rxrpc and rxrpc_s key types are moved out
-> > > > into their own module upon which rxrpc.ko depends.
-> > > 
-> > > Hmm... I'll experiment with this, thanks. This was useful.
-> > 
-> > It's not entirely trivial.  I've attached a patch that makes a start on it,
-> > but it needs access to bits of the security class implementations (rxkad and
-> > rxgk).  Those bits only parse the key (and in the case of rxgk access the krb5
-> > code), so in theory it should be possible to extract them out.
-> > 
-> > One thing that needs to be considered, though, is the security class selected
-> > should really be up to the application, not merely switched on by the
-> > security_id.  This is one of the reasons I would like to add an add_key2()
-> > syscall that adds an additional parameter string argument.
-> 
-> Thanks I'll investigate this.
+The legacy PC Client spec defines the EV_EVENT_TAG payload as a
+TCPA_PC_EVENT: event_id, event_size and event-type-specific data.
+A conformant entry carries the 8-byte header, and the hash-type
+ids carry a full digest.
 
-Well, this really unknotted:
-
-    dns_resolver: Move the key type into a separate module
-
-    Once keys bind their type, having the DNS key type in the same modules as
-    the resolver will introduce a circular dependency preventing module_exit()
-    from ever running.
-
-    Introduce dns_resolver_key.ko containing key_type_dns_resolver. On a module
-    exit, drop the credentials and call key_gc_flush() in order the drain the
-    remaining RCU callbacks.
-
-    Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-And yes, I was over-complicating this, just like I told earlier :-)
-
-This means I should be able to submit v3, which continues to build
-around the same ideas.
-
-Br, Jarkko
+The catch is that the log is an ACPI table the firmware leaves in
+memory: the TPM never measures the log itself, so the kernel cannot
+tell a conformant log from a corrupted one.  The iterators already
+work on that assumption - they stop once the declared event_size
+runs past the buffer end - and this check applies the same rule to
+what the EVENT_TAG branch reads off the payload.
