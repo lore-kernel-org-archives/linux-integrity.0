@@ -1,73 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793789225;
-	b=ePt7EpUQXvdvWCBKgQEj+jvSsMUPml2LB1yyvxsjsFSswExUOCt/PQH+aDk+s9C3F3Dn
-	 Ig2o0bSmfUi9UCvP5UxP8m60KGjFcx/nTOVJfZtDkAo0cpVSG9cdbIAOSHCIeoOnVJJ69
-	 U5kvBMaGcep4N0UQZD8JOwpsICekDwtnzugNyhOtPqxxSXWF1O1oK0h1/hht66iW+x/Bj
-	 SjiKpzDANPuMM1PjnYTC9htlviLyT+j0Sm+OsnBEUkl9lPTS270MYhfSrVGHtJpL9P4rN
-	 V0KntVBwfR3H342TgYpH3aCkEf/64s5hdPiGbdyTInYNkSMsU/6Rc9njoEXxI4VKvaQ==
+	t=1793790144;
+	b=VS6BBEjKWfbrrColzJmF+lGqabxSyfKT+3UFvzBbas4dQAxBICyOcZKunDCtU+70Mu5y
+	 Jdx0guTVcC2CfULgP2V/WFrTOkZM8mptgRxV3RrcukeP3nM/uuYBjLHRQBeqBE2ZwcUGF
+	 m+woVe2ASlsmOblSIYYAwSayNb2ueci+6ghmb7pIRfuV41xsWocsNcKo1xnlOR5j6ET+v
+	 yRKyLgWP23fE7hUcCOhjC1kPyXX15Sw11AD4ncc7ep+CavCScNIQhIb38RAL/M7xNPSFT
+	 pvvhcKq2ig+jqGQwns46tZYl3f7h6OadkahBlCuK6fxPW6wjjmwYal+CPj+EuFj87lA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793789225;
-	h=Received:DKIM-Signature:Received:Received:X-ME-Sender:
-	 X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type:Content-Transfer-Encoding;
-	bh=bhOmEa952md/X2FxyjNFbUxSEKG6z2HGY2NSxyblu7s=;
-	b=eWj0MFZkI06Q18hXwosGpCIdgyBlNHwVA+Frzdk4EHMOGbjBTSWLd4LDawteV0kehfLx
-	 G2CItIN7k/9kNlfjty83NIcH40CaUurfD30hleG05DNgZD3+YWpedRYKH5AAxToR1xITm
-	 ZagHtVTXvvIpRAEDu474eAMsMW5L9SLxswhzAnGkV2waPpmZJP4TDyoQBJ+Q7gI7gYldJ
-	 n+5il338WngFOFWWga8JRBnzGtsRBI6fEQMCPkHZV04jlAvgJwV573uM33X22dEsiCEsH
-	 YN1BoBnFk3/vyf9Ygc3ALJXtCr8Lsfvrhk0xOPnPM+G+u81/OiozuqS+GKAzAlTbrEA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793790144;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=cEVR4bOY4D+puDxbxymd8sWII3mVG3OtcBxnbLeMyo0=;
+	b=Cdat9orkiM4zAj5KUV3qAiJDj7ph6IDqSwGCKeuI9Y4tynEeuXtDvhacptH72OUsFC5s
+	 jBFIU1zzw8F5gMRaOvVVYW4i6VMSZkZtzLArrBl9kr6HMmX9mhGgWwCQIq3flpE+8Qnis
+	 PhjQdSG6+jpnTLdHlHYpN/jXPMIFHY8H+D40OE8T5PsZzI+yL3cKidN6c6reDA63A09EA
+	 QwZUR8mE5UDyrMw9NrMcLePvwjTVhTu2rZc2cBOqTKgb3xdQyasqf34mWdCHS6ghC6Ab9
+	 lE6o+6oqVzRVNmEmmANz0XqHX4d/bo5dDUW5PvEaP0ECKWCBS05tDcXuBcQE3nAl8jA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="VJrT2/1Q";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="VMbuu/Kw";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96CA606A328;
-	Wed,  4 Nov 2026 10:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id DAE05606A31B;
+	Wed,  4 Nov 2026 11:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VJrT2/1Q
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 582D11F00919;
-	Wed,  4 Nov 2026 10:47:02 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VMbuu/Kw
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E9B481F000C1;
+	Wed,  4 Nov 2026 11:02:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793789224;
-	bh=bhOmEa952md/X2FxyjNFbUxSEKG6z2HGY2NSxyblu7s=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject;
-	b=VJrT2/1QLEtsT7IAJHPVIQ2ISxt4hMdc3map/aD2+trIBN9mSj3nx2Q9bTpfMT3MF
-	 cGNw4vlunjJnW2IgqkdannjrufnBjkEyqAdwxHFKLVUEMfE+G1hX5DaeWBXjmWX36S
-	 imsPN3k2zFxiGZhrAEtQPYo34cnkB1wIfefgCgCRieHnN8ascqJ5oPN4Fh4QbYtHlq
-	 7/wVgTJuM16kHNFu8An5p+QSkHTadJXmkvy+7t9tMNoYCB9OvYjalYNNGUIRajXJbd
-	 YN4n/cPqhT0kWRFpjhDg6dKdJbl4dZ4IR8N3yu9oo0FcspYKIrDgWmd+hMBEXfPmLJ
-	 lIvFousnuVg2A==
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfauth.ams.internal (Postfix) with ESMTP id BE33A198003A;
-	Wed,  4 Nov 2026 05:47:00 -0500 (EST)
-Received: from ams-imap-11 ([10.64.2.31])
-  by ams-compute-02.internal (MEProxy); Wed, 04 Nov 2026 05:47:00 -0500
-X-ME-Sender: <xms:Hw3ranMJL85RL35ZdIqlVZy7B5jeINP5BbPezeQrDi-SF2g1QOUblw>
-    <xme:Hw3raswrF1gip8laAtOzF-VI-pmh8_xio3Iv18-kjvZb7gAJgZagRdgIgdR_Z9VpH
-    3aGcEn9wEYZRA1vkqbcSrpJfGBueP2SI-2Ks1wLLANcLZGoARC6PFs>
-X-ME-Proxy-Cause: dmFkZTFcPavaLWIfgpoRM8kguzVyv4s6FUkLYAQNGvkUHQVN3xVxVzv9NryfTRmBx2+1+T
-    O8Nt36zML1hPcpqbZ31+TrK5u1pojcuEtJ4d9wGWUhJ3PA4GR64AER0KVm/mg5J8CEvDjb
-    87JxU7ByEHQUkd87rjl5YJ6VpVGYEteXdzVHpDfaZbUb25I8yUXHEzXzvTki5YhHrX0+Ff
-    dEw6DUI60ChXVG7qPis8rKSRSBjgm3FH41orMrqi8AzmwVObG7DSV0A/n08w8QClZ1o7l+
-    535jOrxx7Ryk22b71pTU7piz9TOaOxspVPbT5mctmMzGlgM03lWJfWSB8QGDefxIJWbjYs
-    SWRWaf8wtqVtG/y8VhcGvWaXz0LsELuUcWCWXl8uYz0FlppVOkjLlTI83jJnQvIsR6wW9A
-    CHbjI9SRCOspRJI14AvVQ1gcqqNFg/aukBnzTQSgDXsMSAvOzAUMquE+WlSukqk5s0kWpa
-    njVLPVqOL6PMp5x3IoZtBkRTGd/N3jxEy8pK1FCY/kEv9MN3SOjavcn9IuRnWmh/83Rc77
-    6GG8VVWJng4fdcHXdysUYGD2mMNjsZxD/N6+r+yDqOve4t+C3EzK9VWq9skd3rDm5qfSyS
-    0v1Q3nZRYNBxw1A74kxjY01EsAfvmnziAM0IIiwwBMPqwOU9vx9fO+TEwqTQ
-X-ME-Proxy: <xmx:JA3rarOc2on3e1xb7iUIdCss_xeJ3zdgPplKMTBac8Yz3xu00QXGXA>
-    <xmx:JA3rakancmdTtLZDM22WzdIgr8lJQn3ocDdsi_RjrSD_VtAdD8coHg>
-    <xmx:JA3ras7McSax5611gqIhLQldHowrwdBi4-xbCgqokzbp7BU_VCYGyw>
-    <xmx:JA3rarBd0hh0XKEJUgCfUXIrbQcvdDWVyz9bN0fiE8VImxPs8sd5Dg>
-    <xmx:JA3rar7rbi7TJSfdSFS58Fu87suf-sHWjoQzGw8ON1-8MnFv5N6AUirL>
-Feedback-ID: ice86485a:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 3A57AF8008E; Wed,  4 Nov 2026 05:46:55 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=k20260515; t=1793790143;
+	bh=cEVR4bOY4D+puDxbxymd8sWII3mVG3OtcBxnbLeMyo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=VMbuu/KwSeMgvNc499NJoBnUuPcxauEXI7R+lrYexJkaEtROnKZdMbeg3xvVnugEz
+	 NM/ExuC4YOjv3Iazr8QvH9M2WTrLQeyDb2XIG/PeGhFkpolO/jBO/rb6UWBH/ZS7GT
+	 sWaAcCutg+uloXxCdAAaY1/GK6ff3n6PdYVrIlPB4CwJ3JS1twC/wrKV/GvC7iNrbt
+	 N4ADxNOA6BGPYR3r6/VoMpZUs63m44Hv/KeY1SbHglA6oQfQxrwDXf6NKUxhuFX/UO
+	 pd2EWPjk+7HU3zPPjQv4Nl2v0npJBicwhN09ID4fXxXTtSBIk8+27Y8jZY9Hi33IEI
+	 eR8NgnHngufvA==
+Date: Wed, 4 Nov 2026 13:02:19 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Guanglei Zhu <zhugl3@xiaopeng.com>
+Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, liuc63@xiaopeng.com
+Subject: Re: [PATCH] tpm: eventlog: check the payload size before reading tag
+ events
+Message-ID: <ausQu4DY8WARe_2j@kernel.org>
+References: <aunbAIcxu8XTW0Ph@kernel.org>
+ <20261104025809.787723-1-zhugl3@xiaopeng.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -77,61 +58,28 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Date: Wed, 04 Nov 2026 11:46:33 +0100
-From: "Ard Biesheuvel" <ardb@kernel.org>
-To: "Jason Gunthorpe" <jgg@nvidia.com>
-Cc: "Alexandre Ghiti" <alex@ghiti.fr>, "Albert Ou" <aou@eecs.berkeley.edu>,
- "Arnd Bergmann" <arnd@arndb.de>, "Catalin Marinas" <catalin.marinas@arm.com>,
- "Jonathan Corbet" <corbet@lwn.net>, "David Sterba" <dsterba@suse.com>,
- "Ilias Apalodimas" <ilias.apalodimas@linaro.org>, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-riscv@lists.infradead.org,
- "Mark Rutland" <mark.rutland@arm.com>, "Palmer Dabbelt" <palmer@dabbelt.com>,
- "Paul Walmsley" <pjw@kernel.org>, "Randy Dunlap" <rdunlap@infradead.org>,
- "Simon Glass" <sjg@chromium.org>, "Shuah Khan" <skhan@linuxfoundation.org>,
- "Nick Terrell" <terrelln@fb.com>, "Will Deacon" <will@kernel.org>,
- "Alexandre Ghiti" <alexghiti@rivosinc.com>,
- "Conor Dooley" <conor.dooley@microchip.com>,
- "Jonathan Cameron" <jonathan.cameron@oss.qualcomm.com>,
- linux-integrity@vger.kernel.org, "Palmer Dabbelt" <palmer@rivosinc.com>,
- patches@lists.linux.dev, =?UTF-8?Q?Piotr_Kr=C3=B3l?= <piotr.krol@3mdeb.com>,
- "Ross Philipson" <ross.philipson@gmail.com>,
- "Sami Tolvanen" <samitolvanen@google.com>,
- "Song Shuai" <songshuaishuai@tinylab.org>
-Message-Id: <cc4d09b6-a56b-44a2-a137-f27bc87e96e3@app.fastmail.com>
-In-Reply-To: <20261103160138.GA3165945@nvidia.com>
-References: <0-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
- <4-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
- <20261103160138.GA3165945@nvidia.com>
-Subject: Re: [PATCH v2 04/15] efi/libstub: Add a general way to get symbols from the
- vmlinux into zboot
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261104025809.787723-1-zhugl3@xiaopeng.com>
+
+On Wed, Nov 04, 2026 at 10:58:09AM +0800, Guanglei Zhu wrote:
+> The legacy PC Client spec defines the EV_EVENT_TAG payload as a
+> TCPA_PC_EVENT: event_id, event_size and event-type-specific data.
+> A conformant entry carries the 8-byte header, and the hash-type
+> ids carry a full digest.
+> 
+> The catch is that the log is an ACPI table the firmware leaves in
+> memory: the TPM never measures the log itself, so the kernel cannot
+> tell a conformant log from a corrupted one.  The iterators already
+> work on that assumption - they stop once the declared event_size
+> runs past the buffer end - and this check applies the same rule to
+> what the EVENT_TAG branch reads off the payload.
+
+Yeah, this is exactly what I wanted to know. Could you refine the
+patch and send a new version with this?
+
+It's really good stuff to have in the commit log when looking back
+at old changes.
 
 
-
-On Tue, 3 Nov 2026, at 17:01, Jason Gunthorpe wrote:
-> On Fri, Oct 02, 2026 at 08:31:41PM -0300, Jason Gunthorpe wrote:
->> Currently the zboot stub has no access to symbols in the vmlinux. In
->> contrast x86 has a voffsets.h header that allows the stub to know whatever
->> symbols it wants for the decompressed image. ARM DRTM needs another 4
->> symbol locations to work, and it also wants to compile the DRTM libstub
->> code once and have it work in both zboot and embedded.
->> 
->> The current solution in arm is "code_size" from commit 45dd403da851
->> ("efi/zboot: arm64: Inject kernel code size symbol into the zboot
->> payload"). This is neat, but it makes the zboot and embedded cases
->> work differently.
->> 
->> The x86 voffsets.h approach is also nice, but it can only work in zboot
->> since it relies on 'nm vmlinux' to extract the locations. That's a
->> circular dependency for the embedded stub.
->
-> Ard,
->
-> Did you have any further thoughts on this patch? Did the sketch you
-> showed me at LPC turn into anything?
->
-
-I will get back to you before the end of the week.
-
+Br, Jarkko
