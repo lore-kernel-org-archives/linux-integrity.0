@@ -1,56 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793783086;
-	b=T6+bdBsqsbziO2SWc6ki0ogy2RrVgfcYfFa3oq5C3C8y9FwoHgbtqTsI/DUXddB3fFgY
-	 NDsFyOGa4k7muhwkHdaIxidZ0i3ZPccTtqW6ucVUz3nOI4TNmU4N1WzrJbofWnrsu3Lzu
-	 gmeEljRA97K6kVVt8DFHc2rZI4/E6mtPcFkL3kjVkVH2iQV5CFjqv+fNFS69kWiABE227
-	 ZEEmeVry1JDRjhRLwMc8E0n+gu5lQ7coWFo5sFHvbq4OqUShy5Xtc35MAgE32/il+Xrs5
-	 lxb1iIfcBWUnFpkwNhVodqWp9ULt73HdgNg7BWyxGKJ2EG10ySpZL5eYHG3oLVlK4cw==
+	t=1793789225;
+	b=ePt7EpUQXvdvWCBKgQEj+jvSsMUPml2LB1yyvxsjsFSswExUOCt/PQH+aDk+s9C3F3Dn
+	 Ig2o0bSmfUi9UCvP5UxP8m60KGjFcx/nTOVJfZtDkAo0cpVSG9cdbIAOSHCIeoOnVJJ69
+	 U5kvBMaGcep4N0UQZD8JOwpsICekDwtnzugNyhOtPqxxSXWF1O1oK0h1/hht66iW+x/Bj
+	 SjiKpzDANPuMM1PjnYTC9htlviLyT+j0Sm+OsnBEUkl9lPTS270MYhfSrVGHtJpL9P4rN
+	 V0KntVBwfR3H342TgYpH3aCkEf/64s5hdPiGbdyTInYNkSMsU/6Rc9njoEXxI4VKvaQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793783086;
-	h=DMARC-Filter:Received:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To:User-Agent;
-	bh=tcFCvk5dy/5nZvQXEyJVg4b960/R9SgdjtGuBESCiW4=;
-	b=c27ANWOeqvfcrDf1q1uQ85ViJfinIEuEP+fNRYlck2hxyNsUYkNHXKzduL/FodkTTpBF
-	 0MCxAlpR3PW2TcqO1Qsn2j1b0zpFooH6Tl6vcKq9toaleR5HTH2rs4JY4Bqn3ESLNGrQX
-	 ai1ybJYeT14jevCxXmaGik3SZ6aflVjKx7M88kxh1x30h9V+z8PuJgLVGKAAZ1x1HotwP
-	 mLpL1iY5ifvCb/01cQtHHQoU5iH9WW3aCDEZfJ7Dl3QEGGlwDo09+erok2cXUqEUTlWht
-	 O007ljC1r2LLrnVEggsiYFpWMNYEcMSpOfWBVNIdF2G5tjIA/5xAIWPYQLh779jyQbA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793789225;
+	h=Received:DKIM-Signature:Received:Received:X-ME-Sender:
+	 X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type:Content-Transfer-Encoding;
+	bh=bhOmEa952md/X2FxyjNFbUxSEKG6z2HGY2NSxyblu7s=;
+	b=eWj0MFZkI06Q18hXwosGpCIdgyBlNHwVA+Frzdk4EHMOGbjBTSWLd4LDawteV0kehfLx
+	 G2CItIN7k/9kNlfjty83NIcH40CaUurfD30hleG05DNgZD3+YWpedRYKH5AAxToR1xITm
+	 ZagHtVTXvvIpRAEDu474eAMsMW5L9SLxswhzAnGkV2waPpmZJP4TDyoQBJ+Q7gI7gYldJ
+	 n+5il338WngFOFWWga8JRBnzGtsRBI6fEQMCPkHZV04jlAvgJwV573uM33X22dEsiCEsH
+	 YN1BoBnFk3/vyf9Ygc3ALJXtCr8Lsfvrhk0xOPnPM+G+u81/OiozuqS+GKAzAlTbrEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=lst.de;
-	spf=pass smtp.mailfrom=lst.de;
-	arc=none smtp.remote-ip=213.95.11.211
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="VJrT2/1Q";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB312606A32E;
-	Wed,  4 Nov 2026 09:04:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB312606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id E2B4E68BEB; Wed,  4 Nov 2026 10:04:40 +0100 (CET)
-Date: Wed, 4 Nov 2026 10:04:40 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, David Howells <dhowells@redhat.com>,
-	Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-	stable@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Hannes Reinecke <hare@kernel.org>,
-	"open list:NVM EXPRESS DRIVER" <linux-nvme@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 02/11] nvme-keyring: Add a missing key_put()
- call to nvme_tls_key_lookup()
-Message-ID: <20261104090440.GA30968@lst.de>
-References: <20261103030226.2685251-1-jarkko@kernel.org> <20261103030226.2685251-3-jarkko@kernel.org> <20261103053303.GA1382@lst.de> <aunTlxXbRJ6ZP63h@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96CA606A328;
+	Wed,  4 Nov 2026 10:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VJrT2/1Q
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 582D11F00919;
+	Wed,  4 Nov 2026 10:47:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793789224;
+	bh=bhOmEa952md/X2FxyjNFbUxSEKG6z2HGY2NSxyblu7s=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject;
+	b=VJrT2/1QLEtsT7IAJHPVIQ2ISxt4hMdc3map/aD2+trIBN9mSj3nx2Q9bTpfMT3MF
+	 cGNw4vlunjJnW2IgqkdannjrufnBjkEyqAdwxHFKLVUEMfE+G1hX5DaeWBXjmWX36S
+	 imsPN3k2zFxiGZhrAEtQPYo34cnkB1wIfefgCgCRieHnN8ascqJ5oPN4Fh4QbYtHlq
+	 7/wVgTJuM16kHNFu8An5p+QSkHTadJXmkvy+7t9tMNoYCB9OvYjalYNNGUIRajXJbd
+	 YN4n/cPqhT0kWRFpjhDg6dKdJbl4dZ4IR8N3yu9oo0FcspYKIrDgWmd+hMBEXfPmLJ
+	 lIvFousnuVg2A==
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailfauth.ams.internal (Postfix) with ESMTP id BE33A198003A;
+	Wed,  4 Nov 2026 05:47:00 -0500 (EST)
+Received: from ams-imap-11 ([10.64.2.31])
+  by ams-compute-02.internal (MEProxy); Wed, 04 Nov 2026 05:47:00 -0500
+X-ME-Sender: <xms:Hw3ranMJL85RL35ZdIqlVZy7B5jeINP5BbPezeQrDi-SF2g1QOUblw>
+    <xme:Hw3raswrF1gip8laAtOzF-VI-pmh8_xio3Iv18-kjvZb7gAJgZagRdgIgdR_Z9VpH
+    3aGcEn9wEYZRA1vkqbcSrpJfGBueP2SI-2Ks1wLLANcLZGoARC6PFs>
+X-ME-Proxy-Cause: dmFkZTFcPavaLWIfgpoRM8kguzVyv4s6FUkLYAQNGvkUHQVN3xVxVzv9NryfTRmBx2+1+T
+    O8Nt36zML1hPcpqbZ31+TrK5u1pojcuEtJ4d9wGWUhJ3PA4GR64AER0KVm/mg5J8CEvDjb
+    87JxU7ByEHQUkd87rjl5YJ6VpVGYEteXdzVHpDfaZbUb25I8yUXHEzXzvTki5YhHrX0+Ff
+    dEw6DUI60ChXVG7qPis8rKSRSBjgm3FH41orMrqi8AzmwVObG7DSV0A/n08w8QClZ1o7l+
+    535jOrxx7Ryk22b71pTU7piz9TOaOxspVPbT5mctmMzGlgM03lWJfWSB8QGDefxIJWbjYs
+    SWRWaf8wtqVtG/y8VhcGvWaXz0LsELuUcWCWXl8uYz0FlppVOkjLlTI83jJnQvIsR6wW9A
+    CHbjI9SRCOspRJI14AvVQ1gcqqNFg/aukBnzTQSgDXsMSAvOzAUMquE+WlSukqk5s0kWpa
+    njVLPVqOL6PMp5x3IoZtBkRTGd/N3jxEy8pK1FCY/kEv9MN3SOjavcn9IuRnWmh/83Rc77
+    6GG8VVWJng4fdcHXdysUYGD2mMNjsZxD/N6+r+yDqOve4t+C3EzK9VWq9skd3rDm5qfSyS
+    0v1Q3nZRYNBxw1A74kxjY01EsAfvmnziAM0IIiwwBMPqwOU9vx9fO+TEwqTQ
+X-ME-Proxy: <xmx:JA3rarOc2on3e1xb7iUIdCss_xeJ3zdgPplKMTBac8Yz3xu00QXGXA>
+    <xmx:JA3rakancmdTtLZDM22WzdIgr8lJQn3ocDdsi_RjrSD_VtAdD8coHg>
+    <xmx:JA3ras7McSax5611gqIhLQldHowrwdBi4-xbCgqokzbp7BU_VCYGyw>
+    <xmx:JA3rarBd0hh0XKEJUgCfUXIrbQcvdDWVyz9bN0fiE8VImxPs8sd5Dg>
+    <xmx:JA3rar7rbi7TJSfdSFS58Fu87suf-sHWjoQzGw8ON1-8MnFv5N6AUirL>
+Feedback-ID: ice86485a:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id 3A57AF8008E; Wed,  4 Nov 2026 05:46:55 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -60,25 +77,61 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aunTlxXbRJ6ZP63h@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Date: Wed, 04 Nov 2026 11:46:33 +0100
+From: "Ard Biesheuvel" <ardb@kernel.org>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+Cc: "Alexandre Ghiti" <alex@ghiti.fr>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Arnd Bergmann" <arnd@arndb.de>, "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Jonathan Corbet" <corbet@lwn.net>, "David Sterba" <dsterba@suse.com>,
+ "Ilias Apalodimas" <ilias.apalodimas@linaro.org>, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-riscv@lists.infradead.org,
+ "Mark Rutland" <mark.rutland@arm.com>, "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Paul Walmsley" <pjw@kernel.org>, "Randy Dunlap" <rdunlap@infradead.org>,
+ "Simon Glass" <sjg@chromium.org>, "Shuah Khan" <skhan@linuxfoundation.org>,
+ "Nick Terrell" <terrelln@fb.com>, "Will Deacon" <will@kernel.org>,
+ "Alexandre Ghiti" <alexghiti@rivosinc.com>,
+ "Conor Dooley" <conor.dooley@microchip.com>,
+ "Jonathan Cameron" <jonathan.cameron@oss.qualcomm.com>,
+ linux-integrity@vger.kernel.org, "Palmer Dabbelt" <palmer@rivosinc.com>,
+ patches@lists.linux.dev, =?UTF-8?Q?Piotr_Kr=C3=B3l?= <piotr.krol@3mdeb.com>,
+ "Ross Philipson" <ross.philipson@gmail.com>,
+ "Sami Tolvanen" <samitolvanen@google.com>,
+ "Song Shuai" <songshuaishuai@tinylab.org>
+Message-Id: <cc4d09b6-a56b-44a2-a137-f27bc87e96e3@app.fastmail.com>
+In-Reply-To: <20261103160138.GA3165945@nvidia.com>
+References: <0-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
+ <4-v2-989a18390eb1+486-arm64_drtm_jgg@nvidia.com>
+ <20261103160138.GA3165945@nvidia.com>
+Subject: Re: [PATCH v2 04/15] efi/libstub: Add a general way to get symbols from the
+ vmlinux into zboot
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 03, 2026 at 02:29:11PM +0200, Jarkko Sakkinen wrote:
-> And essentially what I would want is key_type_dead not to exist.
-> 
-> This version is based on module pinning, and  thus not having that
-> key_put() would keep key type module alive in that case. However, it
-> turned out this approach will not fly as AF_RXRPC and DNS resolver will
-> hit the wall given e.g., the remote pinnings.
-> 
-> The approach I'm going for next is to have a type registry instead,
-> which is independent of the module system (to put story really short).
-> I think I'm doing this with right process as this really needs a few
-> trials in order to find patterns that stick.
 
-So what's the plan here.  Should we merge this standalone as a fix,
-or are you trying to get an entire series in?
 
-If it's useful as a standalone fix, please resend it standalone.
+On Tue, 3 Nov 2026, at 17:01, Jason Gunthorpe wrote:
+> On Fri, Oct 02, 2026 at 08:31:41PM -0300, Jason Gunthorpe wrote:
+>> Currently the zboot stub has no access to symbols in the vmlinux. In
+>> contrast x86 has a voffsets.h header that allows the stub to know whatever
+>> symbols it wants for the decompressed image. ARM DRTM needs another 4
+>> symbol locations to work, and it also wants to compile the DRTM libstub
+>> code once and have it work in both zboot and embedded.
+>> 
+>> The current solution in arm is "code_size" from commit 45dd403da851
+>> ("efi/zboot: arm64: Inject kernel code size symbol into the zboot
+>> payload"). This is neat, but it makes the zboot and embedded cases
+>> work differently.
+>> 
+>> The x86 voffsets.h approach is also nice, but it can only work in zboot
+>> since it relies on 'nm vmlinux' to extract the locations. That's a
+>> circular dependency for the embedded stub.
+>
+> Ard,
+>
+> Did you have any further thoughts on this patch? Did the sketch you
+> showed me at LPC turn into anything?
+>
+
+I will get back to you before the end of the week.
+
