@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.181
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793907479;
-	b=B7H2qBTPxspeGFAZbVSLojhpB8iPNS8v8zqxcxKTgO21Bq7Ah3MDPW6k7v+9kC3hMPEy
-	 eXdPtuLZ3Zkm1R3a/Hg0/JMFPHt1A0TrZVLdsT2fr2vNtUDzRLYCsbZZk4oIt3XNsmJ9i
-	 Wd0+sheOxgiLuZb8msoFSFIOu9V3juXE4b5rcYq470ooq15u26JNQYPTaLxyKiqN1S0wm
-	 5RTAZsU1Vqc4+cRJ9Z9MZ8FqIC/CXdgz1WtPlAGBUY8uyrhmTg7uNdVQpRfm2E7dANgO7
-	 HYJ58ysF2RtYTaseXypM/KV+ME5GpfuesKygQDZxUv6r6Vp47zntUSAvUnEv8OOQiJg==
+	t=1793907480;
+	b=NjIZgd2i/NZgg3FWzTF78T8dtNeMt7S21eVIxngcG8j5eIAN43WDOKr0vOEwzkB75Ue8
+	 vHoRMGnzY3BHMqp2TuliHHNbsHgXwyKdmAX9+4RNll5ZYTd3pPKnTynUFAVzwpCz3LuAi
+	 7+MEuTWDsVxA3jj3wZEiH1iGq0617Vfa7ZX1d3SeA3ZTB4urcuKtfXMh1bqq4FBxB/FOc
+	 eTF1ntMLkNANhVUyUW95ETL5y45Pw7sqiv/WWPy8Rw1wtbc6iFqvz/icf265b+h7SrgPg
+	 TuTmo528RiLFtK/LBRWWZgzx38gnwzDsnvpyBbMqoPIfiOneWgEQUiCWsIhWQuFSJ3A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793907479;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793907480;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=3AyWWDFVbKJ/DkrPhpXcM2lwKymyXBABHoZtsa2/+w4=;
-	b=Nls1rKc7Aul6FH2NKR9DGlI17FIzNsTj1+IIJhGi3opDfD6iZpTNvF08YztqsctISIJh
-	 D6gw3z+SXPZB6rDqYqbOs0nfNogFlcyydPUCA8MZRPIpqhZQpflsmxgj1i8wW5nk+yCAb
-	 Yg7CQn6shgcuzhfrOKZm2VzLL+O85VsyWuh17bus6DRN41wJsxZNF7C78o2ANgzH3V5SB
-	 NcruDRUYpJvfRnhgMhzKv8elsBjwcMkB1Vcvu5xu330mUMg7vr6C8ygclzGZOAg2YZrEc
-	 Xy+AE1SEYVGm996wXwkApLyHPV79ch0Bw8ZdpkQxwzRu3TgzlWp0oMjJLaGgQqfbmNg==
+	bh=ij0g0OsXKPamM88HAz3Lefa+vRljQ+YHmBrQJBa3tGU=;
+	b=wc9BQr5u7qkxQqWNd8Ct2LQka+LwzMmOVxk2YVU/mxyT4E4SGjcVxLDeU5XkMtGmMUwE
+	 sxrbgZPBHSx8oR0vwHZdNBiMqWK/vTUAK5A786GMuy6mTNHwYSRMlGyBE5VYiWkVBavLi
+	 WfpdHm46W4h7EPqsYYQXg4p1t0JKRQqlHSnDwhf7I4N2hnwUOhSkbFfQcZL/OJ0roCT76
+	 RSK7drX3CIOtfrbCJAYwXleYMCsoxaex3xOWpyXO9SOxTGDRYOJGsenCBViD6r943jPeI
+	 2evkRom5TIbA2RbPeWnzJU1ybSQB/7H6RFaKJojgM0gMn/55TOzIrCw+Dns/0UXT15Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=arista.com;
 	spf=pass smtp.mailfrom=arista.com;
-	dkim=pass header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=cPl6L7vv;
-	arc=none smtp.remote-ip=74.125.82.177
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
+	dkim=pass header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b="U6nh/ArJ";
+	arc=none smtp.remote-ip=74.125.82.181
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2168E607B96F
-	for <linux-integrity@vger.kernel.org>; Thu,  5 Nov 2026 19:37:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2168E607B96F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E79160A261D
+	for <linux-integrity@vger.kernel.org>; Thu,  5 Nov 2026 19:37:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8E79160A261D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=cPl6L7vv
-Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-36d6765756fso2917251eec.1
-        for <linux-integrity@vger.kernel.org>; Thu, 05 Nov 2026 11:37:57 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=U6nh/ArJ
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-36a18fc7a38so9563eec.1
+        for <linux-integrity@vger.kernel.org>; Thu, 05 Nov 2026 11:37:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1793907477; x=1794512277; darn=vger.kernel.org;
+        d=arista.com; s=google; t=1793907479; x=1794512279; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=3AyWWDFVbKJ/DkrPhpXcM2lwKymyXBABHoZtsa2/+w4=;
-        b=cPl6L7vv4IdiTxomRsfBZyJX59O6aKePsnYBsOL+Il0TM2e7QZLMYUoor5RewSvnv7
-         vLLbLRMSyMW/YKWH7JVRt+VA8awqGEfSTnb3NSI212h84khTjynO2iw5mzK2nVh11z5d
-         EZ6tC6WQcQkAThRjYpVZDYHpM0IHCup/ssjDItaCiUmXD6fNSzFXuqyMXfcjXo9Y3C18
-         AjZA2LqCbQEPJQKpzTHX/9JMW5k+59UhN0TUOXzSYbdIuRgq6YZLqhp3MfDyp1FFBB4n
-         21C0wHgHpp9aOnGvecq21MbiLJ846BIuczpuDUnGu78BBlZgT6V+04NGwiDJ3uZbl2e6
-         YlkQ==
+        bh=ij0g0OsXKPamM88HAz3Lefa+vRljQ+YHmBrQJBa3tGU=;
+        b=U6nh/ArJsGmiH+qqcKQih8Mqh4TvgZ90R4kDoGQxu+P1s69CrKUnv9GlDc/DaO/BDg
+         u/woqO/1TVKF45z9hQKyC+68pdGGgvoeNOCHokzk1PxnkX2DWA66g2K/cXAPFv/aD7Yi
+         zoyU1y3R2CaGZIG9DzxfkVmDPMi8YPKpURB5ucW8myb4iofpPRjO/z6Z1ckqirqp2k7L
+         7AfGCykfjmKcMcSv0EfpakF5yj53FyzvMOBPGOV+OCfZELijjzk8uGDk5gjXak3YxEnT
+         /Bd451Q5bOzhWnhMG9tvvDCcENHYeFq///X4qVjMloZHheBXd7PODrk6ljW5JACwPTye
+         lKow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793907477; x=1794512277;
+        d=1e100.net; s=20260707; t=1793907479; x=1794512279;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=3AyWWDFVbKJ/DkrPhpXcM2lwKymyXBABHoZtsa2/+w4=;
-        b=0ZA5CY4LpofPN3sfKsJLLS+K5zVIa3pSOqNCKxz8TQVondP6NkEgHyD9/ne1d9Upql
-         KSfz9FSs4/cJShtv0TClxyW+pK7EDrhH2CH0zqnMjdGlUnn2DbsrGgRilh58NyW+RDYh
-         JL4v2zzQEXmzKZ9qkCoVRhhYUUBUiTRYkIeDCXLnIZLdUnYTImJlD76iLULOzkXBH0W5
-         04cmrapJu9pLJiceB1x5yWQY6Nu15R0xQ5eWtBs7Oa+P9ih+vE+my6as1X8xyXVz0Llq
-         19MsbY6gRr4tzbEjGvyM/yZvQl3R+dss/hdKr2FRkcAH7426X85jxDcIR2X/xxOVfBMA
-         aM6w==
-X-Forwarded-Encrypted: i=1; AKwUvBz9TxSgjB/cole4NWlSs98hVaIyLe5eVhu5EyNdqgZKXvao5viNmseZaGzxPS8UgBaFi/+Zrv4SFEew4BTicZ0=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/INYBdKBCKu+ZV4WGkQ0DsStkneS//9WHKYDFPoZLHHVmrHn85
-	HwtwT52NTHvA2AFW7nbVEJ/bWWqMWiHfShHvTAGitEmtFBpRiNjq+JgcPcT4kYo7KQ==
-X-Gm-Gg: AYBFou2N4Zdgbt9AjDLk+b2Ea24syHtdIQw/PmCQiyISL8lLqsy6Cu7KXkyRv5PP2KD
-	ywu/Qj6EPhXMQoB3Hi63sjpO/hT8lBLZdolTpFkuh85XhRWxXenfBuimkgunrJS1WPxxkFZe9K3
-	SdkokB9si19eIaiVkPnY829uh4Xf7gDLRYmGgthMN6BvcEHNtJ+tgLDYjgGSV0zHNLVvf6QiBK8
-	vPkP/Cok0ruZrpAiFqGiuNwtMZRkq1rb08nXbCXJve/iV4l4eop1TAjmnS4rk4FNi/t9B7YMO1A
-	yOrFrpD5Hap456LmS2QEHEQcOW2/tFSjMm+F+NpvgRAu9RchqXtokyR33Q8ceG/ENRtSqUJXJqR
-	wjG45tCnxTolV0/VyVVy6h6iC9Vr8ZZtb9MnHGQrIb/eDWctn244WbaXMS8vKvwpkiGZuWGk+0n
-	lhaU2VxxCuSK9V7VbtYxhmiKAQLOKrHtMWlfSMhMtgaar6HgT6CfJuipznuVkphs7EQSQlG6mNn
-	nPECOhKVFJPMqpOWyyTPmzP87fBnANSw6JSuGW/E+tYNy4ZTjHpeZ4oR9/jcuFdWsdx2wasOLU0
-	9GNBj/JXDHUp7zbLV70/y7CHMVjTu4Dr/lih6OgF0u0LNm/CNd8BQjTC+xgssGnV9m2OHfQVdgJ
-	5QAjP3QQDqZkA5rvwI/juCy0=
-X-Received: by 2002:a05:7301:6285:b0:35c:85fa:5a61 with SMTP id 5a478bee46e88-36f76f0e752mr142560eec.38.1793907476899;
-        Thu, 05 Nov 2026 11:37:56 -0800 (PST)
+        bh=ij0g0OsXKPamM88HAz3Lefa+vRljQ+YHmBrQJBa3tGU=;
+        b=qBn9DyjRC/pZGUvyDoCcPhHwl2NiEpZ9bdTVlB+rw5lf8XYXTPbSzaBoXaSah7dkmy
+         b/1FdYhfxLlfs2mTpG/1kXEDVy9Xakzy2k5/emtu27XbyTAtTC6p4S72yG59qklXntcy
+         sj8UeONiltIcPrybvDs4XG+r/nKgYZ8Fkm/U2bkkAA4ND8D15U115+04A4hreETDJ3Pf
+         IHXISQeOUZr2XHIKaFeZu+OYxbCTba+YlHw+qoXuPQ2WfzHpXELzSYKo9edyLMFVCK8Z
+         Eo5KNsLi8NDwwr68o5LR2mLqtt9apaZYOT/qIV878OIv/4EeNwFthvlnjza7B0Va10Np
+         gcfg==
+X-Forwarded-Encrypted: i=1; AKwUvByDMcMxlp+Pzqs+riQ52ocX8UxEno4aJZCCEpgbSrsxYoPCUY86e9hzUOj0UCNzSHde2nZbQNRE5ZsPmLn0cCc=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8/UByN9sAlgzuT1iPKrBhiWwyUDinZOn0F04nATLxvhvQGfKr7
+	11bm4KI2o1yZmrK2IilgsDYCZxj4mkIMtYTLJnVKZA61DpYo06K5D7AA2RL6PZPtaw==
+X-Gm-Gg: AYBFou1aux6P4h3YZuiS4yiNgOwF8xva2IAhwKspIj58dcXF5HVXIK6xYGe9Vqa3utF
+	fbSVYPetIOi3gFOz+HXDHEbwb9Un3n0vk+zOJkqgqrlGW03zPJzfYw6YYisEPl629/rXaoPJH7c
+	GCXHUJyzSH+FK/0z48XsV52vnEMrcbgKQAPpLBeZ1j+uANbkVoJNH6pzRXHmqxkkMLSA2qfhsjB
+	pgxG4016jtL0khAoCpOECgXdblVSV6rvRF7v0MsaznD59meITfSYNgfmceOJRWBgYAM1cN67Qbe
+	zRj3mpnniaPhq7rBAWitqls2pkqnANxg6o/4BfCjbQwJ6ktGXoKQszIAqJzlbAwV2GAK8GD/75U
+	IVt2UPH6wjOHB3QYrCmhHT2HY80NrapAS4oul780tcmPRhAiSFAZA9E+QjzDUllS0dFuUmh08st
+	Bn//Y3WKO9RqKbV4LbVDA0Sr4xjo5T/DwD7GCH+J+1HcXm9byAuRXJeuvjb3NoL96GlJFNSBKaS
+	MWWfNrPiuqa3cfiOcYtlFiZ7XhepDmNR/9vmIUhYgiemcRdnsXpn8NZUTrXv8ARqxeYIiw9SeAq
+	ZmGz04jvxSMPdZkekvIEm8rdP75J7Kg9bBYAoToce8lT+6n0YNTT43KH4eOs22sD4JnbwcJkXO5
+	wtAAmiZZ5zoDTV7rn90iCe9I=
+X-Received: by 2002:a05:7300:10d:b0:36c:c434:b6b5 with SMTP id 5a478bee46e88-36f76621095mr172222eec.17.1793907478524;
+        Thu, 05 Nov 2026 11:37:58 -0800 (PST)
 Received: from dannyhu-upstreamLinux.sjc.aristanetworks.com ([74.123.28.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36f72ec8a02sm326134eec.11.2026.11.05.11.37.55
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36f72ec8a02sm326134eec.11.2026.11.05.11.37.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 11:37:56 -0800 (PST)
+        Thu, 05 Nov 2026 11:37:58 -0800 (PST)
 From: Danny Hu <dannyhu@arista.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
@@ -110,9 +110,9 @@ Cc: Mimi Zohar <zohar@linux.ibm.com>,
 	linux-api@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bug-cpio@gnu.org
-Subject: [PATCH v6 2/4] initramfs: add file metadata
-Date: Thu,  5 Nov 2026 11:37:41 -0800
-Message-ID: <20261105193743.2654656-3-dannyhu@arista.com>
+Subject: [PATCH v6 3/4] initramfs: read metadata from special file METADATA!!!
+Date: Thu,  5 Nov 2026 11:37:42 -0800
+Message-ID: <20261105193743.2654656-4-dannyhu@arista.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20261105193743.2654656-1-dannyhu@arista.com>
 References: <20261105193743.2654656-1-dannyhu@arista.com>
@@ -127,230 +127,274 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-This patch adds metadata to a file from a supplied buffer. The buffer might
-contains multiple metadata records. The format of each record is:
+Instead of changing the CPIO format, metadata are parsed from regular files
+with special name 'METADATA!!!'. This file immediately follows the file
+metadata are added to.
 
-<metadata len (ASCII, 8 chars)><version><type><metadata>
+This patch checks if the file being extracted has the special name and, if
+yes, creates a buffer with the content of that file and transitions
+to a new dedicated CollectMetadata state to buffer the metadata contents
+in memory without creating a file in the rootfs.
 
-For now, only the TYPE_XATTR metadata type is supported. The specific
-format of this metadata type is:
-
-<xattr #N name>\0<xattr #N value>
-
-[kamensky: fixed restoring of xattrs for symbolic links by using
-           sys_lsetxattr() instead of sys_setxattr()]
-
-[sassu: removed state management, kept only do_setxattrs(), added support
-        for generic file metadata, replaced sys_lsetxattr() with
-        vfs_setxattr(), added check for entry_size, added check for
-        hdr->c_size, replaced strlen() with strnlen(); moved do_setxattrs()
-        before do_name()]
-
-[zhangguangzhi: fix checkpatch warning EMBEDDED_FILENAME in
-                include/linux/initramfs.h]
-
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Tianxing Zhang <zhangtianxing3@huawei.com>
-Reviewed-by: Jason Yan <yanaijie@huawei.com>
 Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
 Signed-off-by: zhoushuiqing <zhoushuiqing2@huawei.com>
 Signed-off-by: zhangguangzhi <zhangguangzhi3@huawei.com>
 Signed-off-by: Danny Hu <dannyhu@arista.com>
 ---
-Changes in v6:
- - Document lack of support for POSIX ACL restoration. The main use case is to
-   restore security.ima xattr for IMA use. POSIX ACL support is out of scope
-   for this patchset
- - Check xattr name and value lengths to ensure they are valid and do not
-   exceed the limit
- - Compare metadata header and record sizes against the remaining buffer
-   length to avoid pointer arithmetic overflow in bounds checks
- - Use the kernel u32 type instead of uint32_t
+v6 changes:
+ - Introduce a dedicated CollectMetadata state to collect METADATA!!! entries
+   in memory. This state replaces the metadata flag and eliminates the need to
+   reset it on failure paths. Since metadata is collected purely in memory, the
+   entry is no longer extracted as a regular file to the root of the archive.
+   This also has the benefit of separating metadata collection from do_copy.
+ - Validate the checksum before setting the xattr with do_parse_metadata
+ - Improve bookkeeping of previous_name_buf by setting it only after the target
+   object is created. Clear the buffer on skipped or failed entries to prevent
+   setting metadata on the wrong target. Indicate that previous_name_buf is
+   invalid/not set by having the first byte be the NUL character
+ - Remove "Reviewed-by: Jason Yan <yanaijie@huawei.com>" because patch has
+   implementation has significantly changed in the v6 revision
 
-Changes in v5:
- - For debug print in do_setxattrs(), use print_hex_dump_debug() rather
-   than printing the xattr value as a string
- - Use u32 metadata record lengths and reject records smaller than their
-   header
+v5 changes:
+ - clean up metadata buffer when returning from unpack_to_rootfs()
 
- include/linux/initramfs.h |  19 +++++++
- init/initramfs.c          | 103 +++++++++++++++++++++++++++++++++++++-
- 2 files changed, 121 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/initramfs.h
+ init/initramfs.c | 103 +++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 90 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/initramfs.h b/include/linux/initramfs.h
-new file mode 100644
-index 000000000000..9b3839dc88a1
---- /dev/null
-+++ b/include/linux/initramfs.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Include file for file metadata in the initial ram disk.
-+ */
-+#ifndef _LINUX_INITRAMFS_H
-+#define _LINUX_INITRAMFS_H
-+
-+#define METADATA_FILENAME "METADATA!!!"
-+
-+enum metadata_types { TYPE_NONE, TYPE_XATTR, TYPE__LAST };
-+
-+struct metadata_hdr {
-+	char c_size[8];     /* total size including c_size field */
-+	char c_version;     /* header version */
-+	char c_type;        /* metadata type */
-+	char c_metadata[];  /* metadata */
-+} __packed;
-+
-+#endif /*LINUX_INITRAMFS_H*/
 diff --git a/init/initramfs.c b/init/initramfs.c
-index ebddde9c8f0d..d206624d1160 100644
+index d206624d1160..a17c26fde5f5 100644
 --- a/init/initramfs.c
 +++ b/init/initramfs.c
-@@ -10,7 +10,9 @@
- #include <linux/hex.h>
- #include <linux/init.h>
- #include <linux/init_syscalls.h>
-+#include <linux/initramfs.h>
- #include <linux/kstrtox.h>
-+#include <linux/limits.h>
- #include <linux/memblock.h>
- #include <linux/mm.h>
- #include <linux/namei.h>
-@@ -22,6 +24,7 @@
- #include <linux/types.h>
- #include <linux/umh.h>
- #include <linux/utime.h>
-+#include <linux/xattr.h>
+@@ -34,6 +34,17 @@
+ static __initdata bool csum_present;
+ static __initdata u32 io_csum;
  
- #include <asm/byteorder.h>
++static void __init update_csum(const unsigned char *buf, size_t len)
++{
++	size_t i;
++
++	if (!csum_present)
++		return;
++
++	for (i = 0; i < len; i++)
++		io_csum += buf[i];
++}
++
+ static ssize_t __init xwrite(struct file *file, const unsigned char *p,
+ 		size_t count, loff_t *pos)
+ {
+@@ -50,12 +61,7 @@ static ssize_t __init xwrite(struct file *file, const unsigned char *p,
+ 		} else if (rv == 0)
+ 			break;
  
-@@ -189,7 +192,7 @@ static __initdata time64_t mtime;
+-		if (csum_present) {
+-			ssize_t i;
+-
+-			for (i = 0; i < rv; i++)
+-				io_csum += p[i];
+-		}
++		update_csum(p, rv);
  
- static __initdata unsigned long ino, major, minor, nlink;
- static __initdata umode_t mode;
--static __initdata unsigned long body_len, name_len;
-+static __initdata unsigned long body_len, name_len, metadata_len;
- static __initdata uid_t uid;
- static __initdata gid_t gid;
- static __initdata unsigned rdev;
-@@ -264,6 +267,7 @@ static void __init read_into(char *buf, unsigned size, enum state next)
+ 		p += rv;
+ 		out += rv;
+@@ -233,6 +239,7 @@ static __initdata enum state {
+ 	SkipIt,
+ 	GotName,
+ 	CopyFile,
++	CollectMetadata,
+ 	GotSymlink,
+ 	Reset
+ } state, next_state;
+@@ -266,7 +273,7 @@ static void __init read_into(char *buf, unsigned size, enum state next)
+ 	}
  }
  
- static __initdata char *header_buf, *symlink_buf, *name_buf;
-+static __initdata char *metadata_buf;
+-static __initdata char *header_buf, *symlink_buf, *name_buf;
++static __initdata char *header_buf, *symlink_buf, *name_buf, *previous_name_buf;
+ static __initdata char *metadata_buf;
  
  static int __init do_start(void)
- {
-@@ -365,6 +369,103 @@ static int __init maybe_link(void)
+@@ -308,10 +315,10 @@ static int __init do_header(void)
+ 	next_header = (next_header + 3) & ~3;
+ 	state = SkipIt;
+ 	if (name_len <= 0 || name_len > PATH_MAX)
+-		return 0;
++		goto skip;
+ 	if (S_ISLNK(mode)) {
+ 		if (body_len > PATH_MAX)
+-			return 0;
++			goto skip;
+ 		collect = collected = symlink_buf;
+ 		remains = N_ALIGN(name_len) + body_len;
+ 		next_state = GotSymlink;
+@@ -320,6 +327,11 @@ static int __init do_header(void)
+ 	}
+ 	if (S_ISREG(mode) || !body_len)
+ 		read_into(name_buf, N_ALIGN(name_len), GotName);
++	else
++		goto skip;
++	return 0;
++skip:
++	previous_name_buf[0] = '\0';
  	return 0;
  }
  
-+static int __init do_setxattrs(char *pathname, char *buf, size_t size)
-+{
-+	struct path path;
-+	char *xattr_name, *xattr_value;
-+	u32 xattr_name_size, xattr_value_size;
-+	int ret;
-+
-+	xattr_name = buf;
-+	xattr_name_size = strnlen(xattr_name, size);
-+	if (xattr_name_size == size) {
-+		error("malformed xattrs");
-+		return -EINVAL;
-+	}
-+
-+	if (!xattr_name_size || xattr_name_size > XATTR_NAME_MAX) {
-+		error("invalid xattr name length");
-+		return -EINVAL;
-+	}
-+
-+	xattr_value = xattr_name + xattr_name_size + 1;
-+	xattr_value_size = buf + size - xattr_value;
-+	if (xattr_value_size > XATTR_SIZE_MAX) {
-+		error("xattr value exceeds size limit");
-+		return -EINVAL;
-+	}
-+
-+	ret = kern_path(pathname, 0, &path);
-+	if (!ret) {
-+		/*
-+		 * POSIX ACL restoration is currently unsupported.
-+		 * vfs_setxattr() rejects POSIX ACL xattrs with -EOPNOTSUPP.
-+		 */
-+		ret = vfs_setxattr(&nop_mnt_idmap, path.dentry, xattr_name, xattr_value,
-+				   xattr_value_size, 0);
-+
-+		path_put(&path);
-+	}
-+
-+	pr_debug("%s: %s size: %u (ret: %d)\n", pathname, xattr_name,
-+		 xattr_value_size, ret);
-+	print_hex_dump_debug("xattr value: ", DUMP_PREFIX_OFFSET,
-+			     16, 1, xattr_value, xattr_value_size, false);
-+
-+	return ret;
-+}
-+
-+static int __init __maybe_unused do_parse_metadata(char *pathname)
-+{
-+	char *buf = metadata_buf;
-+	char *bufend = metadata_buf + metadata_len;
-+	struct metadata_hdr *hdr;
-+	char str[sizeof(hdr->c_size) + 1];
-+	u32 entry_size;
-+
-+	if (!metadata_len)
-+		return 0;
-+
-+	str[sizeof(hdr->c_size)] = 0;
-+
-+	while (buf < bufend) {
-+		int ret;
-+
-+		if (bufend - buf < sizeof(*hdr)) {
-+			error("malformed metadata");
-+			break;
-+		}
-+
-+		hdr = (struct metadata_hdr *)buf;
-+		if (hdr->c_version != 1) {
-+			pr_debug("Unsupported header version\n");
-+			break;
-+		}
-+
-+		memcpy(str, hdr->c_size, sizeof(hdr->c_size));
-+		ret = kstrtou32(str, 16, &entry_size);
-+		if (ret || entry_size < sizeof(*hdr) ||
-+		    entry_size > bufend - buf) {
-+			error("malformed xattrs");
-+			break;
-+		}
-+
-+		switch (hdr->c_type) {
-+		case TYPE_XATTR:
-+			do_setxattrs(pathname, buf + sizeof(*hdr),
-+				     entry_size - sizeof(*hdr));
-+			break;
-+		default:
-+			pr_debug("Unsupported metadata type\n");
-+			break;
-+		}
-+
-+		buf += entry_size;
-+	}
-+
-+	return 0;
-+}
-+
- static __initdata struct file *wfile;
- static __initdata loff_t wfile_pos;
+@@ -471,6 +483,8 @@ static __initdata loff_t wfile_pos;
  
+ static int __init do_name(void)
+ {
++	bool target_ready = false;
++
+ 	state = SkipIt;
+ 	next_state = Reset;
+ 
+@@ -482,6 +496,19 @@ static int __init do_name(void)
+ 		return 1;
+ 	}
+ 
++	if (S_ISREG(mode) && strcmp(collected, METADATA_FILENAME) == 0) {
++		metadata_len = body_len;
++		if (metadata_len)
++			metadata_buf = kmalloc(metadata_len, GFP_KERNEL);
++		else
++			metadata_buf = NULL;
++		io_csum = 0;
++		state = CollectMetadata;
++		return 0;
++	}
++
++	/* Clear metadata target only after checking entry is not metadata */
++	previous_name_buf[0] = '\0';
+ 	if (strcmp(collected, "TRAILER!!!") == 0) {
+ 		free_hash();
+ 		return 0;
+@@ -504,24 +531,65 @@ static int __init do_name(void)
+ 			if (body_len)
+ 				vfs_truncate(&wfile->f_path, body_len);
+ 			state = CopyFile;
++			target_ready = true;
+ 		}
+ 	} else if (S_ISDIR(mode)) {
+-		init_mkdir(collected, mode);
++		int ret = init_mkdir(collected, mode);
++
++		target_ready = !ret || ret == -EEXIST;
+ 		init_chown(collected, uid, gid, 0);
+ 		init_chmod(collected, mode);
+ 		dir_add(collected, name_len, mtime);
+ 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
+ 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
+-		if (maybe_link() == 0) {
+-			init_mknod(collected, mode, rdev);
++		int ml = maybe_link();
++
++		if (ml == 0) {
++			int ret = init_mknod(collected, mode, rdev);
++
++			target_ready = !ret || ret == -EEXIST;
+ 			init_chown(collected, uid, gid, 0);
+ 			init_chmod(collected, mode);
+ 			do_utime(collected, mtime);
++		} else if (ml == 1) {
++			target_ready = true;
+ 		}
+ 	}
++	if (target_ready)
++		memcpy(previous_name_buf, collected, strlen(collected) + 1);
+ 	return 0;
+ }
+ 
++static void __init do_process_metadata(const char *buf, size_t len)
++{
++	/* Still checksum the body if allocation failed. */
++	update_csum((const unsigned char *)buf, len);
++	if (metadata_buf)
++		memcpy(metadata_buf + (metadata_len - body_len), buf, len);
++}
++
++static int __init do_collect_metadata(void)
++{
++	if (byte_count >= body_len) {
++		do_process_metadata(victim, body_len);
++		if (csum_present && io_csum != hdr_csum)
++			error("bad data checksum");
++		else if (metadata_buf && previous_name_buf[0])
++			do_parse_metadata(previous_name_buf);
++		kfree(metadata_buf);
++		metadata_buf = NULL;
++		metadata_len = 0;
++		eat(body_len);
++		state = SkipIt;
++		return 0;
++	}
++
++	do_process_metadata(victim, byte_count);
++	body_len -= byte_count;
++	eat(byte_count);
++	return 1;
++}
++
+ static int __init do_copy(void)
+ {
+ 	if (byte_count >= body_len) {
+@@ -546,6 +614,7 @@ static int __init do_copy(void)
+ 
+ static int __init do_symlink(void)
+ {
++	previous_name_buf[0] = '\0';
+ 	if (collected[name_len - 1] != '\0') {
+ 		pr_err("initramfs symlink without nulterm: %.*s\n",
+ 		       (int)name_len, collected);
+@@ -554,7 +623,8 @@ static int __init do_symlink(void)
+ 	}
+ 	collected[N_ALIGN(name_len) + body_len] = '\0';
+ 	clean_path(collected, 0);
+-	init_symlink(collected + N_ALIGN(name_len), collected);
++	if (!init_symlink(collected + N_ALIGN(name_len), collected))
++		memcpy(previous_name_buf, collected, strlen(collected) + 1);
+ 	init_chown(collected, uid, gid, AT_SYMLINK_NOFOLLOW);
+ 	do_utime(collected, mtime);
+ 	state = SkipIt;
+@@ -569,6 +639,7 @@ static __initdata int (*actions[])(void) = {
+ 	[SkipIt]	= do_skip,
+ 	[GotName]	= do_name,
+ 	[CopyFile]	= do_copy,
++	[CollectMetadata] = do_collect_metadata,
+ 	[GotSymlink]	= do_symlink,
+ 	[Reset]		= do_reset,
+ };
+@@ -628,6 +699,7 @@ char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 		char header[CPIO_HDRLEN];
+ 		char symlink[PATH_MAX + N_ALIGN(PATH_MAX) + 1];
+ 		char name[N_ALIGN(PATH_MAX)];
++		char prev_name[PATH_MAX + N_ALIGN(PATH_MAX) + 1];
+ 	} *bufs = kmalloc_obj(*bufs);
+ 
+ 	if (!bufs)
+@@ -636,6 +708,8 @@ char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 	header_buf = bufs->header;
+ 	symlink_buf = bufs->symlink;
+ 	name_buf = bufs->name;
++	previous_name_buf = bufs->prev_name;
++	previous_name_buf[0] = '\0';
+ 
+ 	state = Start;
+ 	this_header = 0;
+@@ -678,6 +752,9 @@ char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 	dir_utime();
+ 	/* free any hardlink state collected without optional TRAILER!!! */
+ 	free_hash();
++	kfree(metadata_buf);
++	metadata_buf = NULL;
++	metadata_len = 0;
+ 	kfree(bufs);
+ 	return message;
+ }
 -- 
 2.51.0
 
