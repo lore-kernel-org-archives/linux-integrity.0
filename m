@@ -1,60 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793916078;
-	b=pZsckyvnyj4LT0nqaW1v/Yk39u05cx/D3OZIKuJwPPKUESyYa3u90c6gqWTYwLnGQsiz
-	 1KfMBngEmSk/Ai0BrUGRmOoplBfgDy3KUczVZhsQjJ5htPTlGjPlShMp/QyBwt6f7R3rN
-	 Mwt2Ne3bPSvYcdEN+VF+VCIpYQ8Be31+lanujudMslkNfMpH3c/mrc8Kyjm/xF0kGVtpn
-	 KseM5X0uxhlOhYb4jQ3fzVxBD3QFbRvT83PJbEq2bRFpCOdSMJdz2J7rCY3pany4q1KKo
-	 N8mSVrBUEX7aOE2Gk4Xd8wzuqzry3uK2NBb3q7701XdKdJ7Fiy4FvBJOExlFX+vncOw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793916078;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=Cgy5DVilFM6CzFnBGEzM5eRHWtTZeelbHEfIqvrPH2w=;
-	b=5pdWY0xVqjG+oO66zGeKk2i98di1ye3ThlhehIIIXr+9X2X5YUQICsiHKrNl6e+MKsT+
-	 7LGidzIx18POUaFzkDpFdJwJvYjMODjJUCw6hd0kAIO0rRr0tU27TBL4kXwkBGGg2yqTH
-	 0+6gLI3uAKpDnWFG4wygm6MzfNLFqjNVVLKX0EX41F9vjpYjpy0iTBZti9UDWVDM4cI/J
-	 TNGrV3O5b4uAAPUYxMC/LeW59nls8q1ZSpMc7vy/riEK96pK4cBo/VB0WmfULNDz/Ezdq
-	 nv+99d+nIksn/zUGRhxsd8Wf+M/rmP8dfENVGXS7imZdc+pUUrD0hRp56b0S+/L9D4w==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WieLlrYp;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=209.85.216.45
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
+	t=1793920680;
+	b=E6WibTjw9ipECJYTwtrAPKMdLJrxSM0t2C1gGid1z5QsWlpW7NOVlxm7l1BI0i0Eier0
+	 gSusNL8qhD5m6BPo+H9ic2pt9uphpup5oeLl9EGll4Ak/uFZk3jVmP/zVpzjbXS1oGmSZ
+	 JhxvHUr2pmwTC+wClBAGNBjyVqol31SJMCH6QOM2CJxPG0egLAhuMwTve7D0QSEPVzukf
+	 182z5lxw1/i1gju41ubYYaGjW97Fpd1VS4qU7w6qKRE4CePmPhzzGFGu5cSPNjfXQbOek
+	 yiivgUSrVcHeCydiHfDBpi5bYOZXrSsDUVgNYIOfsOW4Z0QeqSJFaSFY86Nexak6wPQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793920680;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=fuCDmSI9zu6AYuOwJkaSaRyngdfgRozjSLztTOAphqk=;
+	b=tf/ZFX+ws25CIc+BwKO4l8Z0sjeWq+gCyYQc0cjGs6GS0biY+iLQv7c3dDzzvo5o2vNJ
+	 XJc/oWGvwS8OYFnSFcw4nwyVYjNcSo7Tb5TU0Xkx6u98TeAWA4SmbuxDolTbb5c8WztOL
+	 8D9IuB7XQCd+n7QfK1VXWou8mY5qFbv1Vq9oi1cR2CbTUdYwNaf/wXwexkxT7bHMAzJ2g
+	 I08u7b2mH6tRPPF9AITSNMl0pOSgdPrQx5tI+pvTU6ecR7c3HKPbtHS7JX8iCrXTO8A0V
+	 yXrF2DvaqVcUnINkbGaSGDoXHb5yKwU1yw24lkvIZw7HP9OP2WQ1Oha2UT8ZWifbMVQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=paul-moore.com;
+	spf=pass smtp.mailfrom=paul-moore.com;
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=F936vzKm;
+	arc=fail smtp.remote-ip=209.85.216.45
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 9D56C606A328;
-	Thu,  5 Nov 2026 22:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1186F606A330
+	for <linux-integrity@vger.kernel.org>; Thu,  5 Nov 2026 23:17:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1186F606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WieLlrYp
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B60B61F0089F;
-	Thu,  5 Nov 2026 22:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793916077;
-	bh=Cgy5DVilFM6CzFnBGEzM5eRHWtTZeelbHEfIqvrPH2w=;
-	h=From:To:Cc:Subject:Date;
-	b=WieLlrYpj6+/bEFJYfS1yZhcO+5c9zQePcf6xFYXBujXL9SxObOqW8ynbGFIvLrh7
-	 kwumTlytIdkTabqBjsvGiu/LjEqze+sE9/NX5dWotEcEgaLWM5r7IuRWrnQwFr6dLU
-	 Uq8KW6FntZ+xYDHg6TflPiA1ycHdmaAnRuCfcI2zfZJR7mR/0Kf22FXX27PwUPbNVv
-	 YrP5u9NbVfivcdkJzenMEe2e20T4In/SJJqfsMUM8WGn74tu6WSWuPJTZlpIVpZGn9
-	 oFm/vhwTWqjJfSg0vPSDfPESFaJDZGippf3IhTrpTv4aIFhYU1Zap3I4h5cPIQ8zez
-	 NMfAjS1SZRU1w==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	stable@vger.kernel.org,
-	Jann Horn <jannh@google.com>
-Subject: [PATCH v3 1/2] KEYS: Return user session keyring on lookup
-Date: Fri,  6 Nov 2026 00:00:49 +0200
-Message-ID: <20261105220050.1421842-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key, unprotected) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=F936vzKm
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3ae1d0caaedso31384a91.2
+        for <linux-integrity@vger.kernel.org>; Thu, 05 Nov 2026 15:17:59 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793920679; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ZwybCDAycv4V48aF8uCtnTdgjYjV9Yg6HR2uII+h/4ptu3ALTlUbYOkOOZQbfb9rwq
+         xtTgyW9eDZl0Ba0TUUo1v2f6L2sZRPucYt6buSQwpIQA69U5UBcSms+FESmFndx9AplS
+         F32eOYWj0wEugs502I46iFq0TiJ8TNlF4jkmLWjBJsM46MManANXumw0yHAU2jtJIjf+
+         5PSJBxgyvEitWDQL2Dcpc6Qjv7euxYEcsacE0pz9adJLFRX2esPMu5FQ+qvuM7LXeGhq
+         jc+R6WBL7e1kjGbSGfUTlXW+tDdCoDQAHQGtqyWN9xfDp/K41GgBCMCla/biy4YvKcgd
+         yGWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fuCDmSI9zu6AYuOwJkaSaRyngdfgRozjSLztTOAphqk=;
+        fh=L0CO1ApsL0Y43bI5M2tu2cOggVXlf/srl+CFoBrLaN8=;
+        b=jqYPMhtTINlAlJ4JQwcZgUKQ7eG4SNEHhC8hhfG0tpPI7oqPZvh9iqWXLL9qFdMVCY
+         dc27o7802gxgxIjDK++QwUt8eFjOiQnIYJ0iUFNthshD1WFgxKR4kZsVRUzWtTJfK1hY
+         SKbC3HyjoyrDCYQqu92t54vnaW+k0/RYk+tgyieFstsBAm+lo47ZMLQAOqNQ0Bl81KaZ
+         HZ1zWQVZUVsidzYcb+S9v0Bs0MnT9wbZxE/rdHgT7mf8+aQW8N3c1/yLUi3JMthuFuAH
+         eZb4QvBbqH1o8oKphUnKrOTI5wbphoE8TZIbA8Pj2GfvDw90fep38j7vub9LK0j6hLlh
+         vvIA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1793920679; x=1794525479; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=fuCDmSI9zu6AYuOwJkaSaRyngdfgRozjSLztTOAphqk=;
+        b=F936vzKmZco1Rg9qiS2Cf7yXwnXt8dn1LQ3YxCN5SMsKSJRTlu37FG2JQnmiZ4tO3q
+         ZY7C/eCqTECYbf79gAR8gp3oow9+Ykdrk78RZdAOFLnN4sIU8x8jDIiI/j4+tmIgfhgQ
+         Kfc7/iulz45+20nMepsyi2DVKsca2I7vu/IOFa2DSNB+5NoNB+X3xZL+TnSEr5nUJW/0
+         t+eWupnUof2Q+Z07m3XUdhgKdmPOk5SNXh4+R1i03zuB5eyYkN5hGGMTpwfL4P3jF/oi
+         qjoVjwxKWuHtQbutc+EbzPaNTI2YVJHBnHBIs9egvV2qx2jXIUZICkPleteOCZKku3cJ
+         ZAwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793920679; x=1794525479;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fuCDmSI9zu6AYuOwJkaSaRyngdfgRozjSLztTOAphqk=;
+        b=AUf4rLf5yMCsOm/UXf9uv+LXrPNkKvmX9w61iQAZHwfY+0e1iJDK29Usjd/zZB3hGW
+         xMneubZZE2+FdHy0zaSgVV9i3SmBsmaQ8kmqB5sMM8KNWaxQMBkxp1I7UDD3t6oGyfMz
+         WthtqA9cRCvvCLgY01zMpdusyQ1cjeE+rne8PMdH0bRePFHmYdZN2ifojTKQCqcS6bFB
+         XpOwg7Y9UPudqdUjD79nMedvpAE2nW1hLiJ/jtBlsgRY/pfjVI3K0bI5x6/2NyYFp34F
+         z8gQdzPANLWQUk2s1wNPhkMOxIwKXM3UgyL5NZ2gpM1cYucCiSCZ+a3DHo0tRerwqOXR
+         pR7Q==
+X-Forwarded-Encrypted: i=1; AKwUvBzw5jAARasII33h95u8egMVBlxMqegjZbX8JUdN/YyOHBfivwzUwMF338PDzJJrByxWshNd9h05gOSuWV3onXY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8KHYwydaGm8f8prdCkdYSPn21pfsXQ/fDhjOVY/LMO0dDsXjI1
+	mkDjpITcXz3fxDTOZbzZWxSoMDIbj+HiYCiMG5ONoKwQ7JxwP/1lOSDmtMi6DEUkprEAgJx2mUH
+	mwyOH1BMASa0u3FhP+vwE3zGphos5GA83Z813t8Kg
+X-Gm-Gg: AYBFou3/HAjPVXwamBIotNikCGYQqDNMnh2CidMm9nG/kdLcHZD1SGGH3hkMpvVxX/M
+	TI1WC/5tl/5GatBOLwkYkX13HceaOg454ldXAmhF8v6ICPbwN87R75jNj+cgWvL/a+zX/lfWufL
+	hZeVWN/Wn5PvChqVuFdBZO4lCqhlbrnwS7Bhzi9uyG+BeeXpz/BkhYVc9h57mxF+sG4PiF/5073
+	Or7jJNhMzmp0ochedUVuQCVSOVmSyOOuvUr1pM3+s6ygS5B0/ozrrIF2izQgDkOjT6P/y9xmPYv
+	wlnF5OyudVVpNLqe7IBAiVi70L6xZeovb5Cbpjngsq+N8dLD4Wt66FAxnOa4SochfErhkD6QqrL
+	YVVKIAkMR7IU5X42LRwmWDB6c1z25I+0ajcjUZdlS6EfxL1V6FojwnTY5KvGFUTcuACuJ
+X-Received: by 2002:a17:90b:1dcd:b0:3ab:f38:2b43 with SMTP id
+ 98e67ed59e1d1-3b0db703e39mr535625a91.34.1793920679319; Thu, 05 Nov 2026
+ 15:17:59 -0800 (PST)
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -64,152 +104,81 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org> <20261105-late-2026-vma-flags-v1-13-0d3cd15ab75f@kernel.org>
+In-Reply-To: <20261105-late-2026-vma-flags-v1-13-0d3cd15ab75f@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 5 Nov 2026 18:17:47 -0500
+X-Gm-Features: AclHuK_gkg-Hspii6U5_01_jGLQO23B7F4YXuvzvsb53ImE19wnChR3DgLruv6g
+Message-ID: <CAHC9VhSR=9YNhBxeFBcTR8wgG2yDP1fW590QKjzuc4Kq9ohaiQ@mail.gmail.com>
+Subject: Re: [PATCH 13/13] security: convert VMA flag tests to use vma_flags_t
+To: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, 
+	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, Harry Yoo <harry@kernel.org>, 
+	Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, Zi Yan <ziy@nvidia.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <nico.pache@linux.dev>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Usama Arif <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>, Xu Xin <xu.xin@linux.dev>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+	Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+	Baoquan He <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, 
+	SJ Park <sj@kernel.org>, Rakie Kim <rakie.kim@sk.com>, David Rientjes <rientjes@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Oleg Nesterov <oleg@redhat.com>, John Johansen <john.johansen@canonical.com>, 
+	Georgia Garcia <georgia.garcia@canonical.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm@vger.kernel.org, damon@lists.linux.dev, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-A process without a session keyring looking up KEY_SPEC_SESSION_KEYRING
-without KEY_LOOKUP_CREATE mutates the credentials. This causes struct creds
-instances shared with other subsystems to become stale.
+On Thu, Nov 5, 2026 at 4:35=E2=80=AFPM Lorenzo Stoakes (ARM) <ljs@kernel.or=
+g> wrote:
+>
+> Replace use of the legacy vm_flags_t flags with vma_flags_t values in the
+> mmap and mprotect LSM hooks of SELinux, AppArmor, IMA and IPE.
+>
+> No functional change intended.
+>
+> Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
+> ---
+>  security/apparmor/lsm.c           |  2 +-
+>  security/integrity/ima/ima_main.c |  2 +-
+>  security/ipe/hooks.c              |  2 +-
+>  security/selinux/hooks.c          | 14 +++++++-------
+>  4 files changed, 10 insertions(+), 10 deletions(-)
 
-Address this by returning the resolved user session keyring directly
-without installing it into credentials.
+Similar to the other patchset you just posted, is there any reason why
+individual subsystem maintainers can't pick these patches up, or is
+there some reason I'm missing and they need to go through a single
+tree?
 
-Cc: keyrings@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: Eric Biggers <ebiggers@kernel.org>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: stable@vger.kernel.org # v5.10+
-Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
-Suggested-by: Jann Horn <jannh@google.com>
-Closes: https://lore.kernel.org/keyrings/CAG48ez0XjVSR=M--UBauTm8sJuc+ZbhKzaPa3a6wrSVHyoKevw@mail.gmail.com/
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3:
-In keyctl_session_to_parent(), check the resolved cred->session_keyring
-instead of mycred->session_keyring.
-v2:
-- Added mandatory tags.
-- No code changes.
-- Link: https://lore.kernel.org/keyrings/20261019145624.309790-1-jarkko@kernel.org/
- Documentation/security/keys/core.rst |  6 ++--
- security/keys/keyctl.c               |  5 ++--
- security/keys/process_keys.c         | 44 +++++++---------------------
- 3 files changed, 16 insertions(+), 39 deletions(-)
----
- Documentation/security/keys/core.rst |  6 ++--
- security/keys/keyctl.c               |  5 ++--
- security/keys/process_keys.c         | 44 +++++++---------------------
- 3 files changed, 16 insertions(+), 39 deletions(-)
+If they can go through multiple trees, can you split this patch up?
+AppArmor, Integrity/IMA, IPE, and SELinux are all maintained by
+different groups/people.
 
-diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
-index 37ed42382f16..e3a215e55f81 100644
---- a/Documentation/security/keys/core.rst
-+++ b/Documentation/security/keys/core.rst
-@@ -165,8 +165,10 @@ The key service provides a number of features besides keys:
-      When a process changes its real UID, if it used to have no session key, it
-      will be subscribed to the default session key for the new UID.
- 
--     If a process attempts to access its session key when it doesn't have one,
--     it will be subscribed to the default for its current UID.
-+     If a process attempts to access its session keyring when it doesn't have
-+     one, the default user session keyring for its current UID is returned
-+     without being installed into its credentials.  If creation is requested,
-+     an anonymous session keyring is installed.
- 
-   *  Each user has two quotas against which the keys they own are tracked. One
-      limits the total number of keys and keyrings, the other limits the total
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index d6b10fd67627..b11716f88ded 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1682,8 +1682,7 @@ long keyctl_session_to_parent(void)
- 	 * there's no point */
- 	mycred = current_cred();
- 	pcred = __task_cred(parent);
--	if (mycred == pcred ||
--	    mycred->session_keyring == pcred->session_keyring) {
-+	if (cred->session_keyring == pcred->session_keyring) {
- 		ret = 0;
- 		goto unlock;
- 	}
-@@ -1701,7 +1700,7 @@ long keyctl_session_to_parent(void)
- 	/* the keyrings must have the same UID */
- 	if ((pcred->session_keyring &&
- 	     !uid_eq(pcred->session_keyring->uid, mycred->euid)) ||
--	    !uid_eq(mycred->session_keyring->uid, mycred->euid))
-+	    !uid_eq(cred->session_keyring->uid, mycred->euid))
- 		goto unlock;
- 
- 	/* cancel an already pending keyring replacement */
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index 3af71c6322af..cdf03b8124d0 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -356,31 +356,6 @@ int install_session_keyring_to_cred(struct cred *cred, struct key *keyring)
- 	return 0;
- }
- 
--/*
-- * Install the given keyring as the session keyring of the current task,
-- * replacing the existing one if any.  If the given keyring is NULL, then
-- * install a new anonymous session keyring.
-- *
-- * Return: 0 on success; -errno on failure.
-- */
--static int install_session_keyring(struct key *keyring)
--{
--	struct cred *new;
--	int ret;
--
--	new = prepare_creds();
--	if (!new)
--		return -ENOMEM;
--
--	ret = install_session_keyring_to_cred(new, keyring);
--	if (ret < 0) {
--		abort_creds(new);
--		return ret;
--	}
--
--	return commit_creds(new);
--}
--
- /*
-  * Handle the fsuid changing.
-  */
-@@ -720,20 +695,21 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
- 
- 	case KEY_SPEC_SESSION_KEYRING:
- 		if (!ctx.cred->session_keyring) {
--			/* always install a session keyring upon access if one
--			 * doesn't exist yet */
- 			ret = look_up_user_keyrings(NULL, &user_session);
- 			if (ret < 0)
- 				goto error;
--			if (lflags & KEY_LOOKUP_CREATE)
-+
-+			if (lflags & KEY_LOOKUP_CREATE) {
-+				key_put(user_session);
- 				ret = join_session_keyring(NULL);
--			else
--				ret = install_session_keyring(user_session);
-+				if (ret < 0)
-+					goto error;
-+				goto reget_creds;
-+			}
- 
--			key_put(user_session);
--			if (ret < 0)
--				goto error;
--			goto reget_creds;
-+			key = user_session;
-+			key_ref = make_key_ref(key, 1);
-+			break;
- 		} else if (test_bit(KEY_FLAG_UID_KEYRING,
- 				    &ctx.cred->session_keyring->flags) &&
- 			   lflags & KEY_LOOKUP_CREATE) {
--- 
-2.47.3
-
+--=20
+paul-moore.com
