@@ -1,51 +1,51 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.88
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793944060;
-	b=CYnQ+Ho3T373krGq/wtOAsk2s50bf9UpH8dzdRBAdPnPxzD5Z5pp2oIZSHLajqicB0ip
-	 Lb7VZB53hF/8S13Bl+ZNG73WwEjE808WK3CGsM5DWc9D6emtvBwgw3D0gCycWM1jvfZjI
-	 iEyrwD5II3wL/HUn5ZOmeOfI5HlpjdCBm8742J8YE8DrGHLNP0IvbnehKA61d5ACsxxKi
-	 4DGrRiMGxY4fkxbW+0M5bags6Cj+Abbiqvc3GaWl51SxI3XnHc4OFN96eSKSG+EC5R21k
-	 5TWaHzO9g7RJw6qF/W89R/dtaWGZHGmm58mhI3oZg54O5o+rVdPTM1fXaYsyVcTVVag==
+	t=1793944468;
+	b=Dy4KwSuu4jU19yDBUIqrd/GzX0+nvBg2pgq9D570W+Qst68aJSK4+rJLbwjRKNg0WBsk
+	 9nMWMpX1ugLk85RhPxgHDeyOq2G/haXTm3OgSwkPSDX8BuJ4enjRyvrTikNMeqm3KUmAj
+	 NA6/z2PG6/26X0oJj9EPo/7iNrbnIKbYA+ojLWi5u5S78GNgTW9+jZwv/0SemrkY10laO
+	 cslQfuWOv22TMD3X7Sir6VgPcLtB3kBc2LIiKYWFAEPZOob11mbDKA2GKniC/Gi90yBSN
+	 T+40vKL/MaokRFjStpjvFFNF3I7p8HM9oApLwwr2iMtGIiSST7e8Xw3/eXWNTphfH3g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793944060;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793944468;
 	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
 	 X-Mizu-Trace-ID:X-Migadu-Flow:From:To:Cc:Subject:Date:Message-ID:
 	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=ZT+3t8jUtNYvSMUXBsXE5t2lolnKWHLNl4pEvr8+Rfk=;
-	b=a4P91epGZmFRD880ibFUmVthRwXXOqlAxIp7/bCRHbjo03pUvq5Nj9CkFOLSzQU+GgMP
-	 bFAgvenFaF9vHuP1VvIyOe/MxAO3QH8bMy2KlpEFWjrFJI/mJTBwrqwS8ZiPCwb37lhp3
-	 osa6/U0NaZBybWFCmFADwlP0x8u+CEwIAMf/38UewhFO0t/4KCQ1L2rEWq+WFxV7Vqaya
-	 SL2/Vb0389WAPID1KJwSYc5SHWdn+AMiYKHJYZqELJJrHwZvTUaRK0NPT4tL3s0b2MARS
-	 N0eDJ+LBkPy9YOe2jwt6ZMxszcJBvQ1guoEMUMrKMIzglIl0V6LjSzQyIEkKStEjr5A==
+	bh=ZkVgJPqUyM/MWdECKVhoMlY0/kmR087+Z++BChEE7DA=;
+	b=Fk6ntU00uSq8smWh5VNdDeBxZLD1zX/QSAXrcNJNt671Xx16ZvcFX/7X8/T3xFrwiSuS
+	 Nlu4wWtAQ3b/TB5iVBJ5Vx9b3+yh58kIDLoQcPXmZOmw4jaiovvcoS9C42U2DY5Fz4HgV
+	 r/QkrXiCKXh7Lwa1espkD3aCt5gFR62W4Q3vaESZbMKsDhq/TGar+U33q/8iTlMjISWWA
+	 Krbso8XyvyxGyTnSnJWkZctSi9PvsT5PQZnw5CEXgrSM2tHRItqlLD8EXb5RMZpmenw9B
+	 waDM3Snsm0NEZ0MozJwj8FKz/xHzRlTChspmYR6KxjQccGeuv4/xcgp5oTbuJmkE0pQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.dev;
 	spf=pass smtp.mailfrom=linux.dev;
-	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=SwviooWv;
-	arc=none smtp.remote-ip=91.218.175.10
-Received: from mta0.migadu.com (out-10.mta0.migadu.com [91.218.175.10])
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=XM73R6f9;
+	arc=none smtp.remote-ip=95.215.58.88
+Received: from mta1.migadu.com (out-88.mta1.migadu.com [95.215.58.88])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C257B606A33B
-	for <linux-integrity@vger.kernel.org>; Fri,  6 Nov 2026 05:47:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C257B606A33B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DB3606A32F
+	for <linux-integrity@vger.kernel.org>; Fri,  6 Nov 2026 05:54:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 86DB3606A32F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=SwviooWv
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=XM73R6f9
 X-Envelope-To: linux-integrity@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=ZT+3t8jUtNYvSMUXBsXE5t2lolnKWHLNl4pEvr8+Rfk=;
+DKIM-Signature: a=rsa-sha256; bh=ZkVgJPqUyM/MWdECKVhoMlY0/kmR087+Z++BChEE7DA=;
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793944055; v=1; x=1794548855;
- b=SwviooWvDejqDRzO2A0nujqib2PF5765rIQLYOGZu0/WdViNdT8Ds79PoG01GewUKyIVCwJx
- Jfsc/3gtIFAGfelNEfNwAqtYBNnfbnBeG8NMMttoDjdjhCN+dWkXu+gToTOUg9i804PEa9BjD40
- sSZyFc6TRAoPag6ek3iqpitQ=
+ t=1793944465; v=1; x=1794549265;
+ b=XM73R6f923jyC0PZNUyIeEFMqCmB2nWVRY4vtPYRgmagU8XrWDY7HJJLfj60oHRnUklclkrW
+ 8fpzquZt131BMUCZMDzlV7vXYXOvJjD0VgcEJK8HEYBBufNfV/c/nfxM5lCVTm6pt7vbauBgM8J
+ J57tKB77ylquFvNEhY9WOQD0=
 X-Envelope-To: linux-integrity@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 094e1342a4777852;
-	Fri, 06 Nov 2026 05:47:33 +0000
-X-Mizu-Trace-ID: 094e1342a4777852
+Received: by smtp.migadu.com with ESMTPS id 578f26654fbdc28a;
+	Fri, 06 Nov 2026 05:54:24 +0000
+X-Mizu-Trace-ID: 578f26654fbdc28a
 X-Migadu-Flow: FLOW_OUT
 From: Lance Yang <lance.yang@linux.dev>
 To: ljs@kernel.org
@@ -137,12 +137,12 @@ Cc: akpm@linux-foundation.org,
 	linux-security-module@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
 	selinux@vger.kernel.org
-Subject: Re: [PATCH 01/13] mm/gup: convert GUP code to use vma_flags_t
-Date: Fri,  6 Nov 2026 13:47:23 +0800
-Message-ID: <20261106054723.41863-1-lance.yang@linux.dev>
+Subject: Re: [PATCH 03/13] mm/rmap: convert remaining VMA flag tests to use vma_flags_t
+Date: Fri,  6 Nov 2026 13:54:15 +0800
+Message-ID: <20261106055415.42873-1-lance.yang@linux.dev>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20261105-late-2026-vma-flags-v1-1-0d3cd15ab75f@kernel.org>
-References: <20261105-late-2026-vma-flags-v1-1-0d3cd15ab75f@kernel.org>
+In-Reply-To: <20261105-late-2026-vma-flags-v1-3-0d3cd15ab75f@kernel.org>
+References: <20261105-late-2026-vma-flags-v1-3-0d3cd15ab75f@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -156,15 +156,13 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, Nov 05, 2026 at 09:30:52PM +0000, Lorenzo Stoakes (ARM) wrote:
->Replace use of the legacy vm_flags_t flags with vma_flags_t values
->throughout the GUP logic, both for the MMU and nommu variants.
+On Thu, Nov 05, 2026 at 09:30:54PM +0000, Lorenzo Stoakes (ARM) wrote:
+>Replace the remaining uses of the legacy vm_flags_t flags in the rmap logic
+>with vma_flags_t values.
 >
 >No functional change intended.
 >
 >Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 >---
-
-Nice work1
 
 Reviewed-by: Lance Yang <lance.yang@linux.dev>
