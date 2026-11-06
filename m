@@ -1,56 +1,90 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793978519;
-	b=Ju8p2Q6tGVdhJrrdIrzxaN2ugJoyTuzt2ysAjgQqkXGnJwdA0tAuB4Sys/5hCeupjljz
-	 jYwkLAiDpnPTguvvd6hfollXHb+SbQJNRsssSDjUEcaf4LUIvuJx9UFNZ+JAxj5BWdtfo
-	 82Yixv4drcEoFqKnboXYMDELIzY8n428nuVhk6cd58Xi2v2yyF7lwrzLGab0+QhuVexBt
-	 NnIUktZmAQStgCawM4XDF/NJVF359cw6+n7nEfV818f2CEXM4L7Yx4Df7fDTyFpOqy2FZ
-	 OYk04AtLvrSu1uPYS+Lpr1Q4frb1ZryCTZLeOT3z6LM6tp8EjfozyxW87SR2E1aFmsQ==
+	t=1793978548;
+	b=ffkctUyVfLOQw9VQV8MEG3myIs9iNNNarii8gvgA/Nmtxy91XQAtW5dwkBNs1RKeG1oC
+	 uUttN0b2MFF1wXaSRAUWy4gPbEm1TwhjBiKlUs3Of9U2HO0Y9aaSXsMIfFX92l0holULW
+	 StcdTdvIy2dLDxZMQv6e3I8BbNqhEUJXX+6Aywj81BjnTfQJcoCkxKjzxbAUjZxWvx3bl
+	 1HpaDAsUoD4eK+Iz8m3sgld0GuoP9XkVQXFXvxrDeDK16iEpoq9N4YAym79sIQR0TN4su
+	 akrVUsXqEjOBXpNgEwMbvLPBB9lbIZPoztWUKSRywnKJGFCKRs8TUswaqlaqVlgc2Vw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793978519;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793978548;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=YTHJ8+MpM8193qn5WoJpMEdilL1LiuEkd+kPgOio/gg=;
-	b=tZ7RVBDIjyfPNYHxXqRJM7AjDm7TEze8Qi4m8099PQ3nzG2p6QZFvGzkQ9KbfmwI5BE0
-	 +ko9Yv6T3shSjorPNK2iNAPqtcArMMkRF4bEQo9COdc6GQOZwNrV4zUYGq07N5Gy7fQcA
-	 C5d/tqepMG7cOogfk2KofavTEpTKo97oVdhHkbMdShApSQOUb/VlQWRpfxuYPWlr9zF1P
-	 uEeqzfnGIoJPYq2PiUcRzafIAj/mxasC8wNN/sOjNCG0fosPXi8rzxEWXMAmW3aZu+8u4
-	 +1mxtPQWkg98LDnCtYhrZpRnRoc/MGQepvlfIXbdTWWaPLwJ/j1QNe0xaXGSKX+E9Cg==
+	bh=z3y+DELGAxT9V5PmpfgouMZn+gCc4O45ROBPQSi1BPo=;
+	b=zvG/pFCnX+N7P6i/0L8qwFk3gaCDMZRqcH+u65PWyybcl0c3wqFXnuorIBNRP1hVhKeK
+	 jlyONjui4CHYxLfeEEnsGzzLnB+AsOSmTMzl6a5MdGQ6iGDxiIvMkYbknBYkJOjpt2A79
+	 Dz6RFjVa1ujDWoQHB3suVg3Js+XhFuOarcI0WRcYoGnAWcWmRJA3mlIwcYBhnHorG/c51
+	 xZjj8mf3L8QnVuuaYZHMi8hYpPFwD6VmEaErkHX/8l87a9LLh8TpnUpDIKWq6R3AmO7oQ
+	 7iu7flhqx22l8dE1RB5S8Roc0lKmwpTe0Ty259Vwqad+/nPnOiX8UI69o6SlRztdPKg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yq5aTuLL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=D0OBt12S;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 0256C606D80E;
-	Fri,  6 Nov 2026 15:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E95606A32D;
+	Fri,  6 Nov 2026 15:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yq5aTuLL
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 294A81F008A7;
-	Fri,  6 Nov 2026 15:21:57 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=D0OBt12S
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73F71F0089F;
+	Fri,  6 Nov 2026 15:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793978518;
-	bh=YTHJ8+MpM8193qn5WoJpMEdilL1LiuEkd+kPgOio/gg=;
+	s=k20260515; t=1793978547;
+	bh=z3y+DELGAxT9V5PmpfgouMZn+gCc4O45ROBPQSi1BPo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Yq5aTuLLFna6cHSMgBty/+ZT8blngfZawZPcRtQTuHXQak4fp1zdcfI2a1Xr22qf0
-	 JbLBr2UKFzFBKE1wkoebjsF1yvyKqr/20M3kSqzmkZ7e+tAgGeSY8RUHymvVicjpSQ
-	 27T4tX3/UcToB4wmoLjhrxM5LNR6ZVOOJt3lTi5UQx5BMapNw4d33YgXk3p1Q8Lm5l
-	 kZ7zwhFppL3SdJKdpo11cQuOecDLmdjusTb2sUnHcNaUx8CAhsBKAgbBYb+xp8HAyq
-	 g3OLvB0GKEaVi0/Vi9xVtk8TUnHgbochRCIAoFsCt6Zx9QPxCdqp/PPdxrZ/MP2CE6
-	 HwocXofcAy16A==
-Date: Fri, 6 Nov 2026 17:21:55 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Guo Zihao <guozh23@xiaopeng.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] tpm: sessions: bound the parameter decryption by the
- response size
-Message-ID: <au3wk32xa9RjdFy4@kernel.org>
-References: <20261106014937.4127650-1-guozh23@xiaopeng.com>
- <20261106014937.4127650-2-guozh23@xiaopeng.com>
+	b=D0OBt12S5A0/61ajOHRCOvVj9Y496CxzkIZ539OmP2Egd7lJ1ZTg+93+bz35MlhhQ
+	 aEcmgJvs2K1rXKjoPty9afP418nmgDzNbNz3R49xM82YI+IZppcn7JPT2+rOR1oP3E
+	 aXPgvNxlojcYTHikG/NcZ6k0ko8+NVlu5A2DjoEJYkhK0Y6iRimNr2X51btaRYAQe4
+	 3oYkIoHH1FFpK2QL5UAfs5I6l1ULxHTF3yATZiallmsTHKUql1MDHJSRDkOp7LPZaS
+	 WDiRcIhr4R/mT8uJ1TsaVWpbDwDHCB8mxh70Ac0iVGTP+nI77JgCBpwlXJfuSijYjQ
+	 cOmEIk2xUD+nw==
+Date: Fri, 6 Nov 2026 15:22:08 +0000
+From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+To: "David Hildenbrand (Arm)" <david@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, 
+	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
+	Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
+	Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Alistair Popple <apopple@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Usama Arif <usama.arif@linux.dev>, 
+	Kiryl Shutsemau <kas@kernel.org>, Xu Xin <xu.xin@linux.dev>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+	Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, SJ Park <sj@kernel.org>, 
+	Rakie Kim <rakie.kim@sk.com>, David Rientjes <rientjes@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	John Johansen <john.johansen@canonical.com>, Georgia Garcia <georgia.garcia@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, damon@lists.linux.dev, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 00/13] mm: continue vma_flags_t conversion
+Message-ID: <au3r0-geuwtRYPiC@gremlin>
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
+ <d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -62,33 +96,47 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261106014937.4127650-2-guozh23@xiaopeng.com>
+In-Reply-To: <d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org>
 
-On Fri, Nov 06, 2026 at 09:49:36AM +0800, Guo Zihao wrote:
-> tpm_buf_check_hmac_response() decrypts the parameter area of a
-> response for sessions with TPM2_SA_ENCRYPT set:
-> 
-> 	len = tpm_buf_read_u16(buf, &offset_p);
-> 	aes_prepareenckey(&auth->aes_key, auth->scratch, AES_KEY_BYTES);
-> 	aescfb_decrypt(&auth->aes_key, &buf->data[offset_p],
-> 		       &buf->data[offset_p], len,
-> 		       auth->scratch + AES_KEY_BYTES);
-> 
-> The length is read from the response itself and never checked
-> against the buffer: every other size taken from a session response
-> is compared to tpm_buf_length(), but not this one. A TPM that
-> reports an oversized parameter area makes aescfb_decrypt() walk
-> past the end of the buffer, and since the decryption is done in
-> place, this both reads and writes whatever follows the received
-> data.
-> 
-> Check that the encrypted parameters fit in the response before
-> decrypting them.
-> 
-> Fixes: 1085b8276bb4 ("tpm: Add the rest of the session HMAC API")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Guo Zihao <guozh23@xiaopeng.com>
+On Fri, Nov 06, 2026 at 03:35:01PM +0100, David Hildenbrand (Arm) wrote:
+> I agree that this should be picked separately. For example, I will pick
+> everything that falls into my realm to reduce conflicts.
 
-Ditto.
+Hmm, generally tree-wide mechanical changes are the exception to that rule
+no?
 
-Br, Jarkko
+It's going to make the rest of the VMA flags/mmap_prepare conversion really
+quite difficult if I have to chase every single driver maintainer in the
+kernel (literally in both cases pretty much :).
+
+And sometimes there are dependencies which mean you really can't split it
+across trees unless you establish functionality in one cycle and callers in
+another, but that seems a little silly.
+
+I was thinking that once the VMA tree is separate I'd put mechanical
+changes like this through it. Is that not the way to go?
+
+>
+> Ideally, patches really only touch one component.
+
+Right, but sometimes functions are declared in one place and called in
+others. It is impossible to change the signature of one without also touching
+the others.
+
+>
+> [PATCH 07/13] mm/madvise: convert madvise_vma_behavior() to use vma_flags_t
+>
+> is all over the place :)
+
+It's not really all over the place, it's converting vm_flags_t to
+vma_flags_t across madvise.c, which involves changing a few function
+signatures, whose callers must be updated.
+
+I could split it up into 3 patches where 1 does internal-only, one changes 1
+function, and the next changes another, if that works?
+
+But there's no way for that change to only touch madvise() given the
+function decl/callers.
+
+--
+Cheers, Lorenzo
