@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793936864;
-	b=JpFBTt7rJq4VkzTWRXN7vKXmp7X6VK2HQUTdRdjhb7mMSuTpdnxQ/vGCUhGtdzDTZzol
-	 JJv0gh1eoxWBIb7mdecz1ss1sR9qgHDRmBBCxtAdbE+jBWcumJ6VwKi6naXu/uNqECwVl
-	 Cg/4RXUOg/LLS7D9cDQd+Tx/Wiqrhs3Upu8L8xzaOgNlh/Sr0lI3I3la3xHK8Imzes1ga
-	 717xdqQqgGEsaRCC2yrpKN+kXIDhB83c/JWJevh3CKgqzXlOmqAvI/UoZZ63z2QNWQyTP
-	 GFY+ws2gFBAH31uk2CsjApfGh2PKolKz+QVsmbUdZ3fl9X1YgGLRErVmP56MSoUpZmg==
+	t=1793937442;
+	b=bL7gmNG0GoDLDd9L0chRjXYkn0c/Bv0a9gdiZVr4m1YA2e4UW8xd8gUBNEtVFZ7slmLO
+	 3r/55IgNinApflR7n5AhtbifL8bKnksWUdCTDQMsIeL56eytgk8sy1gly12Rkr4aQ67+F
+	 a5nt5raC+ZVCQfgOrYv5tWBhq0Pibc31e3WuWJXUHqDGCGxmr6QVO4+59e7mxZeiymyRG
+	 08H4uLBHqs2cSYbSqEkWp/p4uJX2Kt3JfUkNCIjkxveVvRZW7UD+yVUn8up0IxGYTsiQ3
+	 mU/2iDOZx71gMsBaYPE3E6wNV5KV/Sycmcq5f/7y8DB+zyqNn4LXgOo7o7axpgj80Vg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793936864;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793937442;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=7itVVRO0OrCMzanAOyJRHIm0MPtgmrlnhYWCxSa5SEs=;
-	b=0R1AcYkEuw4VhxvGuR/YvaeJXBkvI3x0YzfB4qrIZiBaWHLZBRWqtU5TSSdC5pEBSS0S
-	 8NvfrtKl3OZu05aJ90vGABYrZK+A/SGAbMOXyw6YJGV89c/m2gdI4bogd5zg9oxOCdWyN
-	 xwrTkhkyhMpCflAbVznNXOemNk7FXYAHWaOBlWgr1sW4b2V0KHCWv1dU83VTKT+ojrL83
-	 aLGi46I7ocI3tXC26A1LZV01b310QeAqDQdhvVFBQz+l++hpA9rwo2eTjefopLt+ub9+3
-	 wWJFP16KQnxx6gNs3iVS1FUCeX7Pmvf0QVHk3eK5dTlOSVzVFKd3AhX9n2+2w1TZMuA==
+	bh=lHXR2FH3bh5spT35/G4nG+cv25q2yTDGLvo0NNx3ZVg=;
+	b=kPZnruowtjfZmN4qYwyUmdagvqQgmwPTfwy2/iQmsYs7UC9sIMI079yL2/pOdSRpO017
+	 1JiClyFQDEwWUjhN6ssX2qlwpnjWenwteEYaLsv8j5Sr3vPQbxSpr7vyQy5wzUmT70Ab6
+	 daTtLnMUaBD0PRKVYr6FGePLZSQ+DsLQst42BQYHD3RiBeqrAo8ddftgJ/JgX8yx0UAIo
+	 Okr+M/NvSoQ2idJindOFrJ5GVfS6tNGSG+x3g34TjQlXO7wyECr45Ml4K+XhxEWaY2kIr
+	 H93Td0lQbT3o27X9yPYmdRrRLth289HQ+P8JmimE2+4blVG2eWWXu0mOK3z2gyMm8iA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SHNJYmjZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XqiaXlxi;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DB1606A32E
-	for <linux-integrity@vger.kernel.org>; Fri,  6 Nov 2026 03:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1316606A336
+	for <linux-integrity@vger.kernel.org>; Fri,  6 Nov 2026 03:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SHNJYmjZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C91271F00922
-	for <linux-integrity@vger.kernel.org>; Fri,  6 Nov 2026 03:47:43 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XqiaXlxi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED711F00927
+	for <linux-integrity@vger.kernel.org>; Fri,  6 Nov 2026 03:57:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793936863;
-	bh=7itVVRO0OrCMzanAOyJRHIm0MPtgmrlnhYWCxSa5SEs=;
+	s=k20260515; t=1793937441;
+	bh=lHXR2FH3bh5spT35/G4nG+cv25q2yTDGLvo0NNx3ZVg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=SHNJYmjZARW+KMI9weZlYiailG9olXiPUIy9DhCfIwXmV7q4793PyRrLUT1E0bUGo
-	 nmmkSMDlfuESlH1L51OEthu9tEkk2dz2ml2LZ2Yor/qURFWM9SBb47kSDL7kUWgh9C
-	 KsoGQQsyq8SQ3dBpKKj2a0u8iYdYRtyHNqGxCi2IdNRzvx7Jk2ogdHgO1WRtzTr3ck
-	 pbqvm15vJgAS3L3BUo1VvUPFU4RI+LQ3b7/f020/Qst049o3V6Tx1xgJr2l3zMg1Gi
-	 d0CgtsezOi7hf/YovyD6VXycvpTFmxYdwrokEbGNW+riJ23JkFlugyHUX1hoqofhzR
-	 GMHWANQP9U7qA==
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-945ae2daa68so28240285a.1
-        for <linux-integrity@vger.kernel.org>; Thu, 05 Nov 2026 19:47:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBzLMScoTh0/pnPPCRiut6nHJZKhcQUIcVHW+GbMuuGY6mvF3uZBh+YUEpqsst66ibvVPjnbbxboLtIy0BOsRcI=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+QYTxPlCs6tYylhuHcmTvxF6kmkxrlJ+cA7jl/fICPwj+E85Wy
-	DHSa7H3Vnsb8yLs+jgVZ2uA5Gi70jBJB6kSBceZJUjtD8U7Q8N5ZDbk4jETo0qYqldQqP2ZsBs5
-	iEqG8jrum2e+0/g9pzgMIuCWQUgrC8UY=
-X-Received: by 2002:a05:620a:6ccd:b0:945:d3ba:7d99 with SMTP id
- af79cd13be357-945f3593146mr175996585a.37.1793936862458; Thu, 05 Nov 2026
- 19:47:42 -0800 (PST)
+	b=XqiaXlxiATDzJrgw9f0OYt1TfHLb2ipTeIcKivy65nis0f6TmA/08oHIZ0R0nf5m6
+	 nUvgA0EXaiwf1XpMUGGc013GsyUxECqfq1Uh00oLL7zzVrZ//HgstfV0QrxF9mqluK
+	 NKkBvgk64ubOOcbPj23ww4CMq5VaK+O5NA3iSPWNPiVWpS/jS5m6iqdqtnQXeGv5w0
+	 y48/IZagRGHa+F1jeQ+VqNbGxtUf9G7I+pzA0zivc6NUUr/7OjAG+Y1R8Paj8q4Cin
+	 LMpizKHXpmKlbmYFDP5mLxbU6mR0aZreEhaVl2amkcHQT9fKPqzhlS/9aCSoy1O64o
+	 /7S9mxQbxAZMA==
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-93cb9e9405fso10014785a.2
+        for <linux-integrity@vger.kernel.org>; Thu, 05 Nov 2026 19:57:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBxJ7NKiAOei9kenlcNWH90QAAlUjBEBwa/DpzLRzt5XLt7piooU/CsOMOUzVlE4MABfIRcCXMO8BugTb1PxVqQ=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/Qv00dfBLQQS5brAwO3hdT3GEOPETdKJTxGyYJr66/soKWdHf0
+	HO8w/xclnbvfuF+mxaPCtae2bgKXSBHDw4pfzicVBwGUDg3PZjHhg9seyzpowedDByL4NS7zW9g
+	k5jUxPRKkamkZgbp0XDKi3xmWljiGV8Y=
+X-Received: by 2002:a05:620a:6c88:b0:939:b8d6:9b1c with SMTP id
+ af79cd13be357-945f34af2acmr198595685a.19.1793937440071; Thu, 05 Nov 2026
+ 19:57:20 -0800 (PST)
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -59,14 +59,14 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org> <20261105-late-2026-vma-flags-v1-1-0d3cd15ab75f@kernel.org>
-In-Reply-To: <20261105-late-2026-vma-flags-v1-1-0d3cd15ab75f@kernel.org>
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org> <20261105-late-2026-vma-flags-v1-3-0d3cd15ab75f@kernel.org>
+In-Reply-To: <20261105-late-2026-vma-flags-v1-3-0d3cd15ab75f@kernel.org>
 From: Barry Song <baohua@kernel.org>
-Date: Fri, 6 Nov 2026 11:47:31 +0800
-X-Gmail-Original-Message-ID: <CAGsJ_4wFi9mqSsq9RFoYP8m0GbqU01he_icbP2VLPhBfQAvCOg@mail.gmail.com>
-X-Gm-Features: AclHuK8VX6mOjbrvfm7oXhssK45doLoq2eZ9cV_P4690FurSVGBQe9E3r9SjObI
-Message-ID: <CAGsJ_4wFi9mqSsq9RFoYP8m0GbqU01he_icbP2VLPhBfQAvCOg@mail.gmail.com>
-Subject: Re: [PATCH 01/13] mm/gup: convert GUP code to use vma_flags_t
+Date: Fri, 6 Nov 2026 11:57:08 +0800
+X-Gmail-Original-Message-ID: <CAGsJ_4wCd_j5or0uHwPLq0PUixcXgiFim=_d7uUhUhAuQf0nTQ@mail.gmail.com>
+X-Gm-Features: AclHuK8deEInzaZZJ26UPrq6mS-8I8VnGN9Ocbio_nvLAi7VvywQ3Ss3UdDHcfM
+Message-ID: <CAGsJ_4wCd_j5or0uHwPLq0PUixcXgiFim=_d7uUhUhAuQf0nTQ@mail.gmail.com>
+Subject: Re: [PATCH 03/13] mm/rmap: convert remaining VMA flag tests to use vma_flags_t
 To: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
 	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
@@ -111,34 +111,50 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.o
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 6, 2026 at 5:31=E2=80=AFAM Lorenzo Stoakes (ARM) <ljs@kernel.or=
+On Fri, Nov 6, 2026 at 5:32=E2=80=AFAM Lorenzo Stoakes (ARM) <ljs@kernel.or=
 g> wrote:
 >
-> Replace use of the legacy vm_flags_t flags with vma_flags_t values
-> throughout the GUP logic, both for the MMU and nommu variants.
+> Replace the remaining uses of the legacy vm_flags_t flags in the rmap log=
+ic
+> with vma_flags_t values.
 >
 > No functional change intended.
 >
 > Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
+> ---
+
+LGTM,
 
 Reviewed-by: Barry Song <baohua@kernel.org>
 
-> ---
->  mm/gup.c | 45 ++++++++++++++++++++++++---------------------
->  1 file changed, 24 insertions(+), 21 deletions(-)
+>  mm/rmap.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 >
-
-> @@ -1514,9 +1514,8 @@ static bool vma_permits_fault(struct vm_area_struct=
- *vma,
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 1131b76bbbc2..cdc97fec8586 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1196,7 +1196,7 @@ static bool page_mkclean_one(struct folio *folio, s=
+truct vm_area_struct *vma,
+>
+>  static bool invalid_mkclean_vma(struct vm_area_struct *vma, void *arg)
 >  {
->         bool write   =3D !!(fault_flags & FAULT_FLAG_WRITE);
->         bool foreign =3D !!(fault_flags & FAULT_FLAG_REMOTE);
-> -       vm_flags_t vm_flags =3D write ? VM_WRITE : VM_READ;
->
-> -       if (!(vm_flags & vma->vm_flags))
-> +       if (!vma_test(vma, write ? VMA_WRITE_BIT : VMA_READ_BIT))
+> -       if (vma->vm_flags & VM_SHARED)
+> +       if (vma_test(vma, VMA_SHARED_BIT))
 >                 return false;
-
-This also improves readability. Thanks!
-
 >
+>         return true;
+> @@ -1660,7 +1660,8 @@ void folio_add_new_anon_rmap(struct folio *folio, s=
+truct vm_area_struct *vma,
+>          * VM_DROPPABLE mappings don't swap; instead they're just dropped=
+ when
+>          * under memory pressure.
+>          */
+> -       if (!folio_test_swapbacked(folio) && !(vma->vm_flags & VM_DROPPAB=
+LE))
+> +       if (!folio_test_swapbacked(folio) &&
+> +           !vma_test_single_mask(vma, VMA_DROPPABLE))
+
+Right, VMA_DROPPABLE_BIT is not available on
+32-bit architectures, so vma_test() cannot be
+used here.
