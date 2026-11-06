@@ -1,62 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.74
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793956846;
-	b=gPTCKb1AbA2x4BHzqwjOZ0WfUfkNY/yKF29w+LKrCXtrvPZf6njVO9rf37LMWtTfBWDu
-	 zHyTQeeeg77ZmWcge8m/HNYuRpv7eg0iFghgWA1XWb8nmy1L4w0bkpHVfd4BkhEo+otW0
-	 wuXoCiQ+1SwrWr3I46F8IaZBZ1sgIgzopbeyRhauN8swsr8Hz82tOjKdCzMzoaIqx51pD
-	 kfbGUEMMQCs8ID5lK8uojb9B60w30YjVjlbPKOFdzRH98ikWBz66LnVMPAEy6nJzj0xPN
-	 XRpFPt9xvEvj0u+NZhHjBQ0LqyPJxQ9HofamBrVgqDJuqa69PdPN1KjRTq+VMDnDhxA==
+	t=1793960026;
+	b=BkR6aj5ZeCtWMDu6vul64vOLd0tBl/2ZgO8tCEh+bL9lf/llv8ECdpMt9k1qL+Egjnkn
+	 snXrQ27AVHQ5Ee8HpNLmovJ1p+Z+X9AcTvwDGWGhBPKcy2T43tlX+XxlVggAB65lte1QC
+	 +zcuvUfkXAx4aQ4kbCyIcz1AcH1UckWxAyWGg/Z9iISeCbMe09anvcPYwSI6oZyifiLo8
+	 eaQBhX5b//Q1n4ztnEgIl7TKzVlltqB8brUKU5yGTxAAT6gxDtMrcLOz8p0ZpJrI7p85e
+	 zEgnfeCOT7WY/kYgOi8yzP2IWAhtq46TKLx4/HXwNb3iSGF0lPzUgQuu1riRcNIJIJQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793956846;
-	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=zVZn/PHtKTXfIDqjN5+GVy65SE+it2qO3RfBBuitjt8=;
-	b=EtsXBBVGP+djA4ekbclWnQuQ/qAlrf8RwocxlAkHt+TFFyHVJLEdDZhpcjUxH1ijNkB0
-	 HdJ+ElPJh4qaX2QgKo/VhqfwIKt5N0VFj1qToaicB1i4cQGZp1Ef/UL5lfYwsToI94uMG
-	 vhTdYcQK/ufraICkcq71KK6AgRPegBQK2qRkDMVupfkreyXxQWeQ/Myqt+j3MZ1NHMUZ6
-	 T7mNecgcZAmZZKv6YcyTUaXKYKNzV5ClQboWkvy5dVeEnNnRdRDq+kD7fNqpJ3hYwWkrc
-	 4D/PzAHvuxWhEvulsHbCsPNjrzNgTlzdswh8BCibDxMHDuEwAyzCHX8cL/K4SvoXIbQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793960026;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=cFVMR87EGNpkNOCnSwEX2b70j/gGYf8Jkc9yEvS8W5Y=;
+	b=2lOMFaOb8G+xAUauT1HWRGCCaoECIzcqs3NKGAQc4lNAgLpV++2wRVE2xD0b520lfDYZ
+	 OQCkNkf2NadnHPvizY7Cn6tHOYZkjcsFWvT3QOCIxJvPZ5x4f6OX1ZmLdoFJRwh0qlt7H
+	 HcPg/CnvYCpqM6Ncf+9qAk8enXpD17LvtQwT0/if+24P5MX+dKSQ+SyQYEVIYjwYdHsuk
+	 1/XkK9fZ3uYV/HYjEdSmqBbjxITJ8+dUxCXEafElhRdu+nyF6Hi4RmTYKPW3H2aejhY9n
+	 eH4ZeMP6iDYDgU6Wi0BVMuitDxGh8MFRVcwH0GFcTY1+h+s7HMqXBeH9G4oBYk0EPSg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=xiaopeng.com;
-	spf=pass smtp.mailfrom=xiaopeng.com;
-	dkim=pass header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=IKN2FFnQ;
-	arc=none smtp.remote-ip=115.124.28.74
-Received: from out28-74.mail.aliyun.com (out28-74.mail.aliyun.com [115.124.28.74])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YwYtVdd3;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBE4606A328;
-	Fri,  6 Nov 2026 09:20:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7CBE4606A328
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaopeng.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A68606A335;
+	Fri,  6 Nov 2026 10:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=IKN2FFnQ
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xiaopeng.com; s=default;
-	t=1793956834; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=zVZn/PHtKTXfIDqjN5+GVy65SE+it2qO3RfBBuitjt8=;
-	b=IKN2FFnQyHTTepagSBuuK3wH/x2GAwUPeXHFO75TYtkqyTRQCtLpcYpxPRvG5cDbJMOQfZOXX6H7nbC3B27oApZg0sJxiHxOVESfTHFeeM5oyexmDCoXsnat7y1zFY01pS0xeeEMtO/pzdfcMymlAZZuYIfiR1XcQkrdvGMwUVY=
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08651333|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_enroll_verification|0.01135-0.00149655-0.987153;FP=5149363861963095640|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033023087102;MF=guozh23@xiaopeng.com;NM=1;PH=DS;RN=8;RT=8;SR=0;TI=SMTPD_---.jyFCtSG_1793956833;
-Received: from localhost(mailfrom:guozh23@xiaopeng.com fp:SMTPD_---.jyFCtSG_1793956833 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 06 Nov 2026 17:20:34 +0800
-From: Guo Zihao <guozh23@xiaopeng.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Matthew Garrett <matthewgarrett@google.com>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] tpm: efi: reject a final events table with an oversized preboot log
-Date: Fri,  6 Nov 2026 17:20:33 +0800
-Message-ID: <20261106092033.4041125-1-guozh23@xiaopeng.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <73a5f412-0962-400d-9e80-5b9eef92bb8e@app.fastmail.com>
-References: <73a5f412-0962-400d-9e80-5b9eef92bb8e@app.fastmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YwYtVdd3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE401F008A6;
+	Fri,  6 Nov 2026 10:13:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793960025;
+	bh=cFVMR87EGNpkNOCnSwEX2b70j/gGYf8Jkc9yEvS8W5Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YwYtVdd3f+9r0rGtBh8d1tRPhVBL4qmvxhKCMZkV8lomBwDWV76lkDV2ZPvzrsUcy
+	 trEyAB1TCppduadMVhftHMFVxgeYolc/EMPmtth1hXWiwFgz1kQ0EKU4byddd4Ylof
+	 Kw8NW48Kkjzx+SlpAufJOnfBvexabI3n6q9ar/Hme/DA7MCCquYR1YVU8yI3FmAIG8
+	 1O4CYPlx4m2ZTD5HMwTNZOFUugRf4D3Ab0jOV8qahLlzSisYMSFxFIYqDA/1U31men
+	 TNFTuhw5aLNcrLSy3wXMfK9DUwkHBXM2MWRhS62JTGof+13zFAAyi0DL6QeEKCjKfL
+	 pWOWcHUvqbeJQ==
+Date: Fri, 6 Nov 2026 10:13:27 +0000
+From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, 
+	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
+	Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
+	Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Alistair Popple <apopple@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Usama Arif <usama.arif@linux.dev>, 
+	Kiryl Shutsemau <kas@kernel.org>, Xu Xin <xu.xin@linux.dev>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+	Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, SJ Park <sj@kernel.org>, 
+	Rakie Kim <rakie.kim@sk.com>, David Rientjes <rientjes@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	John Johansen <john.johansen@canonical.com>, Georgia Garcia <georgia.garcia@canonical.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Fan Wu <wufan@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, 
+	damon@lists.linux.dev, linux-trace-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 13/13] security: convert VMA flag tests to use vma_flags_t
+Message-ID: <au2ny_goOYa9TJ4u@gremlin>
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
+ <20261105-late-2026-vma-flags-v1-13-0d3cd15ab75f@kernel.org>
+ <CAHC9VhSR=9YNhBxeFBcTR8wgG2yDP1fW590QKjzuc4Kq9ohaiQ@mail.gmail.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -66,58 +97,41 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSR=9YNhBxeFBcTR8wgG2yDP1fW590QKjzuc4Kq9ohaiQ@mail.gmail.com>
 
-The preboot portion recorded in the main event log is subtracted from
-the size of the final events table taken from the firmware:
+On Thu, Nov 05, 2026 at 06:17:47PM -0500, Paul Moore wrote:
+> On Thu, Nov 5, 2026 at 4:35 PM Lorenzo Stoakes (ARM) <ljs@kernel.org> wrote:
+> >
+> > Replace use of the legacy vm_flags_t flags with vma_flags_t values in the
+> > mmap and mprotect LSM hooks of SELinux, AppArmor, IMA and IPE.
+> >
+> > No functional change intended.
+> >
+> > Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
+> > ---
+> >  security/apparmor/lsm.c           |  2 +-
+> >  security/integrity/ima/ima_main.c |  2 +-
+> >  security/ipe/hooks.c              |  2 +-
+> >  security/selinux/hooks.c          | 14 +++++++-------
+> >  4 files changed, 10 insertions(+), 10 deletions(-)
+>
+> Similar to the other patchset you just posted, is there any reason why
+> individual subsystem maintainers can't pick these patches up, or is
+> there some reason I'm missing and they need to go through a single
+> tree?
+>
+> If they can go through multiple trees, can you split this patch up?
+> AppArmor, Integrity/IMA, IPE, and SELinux are all maintained by
+> different groups/people.
 
-/*
- * The 'final events log' size excludes the 'final events preboot log'
- * at its beginning.
- */
-final_events_log_size -= log_tbl->final_events_preboot_size;
+Sure, they're all independent so you can take the security bits through your
+tree, I guess fairly easy for Andrew/David to figure out which went where?
 
-Both sizes come from EFI configuration tables and are not validated
-against each other. A final events table claiming a preboot portion
-larger than the table itself makes final_events_log_size go negative:
-the subsequent devm_krealloc() can then end up with a wrapped, too
-small allocation, and the memcpy() that appends the final events log
-uses the negative value as its length, running far past the buffer.
+Intentionally made these easy ones given how busy the cycle is, just keeping the
+conversion rolling forward :)
 
-The boot path has no way to fix up such a table, so fail the final
-events log instead of appending from it. Warn before dropping it, so
-a malformed firmware table leaves a trace instead of a silently
-missing final events log.
-
-Fixes: 166a2809d65b ("tpm: Don't duplicate events from the final event log in the TCG2 log")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guo Zihao <guozh23@xiaopeng.com>
----
-
-v2: Add a pr_warn() before dropping the final events log, as suggested
-by Ard Biesheuvel, so a malformed firmware table leaves a trace.
-
- drivers/char/tpm/eventlog/efi.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/char/tpm/eventlog/efi.c b/drivers/char/tpm/eventlog/efi.c
-index 4e9d7c2bf32e..76860f9a25de 100644
---- a/drivers/char/tpm/eventlog/efi.c
-+++ b/drivers/char/tpm/eventlog/efi.c
-@@ -82,6 +82,13 @@ int tpm_read_log_efi(struct tpm_chip *chip)
- 		goto out;
- 	}
- 
-+	if (log_tbl->final_events_preboot_size > final_events_log_size) {
-+		pr_warn("UEFI TPM final events table has an oversized preboot log: %u > %d\n",
-+			log_tbl->final_events_preboot_size,
-+			final_events_log_size);
-+		goto out;
-+	}
-+
- 	/*
- 	 * The 'final events log' size excludes the 'final events preboot log'
- 	 * at its beginning.
--- 
-2.50.1
-
+--
+Cheers, Lorenzo
