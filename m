@@ -1,81 +1,71 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794090870;
-	b=TBe94UldItCIcLEEcpfm5frPjU7Q+extiYX0a+HxXxccu/7A3LgX+AytPracz0P4gUaE
-	 mrL8iNEguSY9pQM2EJVw7WVm5MoVIMR22dXykU4CkoA2aGn/Y/0cLb4I9g6Cmtn/u9JLy
-	 fcWhvy5IaV2N0fAcssYYoIycoYgaQ0b74Mkau1NYjt5t2WwaklKRlpaDWoh3XDQ3N9bx/
-	 WAoF0fV20uf93XMNyf6OEb0gF3d/V2QmFP5znCwEV0oQWtDzQDJD2fK1iDwnT04ZvY26J
-	 Sfh9nWrz47yW6PY/s1kMiI4ex2AGl1QdheXPvxuqJ11Yq3PrsBef9PKdXF9Pxrd57gA==
+	t=1794092746;
+	b=l8wicbvoWizBVpDhAYM8gla+P9ih+Z5GoIuAzoXTB21CDhKDsIm47DQChzTDFSpbwqzI
+	 pDzjY/BqZErMN2Tb9Djwd7BJ67ePSUDLmISi2JkcxqTiDBLclMSAtFcVIZxXX9Jl/G9Nb
+	 nqcn3A07AeuHmFj4sK61BdFRlNtUvnxZK7vm4mLJQ5hHBVGYcl9nQ9lHyhojWz4Tjfvxq
+	 tS34RCXLRiIkxBwKCpCXa3eQCpbOsoBRj6uRotYqPLeLJPjs40JjegxSUKBfALr276bxe
+	 dxNSDbpdl/Cxq8UPyX9gB8yKoA7dZtCn0TrqoqKGhzey7g/JHUcNLM7+qlwY38RXZ3w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794090870;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	bh=wR5HXTh16ddUXMlLaMHcCDUi43szIAAM9f7TTgkHzr4=;
-	b=3r9zE9dsPeGxtWaLoaV2tkh6deDPxxTgnVm9OE6qeedZe6o8lN5XWG7IOrM/RI+2UQBs
-	 eAIvPCS52qQ4Mvqh/421xgvWL8AX9Ib2x3V0pJSepC2upUe6mK7hyIw3PfRzo+hb98Ktl
-	 Hi8vRKOdLShKMiw8OimhvB8xrNN9HyVM/fl2bzmfR1Ga55tG0k1G5tEe2DoQx3J8J5hNe
-	 KeXTbIKtsn1uTt6oIai/adeL3Of2NEjftVsakoq6VinTMxHrOTKU9pXGMYX0G8EV9O9C9
-	 jx4TFDUFukldUfM3dmdLIzL2Tl9oowl3fubzcY9PMFmea0M2vUdzUXr1+9lUigoDgLQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794092746;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
+	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
+	bh=DIMiaePVV9GcXMmhefDHZYoBfudUKELmzbg1o7Nw6s0=;
+	b=qCXlXEPX5/8ZoiZdOieffH4bhmvsdScGPNtkS30qJCGd79FJTahD94FQEEvL5R7FLjwh
+	 xVYTO0HGYjqrku+IzmDvUKedInRDmt65D8+TBT0GP70wbnthX7BxzvJQMK5G+ntK1CQBu
+	 WW6XHaDEJj6lcbeJTBRqEbxLsJV6WHtr3936UO9gaE0m2sJyPV9nz4gIs+372R3rsrjma
+	 Wu2YY8a7GfXeewyhmLXmDNZP/KMu59eumIWfSPsROqmfEf8mqlyjY5iITokK7rhm4pq1S
+	 cjZgmwDYKWgYTcAG0DCvPPqy8ikvFI/dbcQmkXOT2iD26v3swjk2gEXQ8jKl2By5d/Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=gompa.dev;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.160.182
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=oss.cyber.gouv.fr;
+	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
+	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=fKNReNxx;
+	arc=none smtp.remote-ip=51.159.188.251
+Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF0F606A32D
-	for <linux-integrity@vger.kernel.org>; Sat,  7 Nov 2026 22:34:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9DF0F606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-5364648ae07so833011cf.1
-        for <linux-integrity@vger.kernel.org>; Sat, 07 Nov 2026 14:34:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794090867; x=1794695667;
-        h=content-type:content-transfer-encoding:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wR5HXTh16ddUXMlLaMHcCDUi43szIAAM9f7TTgkHzr4=;
-        b=aq55eqw2nJY1KC0PkoZI1iSMe+7JZLcE4hIBTI3Z4k9YOgz0mnjQj5WgsGbfckhF80
-         nuTeFZYNyMlXiBRjcLYTa0zA89zQDXwSl4GbnaPXLdXjmOucdUFXFnlX7G5n4N54ok24
-         03piY2Q4IF8sxP9tz+llWYTlVrr6zjjrGSESoMYQW+5pj8MIGfXVht1ijdWxsuFAg7iS
-         uwfJrigWyI3b4oqaY/9dwgHpbQzEsClybp2yAaKsJgE48ARDWZ7gjTzUdIkuX8c4X8Lp
-         lPEL/wG7TwZePI4U1evlbo/o2zcPOq8i9Mk5M91GbS3VfqlU4RwAOQO1dsx8A/ZhLEDn
-         KKYA==
-X-Forwarded-Encrypted: i=1; AKwUvBysIA8Yrd3T0MsiKBDuvg0vfT5HN8iW8rD4Lbrpnl9bKzh7WlTkzJOVuW0PYvU1u6LHqeBynnyR/QXBK/ozEPs=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/K6EHBVPWYZgLcl6bnYBUnFQsQ2WdLSOklnLQAPeevYonwvXFu
-	0P82p0ooSAHzyyi1OHlJOmPeW2D0x2GOj6+M2f+MQzBB0ubSktRj7+d2
-X-Gm-Gg: AYBFou2Uv/vUMecmTCHFyl5BUH7bDHqFlYVUaKhTDWktkGC020NCnNSXnG1BMSyF7WO
-	RVuKZ4xSNmUcwuXvMqI9ecgdwGokG1JBk0jMjA4qjb78w0wInmnuz0ayqWb6dcb7+FCaIw+akSF
-	g/udnH7828ib28V0n20A7VwKbXQhPk6bTlXr1iKo++rOgnz8NczcPwp9ApjyXI7EtKmdGTyi7AI
-	nrTFxaY5v1ABgIM04ICcf0SuEQ0ogJ8EGsKGREMR7jzEIhy1FEBasBO3moZDufIFOTl/83h0D2z
-	IKVcKv6qfSoSLq+NI3whuGRZhxWin0u4QP8RcC9pMERxqzqAqZqXYlmPzyCa9bhM0IS7j5vCPAC
-	2c+KUZf/u7Kp2ZUkjTLu5xAdJsiE1atmAvPA+AK5vjZDVOvhFA8i8W9PMQkEqa/e+YTuS18WLnt
-	CICZ6s1YofhSybfFk8f8OopLrBvsThDRqFkjV+NLXvuVbIPNaRYoD9K6gntDohTK1SXJmPb7dEZ
-	m8D4i1xbCKzb+sBXo/alSJxgLkJ5E2oWXcLT2EB3gvI9vXAUMi1VifZ0LUs/OhcJ/usV77G04IL
-	d3lA7zYTSedAZPCfQiVEHbT6GH7oelFiH6bKyTk8ebyairQrNs0xGz8QERYxMqHMyYHxMhitLms
-	fLlX696U/AweDANdBkmbU7huU08uEpB2A9PKozWaq+tCajM4pxXQph2nGaRk9vdOPAiw+fMwqpr
-	Ua
-X-Received: by 2002:a05:622a:494:b0:533:8900:4eb2 with SMTP id d75a77b69052e-54e14e77819mr102542781cf.58.1794090867395;
-        Sat, 07 Nov 2026 14:34:27 -0800 (PST)
-Received: from skuld-framework.localnet ([32.221.37.233])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5526454c1e2sm3581101cf.22.2026.11.07.14.34.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2026 14:34:26 -0800 (PST)
-From: Neal Gompa <neal@gompa.dev>
-To: mjg59@srcf.ucam.org, Matthew Garrett <matthewg@nvidia.com>
-Cc: keyrings@vger.kernel.org, James.Bottomley@hansenpartnership.com,
- linux-integrity@vger.kernel.org, rafael@kernel.org, linux-pm@vger.kernel.org,
- linux-efi@vger.kernel.org
-Subject: Re: [RFC] Make hibernation work with lockdown
-Date: Sat, 07 Nov 2026 17:34:25 -0500
-Message-ID: <Qc3eI7EOR8ep1b77lr0gsw@gompa.dev>
-In-Reply-To: <20261008132532.1155166-1-matthewg@nvidia.com>
-References: <20261008132532.1155166-1-matthewg@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DDF606A326;
+	Sat,  7 Nov 2026 23:05:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 64DDF606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=fKNReNxx
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Sender:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=DIMiaePVV9GcXMmhefDHZYoBfudUKELmzbg1o7Nw6s0=; b=fKNReNxx7jbsQMz9QoJ0/b0oIv
+	VvdJ3cxvHCSoLjVUNoqk5U39eCuLOCXu16s4JonptlVR18DB/phUibsX9y2eXpbAxzXw7oPt8DqzR
+	KOqn8oXkJJMHPQ/mJi+1GkjQkgeKyu3/NIWG/t448lqNEGZy6qOKzDc8bbZ5Ymtth0D7TghRMmq0q
+	x4srJ9xBS/8fT40w/IBylFOyJKl9QCNJfd/DkeZ073ncWZLrIGmz/iZQx7ZpLLushDSYylClKg9fu
+	9fI2l64PPCtfnjB+U6pfPCOMc6K0MdoX+zxHuviMCw/iZzIsIgt8WiKu8l6LoAQ+iNhGU3wVavadd
+	Q7vijMFQ==;
+Received: from [151.115.150.205] (port=44646 helo=gepetto..)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <Jeremy.Jean@oss.cyber.gouv.fr>)
+	id 1xPpTo-0000000EVj3-1hHr;
+	Sun, 08 Nov 2026 00:05:44 +0100
+From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] evm: fix TOCTOU heap OOB in protected xattr reads
+Date: Sat,  7 Nov 2026 23:05:15 +0000
+Message-ID: <20261107230514.1108379-2-Jeremy.Jean@oss.cyber.gouv.fr>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -85,98 +75,95 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thursday, October 8, 2026 9:20:16=E2=80=AFAM Eastern Standard Time Matth=
-ew Garrett=20
-wrote:
-> Hibernation writes out the full system state to disk in an unencrypted
-> and unauthenticated manner. Resuming from hibernate reads that data and
-> throws it directly into RAM, then jumps into it. This is effectively an
-> entirely unauthenticated mechanism for putting whatever you want into
-> kernel space. This violates the assumptions around lockdown (root can
-> write whatever they want to the swap partition and then trigger a
-> resume), and as such lockdown blocks hibernate.
->=20
-> This has made many people unhappy.
->=20
-> This patchset seeks to solve this problem. In order for hibernation to
-> be trustworthy we need to be able to prove that the image was generated
-> by the kernel and not modified after that. This is not an easy task, and
-> requires some infrastructural framework. To that end, this patchset does
-> the following:
->=20
-> 1) Co-opts a TPM NV index for the kernel's sole use. This is currently a
-> placeholder and we should register one explicitly from an appropriate
-> range in order to ensure that we don't conflict with userland.
->=20
-> 2) Does something horrifying with PCR 5 in order to prove that a given
-> kernel supports (1). We need to extend and cap a PCR before userland is
-> running in order to prove that the kernel has support for this feature,
-> but since we don't currently cap any PCRs there's nothing stopping
-> userland from doing the same and so achieving the same state. The way
-> around this is to rely on a feature of PCR 5 - it is extended as a
-> result of ExitBootServices being called, and since the boot stub can
-> execute code before that happens we can perform the proof extension
-> there and then have it implicitly capped by the firmware's extension.
->=20
-> 3) Adds support for audited TPM sessions in the kernel, allowing us to
-> generate signed digests of the commands that were executed in that
-> session and their results
->=20
-> 4) Adds support for generating a predictable AK that can be used to sign
-> digests from those audit sessions
->=20
-> 5) Adds support for generating a TPM signing key in such a session, and
-> using the signed digest to prove that the session took place in the
-> kernel
->=20
-> 6) Signs the hibernation image with such a key
->=20
-> An old kernel that doesn't implement (1) won't be able to mimic the same
-> PCR 5 value. Userland won't be able to mimic the NV index value because
-> the kernel will block it. This means that the only way that key could
-> have been created is by the kernel, and so we can trust that the image
-> was generated by the kernel.
->=20
-> QUESTIONS:
->=20
-> 1) I haven't tried to make the key management generic, since this isn't
-> intended to ever be exposed to userland in any way. Should it be
-> integrated into the trusted keys layer anyway?
->=20
-> 2) Filtering TPM commands from userland isn't ideal - anyone able to
-> poke commands into the TPM directly is in a position to violate the
-> assumptions here. Is there any way we can get a secret into the kernel
-> that can be used as an auth value? It would need to be impossible to
-> obtain from userland and it would need to be consistent over platform
-> reboots.
+ima_eventinodexattrs_init_common() queries the total size of protected
+xattrs, allocates that amount, and calls evm_read_protected_xattrs()
+again to fill the buffer. This creates a TOCTOU window: if the
+protected xattr changes between the two calls to
+evm_read_protected_xattrs(), names and lengths are written without
+checking whether the data still fits in the target buffer. This can
+yield an OOB heap write that KASAN reports as:
 
-Looking over the patch set, it seems like this should be okay with swap fil=
-es=20
-being used for hibernation, right? I don't see a reason it wouldn't work, b=
-ut=20
-I figure it would be worth directly asking.
+  BUG: KASAN: slab-out-of-bounds in evm_read_protected_xattrs+0x15e/0x280
+  Write of size 20 at addr ffff888002c59bcd by task init/62
 
-The reason I am asking is because I am looking at integrating KDE's dynamic-
-hibernate[1][2] to allow Fedora Linux to dynamically generate files specifi=
-cally=20
-for hibernation.
+Reject fields that no longer fit in the target buffer. For xattr
+values, also check the length returned by the copy before accounting it.
+This also handles the case where a size of 0 is treated as a length
+query.
 
-Obviously, this works fine in non-SB environments since lockdown doesn't=20
-negatively impact power management there, but if this manages to make it ov=
-er=20
-the finish line in some form, I would like to be sure the approach is=20
-compatible or can be made compatible.
+Fixes: 8314b6732ae4e ("ima: Define new template fields xattrnames, xattrlengths and xattrvalues")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+---
+Changes since v1 (after review from Sashiko):
+- Handle the 0 case.
 
-[1]: https://invent.kde.org/tduck/dynamic-hibernate
-[2]: https://src.fedoraproject.org/rpms/dynamic-hibernate
+v1: https://lore.kernel.org/all/20261107194909.1061154-2-Jeremy.Jean@oss.cyber.gouv.fr/
+Sashiko: https://sashiko.dev/#/message/20261107194909.1061154-2-Jeremy.Jean%40oss.cyber.gouv.fr
 
+ security/integrity/evm/evm_main.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-
-=2D-=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
-
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index ac8328812e6ef..2ed0b67b9109b 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -389,6 +389,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+ 		case 'n':
+ 			size = strlen(xattr->name) + 1;
+ 			if (buffer) {
++				if (total_size > buffer_size ||
++				    size > buffer_size - total_size)
++					return -ERANGE;
++
+ 				if (total_size)
+ 					*(buffer + total_size - 1) = '|';
+ 
+@@ -398,6 +402,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+ 		case 'l':
+ 			size = sizeof(u32);
+ 			if (buffer) {
++				if (total_size > buffer_size ||
++				    size > buffer_size - total_size)
++					return -ERANGE;
++
+ 				if (canonical_fmt)
+ 					rc = (__force int)cpu_to_le32(rc);
+ 
+@@ -407,12 +415,20 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+ 		case 'v':
+ 			size = rc;
+ 			if (buffer) {
++				if (total_size > buffer_size ||
++				    size > buffer_size - total_size)
++					return -ERANGE;
++
+ 				rc = __vfs_getxattr(dentry,
+ 					d_backing_inode(dentry), xattr->name,
+ 					buffer + total_size,
+ 					buffer_size - total_size);
+ 				if (rc < 0)
+ 					return rc;
++				/* A size of 0 may be treated as a query. */
++				if (rc > buffer_size - total_size)
++					return -ERANGE;
++				size = rc;
+ 			}
+ 			break;
+ 		default:
+-- 
+2.47.3
 
