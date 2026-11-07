@@ -1,71 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794080973;
-	b=zNvBMyNFKt/t8jCp4Du7dQr7Rc2lPOEWH0sYGNcGv5Gx68XOzsoo/qGdcE2oJ7JqKWLP
-	 OOMlI4bmohJfmcfFg+OY0KNBiXg9ceyEQitrEI6Q5tLnJn8oH+iqJeQVbQJc8Cw+zTqqJ
-	 6aMrh+q7fCJE1HUHeRfSEhBm7jl9IWGH33i4Fu1hMkq/RbiioTSTmj1Ll36556J6Om5Oy
-	 aotI2cJcjGwqvYVi/ido3zfax3PwhzVsKEaO4UC/TYPPWb+FvVohr1aUFtCl2SC2zyJSv
-	 VwWSIJm+SszAo9OAegxbRP9y31pNOohuzbnwXBzBm24295xEJ3pP0V9Ax3528C6L95w==
+	t=1794082215;
+	b=uHXW3fAvQtUp7AwtObeDMEY2z5xz2SuP20HBG6V+k8SvStKuexo39nTUdBe/7ZWaoWpI
+	 LD9qLi8kYqeizve7W5eR/GZIdZijURWkV1Ob8mRTQWduXYljpMX6dHWHjnPOrcFP14lF5
+	 sMS7c4eOwLqe3dL8NCLdc7ZfdmCFyqSFP71FUYAp8aA+9QqSBKdEX50t1PyuL9qvdDuZX
+	 TsqrRA31M8HFahZ37v08GKHuC8LdcGNG51utO8/8/0CIlaoXLPPHUUCTTPDfOagwLcFRL
+	 YMJn2PhLqPOtBJIsOt8GGlTIsXWOc06fFrOzdapk+ebBgATmGs5qPG+qZ7FyzhikI1w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794080973;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
-	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
-	bh=/+pF8ulalzoN9iVRVw5yAMloH9f98sQtIGRgxx6MQ4o=;
-	b=P0RhUjT4e2VwWh8Qbde8QNPWEggK6u1mSXW+qkfwVEazUmBgb5/8QBK9xogj7k31n9Oo
-	 VAlEs+5yx/qPYSj5UdgCbIEh3FAsi6QPwxaPWdTZWY9truIFLG9mq+/PH6d/K/2xRoC6o
-	 Q24Y7JB+8rjWJ6KHZK0uJvbKPH335smtjSWH9c2GjBVGVY3FeyQ2uYYEI/mC6YJOro2UQ
-	 zN0AZOwBG5C2/clvzNZuC4o9uyF7Iv7p7MYKNdN8z7mPsUS2TEjb7Lmxb0KzS0hPwIfP9
-	 QmNV97xknIZ928idcwLbDAPmZks+7plG4Jj+y4RXluX1OxjecQY6kasTaexcgyAWEIw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794082215;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=CMFxkbGnr/NpLAXZXk8rbwy5EGs+66IVJk9lKIVoNp8=;
+	b=uX1djr4KrJAMZKxMVMBGYBEm/Gr7wt1qgnOzrDxZK9R1iSBgprGdLPyP6K/Kq5ISNBIN
+	 wMVrjJPxY+WYgwM6OzCuCxosnXy6wpI7W2HCMKsmd4geOY/3EXgMLxeQzoTZZKzIr/H56
+	 N3barsESmMZbnsBeKFP/sE+lvJdpfnVBVYh6KtGrA6YPQCjDC5vbFEdrF/uGb8eu08gGQ
+	 IIiYpTSbihqegc9CVuAUJXC/ca/2FRym+yV5s/6JKpiCAr5bxDzblan4+s6Pnbta5N+DB
+	 y+rKReozhIyNO+exF3zibImrmrZ/WANB3SHiefsi5qtkY52sPd3I9px3QHhTq1zuMRg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.cyber.gouv.fr;
-	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
-	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=b7FnOmJu;
-	arc=none smtp.remote-ip=51.159.188.251
-Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iLeOYJRj;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82189606A326;
-	Sat,  7 Nov 2026 19:49:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 82189606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830D7606A331;
+	Sat,  7 Nov 2026 20:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=b7FnOmJu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Sender:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=/+pF8ulalzoN9iVRVw5yAMloH9f98sQtIGRgxx6MQ4o=; b=b7FnOmJu22QQeHWMKZWdmZGqug
-	q/kZI/Z4pOz2YGhY+ANb1zHFJ+0UNvY8fYv1bWVAC1kXxV6DwcAD9OqV65NlFX/dawzz/Pq/mq5N+
-	cixgoR/8WNGj+uZeeVgYdTqNYwBzKRAx1AC19TMIiIwQbVeX4NZVFGtyaR03pz6V/7GTqfZyQZVF7
-	CAltwHiMXE06RwCbP3dgDABIZTl/1i8USP6z44o72HDsx82OITxNi5KHQRT9qs1OA49umEoW8Q4Xi
-	n1yG5YhyJKV9XHbbNw5CxCJy2ijhHC1wv7sGUMcC+aQYZyGQ5ZtM35N4phi+SX12r0J2LaqLee3HV
-	GFUU6Tyw==;
-Received: from [151.115.150.205] (port=40112 helo=gepetto..)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <Jeremy.Jean@oss.cyber.gouv.fr>)
-	id 1xPmPu-00000009BTJ-0Zv5;
-	Sat, 07 Nov 2026 20:49:30 +0100
-From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>,
-	stable@vger.kernel.org
-Subject: [PATCH] evm: fix TOCTOU heap OOB in protected xattr reads
-Date: Sat,  7 Nov 2026 19:49:10 +0000
-Message-ID: <20261107194909.1061154-2-Jeremy.Jean@oss.cyber.gouv.fr>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iLeOYJRj
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D661F008A3;
+	Sat,  7 Nov 2026 20:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794082215;
+	bh=CMFxkbGnr/NpLAXZXk8rbwy5EGs+66IVJk9lKIVoNp8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=iLeOYJRjjnhZl3LWMSGaUd1S27vEBJh9NrDzelAqlZmg4R2RciRfWoeIsojODwzqH
+	 AmV3EGrrSvx70iXnLVmV7/bs2dBDE1x/r3nyPcxADmxBtch4xZP+oTaqLUfx+eYAuG
+	 SGRWdAxli2sYIZwe/Tbuw0udh+c0QNfiwmJOXLSfQKYp1etxVNRgoDq0IPlAd0lt9t
+	 yDMA0BPoIWju9BFMAW7mO+dutMm2GHuzj6pjWBP8PMNdT9kLO2lCpBJij+NhIf7LIF
+	 N/2SXcwPj4meyprPc8KlcX/gZ5yZ2cdhj422kyiEPIrnEjIKnHoNmFfhk++nuATcLn
+	 UZoP1hyr/4Jww==
+Date: Sat, 7 Nov 2026 20:09:55 +0000
+From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+To: "David Hildenbrand (Arm)" <david@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, 
+	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
+	Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
+	Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Alistair Popple <apopple@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Usama Arif <usama.arif@linux.dev>, 
+	Kiryl Shutsemau <kas@kernel.org>, Xu Xin <xu.xin@linux.dev>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+	Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, SJ Park <sj@kernel.org>, 
+	Rakie Kim <rakie.kim@sk.com>, David Rientjes <rientjes@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	John Johansen <john.johansen@canonical.com>, Georgia Garcia <georgia.garcia@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, damon@lists.linux.dev, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 00/13] mm: continue vma_flags_t conversion
+Message-ID: <au-DXpEi4wHwsz0r@gremlin>
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
+ <d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org>
+ <au3r0-geuwtRYPiC@gremlin>
+ <1c0b1368-a381-4b25-bba9-7a4f8e92b764@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -75,84 +96,82 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c0b1368-a381-4b25-bba9-7a4f8e92b764@kernel.org>
 
-ima_eventinodexattrs_init_common() queries the total size of protected
-xattrs, allocates that amount, and calls evm_read_protected_xattrs()
-again to fill the buffer. This creates a TOCTOU window: if the
-protected xattr changes between the two calls to
-evm_read_protected_xattrs(), names and lengths are written without
-checking whether the data still fits in the target buffer. This can
-yield an OOB heap write that KASAN reports as:
+I think we're slightly talking across purposes, so to be clear - I am totally
+fine with you taking any of this through your tree or whatever works for you and
+Andrew to avoid merge pain :)
 
-  BUG: KASAN: slab-out-of-bounds in evm_read_protected_xattrs+0x15e/0x280
-  Write of size 20 at addr ffff888002c59bcd by task init/62
+I was just talking more generally about how to merge series that touch a lot of
+subsystems and maintainers-who-may-never-reply, etc.
 
-Reject fields that no longer fit in the target buffer. For xattr
-values, use the length actually returned by the copy.
+These are the edge cases that make things... fun :)
 
-Fixes: 8314b6732ae4e ("ima: Define new template fields xattrnames, xattrlengths and xattrvalues")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
----
- security/integrity/evm/evm_main.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Anyway, I guess easiest resolution here is for you to take the bits that belong
+to your trees and Andrew takes the bits that belong elsewhere?
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index ac8328812e6ef..4b01ca0b4753a 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -389,6 +389,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
- 		case 'n':
- 			size = strlen(xattr->name) + 1;
- 			if (buffer) {
-+				if (total_size > buffer_size ||
-+				    size > buffer_size - total_size)
-+					return -ERANGE;
-+
- 				if (total_size)
- 					*(buffer + total_size - 1) = '|';
- 
-@@ -398,6 +402,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
- 		case 'l':
- 			size = sizeof(u32);
- 			if (buffer) {
-+				if (total_size > buffer_size ||
-+				    size > buffer_size - total_size)
-+					return -ERANGE;
-+
- 				if (canonical_fmt)
- 					rc = (__force int)cpu_to_le32(rc);
- 
-@@ -407,12 +415,17 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
- 		case 'v':
- 			size = rc;
- 			if (buffer) {
-+				if (total_size > buffer_size ||
-+				    size > buffer_size - total_size)
-+					return -ERANGE;
-+
- 				rc = __vfs_getxattr(dentry,
- 					d_backing_inode(dentry), xattr->name,
- 					buffer + total_size,
- 					buffer_size - total_size);
- 				if (rc < 0)
- 					return rc;
-+				size = rc;
- 			}
- 			break;
- 		default:
--- 
-2.47.3
+I don't think anything here has an inter-dependency.
 
+
+On Sat, Nov 07, 2026 at 08:26:29PM +0100, David Hildenbrand (Arm) wrote:
+[ ... ]
+>
+> Because of [PATCH 05/13] mm: convert THP VMA flag tests to use vma_flags_t which
+> is THP-only, and feels like it could go straight through one of my trees,
+> avoiding conflicts with Andrew's tree. But maybe there is more to it that I am
+> missing.
+
+Sorry about that! Please take that through your tree.
+
+>
+> I assume stable topic branches would fix that, but they are currently
+> unfortunately not on the table ... :)
+
+I guess we need everybody-on-git for this!
+
+I guess when Liam and & I have the VMA tree we can do that at least for stuff
+that goes there :)
+
+>
+> >
+> >>
+> >> Ideally, patches really only touch one component.
+> >
+> > Right, but sometimes functions are declared in one place and called in
+> > others. It is impossible to change the signature of one without also touching
+> > the others.
+>
+> Yes. Something like that is unavoidable. Or if you need new APIs/
+
+Yes.
+
+>
+> >
+> >>
+> >> [PATCH 07/13] mm/madvise: convert madvise_vma_behavior() to use vma_flags_t
+> >>
+> >> is all over the place :)
+> >
+> > It's not really all over the place, it's converting vm_flags_t to
+> > vma_flags_t across madvise.c, which involves changing a few function
+> > signatures, whose callers must be updated.
+>
+> Ah, yeah. What on earth does arch/powerpc/kvm/book3s_hv_uvmem.c do with madvise :(
+
+Yeah it's quite worrying that... :)
+
+>
+> >
+> > I could split it up into 3 patches where 1 does internal-only, one changes 1
+> > function, and the next changes another, if that works?
+>
+> No, these things really have to go in as one unit, no need to split that up.
+
+Thanks, yeah, it's a pain I know but eventually 'one fine day' (probably in
+2028) everything will be converted to vma_flags_t/mmap_prepare and we won't have
+to think about this :P
+
+--
+Cheers, Lorenzo
