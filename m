@@ -1,92 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794082215;
-	b=uHXW3fAvQtUp7AwtObeDMEY2z5xz2SuP20HBG6V+k8SvStKuexo39nTUdBe/7ZWaoWpI
-	 LD9qLi8kYqeizve7W5eR/GZIdZijURWkV1Ob8mRTQWduXYljpMX6dHWHjnPOrcFP14lF5
-	 sMS7c4eOwLqe3dL8NCLdc7ZfdmCFyqSFP71FUYAp8aA+9QqSBKdEX50t1PyuL9qvdDuZX
-	 TsqrRA31M8HFahZ37v08GKHuC8LdcGNG51utO8/8/0CIlaoXLPPHUUCTTPDfOagwLcFRL
-	 YMJn2PhLqPOtBJIsOt8GGlTIsXWOc06fFrOzdapk+ebBgATmGs5qPG+qZ7FyzhikI1w==
+	t=1794090870;
+	b=TBe94UldItCIcLEEcpfm5frPjU7Q+extiYX0a+HxXxccu/7A3LgX+AytPracz0P4gUaE
+	 mrL8iNEguSY9pQM2EJVw7WVm5MoVIMR22dXykU4CkoA2aGn/Y/0cLb4I9g6Cmtn/u9JLy
+	 fcWhvy5IaV2N0fAcssYYoIycoYgaQ0b74Mkau1NYjt5t2WwaklKRlpaDWoh3XDQ3N9bx/
+	 WAoF0fV20uf93XMNyf6OEb0gF3d/V2QmFP5znCwEV0oQWtDzQDJD2fK1iDwnT04ZvY26J
+	 Sfh9nWrz47yW6PY/s1kMiI4ex2AGl1QdheXPvxuqJ11Yq3PrsBef9PKdXF9Pxrd57gA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794082215;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=CMFxkbGnr/NpLAXZXk8rbwy5EGs+66IVJk9lKIVoNp8=;
-	b=uX1djr4KrJAMZKxMVMBGYBEm/Gr7wt1qgnOzrDxZK9R1iSBgprGdLPyP6K/Kq5ISNBIN
-	 wMVrjJPxY+WYgwM6OzCuCxosnXy6wpI7W2HCMKsmd4geOY/3EXgMLxeQzoTZZKzIr/H56
-	 N3barsESmMZbnsBeKFP/sE+lvJdpfnVBVYh6KtGrA6YPQCjDC5vbFEdrF/uGb8eu08gGQ
-	 IIiYpTSbihqegc9CVuAUJXC/ca/2FRym+yV5s/6JKpiCAr5bxDzblan4+s6Pnbta5N+DB
-	 y+rKReozhIyNO+exF3zibImrmrZ/WANB3SHiefsi5qtkY52sPd3I9px3QHhTq1zuMRg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794090870;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	bh=wR5HXTh16ddUXMlLaMHcCDUi43szIAAM9f7TTgkHzr4=;
+	b=3r9zE9dsPeGxtWaLoaV2tkh6deDPxxTgnVm9OE6qeedZe6o8lN5XWG7IOrM/RI+2UQBs
+	 eAIvPCS52qQ4Mvqh/421xgvWL8AX9Ib2x3V0pJSepC2upUe6mK7hyIw3PfRzo+hb98Ktl
+	 Hi8vRKOdLShKMiw8OimhvB8xrNN9HyVM/fl2bzmfR1Ga55tG0k1G5tEe2DoQx3J8J5hNe
+	 KeXTbIKtsn1uTt6oIai/adeL3Of2NEjftVsakoq6VinTMxHrOTKU9pXGMYX0G8EV9O9C9
+	 jx4TFDUFukldUfM3dmdLIzL2Tl9oowl3fubzcY9PMFmea0M2vUdzUXr1+9lUigoDgLQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iLeOYJRj;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=gompa.dev;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.160.182
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830D7606A331;
-	Sat,  7 Nov 2026 20:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iLeOYJRj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D661F008A3;
-	Sat,  7 Nov 2026 20:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794082215;
-	bh=CMFxkbGnr/NpLAXZXk8rbwy5EGs+66IVJk9lKIVoNp8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iLeOYJRjjnhZl3LWMSGaUd1S27vEBJh9NrDzelAqlZmg4R2RciRfWoeIsojODwzqH
-	 AmV3EGrrSvx70iXnLVmV7/bs2dBDE1x/r3nyPcxADmxBtch4xZP+oTaqLUfx+eYAuG
-	 SGRWdAxli2sYIZwe/Tbuw0udh+c0QNfiwmJOXLSfQKYp1etxVNRgoDq0IPlAd0lt9t
-	 yDMA0BPoIWju9BFMAW7mO+dutMm2GHuzj6pjWBP8PMNdT9kLO2lCpBJij+NhIf7LIF
-	 N/2SXcwPj4meyprPc8KlcX/gZ5yZ2cdhj422kyiEPIrnEjIKnHoNmFfhk++nuATcLn
-	 UZoP1hyr/4Jww==
-Date: Sat, 7 Nov 2026 20:09:55 +0000
-From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: "David Hildenbrand (Arm)" <david@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, 
-	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
-	Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>, 
-	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	Alistair Popple <apopple@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
-	Barry Song <baohua@kernel.org>, Usama Arif <usama.arif@linux.dev>, 
-	Kiryl Shutsemau <kas@kernel.org>, Xu Xin <xu.xin@linux.dev>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
-	Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
-	Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, SJ Park <sj@kernel.org>, 
-	Rakie Kim <rakie.kim@sk.com>, David Rientjes <rientjes@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	John Johansen <john.johansen@canonical.com>, Georgia Garcia <georgia.garcia@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, damon@lists.linux.dev, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH 00/13] mm: continue vma_flags_t conversion
-Message-ID: <au-DXpEi4wHwsz0r@gremlin>
-References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
- <d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org>
- <au3r0-geuwtRYPiC@gremlin>
- <1c0b1368-a381-4b25-bba9-7a4f8e92b764@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF0F606A32D
+	for <linux-integrity@vger.kernel.org>; Sat,  7 Nov 2026 22:34:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9DF0F606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-5364648ae07so833011cf.1
+        for <linux-integrity@vger.kernel.org>; Sat, 07 Nov 2026 14:34:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794090867; x=1794695667;
+        h=content-type:content-transfer-encoding:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wR5HXTh16ddUXMlLaMHcCDUi43szIAAM9f7TTgkHzr4=;
+        b=aq55eqw2nJY1KC0PkoZI1iSMe+7JZLcE4hIBTI3Z4k9YOgz0mnjQj5WgsGbfckhF80
+         nuTeFZYNyMlXiBRjcLYTa0zA89zQDXwSl4GbnaPXLdXjmOucdUFXFnlX7G5n4N54ok24
+         03piY2Q4IF8sxP9tz+llWYTlVrr6zjjrGSESoMYQW+5pj8MIGfXVht1ijdWxsuFAg7iS
+         uwfJrigWyI3b4oqaY/9dwgHpbQzEsClybp2yAaKsJgE48ARDWZ7gjTzUdIkuX8c4X8Lp
+         lPEL/wG7TwZePI4U1evlbo/o2zcPOq8i9Mk5M91GbS3VfqlU4RwAOQO1dsx8A/ZhLEDn
+         KKYA==
+X-Forwarded-Encrypted: i=1; AKwUvBysIA8Yrd3T0MsiKBDuvg0vfT5HN8iW8rD4Lbrpnl9bKzh7WlTkzJOVuW0PYvU1u6LHqeBynnyR/QXBK/ozEPs=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/K6EHBVPWYZgLcl6bnYBUnFQsQ2WdLSOklnLQAPeevYonwvXFu
+	0P82p0ooSAHzyyi1OHlJOmPeW2D0x2GOj6+M2f+MQzBB0ubSktRj7+d2
+X-Gm-Gg: AYBFou2Uv/vUMecmTCHFyl5BUH7bDHqFlYVUaKhTDWktkGC020NCnNSXnG1BMSyF7WO
+	RVuKZ4xSNmUcwuXvMqI9ecgdwGokG1JBk0jMjA4qjb78w0wInmnuz0ayqWb6dcb7+FCaIw+akSF
+	g/udnH7828ib28V0n20A7VwKbXQhPk6bTlXr1iKo++rOgnz8NczcPwp9ApjyXI7EtKmdGTyi7AI
+	nrTFxaY5v1ABgIM04ICcf0SuEQ0ogJ8EGsKGREMR7jzEIhy1FEBasBO3moZDufIFOTl/83h0D2z
+	IKVcKv6qfSoSLq+NI3whuGRZhxWin0u4QP8RcC9pMERxqzqAqZqXYlmPzyCa9bhM0IS7j5vCPAC
+	2c+KUZf/u7Kp2ZUkjTLu5xAdJsiE1atmAvPA+AK5vjZDVOvhFA8i8W9PMQkEqa/e+YTuS18WLnt
+	CICZ6s1YofhSybfFk8f8OopLrBvsThDRqFkjV+NLXvuVbIPNaRYoD9K6gntDohTK1SXJmPb7dEZ
+	m8D4i1xbCKzb+sBXo/alSJxgLkJ5E2oWXcLT2EB3gvI9vXAUMi1VifZ0LUs/OhcJ/usV77G04IL
+	d3lA7zYTSedAZPCfQiVEHbT6GH7oelFiH6bKyTk8ebyairQrNs0xGz8QERYxMqHMyYHxMhitLms
+	fLlX696U/AweDANdBkmbU7huU08uEpB2A9PKozWaq+tCajM4pxXQph2nGaRk9vdOPAiw+fMwqpr
+	Ua
+X-Received: by 2002:a05:622a:494:b0:533:8900:4eb2 with SMTP id d75a77b69052e-54e14e77819mr102542781cf.58.1794090867395;
+        Sat, 07 Nov 2026 14:34:27 -0800 (PST)
+Received: from skuld-framework.localnet ([32.221.37.233])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5526454c1e2sm3581101cf.22.2026.11.07.14.34.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Nov 2026 14:34:26 -0800 (PST)
+From: Neal Gompa <neal@gompa.dev>
+To: mjg59@srcf.ucam.org, Matthew Garrett <matthewg@nvidia.com>
+Cc: keyrings@vger.kernel.org, James.Bottomley@hansenpartnership.com,
+ linux-integrity@vger.kernel.org, rafael@kernel.org, linux-pm@vger.kernel.org,
+ linux-efi@vger.kernel.org
+Subject: Re: [RFC] Make hibernation work with lockdown
+Date: Sat, 07 Nov 2026 17:34:25 -0500
+Message-ID: <Qc3eI7EOR8ep1b77lr0gsw@gompa.dev>
+In-Reply-To: <20261008132532.1155166-1-matthewg@nvidia.com>
+References: <20261008132532.1155166-1-matthewg@nvidia.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -96,82 +85,98 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c0b1368-a381-4b25-bba9-7a4f8e92b764@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-I think we're slightly talking across purposes, so to be clear - I am totally
-fine with you taking any of this through your tree or whatever works for you and
-Andrew to avoid merge pain :)
+On Thursday, October 8, 2026 9:20:16=E2=80=AFAM Eastern Standard Time Matth=
+ew Garrett=20
+wrote:
+> Hibernation writes out the full system state to disk in an unencrypted
+> and unauthenticated manner. Resuming from hibernate reads that data and
+> throws it directly into RAM, then jumps into it. This is effectively an
+> entirely unauthenticated mechanism for putting whatever you want into
+> kernel space. This violates the assumptions around lockdown (root can
+> write whatever they want to the swap partition and then trigger a
+> resume), and as such lockdown blocks hibernate.
+>=20
+> This has made many people unhappy.
+>=20
+> This patchset seeks to solve this problem. In order for hibernation to
+> be trustworthy we need to be able to prove that the image was generated
+> by the kernel and not modified after that. This is not an easy task, and
+> requires some infrastructural framework. To that end, this patchset does
+> the following:
+>=20
+> 1) Co-opts a TPM NV index for the kernel's sole use. This is currently a
+> placeholder and we should register one explicitly from an appropriate
+> range in order to ensure that we don't conflict with userland.
+>=20
+> 2) Does something horrifying with PCR 5 in order to prove that a given
+> kernel supports (1). We need to extend and cap a PCR before userland is
+> running in order to prove that the kernel has support for this feature,
+> but since we don't currently cap any PCRs there's nothing stopping
+> userland from doing the same and so achieving the same state. The way
+> around this is to rely on a feature of PCR 5 - it is extended as a
+> result of ExitBootServices being called, and since the boot stub can
+> execute code before that happens we can perform the proof extension
+> there and then have it implicitly capped by the firmware's extension.
+>=20
+> 3) Adds support for audited TPM sessions in the kernel, allowing us to
+> generate signed digests of the commands that were executed in that
+> session and their results
+>=20
+> 4) Adds support for generating a predictable AK that can be used to sign
+> digests from those audit sessions
+>=20
+> 5) Adds support for generating a TPM signing key in such a session, and
+> using the signed digest to prove that the session took place in the
+> kernel
+>=20
+> 6) Signs the hibernation image with such a key
+>=20
+> An old kernel that doesn't implement (1) won't be able to mimic the same
+> PCR 5 value. Userland won't be able to mimic the NV index value because
+> the kernel will block it. This means that the only way that key could
+> have been created is by the kernel, and so we can trust that the image
+> was generated by the kernel.
+>=20
+> QUESTIONS:
+>=20
+> 1) I haven't tried to make the key management generic, since this isn't
+> intended to ever be exposed to userland in any way. Should it be
+> integrated into the trusted keys layer anyway?
+>=20
+> 2) Filtering TPM commands from userland isn't ideal - anyone able to
+> poke commands into the TPM directly is in a position to violate the
+> assumptions here. Is there any way we can get a secret into the kernel
+> that can be used as an auth value? It would need to be impossible to
+> obtain from userland and it would need to be consistent over platform
+> reboots.
 
-I was just talking more generally about how to merge series that touch a lot of
-subsystems and maintainers-who-may-never-reply, etc.
+Looking over the patch set, it seems like this should be okay with swap fil=
+es=20
+being used for hibernation, right? I don't see a reason it wouldn't work, b=
+ut=20
+I figure it would be worth directly asking.
 
-These are the edge cases that make things... fun :)
+The reason I am asking is because I am looking at integrating KDE's dynamic-
+hibernate[1][2] to allow Fedora Linux to dynamically generate files specifi=
+cally=20
+for hibernation.
 
-Anyway, I guess easiest resolution here is for you to take the bits that belong
-to your trees and Andrew takes the bits that belong elsewhere?
+Obviously, this works fine in non-SB environments since lockdown doesn't=20
+negatively impact power management there, but if this manages to make it ov=
+er=20
+the finish line in some form, I would like to be sure the approach is=20
+compatible or can be made compatible.
 
-I don't think anything here has an inter-dependency.
+[1]: https://invent.kde.org/tduck/dynamic-hibernate
+[2]: https://src.fedoraproject.org/rpms/dynamic-hibernate
 
 
-On Sat, Nov 07, 2026 at 08:26:29PM +0100, David Hildenbrand (Arm) wrote:
-[ ... ]
->
-> Because of [PATCH 05/13] mm: convert THP VMA flag tests to use vma_flags_t which
-> is THP-only, and feels like it could go straight through one of my trees,
-> avoiding conflicts with Andrew's tree. But maybe there is more to it that I am
-> missing.
 
-Sorry about that! Please take that through your tree.
+=2D-=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
->
-> I assume stable topic branches would fix that, but they are currently
-> unfortunately not on the table ... :)
 
-I guess we need everybody-on-git for this!
-
-I guess when Liam and & I have the VMA tree we can do that at least for stuff
-that goes there :)
-
->
-> >
-> >>
-> >> Ideally, patches really only touch one component.
-> >
-> > Right, but sometimes functions are declared in one place and called in
-> > others. It is impossible to change the signature of one without also touching
-> > the others.
->
-> Yes. Something like that is unavoidable. Or if you need new APIs/
-
-Yes.
-
->
-> >
-> >>
-> >> [PATCH 07/13] mm/madvise: convert madvise_vma_behavior() to use vma_flags_t
-> >>
-> >> is all over the place :)
-> >
-> > It's not really all over the place, it's converting vm_flags_t to
-> > vma_flags_t across madvise.c, which involves changing a few function
-> > signatures, whose callers must be updated.
->
-> Ah, yeah. What on earth does arch/powerpc/kvm/book3s_hv_uvmem.c do with madvise :(
-
-Yeah it's quite worrying that... :)
-
->
-> >
-> > I could split it up into 3 patches where 1 does internal-only, one changes 1
-> > function, and the next changes another, if that works?
->
-> No, these things really have to go in as one unit, no need to split that up.
-
-Thanks, yeah, it's a pain I know but eventually 'one fine day' (probably in
-2028) everything will be converted to vma_flags_t/mmap_prepare and we won't have
-to think about this :P
-
---
-Cheers, Lorenzo
