@@ -1,77 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794164749;
-	b=IRwurULyhm+wTumn40tQ8aZhW7htVNwsJCWHZiiQ8SZD2o8oreVMGIPvOFCSfCokjsrd
-	 WexL9fVyOf3U4N4uZpmJqSl/wf9na9IvSd/iu8hNC8HrXCwXwXQfcWv6n+goby+NjGSbS
-	 ZmI7Dae7au3r6ijnVnmiWHZKYXEWpmRPQ0L/GZegC22pIQhJKrJbwnGzjP9BN40XFsguw
-	 29u2qU2bsIPG/SsuppzHtfMINnoj7t1X1KlUn+4sPItv3x8TsIEYwHyvsj57GTNeJ7itt
-	 eIfsxUf/eUldAY2m0qpB+Rn3Wx0Lodt08hlXCaD9ZZ1kGKH6lAZ74ZF/NXcp32+a0Lg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794164749;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
-	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
-	bh=rLyxJwr2Q1zmyzbvbW4Jg4mYpaRFZWR35m+j3Gs4cMU=;
-	b=v5MVoTZEb+FNmsW3+mcPNHWosCAG36gbi3T/XyV2QrhOSMaZ1ZOFxtgk7l6o5uEVYxj6
-	 4HUgJMZQTrR+ak9e2t+ysnd4WIV7HPKSvsEJfJZ5TEPtjfVzw3pCvBWsPndRamfT4eBvQ
-	 /wo9PqlY+7h4lPPQnDokEuxUWN8LW4IYmW1Vu7Krjo98TXN6aExyV9ZjmjNkk+yYJhByn
-	 xISvQPLPUg5QWLZ4Brn4SgjlUtsW1lsO82lV6j9Y7LXFOKsaj4XFkooVvJWOncTuMUE9K
-	 Wk6HNRC8fWw0ZuQhuaMf6ilHclbrxgqxfxm1tlYW2S7F7ykJDd1pRMev/XEteWIhtkQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.cyber.gouv.fr;
-	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
-	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=a5SwbWrC;
-	arc=none smtp.remote-ip=51.159.188.251
-Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794168334;
+	b=qA0waHF/PXFmIjwwRQ9srQnMW2XYhJNziWR38zqXxLn+IzY1fnQ4rz63SeOS/6uWnYx4
+	 Hf1L6l9BBqSc2f8IJXauew4YjaZUd5YpeOWJKiGAlUt+tcSwC2zPRLK7C9Bj9NZdD6lEW
+	 Hau9cmHwXJpHPhMOzUFFN7oEoJeiPvxagmu6WQyYBh/Q1Ch1vxJNkJ7xY3pK7hWjpgwRr
+	 aRaJboWajEBBa7jqztvJP7TsUkqdn+w/+2UKbl4m1Kw8nZDW5OZ7mB4860n562jCMz79b
+	 foS6hAginbl+r/Ze7mD78ONRiXvBLOwo36WvLaSfcIebghtcsKFfvufByhvLalUbR9A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794168334;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=/b+EcMdz3JBQYeBrlY3qE8serskLcpaM65tBwPNWFyc=;
+	b=HNeR1M6LZYPsbOmYvECyh/NA1MU43aBeFu8GMoQU3cvaCp/qwwhqjxFZh0QeIrB7FeRL
+	 L+xlpG3HivS28m2UeCFYyrA2B+/AQABpWQVdqH8TbDxP94YeJP0sDhwqhq1luDd6OQiIF
+	 v7fmIUcYgqcKdMy2nCBkoB3l2pwO9LCbYq4H1n/Zj62LbP22jbQBAFyBfU0di0wBwmy36
+	 Rr/m31afDUaQjse0ipGsM2nHp1mxYjmlTHJ1OqjDKj+8sbHUBHnuI4MhVAi7LxKqv+DNc
+	 YjAuk7YL8iZvcwBtqXN7XlV7OboLbDBzFiPm4As91qZpCwFIoCryDgyoVq1ch4KyedA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e0c8kjAh;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E5E606A330;
+	Sun,  8 Nov 2026 20:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e0c8kjAh
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794168334;
+	b=LpuFxBe7PNoQrR9FqPjOXk5HjFWfHAKRpWuy3/0Abf2BsDKbNCQmJ7KXf5N6Jk0WNBIP
+	 hNGeqk8O+XJVH7z3ulQbtbDWV6LyR2Zz62I89sbeMxAGybtyHPJKkg1/pRjATADJnQya7
+	 OB+VYLZtPKc4QF/qRsAbrug/EuQtEFsVgAPER2erW8UkpzXZk8rMXHvPGUzBdYhg4A7g8
+	 i9fXrE105svQTaEKRvQ5ddbGWILnGZ1f/RE2ubv1NPCq75jeaXnIKw0PqjALgD403rLlF
+	 YprWir4qlE3p7UQnS7yud9EjMxnSqrvE0njelVwvOU2guKNJ73bYvV48P3ucRv+DF+A==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794168334;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=/b+EcMdz3JBQYeBrlY3qE8serskLcpaM65tBwPNWFyc=;
+	b=bR+cslNfQFeIdi01pQ98Pojq1IsjKnRX+ceC0wAeI8OHf6igfinyG3W0LZR/p5nam/qI
+	 oyFZJl09HLg7awBWu67j+C2ypjTNVWRMK5jKuciTl4ZQzLhRYCfQMLfl9wyvHG2iXYBcr
+	 Fw95mgYrnsYp2lZQ5LhtvPT3yBHKLw0Ae7TarrGy9694Bj353mHy4LA/yTR6bK4Uzu+n1
+	 PA+Q/o37HK1+cPKeXUszQ3iuzssfP+sTzxYpgXpUXl6fIzQ/Maa73gh+DiYTPfop9kvBv
+	 8EOtUQbJcWrpveqrn6FtM8qNm5bUhv7fWHsp12FZmq1CJkquT+Zi9xTxJfCPEonu2Pg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FB7606A320;
-	Sun,  8 Nov 2026 19:05:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 60FB7606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=a5SwbWrC
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Sender:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=rLyxJwr2Q1zmyzbvbW4Jg4mYpaRFZWR35m+j3Gs4cMU=; b=a5SwbWrCywIz3dU7Pd5cFDAovJ
-	tw1hgr/BiXpgfHmDacdZlRj1+jIEe9f9QDF5XE1GMEQyMAy3ENDUBtM6fwSiIimMTgBcOZzOWKtUX
-	m+9rAKuXEtL7N7bl+bZT7OBAKuOGgyVSsVSNq5O8uufgFwtt40p3BXSI38F7m3t6/HDLkBBBWycqw
-	xhkvHRBjX9rdMgpVQnRmwtiCIXqqH/rpSGY7ixvOEyjv3dtgsbx6Wb5iLvRdNGIAgKcaPyLFzxMZn
-	WUGPxze9Lu+1LYeboGWEw3DI44JTkjYHZnxvSmCCT1HwEv8+VjhioWMfqdXE/Gumlka30XCl4wRVK
-	oZ5TfiAg==;
-Received: from [151.115.150.205] (port=41786 helo=gepetto..)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <Jeremy.Jean@oss.cyber.gouv.fr>)
-	id 1xQ8D4-0000000GibV-17vF;
-	Sun, 08 Nov 2026 20:05:46 +0100
-From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <baoquan.he@linux.dev>,
-	Mike Rapoport <rppt@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org,
-	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>,
-	stable@vger.kernel.org
-Subject: [PATCH] ima: fix kexec measurement buffer overflow after failed loads
-Date: Sun,  8 Nov 2026 19:04:04 +0000
-Message-ID: <20261108190404.1397829-2-Jeremy.Jean@oss.cyber.gouv.fr>
-X-Mailer: git-send-email 2.47.3
+	by smtp.kernel.org (Postfix) with ESMTPS id 8E1711F008A3;
+	Sun,  8 Nov 2026 20:05:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794168334;
+	bh=/b+EcMdz3JBQYeBrlY3qE8serskLcpaM65tBwPNWFyc=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=e0c8kjAh35KI85lZ1Qjj5mCQ1CROC8CU8n+z5efDzz9DKMOYv8LoceJOlNxEpFEnc
+	 5QBQlyQpA6BWOsK/A4s7SJ70pv5M8jFQWGM/xC45jgKA/RYJBVBI2Fbm8KpnBFAUGd
+	 /CJTTJ5lPNT4ExbvFAT/Oz3PUYls9pe+NAU6J+aWf23KcvPnu+tEZ33U2KiaPC4ZKG
+	 8WcCci6nP6P6d1zn2gosC29qmbot+1DOg4UHK68/RsYrBu4gLVwDtDf0QcZUHTEPE0
+	 Bb85NILWrVpDxr75L7de4D4AVhbCaGJ2o5oIlI90T3QuRNLv/hPKS4pFFniiman/QD
+	 siMnQyHDCxABA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id E80BE480B2;
+	Sun,  8 Nov 2026 20:05:32 +0000 (UTC)
+From: Alban Munari via B4 Relay <devnull+alban.kernel.gmail.com@kernel.org>
+Date: Sun, 08 Nov 2026 20:05:12 +0000
+Subject: [PATCH v2] tpm: Remove enum tpm2_session_types
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -81,107 +82,99 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261108-tpm-se-trial-v2-1-92c2090351d7@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WNQQ6CMBBFr0Jm7RimQQVX3MOwKDCFMZSSthIN4
+ e4Crl2+5P33FwjshQPckwU8zxLEjRuoUwJNr8eOUdqNQaXqSpTmGCeLgTF60QNe8rRmU9SZoRt
+ sk8mzkfeRe1Q/Dq/6yU3cG7vRS4jOf46/mXbvT3omJMwKpSg3RcsZlZ3VMpwbZ6Fa1/UL9ajHA
+ LoAAAA=
+X-Change-ID: 20261108-tpm-se-trial-580bef9b4f17
+To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, 
+ James Bottomley <James.Bottomley@HansenPartnership.com>, 
+ Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Alban Munari <alban.kernel@gmail.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794168332; l=2277;
+ i=alban.kernel@gmail.com; s=hephaestus; h=from:subject:message-id;
+ bh=FiL44ygx4KhhpPRDazZwhl0/A0dCZenHQ3H9IagOC6Q=;
+ b=X0eopT0lIsvtKricO5oVDqirkfAmYyAILXvY63PUg5+af7w6HbF4DfZC2LAiqWKAcIppx2ncj
+ jcPliS4jvUJACDva0p4Vc8DnyhDSbCu2Qx/PKA7/vbc9mbs9GB6eD3V
+X-Developer-Key: i=alban.kernel@gmail.com; a=ed25519;
+ pk=E4gTLxHRk8yuKicoDcjhUfRHnlctgbnlV9dmOwM5338=
+X-Endpoint-Received: by B4 Relay for alban.kernel@gmail.com/hephaestus with
+ auth_id=1455
+X-Original-From: Alban Munari <alban.kernel@gmail.com>
+Reply-To: alban.kernel@gmail.com
+Content-Transfer-Encoding: 7bit
 
-When kexec_file_load() fails to install a new image, it can leave the
-global IMA scratch buffer larger than the IMA segment of the current
-image. When that image is executed, ima_update_kexec_buffer() copies
-the larger log past the end of its reserved segment. In a test, KASAN
-reports it as:
+From: Alban Munari <alban.kernel@gmail.com>
 
-  BUG: KASAN: vmalloc-out-of-bounds in ima_update_kexec_buffer+0x265/0x280
-  Write of size 868426 at addr ffffc9000004e000 by task init/1
-  ...
-  Call Trace:
-   ...
-   __asan_memcpy+0x3b/0x60
-   ima_update_kexec_buffer+0x265/0x280
-   ...
-   blocking_notifier_call_chain+0x88/0xb0
-   kernel_restart_prepare+0x18/0x40
-   kernel_kexec+0xe4/0x130
+TPM2_SE_TRIAL is defined as 0x02, while the TPM 2.0 Library
+specification, Part 2: Structures, revision 01.83, section 6.11, Table
+21, defines TPM_SE_TRIAL as 0x03.
 
-Limit the dump to the smaller value between the scratch size and the
-installed image segment size. Update the IMA mapping only after
-machine_kexec_post_load() succeeds.
+The only user of enum tpm2_session_types is tpm2_start_auth_session(),
+which starts an HMAC session. Remove the enum and pass the session type
+there as a literal, rather than fix a constant that nothing uses.
 
-Fixes: 9f0ec4b16f2b ("ima: kexec: move IMA log copy from kexec load to execute")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Alban Munari <alban.kernel@gmail.com>
 ---
- kernel/kexec_file.c                | 6 ++++--
- security/integrity/ima/ima_kexec.c | 8 +++++---
- 2 files changed, 9 insertions(+), 5 deletions(-)
+Changes in v2:
+- Remove the enum instead of fixing TPM2_SE_TRIAL (Jarkko).
+- Refer to the section of the TCG specification.
+- Drop the Fixes tag: no code used the wrong value.
+- Link to v1: https://patch.msgid.link/20261108-tpm-se-trial-v1-1-492218f9de41@gmail.com
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index b668ce8d68eed..0b3245389b758 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -206,11 +206,13 @@ kimage_validate_signature(struct kimage *image)
- 
- static int kexec_post_load(struct kimage *image, unsigned long flags)
- {
-+	int ret = machine_kexec_post_load(image);
-+
- #ifdef CONFIG_IMA_KEXEC
--	if (!(flags & KEXEC_FILE_ON_CRASH))
-+	if (!ret && !(flags & KEXEC_FILE_ON_CRASH))
- 		ima_kexec_post_load(image);
- #endif
--	return machine_kexec_post_load(image);
-+	return ret;
- }
- 
- /*
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 0d845693a1f78..f7be8d85bb9a7 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -65,7 +65,6 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
- 
- 	ima_free_kexec_file_buf(&ima_kexec_file);
- 
--	/* segment size can't change between kexec load and execute */
- 	ima_kexec_file.buf = vmalloc(segment_size);
- 	if (!ima_kexec_file.buf)
- 		return -ENOMEM;
-@@ -98,12 +97,14 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 	struct ima_kexec_hdr khdr;
- 	int ret = 0;
- 
--	/* segment size can't change between kexec load and execute */
- 	if (!ima_kexec_file.buf) {
- 		pr_err("Kexec file buf not allocated\n");
- 		return -EINVAL;
+To: Peter Huewe <peterhuewe@gmx.de>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/char/tpm/tpm2-sessions.c | 2 +-
+ include/linux/tpm_command.h      | 6 ------
+ 2 files changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index ca1e2bf424e1..63e1dd596bc5 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -1043,7 +1043,7 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
+ 		return rc;
  	}
+ 	/* session type (HMAC, audit or policy) */
+-	tpm_buf_append_u8(buf, TPM2_SE_HMAC);
++	tpm_buf_append_u8(buf, 0x00 /* HMAC */);
  
-+	/* A failed replacement load may have resized the scratch buffer. */
-+	ima_kexec_file.size = min_t(size_t, ima_kexec_file.size, segment_size);
-+
- 	memset(&khdr, 0, sizeof(khdr));
- 	khdr.version = 1;
- 	/*
-@@ -239,7 +240,8 @@ static int ima_update_kexec_buffer(struct notifier_block *self,
- 		return ret;
- 	}
+ 	/* symmetric encryption parameters */
+ 	/* symmetric algorithm */
+diff --git a/include/linux/tpm_command.h b/include/linux/tpm_command.h
+index fc446a1282e2..c9988fcff916 100644
+--- a/include/linux/tpm_command.h
++++ b/include/linux/tpm_command.h
+@@ -168,12 +168,6 @@ struct tpm1_get_random_out {
+ /* TPM2 specific constants. */
+ #define TPM2_SPACE_BUFFER_SIZE		16384 /* 16 kB */
  
--	ret = ima_dump_measurement_list(&buf_size, &buf, kexec_segment_size);
-+	ret = ima_dump_measurement_list(&buf_size, &buf,
-+					kexec_image->ima_buffer_size);
- 
- 	if (ret)
- 		pr_err("Dump measurements failed. Error:%d\n", ret);
--- 
-2.47.3
+-enum tpm2_session_types {
+-	TPM2_SE_HMAC	= 0x00,
+-	TPM2_SE_POLICY	= 0x01,
+-	TPM2_SE_TRIAL	= 0x02,
+-};
+-
+ enum tpm2_timeouts {
+ 	TPM2_TIMEOUT_A		= 750,
+ 	TPM2_TIMEOUT_B		= 4000,
+
+---
+base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
+change-id: 20261108-tpm-se-trial-580bef9b4f17
+
+Best regards,
+--  
+Alban Munari <alban.kernel@gmail.com>
+
 
