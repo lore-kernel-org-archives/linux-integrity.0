@@ -1,71 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794092746;
-	b=l8wicbvoWizBVpDhAYM8gla+P9ih+Z5GoIuAzoXTB21CDhKDsIm47DQChzTDFSpbwqzI
-	 pDzjY/BqZErMN2Tb9Djwd7BJ67ePSUDLmISi2JkcxqTiDBLclMSAtFcVIZxXX9Jl/G9Nb
-	 nqcn3A07AeuHmFj4sK61BdFRlNtUvnxZK7vm4mLJQ5hHBVGYcl9nQ9lHyhojWz4Tjfvxq
-	 tS34RCXLRiIkxBwKCpCXa3eQCpbOsoBRj6uRotYqPLeLJPjs40JjegxSUKBfALr276bxe
-	 dxNSDbpdl/Cxq8UPyX9gB8yKoA7dZtCn0TrqoqKGhzey7g/JHUcNLM7+qlwY38RXZ3w==
+	t=1794101744;
+	b=Z9oCirWcdUWGJnL8SkE02iI7nHr4EBJjvB1Ox2L0If0KoNFMnJzbg90fqubn6sJQG5hq
+	 PgRZ77aRNbUHAycguDBtec/3kfnkl23Focb5DaWHZhD1CjIc5n17iHTAg6SCQWgnkRkl9
+	 Hc/Ay/b6zb8G5gjDLjxTcXFKQVlEn9RLmXY8vqPx8gOyOktXGeWkG6eIFfcwmYLD9g5VF
+	 21lwPKlJWcMPntd6T+B6+8YEk0CYJ/QnbhL5Rj/ooS7cniF/8E131TafpO9y+1KW1bDBq
+	 9GJaqcVyuwrOgM3HOl/6bxO9CCLeKeXlut8R0BBG0bYoxxScs0YDngv83P/nDFqHk2Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794092746;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
-	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
-	bh=DIMiaePVV9GcXMmhefDHZYoBfudUKELmzbg1o7Nw6s0=;
-	b=qCXlXEPX5/8ZoiZdOieffH4bhmvsdScGPNtkS30qJCGd79FJTahD94FQEEvL5R7FLjwh
-	 xVYTO0HGYjqrku+IzmDvUKedInRDmt65D8+TBT0GP70wbnthX7BxzvJQMK5G+ntK1CQBu
-	 WW6XHaDEJj6lcbeJTBRqEbxLsJV6WHtr3936UO9gaE0m2sJyPV9nz4gIs+372R3rsrjma
-	 Wu2YY8a7GfXeewyhmLXmDNZP/KMu59eumIWfSPsROqmfEf8mqlyjY5iITokK7rhm4pq1S
-	 cjZgmwDYKWgYTcAG0DCvPPqy8ikvFI/dbcQmkXOT2iD26v3swjk2gEXQ8jKl2By5d/Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794101744;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=1jjWt3b9VOCOhPOBER5bc1d0BDO1F3j/SxlqU5kxk0M=;
+	b=aBxNK2eMAykggAsrjTZYQHwJooM64QTQ1UVl9OeeXuspQbDcDBJQAFq8n5BGss7kJGHM
+	 LtFRRrc31oKmwveFo5BZLYfgZQIrw7EWrgwpLmGot5zrrd+o5XdAedKXen3oVjzqetMnz
+	 lIeScwlkpvfp+38w2jtgbLdF4kkvM1KUd6oo/ho7t4sN+KIezMCHGiSSKiNeFz9iYE3aF
+	 ZQcoORs+uwXO0zXXmbJWzmhYvSLrArRTbNgCHQ2nx1+p1lRvK+1MmupcsmbegZZ8JzDyJ
+	 MzGFuHkV06gVUV2xqCT8uf9L2K+cTIxfsyEaKSPgMz3S0uXN89j3temGyQXMrNiM44Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.cyber.gouv.fr;
-	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
-	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=fKNReNxx;
-	arc=none smtp.remote-ip=51.159.188.251
-Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n22PmfRL;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DDF606A326;
-	Sat,  7 Nov 2026 23:05:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 64DDF606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E41F606A326;
+	Sun,  8 Nov 2026 01:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=fKNReNxx
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Sender:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=DIMiaePVV9GcXMmhefDHZYoBfudUKELmzbg1o7Nw6s0=; b=fKNReNxx7jbsQMz9QoJ0/b0oIv
-	VvdJ3cxvHCSoLjVUNoqk5U39eCuLOCXu16s4JonptlVR18DB/phUibsX9y2eXpbAxzXw7oPt8DqzR
-	KOqn8oXkJJMHPQ/mJi+1GkjQkgeKyu3/NIWG/t448lqNEGZy6qOKzDc8bbZ5Ymtth0D7TghRMmq0q
-	x4srJ9xBS/8fT40w/IBylFOyJKl9QCNJfd/DkeZ073ncWZLrIGmz/iZQx7ZpLLushDSYylClKg9fu
-	9fI2l64PPCtfnjB+U6pfPCOMc6K0MdoX+zxHuviMCw/iZzIsIgt8WiKu8l6LoAQ+iNhGU3wVavadd
-	Q7vijMFQ==;
-Received: from [151.115.150.205] (port=44646 helo=gepetto..)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <Jeremy.Jean@oss.cyber.gouv.fr>)
-	id 1xPpTo-0000000EVj3-1hHr;
-	Sun, 08 Nov 2026 00:05:44 +0100
-From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] evm: fix TOCTOU heap OOB in protected xattr reads
-Date: Sat,  7 Nov 2026 23:05:15 +0000
-Message-ID: <20261107230514.1108379-2-Jeremy.Jean@oss.cyber.gouv.fr>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n22PmfRL
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D1A21F0089F;
+	Sun,  8 Nov 2026 01:35:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794101743;
+	bh=1jjWt3b9VOCOhPOBER5bc1d0BDO1F3j/SxlqU5kxk0M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=n22PmfRLwH9vCJiaf/Tt+q5Pj/mzwVjj35Dl5p8BHBpV+snYXVGYXUXIVhWCH+vZ5
+	 9iRoDhG4eAaL7n/LbL3EmdB5i19krST80SmH+RfJbi7mpm1MJMLpk6GW5GhPEjxoA0
+	 K1z2XWKVorZ+W5HfxdjPYkrxe5kMOA/HLrMZIaZn0Hs6/5GQyVAFBoV0NwsdimITOW
+	 rXF9485T/wduzPWB4ZH1hf3+Uc7dHxDmQ7j9mrS8KQaDEHfB+R7TOrBKb0RHR5Vodq
+	 XttgD1WjScEcDNv+bq3zPpto7nTtuz7OA2fL8FBNfbv3e/uwy5AYOwNBsHipIlyzwB
+	 2+1uX8N0AWvqw==
+Date: Sun, 8 Nov 2026 01:35:26 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+Cc: alexandre.belloni@bootlin.com, andy@kernel.org, asahi@lists.linux.dev,
+ bhelgaas@google.com, bp@alien8.de, brgl@kernel.org,
+ dave.hansen@linux.intel.com, dlechner@baylibre.com,
+ dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, griffin@kroah.com,
+ hansg@kernel.org, hpa@zytor.com, ilpo.jarvinen@linux.intel.com,
+ j@jannau.net, jarkko@kernel.org, jmorris@namei.org,
+ keyrings@vger.kernel.org, lee@kernel.org, lenb@kernel.org,
+ linusw@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux@roeck-us.net, mfd@lists.linux.dev, mingo@redhat.com, neal@gompa.dev,
+ nuno.sa@analog.com, paul@paul-moore.com, pavel@kernel.org,
+ platform-driver-x86@vger.kernel.org, rafael@kernel.org,
+ roberto.sassu@huawei.com, serge@hallyn.com, sre@kernel.org,
+ sven@kernel.org, tglx@kernel.org, wim@linux-watchdog.org, x86@kernel.org,
+ zohar@linux.ibm.com
+Subject: Re: [RFC PATCH 14/14] mfd/macsmc: add ioctl to access smc keys
+Message-ID: <20261108013526.1ce3b9b2@jic23-hlaptop>
+In-Reply-To: <20261104195317.8284-1-atharvatiwarilinuxdev@gmail.com>
+References: <20261101013817.22d67ea7@jic23-hlaptop>
+	<20261104195317.8284-1-atharvatiwarilinuxdev@gmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -75,95 +78,37 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-ima_eventinodexattrs_init_common() queries the total size of protected
-xattrs, allocates that amount, and calls evm_read_protected_xattrs()
-again to fill the buffer. This creates a TOCTOU window: if the
-protected xattr changes between the two calls to
-evm_read_protected_xattrs(), names and lengths are written without
-checking whether the data still fits in the target buffer. This can
-yield an OOB heap write that KASAN reports as:
+On Wed,  4 Nov 2026 14:53:17 -0500
+Atharva Tiwari <atharvatiwarilinuxdev@gmail.com> wrote:
 
-  BUG: KASAN: slab-out-of-bounds in evm_read_protected_xattrs+0x15e/0x280
-  Write of size 20 at addr ffff888002c59bcd by task init/62
+> > If this isn't matching some legacy interface, then we need more
+> > on what these do.  Maybe they are suited to some other kernel
+> > interface? In particular they might need the various controls
+> > on how destructive they are that something like fwctl brings.
+> > 
+> > Generally an arbitrary opaque path to firmware isn't a good idea...
+> > 
+> > Jonathan  
+> 
+> Here its required, if we write CPU/GPU Pstates and PPT to
+> some keys (MSTS MSPC HE0N), we can reduce the temp by 10C
+> And We can fix the dreaded PROCHOT signals on macs, Giving
+> Same temps as macOS.
 
-Reject fields that no longer fit in the target buffer. For xattr
-values, also check the length returned by the copy before accounting it.
-This also handles the case where a size of 0 is treated as a length
-query.
+Being able to control them is good, but ideally we'd map
+these to appropriate subsystems rather than having a magic
+interface for them.  There might of course be some gaps
+that need plugging, but custom ioctl is rarely the way to go
+(except maybe due to legacy userspace we don't want to touch!)
 
-Fixes: 8314b6732ae4e ("ima: Define new template fields xattrnames, xattrlengths and xattrvalues")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
----
-Changes since v1 (after review from Sashiko):
-- Handle the 0 case.
+Jonathan
 
-v1: https://lore.kernel.org/all/20261107194909.1061154-2-Jeremy.Jean@oss.cyber.gouv.fr/
-Sashiko: https://sashiko.dev/#/message/20261107194909.1061154-2-Jeremy.Jean%40oss.cyber.gouv.fr
 
- security/integrity/evm/evm_main.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index ac8328812e6ef..2ed0b67b9109b 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -389,6 +389,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
- 		case 'n':
- 			size = strlen(xattr->name) + 1;
- 			if (buffer) {
-+				if (total_size > buffer_size ||
-+				    size > buffer_size - total_size)
-+					return -ERANGE;
-+
- 				if (total_size)
- 					*(buffer + total_size - 1) = '|';
- 
-@@ -398,6 +402,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
- 		case 'l':
- 			size = sizeof(u32);
- 			if (buffer) {
-+				if (total_size > buffer_size ||
-+				    size > buffer_size - total_size)
-+					return -ERANGE;
-+
- 				if (canonical_fmt)
- 					rc = (__force int)cpu_to_le32(rc);
- 
-@@ -407,12 +415,20 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
- 		case 'v':
- 			size = rc;
- 			if (buffer) {
-+				if (total_size > buffer_size ||
-+				    size > buffer_size - total_size)
-+					return -ERANGE;
-+
- 				rc = __vfs_getxattr(dentry,
- 					d_backing_inode(dentry), xattr->name,
- 					buffer + total_size,
- 					buffer_size - total_size);
- 				if (rc < 0)
- 					return rc;
-+				/* A size of 0 may be treated as a query. */
-+				if (rc > buffer_size - total_size)
-+					return -ERANGE;
-+				size = rc;
- 			}
- 			break;
- 		default:
--- 
-2.47.3
+> 
+> But you and Sasha are right, that exposing all keys is a
+> bad idea, so i have restricted writing to some keys only.
+> 
 
