@@ -1,101 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=14.137.139.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794212734;
-	b=dZXfIHvITrQIvLAGI/AWZfT7VPhyMGlRJ4FhlbxNVPQIdkY1YdOUso4vbfGEnahbIFhV
-	 9c/6HM5GOMTD00IQr4pc57xk+b/STlPQsquOEhiBp2e5qkOzsvM0xstJg9QIOAP6mE04+
-	 2F9/1b10DXnx5qak1/rJf7v6RBOin2elWJ3imoDynfohLC/8uVHpb2o05gBMmBr+DnDpW
-	 59lz2uR43n4lo07pwCbBz6mfDPRYWRqk4fpXL8M6eUdVDBuGVwRFRvaltejqSZ8Yy7weY
-	 R3uPDbHyBZIIrtVhe/zoqzpkxst4VVMfiqa8JW6DV7UF3aYK7zudXPg+T0Sx9/nMDyA==
+	t=1794215299;
+	b=JKVxaX5mXb7iWpEphqlN1oSdNh12f7RgPbFzgDogv8+AIUgvdYoUC7H2DnEHIRccjRft
+	 L+soDJr7TK5cqEIq91hHUmXrBlnAqciZOaya1QAIPuvvEj8Nal7D4dgF8ji6Iy/CJA7HR
+	 349pO4dckpqHslxKU5bZl9J4KJ3TUx1RQH83gjY8kVHivyLFqfs+3FYOZ2rPqUFg5KSSg
+	 +XLHTqcM/SOTJwlhN0siJSEzSCIgHJAJ1wPsyM9ktXCfXLcEGXEr4qlbMokusSJn40r/z
+	 ami8VJLNXnll/sv/fSJz6w8nTh18hoXrB2VC7SAQQ+k01xwVgOeLJ2gx5rY37sZgtmw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794212734;
-	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
-	 DKIM-Signature:Received:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding:X-Spam-Flag:
-	 X-Spam-Level:X-Spamd-Result:X-Spam-Score;
-	bh=A4oUi5vp/2emtE9Fr/c3cwsOuJmCimuvjbyahDedgBM=;
-	b=XU7JEzrQpP8ophZQouugTxQ71IVBsE3zmYt+9XtVQNt0H4yeC2ITNvVOzMfzZITYvnyG
-	 Tdipj82YBV1HgVs0uaAvB5qXIW/qOapmOf7J4x7PYra3UItaYnYGGijc23KOp5h2n7i3U
-	 tUvymTXDFSAn3xWIasRxRZDuzBNeCrwleXIhU16u1g+AIwaY6x3ckdDlAhIh4aNud6XRM
-	 2N4uCSAwxA6cZIAyMQXSVK1O7GgRDSVeHvQah7C7ftM86kvhQJWI/phKmI1UBa5nUnyh7
-	 81xRjbuqwhze41SEJpk/y+1UHw5DdqRbwrYLnpGhE8cn2CnC8G5z2O1wjKfumpWHrYA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794215299;
+	h=DMARC-Filter:Received:Received:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-CM-TRANSID:
+	 X-Coremail-Antispam:X-CM-SenderInfo;
+	bh=WNYcEhnvU8wcHU8zemgPXvta2itTQnZpRv+qT216orI=;
+	b=Y3xTv58d0EL/88fJxAgb/g1b8FixWp/KUQ9iarB+1lHiUpATMHHZP6ztNrYka4AiGQn3
+	 QuFAhgD6XlMQWmw/pBvIIiGYEOYMTDsa6pT9RACu/MJkLRGtY1FqItGp8YUi4frjkkyQf
+	 OFEA8SnoE/OgxYjZVrwx+ypgoBAFXF0/kxDOoZNTlzI91FEdRGdzKs78q3COgEYfjGI1S
+	 6ImhvApYZiFfo4jyBiSnLqUZ+mySRcDL0waifTGpbrnECSGWrDlqEmjyKtCsoABWE3Lag
+	 z2ru2+WhzkMw9Qi365xAYuh39ys4ZYXGxF3Bl4YJEVINhvXzjre6zWQ5B92XpfzfA8Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=suse.de;
-	spf=pass smtp.mailfrom=suse.de;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=faZahCnb;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=PQ4F9vJe;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=qAFMvgdc;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=vxHSxg6+;
-	arc=none smtp.remote-ip=195.135.223.130
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dmarc=none header.from=huaweicloud.com;
+	spf=pass smtp.mailfrom=huaweicloud.com;
+	arc=none smtp.remote-ip=14.137.139.46
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49E2606A31C;
-	Mon,  9 Nov 2026 08:25:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E49E2606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=faZahCnb;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=PQ4F9vJe;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=qAFMvgdc;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=vxHSxg6+
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D458F2217D;
-	Mon,  9 Nov 2026 08:25:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1794212732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=A4oUi5vp/2emtE9Fr/c3cwsOuJmCimuvjbyahDedgBM=;
-	b=faZahCnbv+T2hWi3ztV9rljCL41+ZO9ySPETSV3cqB/IZwXJ0nyNr/GZ23YYXSCpe/jmGd
-	jTiQEnk9A4X5/7NzbJ1/wcSVbe/JlBA8/LFSOwxlLVR+yJP4lojdchqlddUYOgY/AM2Y/o
-	QawCtBhnEhj0eQT/uzU+aYb28mt3P7Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1794212732;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=A4oUi5vp/2emtE9Fr/c3cwsOuJmCimuvjbyahDedgBM=;
-	b=PQ4F9vJe9cSNP9BjDWlUA53CM7wCM1ZJzVDGp+TA3G1DhSrGlMRgZAQSoi5hdFwnDxINBH
-	VsffLtIaMvVta9Dg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1794212730; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=A4oUi5vp/2emtE9Fr/c3cwsOuJmCimuvjbyahDedgBM=;
-	b=qAFMvgdc/kSzIvkUXKr5AIws2s9zRqx60KZ6y9asdE9TE5iHc7ZR61Xh517p5F333QNgWp
-	45PPJURT1MD9iV9xFZZDAhboIWcFxOT8d1QUqKpa1lft9pBIwYt7aHvLYt4xgVyyPDPi2Q
-	ZLuIbXii2VgsoGcBDN4E4Wfat2VqBqI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1794212730;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=A4oUi5vp/2emtE9Fr/c3cwsOuJmCimuvjbyahDedgBM=;
-	b=vxHSxg6+xLdPLIcD0v8xKJVkEp9VGGIqhbdSEUoYDExfGH+MUXKt83NPyov1tnyLsgcc3q
-	9JC3IiGhqRzTrODQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 847E013302;
-	Mon,  9 Nov 2026 08:25:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kMjXFnqD8WqEaAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 09 Nov 2026 08:25:30 +0000
-From: Takashi Iwai <tiwai@suse.de>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: acpi: Fix memory leak at tpm_read_log_acpi() error path
-Date: Mon,  9 Nov 2026 09:25:24 +0100
-Message-ID: <20261109082527.541901-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.53.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE3B606A31C;
+	Mon,  9 Nov 2026 09:08:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BCE3B606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4jNP7h5QBLzpV8h;
+	Mon,  9 Nov 2026 17:07:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.157])
+	by mail.maildlp.com (Postfix) with ESMTP id 7ECA14055C;
+	Mon,  9 Nov 2026 17:08:07 +0800 (CST)
+Received: from [10.221.98.11] (unknown [10.221.98.11])
+	by dep2_app1 (Coremail) with UTF8SMTPA id nRC2B0AmB11vjfFqZ2IPAA--.4181S2;
+	Mon, 09 Nov 2026 10:08:07 +0100 (CET)
+Message-ID: <98d6c26c-3dc4-4659-8284-a7ab0629bb40@huaweicloud.com>
+Date: Mon, 9 Nov 2026 10:07:48 +0100
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -105,62 +51,124 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] evm: fix TOCTOU heap OOB in protected xattr reads
+To: =?UTF-8?B?SsOpcsOpbXkgSmVhbg==?= <Jeremy.Jean@oss.cyber.gouv.fr>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20261107230514.1108379-2-Jeremy.Jean@oss.cyber.gouv.fr>
+Content-Language: en-US
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+In-Reply-To: <20261107230514.1108379-2-Jeremy.Jean@oss.cyber.gouv.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spamd-Result: default: False [-11.80 / 50.00];
-	SUSE_INTERNAL_BYPASS(-9.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[gmx.de,ziepe.ca,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de]
-X-Spam-Score: -11.80
+X-CM-TRANSID:nRC2B0AmB11vjfFqZ2IPAA--.4181S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCFy7ZryDZr45KFW7trW5ZFb_yoW5Cr45pF
+	90kFW3tr45t34Ikr9rtF13Aa4Fk34DXw1Uu3yxG3W2yan09rs5ZrySgrWjgryxCrnrXwn7
+	Aa90qFnYkw1qvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Jr0_Gr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASDWrxOrk8KAACsT
 
-When devm_add_action() returns an error, we do NULL-clear
-log->bios_event_log unnecessarily before calling tpm_bios_log_free(),
-and it would lead to a memory leak of the allocated log buffer.
+On 11/8/2026 12:05 AM, Jérémy Jean wrote:
+> ima_eventinodexattrs_init_common() queries the total size of protected
+> xattrs, allocates that amount, and calls evm_read_protected_xattrs()
+> again to fill the buffer. This creates a TOCTOU window: if the
+> protected xattr changes between the two calls to
+> evm_read_protected_xattrs(), names and lengths are written without
+> checking whether the data still fits in the target buffer. This can
+> yield an OOB heap write that KASAN reports as:
+> 
+>    BUG: KASAN: slab-out-of-bounds in evm_read_protected_xattrs+0x15e/0x280
+>    Write of size 20 at addr ffff888002c59bcd by task init/62
+> 
+> Reject fields that no longer fit in the target buffer. For xattr
+> values, also check the length returned by the copy before accounting it.
+> This also handles the case where a size of 0 is treated as a length
+> query.
+> 
+> Fixes: 8314b6732ae4e ("ima: Define new template fields xattrnames, xattrlengths and xattrvalues")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+> ---
+> Changes since v1 (after review from Sashiko):
+> - Handle the 0 case.
 
-Fix it by simply jumping to the err.
+Hi Jeremy
 
-Fixes: a3a860bc0fd6 ("tpm: Change to kvalloc() in eventlog/acpi.c")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- drivers/char/tpm/eventlog/acpi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I already sent a patch to the mailing list to fix the same problem (it 
+is similar to yours):
 
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index cf02ec646f46..50770cafa835 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -167,10 +167,8 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	}
- 
- 	ret = devm_add_action(&chip->dev, tpm_bios_log_free, log->bios_event_log);
--	if (ret) {
--		log->bios_event_log = NULL;
-+	if (ret)
- 		goto err;
--	}
- 
- 	return format;
- 
--- 
-2.53.0
+https://lore.kernel.org/linux-integrity/20261029142707.2602008-1-roberto.sassu@huaweicloud.com/
+
+Thanks
+
+Roberto
+
+> v1: https://lore.kernel.org/all/20261107194909.1061154-2-Jeremy.Jean@oss.cyber.gouv.fr/
+> Sashiko: https://sashiko.dev/#/message/20261107194909.1061154-2-Jeremy.Jean%40oss.cyber.gouv.fr
+> 
+>   security/integrity/evm/evm_main.c | 16 ++++++++++++++++
+>   1 file changed, 16 insertions(+)
+> 
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index ac8328812e6ef..2ed0b67b9109b 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -389,6 +389,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+>   		case 'n':
+>   			size = strlen(xattr->name) + 1;
+>   			if (buffer) {
+> +				if (total_size > buffer_size ||
+> +				    size > buffer_size - total_size)
+> +					return -ERANGE;
+> +
+>   				if (total_size)
+>   					*(buffer + total_size - 1) = '|';
+>   
+> @@ -398,6 +402,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+>   		case 'l':
+>   			size = sizeof(u32);
+>   			if (buffer) {
+> +				if (total_size > buffer_size ||
+> +				    size > buffer_size - total_size)
+> +					return -ERANGE;
+> +
+>   				if (canonical_fmt)
+>   					rc = (__force int)cpu_to_le32(rc);
+>   
+> @@ -407,12 +415,20 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+>   		case 'v':
+>   			size = rc;
+>   			if (buffer) {
+> +				if (total_size > buffer_size ||
+> +				    size > buffer_size - total_size)
+> +					return -ERANGE;
+> +
+>   				rc = __vfs_getxattr(dentry,
+>   					d_backing_inode(dentry), xattr->name,
+>   					buffer + total_size,
+>   					buffer_size - total_size);
+>   				if (rc < 0)
+>   					return rc;
+> +				/* A size of 0 may be treated as a query. */
+> +				if (rc > buffer_size - total_size)
+> +					return -ERANGE;
+> +				size = rc;
+>   			}
+>   			break;
+>   		default:
 
