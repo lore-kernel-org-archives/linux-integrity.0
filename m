@@ -1,94 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=134.93.178.243
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794222258;
-	b=Tw5VphnAmNWKIFy6Ixtd+HrTisQEu8hq5NLBxaSAK5KRgYL/OeMUM6ObncFtCM6owIHk
-	 +omCfiXPmTY+EGY6ttQTRmGT+JmwuKS0DI9FphJsbRZ9vHhpUxdvQuAOSdCF1Q+WQVpsz
-	 +P1aUCo8VdL1uIHhYaYLsPSW2DW5rCBAdyjzR3WHNkzJwP7C85sC+xRWVRSZSXCDC4/vM
-	 8UZoG5tyo9A7G2j0Q2ZzRvA5q9Rf+nb0UXPGxrETMxaOcG9i/yw0PBxh77G6zZvegtVB+
-	 61aUxfDbO+7nIfrUuneewjz6DxnTnMkvfdQCrIEZON/9V3IXKEahwJrDCLPAAS9zDTg==
+	t=1794227244;
+	b=srFN5VCe6g9DUFvI6/7vzQQ+zNiLnsYnrMjDjXXBAr39tbx4MGZRw4JN3IJLS7BHJDHC
+	 8rdpKa0KFmxZXsniJBE2w7/R1kon/XN1HHC9AmiKfc5Sq6C4lYV08Z0+6c+H/EQ/kSqA+
+	 fYYPla3ePT3oVUuyDYLPBnY/G3DoeuU7NwhSpfKpSsgutPkaggXOBYaNpD25gXrcggb9N
+	 qDDTDJfhVWOp0blCe4H8pta5wpPBZrf/6ymoW9Lobb5+DAXo9+5xHsZPL477JihtLXEK4
+	 8KUMdXq4478ADejRAQqBN/oYWLv5M7GemEZalq3vikERpHjQNJgXs1XzBZGUiYyX7fA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794222258;
-	h=DMARC-Filter:X-CSE-ConnectionGUID:X-CSE-MsgGUID:X-IPAS-Result:
-	 IronPort-Data:IronPort-HdrOrdr:X-Talos-CUID:X-Talos-MUID:
-	 X-IronPort-Anti-Spam-Filtered:X-IronPort-AV:Received:Received:From:To:
-	 CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
-	 X-ClientProxiedBy;
-	bh=IAvdkeYbWNqPuHgLOFIbTsl4llsltzOBBEnlGn0o0/Q=;
-	b=GwAK+keBeAZM8vf49TcKOGS+hx+zqxV7RluwghDEZD5GkfhJIPl+lK4zNT6ADiBskJXk
-	 5jRy9uHWKaN2PUosArytUCZLvjeWCdOwxkALRqKGcNNLkxtZLZKZFOSojEubkoBNitom3
-	 sEaqr15Hk/DSA0lmuhbmkMlHGlywKVixFKC+s/PpdFe6w0e2xCT1Y0PRotDF4Gt4VLAo1
-	 Df+Xuiyy3xb9CHJzFIiqw6mVfZTe0ro05HXUdRMzXlWS3Fy5cdhpiueFfLGWm8rRxXsPI
-	 w0pnndKkgxJVrTpLywdEr7ZHyionaf8xHT3WxAAnfQdgh7D3B7RluQJIppX13YclHRA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794227244;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=RYIcWcYzIUZ35LbYpg6XHYKMwvcMU7zN300uv/7AjsM=;
+	b=5L3gcaWF4f153ORc5lQUt+i37o2pI0gDGZx6wvKghUNHjj4jL6ql+0HHEeKLXyK5xR08
+	 SfZhxoqnBZ130dJc9KVNs0oHOcXuJKC7agxPakP5Pj1ir+GmiDlu9VF4U8SX9TUP+uuCZ
+	 eRFccs1vW4sfrWsVLeSrXl7ZAN7PseEnZy2Bk/AQot6AhotKyWKcdU6pebF6kQx7wYaTq
+	 1irsGhfWYYXr+pMomL2CXpnY6OJxYwDYnCwLXf8MxGWIVAuStia+J+ZY3QKBEtXCKQCJl
+	 Xpopa0X+OLGPCclNMhvOGaS1skReCjGfGsBgPdR6kGCWEFmAy26d28mHpJARKstA1Qw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=hs-mainz.de;
-	spf=pass smtp.mailfrom=hs-mainz.de;
-	arc=none smtp.remote-ip=134.93.178.243
-Received: from mailgate-3.ZDV.Net (mailgate-3.zdv.net [134.93.178.243])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WkYzP4rt;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93CC606A31C;
-	Mon,  9 Nov 2026 11:04:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E93CC606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hs-mainz.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hs-mainz.de
-X-CSE-ConnectionGUID: E54ZMBywTUO/zkDaGLm1TQ==
-X-CSE-MsgGUID: yIURpLAaRHiP40Wn8DkPug==
-X-IPAS-Result: =?us-ascii?q?A2APBABwp/Fq/z72XgpaglmDTIIJli6eJIF+DwEBAQ4BP?=
- =?us-ascii?q?RQEAQGFBQKOHic2Bw4BAgQDAgMBAQEBAQEBAQEBAQEKAQEBBQEBAQEBAQYEA?=
- =?us-ascii?q?YEhhglGDZATBjIBRhALRlYGDoMHAYJ0FL91gQHeSYFuBgkBgUOFdIJuAYUDh?=
- =?us-ascii?q?XM2gVVEhEA+hCEBAW2FeQSCIoEMl0BICnh4LAFVEw0KCwcFgSVDAzUSKhUjS?=
- =?us-ascii?q?wUtHYEjIR0XER5YGwYFEiAqQUNbgRKBB12BKyhdAQIfRi0VgXYCglGBI10CA?=
- =?us-ascii?q?UlBDgdFUwklQxJHJCIIEgkBExosCoEaNTwJJgQ7FQxkCxoFGkcIAgsCDHQoE?=
- =?us-ascii?q?RATHR4kLwUcJj4bCjYYDUgRLDcVGQQ+bgeSQoIwghxYdRE1H0iWFQGvbzQHg?=
- =?us-ascii?q?jmBaoFgCAyKMJU6Tapxkk6GOo4Kmw8CBAIEBQIYgW8IggYzGiSDN1IXAg+Wf?=
- =?us-ascii?q?MVogTUCBwIHDgMLkkgBgR0BAQ?=
-IronPort-Data: A9a23:mT7UGqqGsGZHOcXzWvjWkIJH8GVeBmJ4ZRIvgKrLsJaIsI4StFCzt
- garIBmFO62PNjf8fYh1Pd+18k0PuJbdnddkHFBorytmRiwa8JacVYWSI27OZC7DdceroGBPt
- JxCN4aafKjYbVeF/kv9b+e/9RGQ8YnSG9IQ3cadYngZqTdMEXln1FQ73bFp2uaEuPDhayuVo
- 9T+vsbDD1Gs3j9wIwo85rmKwP9VlK2aVAgw4BpkOpingHeEzyNLVctHdPnoR5fFatA88tCSF
- rurII6Rpgs1zz91Yvu5n7DydFE9Q7K6FWCmlnpMVqG+tQNJryo037xTHKJ0hZB/0mjhc3hZk
- b2hhLToIesbFvSkdNc1CnG0JxpD0Zhuo9crF5QdXfu7lCUqe1O0qxln4dpf0Ycwoo6bCkkWn
- RAUxaxkgh2r34qLLLyHpuZEq5l/HuzBLZwjh1Yn3zL1BNkCRMn/evCfjTNY9G9YasFmD/rAI
- scJYjoqNlLyTyMJHFoLYH48tL7wwCijNWcE9hTL/8Lb4ECKpOB1+L7sO93Rc93MRthTglSVj
- mLdumHwAxcIctCSodaA2ij33LWWxHKqMG4UPKyZy8RypHSa/EwSMEFOal3rjfqBl0HrDrqzL
- GRRoELCt5Ma8E2tU8m4XhukrXGevwINc8RfHvd86wyXzKfQpQGDCQAsXDlBYcYOsM4wWCxs1
- 1WM2djuAFRHkrSQRGnb3LCIsTS3PSUEBW8LYzQJSxMM+cXlrZsojhPXCN1kFcadlNr/FCvsx
- HaRpTMlmp0TkMcU2qT99lfC6xqgo5nVVB9z5QzMV36m7wVRa4usZoju4l/ehd5NNoeSCEKHu
- 2cOltKRxOcUBJqJmWqGR+BlNKmg+vKtKDTBhRtqGJ47+nKm/HvLVYJV5ytkJVxBNM8BdD6vZ
- 1Xc0StK6YVcMVOqZKtzcoT3AMMvpYDkFNL4RrXPY9FTeJltZUqC+y1zYUO4wW/gig4vnLs5N
- JPddtyjZV4eCKJ63H+1Sv0b3LsD2C8z3yXQSIr9whDh1qCRDEN5Up8XPEXLY/Ay7Obe5hfZ7
- ZBZOtfiJwhjbdASqxL/qeY7RW3m51BibXwqg6S7rtK+Hzc=
-IronPort-HdrOrdr: A9a23:93f/DazCXS0knN5j30RYKrPwHb1zdoMgy1knxilNoRw8SKClfq
- eV7ZAmPH7P+VEssR4b9+xoVJPrfZqYz+8X3WBzB8bGYOCFggqVxehZhOOI/9SjIVydygc079
- YHT0EUMrLN5DZB4PoTt2KDYq4dKaG8kJxA0t2utktQcQ==
-X-Talos-CUID: =?us-ascii?q?9a23=3AruK6XmhqefTxDlM/F99WVkoLiDJuXyCB/lL6MlC?=
- =?us-ascii?q?ENEEuWr65QHC0/fpYqp87?=
-X-Talos-MUID: =?us-ascii?q?9a23=3AcBzv5A0eJj0rN5/2p6AM632ppTUj8oWTMlgpuJw?=
- =?us-ascii?q?8m8i8aXRPPWexjwyqTdpy?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.27,203,1787004000"; 
-   d="scan'208";a="23221199"
-Received: from zdv-exch-2.zdv.net ([10.94.246.62])
-  by mailgate-3.ZDV.Net with ESMTP/TLS/ECDHE-ECDSA-AES256-GCM-SHA384; 09 Nov 2026 12:04:08 +0100
-Received: from MacBook-Pro-von-Nicolai-4.fritz.box (91.37.89.206) by
- zdv-exch-2.ZDV.Net (fd42:4323:8cdd:70e:9a03:9bff:fe77:8f92) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Mon, 9 Nov 2026 12:04:08 +0100
-From: Nicolai Kuntze <nicolai.kuntze@hs-mainz.de>
-To: <linux-integrity@vger.kernel.org>
-CC: Mimi Zohar <zohar@linux.ibm.com>, James Bottomley
-	<James.Bottomley@HansenPartnership.com>, Roberto Sassu
-	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric
- Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] IMA: periodic runtime re-measurement of process .text/GOT
-Date: Mon, 9 Nov 2026 12:03:36 +0100
-Message-ID: <20261109110336.82654-1-nicolai.kuntze@hs-mainz.de>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cf79fc0314c1984e68f683d26cbee3ac0859b5d6.camel@linux.ibm.com>
-References: <20260817102323.35950-1-nicolai.kuntze@hs-mainz.de> <b13a1741eceeba4d4ec50e1c898e011ea81a178b.camel@HansenPartnership.com> <20260822193833.98211-1-nicolai.kuntze@hs-mainz.de> <1805cb973c0e38e1ca8cbeb6dadc4f46f9475a0c.camel@linux.ibm.com> <cf79fc0314c1984e68f683d26cbee3ac0859b5d6.camel@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED134606A31C;
+	Mon,  9 Nov 2026 12:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WkYzP4rt
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD0D91F0089F;
+	Mon,  9 Nov 2026 12:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794227243;
+	bh=RYIcWcYzIUZ35LbYpg6XHYKMwvcMU7zN300uv/7AjsM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=WkYzP4rt/AxJflSDY4QvHlo3QQtj+85opjVNNjFvMZqJZn+bBCQKsOR1Vc56wCsWw
+	 FHwDkIcJj0dA8rBrIwiablgEvMq9q7ucu+JfX5ZN/0yOM8xaxvKN1o/8G1XCL0eIBJ
+	 b0Cv7HUFzyyS7CUgxu7a5sjYbh8AKtzd//4hZ8f+wOi407hdVAolsL1UEeBF+yDk3z
+	 Cz0noIGTuP+nGcjHMqce1MVu5INeoK3aRdrWAaXkeN9Rfm7WjlKS4/wg/Th3S/XzAR
+	 k2GkQM8y0M0SzQ1l9cxFRP1xd1zIG5cLpSzvpH/O1BlNyrFDSrS7beg0mpHerpJWoL
+	 FtSvpRHC0A2SA==
+Date: Mon, 9 Nov 2026 12:27:00 +0000
+From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+To: "David Hildenbrand (Arm)" <david@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, 
+	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
+	Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
+	Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Alistair Popple <apopple@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Usama Arif <usama.arif@linux.dev>, 
+	Kiryl Shutsemau <kas@kernel.org>, Xu Xin <xu.xin@linux.dev>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+	Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, SJ Park <sj@kernel.org>, 
+	Rakie Kim <rakie.kim@sk.com>, David Rientjes <rientjes@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	John Johansen <john.johansen@canonical.com>, Georgia Garcia <georgia.garcia@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, damon@lists.linux.dev, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 05/13] mm: convert THP VMA flag tests to use vma_flags_t
+Message-ID: <avG7_rb_PtU1jsbH@gremlin>
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
+ <20261105-late-2026-vma-flags-v1-5-0d3cd15ab75f@kernel.org>
+ <631047fa-8a19-44b8-9fed-6607ec79a1c1@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -98,27 +95,50 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: zdv-exchfe-1.ZDV.Net (2001:4c80:40:70b:21d:d8ff:feb7:30e1)
- To zdv-exch-2.ZDV.Net (fd42:4323:8cdd:70e:9a03:9bff:fe77:8f92)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <631047fa-8a19-44b8-9fed-6607ec79a1c1@kernel.org>
 
-Mimi,
+On Fri, Nov 06, 2026 at 03:36:55PM +0100, David Hildenbrand (Arm) wrote:
+> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> > index 0d3bd9e23613..a2c7c6a0768d 100644
+> > --- a/mm/khugepaged.c
+> > +++ b/mm/khugepaged.c
+> > @@ -640,7 +640,8 @@ static enum scan_result __collapse_huge_page_isolate(struct vm_area_struct *vma,
+> >  		 * If the vma has the VM_DROPPABLE flag, the collapse will
+> >  		 * preserve the lazyfree property without needing to skip.
+> >  		 */
+> > -		if (cc->policy.anon_skip_lazyfree && !(vma->vm_flags & VM_DROPPABLE) &&
+> > +		if (cc->policy.anon_skip_lazyfree &&
+> > +		    !vma_test_single_mask(vma, VMA_DROPPABLE) &&
+> >  		    folio_test_lazyfree(folio) && !pte_dirty(pteval)) {
+> >  			result = SCAN_PAGE_LAZYFREE;
+> >  			goto out;
+> > @@ -1683,7 +1684,8 @@ static enum scan_result collapse_scan_anon(struct vm_area_struct *vma,
+> >  		 * If the vma has the VM_DROPPABLE flag, the collapse will
+> >  		 * preserve the lazyfree property without needing to skip.
+> >  		 */
+> > -		if (cc->policy.anon_skip_lazyfree && !(vma->vm_flags & VM_DROPPABLE) &&
+> > +		if (cc->policy.anon_skip_lazyfree &&
+> > +		    !vma_test_single_mask(vma, VMA_DROPPABLE) &&
+> >  		    folio_test_lazyfree(folio) && !pte_dirty(pteval)) {
+> >  			result = SCAN_PAGE_LAZYFREE;
+> >  			failed_pfn = folio_pfn(folio);
+> > @@ -1948,7 +1950,7 @@ static enum scan_result try_collapse_pte_mapped_thp(struct mm_struct *mm, unsign
+> >  	 * So page lock of folio does not protect from it, so we must not drop
+> >  	 * ptl before pgt_pmd is removed, so uffd private needs pml taken now.
+> >  	 */
+> > -	if (userfaultfd_armed(vma) && !(vma->vm_flags & VM_SHARED))
+> > +	if (userfaultfd_armed(vma) && !vma_test(vma, VMA_SHARED_BIT))
+> >  		pml = pmd_lock(mm, pmd);
+>
+> A patch in mm/core.git will remove that entirely.
+>
+> Right now it results in a conflict between mm-new and mm/core.git.
+>
+> Beat to drop this here entirely. (I can also drop it when applying)
 
-Sorry for the long silence, and thank you for the review.
+Sorry I missed this, feel free to apply with this bit removed!
 
-A short status note so the thread is not left hanging: I agree with
-your direction. I am reworking this as an IMA critical-data measurement
-(ima_measure_critical_data()) triggered by the securityfs write, and
-will send a v3 on that basis once it has been tested against the
-integrity tree. 
-
-The question about extending unchanged digests in that mail needs a bit
-of consideration on my end but I agree that my earlier justification
-for it was not correct. 
-
-One correction: the repository URL in my RFC and in my last message is
-stale. The reference implementation now lives at
-https://gitlab.rlp.net/trusted-computing/memory_attestation
-
-Nicolai (drafted with AI assistance)
+--
+Cheers, Lorenzo
