@@ -1,58 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794235510;
-	b=co/U+Vuw5fO0hKpq0RKz6ixwuflmF58SCY5TMeDqDKGC0dyHGBkfuJyWGzYbaNzaga2o
-	 GRbwaDQeP3g2RUqUOIfTfwAoFyjE5n087PEYfsFQbDvp8Jmym3okfrrb4Lq310Jzk1daG
-	 WFK++vKIhYvr/9kh7YoQVcQ0II8Ju5PG1cG/3JH5NYdF/BF1jAFcqkIH5QehQcFKU/0WH
-	 YrxLFJ+bzdKqJRilDS3zE62cxVbo/1OerxGPqcBBdCpNsGIAEZgLmqWUiYavyzn+VXEgv
-	 5em31yZp6igQJPvcbYmCwVaKi6i1oyx5oI+UP5UOHXmA96lKVDWyN9Rp7up35w8gTjA==
+	t=1794235855;
+	b=iMGtyRYK/tLlxTrxt8XU33q9wBsVdgJoa66THhCOH5V/m/90LgqKOxpxEOD2c2asxSqj
+	 Dygc+7cvh/fD3O+llWy5o0EwHkbK0AVVjlQNo/e8HKH9KoeKJGxJVhljQpYtjVvt5W5pl
+	 hIFXsLP3kqe1O04RMT6pic96up6S3OSfdDBuDQnRmLO9L9+2l/zzKPpMGNfLM3gHF+0zm
+	 pRWmLumkOXCEeTQPedycoCiDQGfSmnBs1ydcGPJKGDbu8AJM2IG4z4jlVt/kLzogGOVyc
+	 /9w+fsRT2HKEqF6zf34MuHrwvRR+XRMSKGS2Pzjy3V69BZdKB3ubyMYWT7NoeuBeo0g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794235510;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794235855;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=7Qt+bdQBMRgfyzqEjWH55cwhWUCf0OmGYF56lEghc2Y=;
-	b=DGqjY/6Sl03OtcadxVC/XDSDKuzQCLcufXfiOEvenwFxmdrVR9Q8LOzZ1A1peojcd8uB
-	 ilZjg5kwNm97xj1szKZlSGVwKT2+psGM31HOK8uLDfDmwIfDxNgAPQSuh9WBF0vlMXtNJ
-	 wZAI09CuJArv7aTlGdlZ3tZBmiiS3NWvPPQyXjnv834scG3pa5cnhIWDe36i9IAVWd7qP
-	 6Z79NmQgYkXY8K7UTzV9q8yQshCq6U7Ws+LWgk10c8qXSogjqMc0eA2r6xboGjXHomlFt
-	 1WEmOFn9mbQNKf2g5r5jMZcgNwnZ4ESv8A+IonOc2tXDrZ755V82274HonCXEAK7r3A==
+	bh=H/+rCAuVYsfnrsVIMu7ttz7mGAAOgBsFhAj5CbRxTk4=;
+	b=iRA1vLp76znAN5t2kaG0DfXjTZ7X93LDU9yHsNMO0QaLCWgM2H60+Csuq0laepCJrKLv
+	 7MA22z8xTT1Qu/5yUFefy3np0Q61hNvDLONbsCwuqUuiGoFxyJZwh9Aj2swPmpWY3DDZZ
+	 3TXLQNVyT5plSNtv4tEeX9xXyCCnVkxlY8tpd4fcLCJ629YU+g6xtrSQqALSgxaAx0h4v
+	 0MKGXEoQUQtvoF1PSyshU14Q/fJt1izPEpR+bIdzopd8EK5HyQETyb0bPjEL2eiWwMXBZ
+	 LEku4OTFx54BzWdqR60OS2cSAvlwweW92nM8mF4ZM2i3hMbhR6SZgSf0g+oQBqGv28Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NeaPzbmF;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AVvVg9x+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 86B58606A326;
-	Mon,  9 Nov 2026 14:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E3D06606A322;
+	Mon,  9 Nov 2026 14:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NeaPzbmF
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8F88D1F0089F;
-	Mon,  9 Nov 2026 14:45:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AVvVg9x+
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 09AB81F008A3;
+	Mon,  9 Nov 2026 14:50:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794235510;
-	bh=7Qt+bdQBMRgfyzqEjWH55cwhWUCf0OmGYF56lEghc2Y=;
+	s=k20260515; t=1794235854;
+	bh=H/+rCAuVYsfnrsVIMu7ttz7mGAAOgBsFhAj5CbRxTk4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NeaPzbmFsMfpsCQ81QYV9ORbpTNns7tXzpR/ckGodStlgh6uDj14wOJE2Qk++rpOn
-	 zCGyJ7Q0dd8fzufvIvEw0oDX8GIDdxmZ3T5oXgS1cBUux6RF05CZF6zAmglXLANsR6
-	 Sg9lDOt3+5sgVTUuUFsA8I8p++VzkLb39eVVTRylmEVHG8GD0ha3f1tbufAyc3u/TG
-	 zakHb6wPnHExtPPzSYIXX2XrdwmwQKdprKbfoRZYhihw7VPfBAQMBxhqM/bVviCHUz
-	 1obwYqLGSm7Fq3L78NK5Rvdkfl5qy944r4irWD0NNJZkYmGCWO/rsjONY3skabCnAM
-	 MUiSjrJo4jqwg==
-Date: Mon, 9 Nov 2026 16:45:06 +0200
+	b=AVvVg9x+0RW/eCtxRJWfGPb1YeYocuDVL4MRfeeJgkFnYP8dXWkA9MVDWZjoKLEAA
+	 dSUbZPvcneA2PEEhFWj4W/z3ZD6f3+0gnVoNTggB3UFJ0/u+BOTlNGffW/WJjzReuL
+	 xDhHfd81JX/lxc11/yRxdCB9rOhxOlqaSqz+Uhk1JoOxCsHdTWWDSdi2ZwFQI60UiR
+	 rMz5+jhe+E6d2XEIpSFFvCETYl1VlIQh3y6LeE3QbQ1GwWgsoIhhJ1Rwu0kXMZg2Zn
+	 epPHZFHwvyl18wvn33vfDLcDw/65SdhUC6ZwYUww+BlpLG+I9pZzxvKdFwfo1wKBXu
+	 D8TaO9Ddl+4uw==
+Date: Mon, 9 Nov 2026 16:50:50 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Guo Zihao <guozh23@xiaopeng.com>
 Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Matthew Garrett <matthewgarrett@google.com>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] tpm: efi: reject a final events table with an oversized
- preboot log
-Message-ID: <avHccmVUV9Wki9bC@kernel.org>
-References: <au3xM-7onNTtgceh@kernel.org>
- <179418897414.2773996.1582380807629789288@xiaopeng.com>
- <avHcB5IOQHomIvEU@kernel.org>
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] tpm: sessions: bound the primary public area by
+ the response size
+Message-ID: <avHdynG1rKStCVUO@kernel.org>
+References: <au3waVnY6QA8TpPl@kernel.org>
+ <20261109014955.2777635-1-guozh23@xiaopeng.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -64,59 +62,60 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avHcB5IOQHomIvEU@kernel.org>
+In-Reply-To: <20261109014955.2777635-1-guozh23@xiaopeng.com>
 
-On Mon, Nov 09, 2026 at 04:43:23PM +0200, Jarkko Sakkinen wrote:
-> On Mon, Nov 09, 2026 at 09:49:34AM +0800, Guo Zihao wrote:
-> > On Fri, Nov 06, 2026 at 03:24:39PM +0000, Jarkko Sakkinen wrote:
-> > > Ditto.
-> > >
-> > > For all four address validation vs bug fix intersection. I did not
-> > > check throughly enough to be exactly sure of all four.
-> > 
-> > For this one I'd like to argue the bug fix case, since the data being
-> > validated is not something the TPM reports over a TCG-defined
-> > protocol: both sizes come from EFI configuration tables written by
-> > firmware, and nothing in the TCG spec constrains what firmware puts
-> > there.
-> > 
-> > The firmware data is already treated as untrusted in the same
-> > function: it bails out on an empty log (log_tbl->size == 0), on a
-> > missing final log address, and on a wrong log format version. The
-> > unchecked subtraction is the odd one out.
-> > 
-> > The consequence is also plain memory corruption rather than a
-> > graceful rejection: final_events_log_size goes negative, the
-> > following devm_krealloc() gets a wrapped size, and the memcpy()
-> > appending the final events log runs with a negative length.
-> > 
-> > And the out-of-bounds write was introduced by 166a2809d65b ("tpm:
-> > Don't duplicate events from the final event log in the TCG2 log"):
-> > before that commit nothing subtracted the preboot size, so a
-> > malformed table was harmless. The Fixes: tag refers to that
-> > regression, not to the malformed table itself.
-> > 
-> > Ard also had a look at v2 and only asked for a pr_warn() on the
-> > rejection path, which is in.
-> > 
-> > So I'd like to keep the Fixes: tag here, but I'm happy to drop it if
-> > you disagree - your tree, your call.
-> > 
-> > Thanks.
+On Mon, Nov 09, 2026 at 09:49:54AM +0800, Guo Zihao wrote:
+> tpm2_parse_create_primary() reads the size of the TPM2B_PUBLIC area
+> from the response and hashes it to compute the object name:
 > 
-> Let's take quantitative approach instead.
+> 	len = tpm_buf_read_u16(buf, &offset_r);
+> 	offset_t = offset_r;
+> 	if (name) {
+> 		/*
+> 		 * now we have the public area, compute the name of
+> 		 * the object
+> 		 */
+> 		put_unaligned_be16(TPM_ALG_SHA256, name);
+> 		sha256(&buf->data[offset_r], len, name + 2);
+> 	}
 > 
-> OK, so does this actually happen? I'm weighting this based on that
-> mainly. Usually bus corruption is not very common when it comes to
-> TPMs because they are usually either soldered or in the firmware.
+> The length is only checked against the response later, after the
+> hash has been taken. A TPM that reports a public area longer than
+> what it actually sent makes the sha256() run past the end of the
+> received data and hash whatever follows the response in the buffer.
 > 
-> Is there something I'm missing out? I don't think bus interposer
-> type of security scenario is common enough to use it as a rationale.
+> Check that the public area fits in the response before hashing it.
+> 
+> Signed-off-by: Guo Zihao <guozh23@xiaopeng.com>
+> ---
+> 
+> v2: Drop the Fixes and Cc: stable tags, as suggested by Jarkko
+> Sakkinen: a TPM reporting an oversized public area is not known
+> to violate the TCG specification, so this is hardening rather
+> than a bug fix. No code changes.
+> 
+>  drivers/char/tpm/tpm2-sessions.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+> index cf8f1fd6790b..e140079dbc13 100644
+> --- a/drivers/char/tpm/tpm2-sessions.c
+> +++ b/drivers/char/tpm/tpm2-sessions.c
+> @@ -1125,6 +1125,8 @@ static int tpm2_parse_create_primary(struct tpm_chip *chip, struct tpm_buf *buf,
+>  		return -EINVAL;
+>  	len = tpm_buf_read_u16(buf, &offset_r);
+>  	offset_t = offset_r;
+> +	if (offset_r + len > tpm_buf_length(buf))
+> +		return -EINVAL;
+>  	if (name) {
+>  		/*
+>  		 * now we have the public area, compute the name of
+> -- 
+> 2.50.1
+> 
 
-I do think that the change is for better. I'm disregarding its value
-by saying this :-)
+Thanks this change itself is great and well described.
 
-There's so many bug incoming that we need to be just somewhat rigid on
-what we consider as a bug fix per se and what not.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 Br, Jarkko
