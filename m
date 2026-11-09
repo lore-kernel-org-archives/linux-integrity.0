@@ -1,101 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794245883;
-	b=VhGQcRE7vsrUCvPg1bfOjJJ3/pe3dzBlBeaURtpK63hPvBFzja7kYX/+7h+as7LrPT6d
-	 zAt7xmp0xh+EXU3YInin/Wf4sRNW+emF9nA8dQsePBsXNgyI1h+y04eK8aOHxY02rFrQP
-	 o1wXMYB3Mx+aKemheUAQ5Bt/fucXFWbb3ZZUFW7ZaOmTgq+Z8T2lQKC9TdluOeB9sVwId
-	 QMHufXvr2rGVcxOWnLnK7E2E21Abf18RHDZzPUpgn9eJLkAWotqDSNteJOveq+bl+U/m7
-	 PqmBWRTcP9IEpLDXVmXpjde/aviEIH2pKhHX5SKka1Q6czB3jxgNyPBA//KlVwxb6IA==
+	t=1794246278;
+	b=lpKdW/HL0ovCcLeX7Engrr6a6mmA+CJOK/6gaSEtOkvtUEskJKZsfhjWftoE0mD+UvIl
+	 LpXFidORSfMUSpyg+dIrYIwKxuok7qx7jlSvPDJJqQePwWycjQF9kwjss37UJdIognzyf
+	 k/Qg6ts10aXBNhIF0Bw+VP/ZVfz39r5BjsQ9ex0+l/cPXtZ2QEh36r1DfmX4OKR67W0jO
+	 5x6o6PoVxBaPf+4+acAO5KWdtNdRZBFz3x2tbqYrT/+RRXV0jxkACnwNRVuUxqIgBonYS
+	 ulQRYaQP5qh2To8jN0nvv7dvvDcI8iwBMffdyB+KDfiWX1RI/XtVu0J6XfWfPXtRQug==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794245883;
-	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
-	 DKIM-Signature:Received:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding:X-Spam-Flag:
-	 X-Spam-Level:X-Spamd-Result:X-Spam-Score;
-	bh=NTjeRwi22EWjiF2CmL7r4VezS/WoFSjVqRJSPlKddy4=;
-	b=cXsVoFwyRN5XUYSLXs572gxpG0H1+UT6KjbxIKV7qFMqw57FvRZd/6v1A2pqYxwLfCLy
-	 orKBH4TxB5eEyQ9eg9eVd1dQtvNd3AkB1nLOoKtp+RaF7kWW4+aWSm7VcgBMaucE1MFNu
-	 MQu/oHwiGaBhJbQiNFEbxsogWSy4fbcKII+9p5bdL6r01ubOF8OLMoqNgmEu9KvxVD765
-	 1okch+rdMgBYrDdn64JV++NcTiewx8pI6N0NTy9oWKzJdeCYvzBFN7dFXdrD09ouF0dYq
-	 InkG3SQknn3AvlkQP7Dmjuf2TUJ+9uWMs0XWe61VcJV6zT3Ra+SAsSt+g0iMb1UUjDA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794246278;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-Id:
+	 In-Reply-To:References:X-Mailer:Mime-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=+EpjN/DsBpVyfyR8n/gQ0lrO4LV9kbgQU5k49WPSPeE=;
+	b=gI0vXvZWQsMtHFwcHnhFN+boumpvFQb2l1QvBzu7si8jY6r58KFzl/ES7AAIPPL91I+V
+	 yrR+Ftt48zm1Or5k4dVfqnzBKvqfS1bD+YEUhIb9oNVqgCHqQQUZZ8yD9G95+1hm+zdIy
+	 HMBHW7BqagF+76eihdYNfLCcQjZbcNfB76Y/obXVJk8HJER9M3f4l9BvC/HuYTS3h3J/L
+	 5zkgnaJ8HjWu0fOCoP8CsQbhXCCXx6qtDg5IgfiZRkrAqFbh74GBRdh6WkSepgvKM3Vww
+	 7EPxKCA0s9yg/4SGiTz9UBFKyXA1SuMcRzPWSlMByvA3LoARZNhMblDbRAHdNVJcIZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=suse.de;
-	spf=pass smtp.mailfrom=suse.de;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=eR938zqa;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=sBg3PaR6;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=PfavQuOr;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=8LOFMHKw;
-	arc=none smtp.remote-ip=195.135.223.131
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=gzaCyMM1;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B99606A31C;
-	Mon,  9 Nov 2026 17:38:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9B99606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D9F606A31C;
+	Mon,  9 Nov 2026 17:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=eR938zqa;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=sBg3PaR6;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=PfavQuOr;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=8LOFMHKw
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E770C1F833;
-	Mon,  9 Nov 2026 17:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1794245881; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=NTjeRwi22EWjiF2CmL7r4VezS/WoFSjVqRJSPlKddy4=;
-	b=eR938zqaoH9Epk7KQw88fTozNR9lB1LoIFyNyj0yD0kkMIH5doAkBjo98VX2roIpX0aErO
-	Ge9ALr49AoT7WjBcOmqbDGTyelwGUHOftLYdk9q4NJ6G4Vw1YCyUzdWqXRFSx8RsiLpf5n
-	Lrho13y26ioVLbx3GbENHdpM3qyA3nk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1794245881;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=NTjeRwi22EWjiF2CmL7r4VezS/WoFSjVqRJSPlKddy4=;
-	b=sBg3PaR6ZhHHx7/pO+7HKoHtmlllwOV1pe2d8S9iFa0PkIgBLy4FruFgIVreCdGbgyG0mr
-	+HvmJZFen4SHDzDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1794245880; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=NTjeRwi22EWjiF2CmL7r4VezS/WoFSjVqRJSPlKddy4=;
-	b=PfavQuOrPjY+M1dGsz96h2RcVyFrLn4E32jKAE78ClmdZ1vCd1/DRWeh98T5GnZJPNuhHc
-	LFVDcGg6coo8Aqv2vZ9jAzYsDLOnsGOOj3miaTlEnB/z5sEdqCjlheq4STZ5xA2wZETkd/
-	ppT++DNC6OEp/kfCSm8kp1iwjLc1FT0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1794245880;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=NTjeRwi22EWjiF2CmL7r4VezS/WoFSjVqRJSPlKddy4=;
-	b=8LOFMHKweFORrkCUolH1VhrhYv36ghMZu0DD3YhyRgdepsl9dCV1db+0+D/3ONcGHr6DTg
-	ya/Lhbd2qfMycZBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 974E313319;
-	Mon,  9 Nov 2026 17:38:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bLZNG/gE8mquMAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 09 Nov 2026 17:38:00 +0000
-From: Takashi Iwai <tiwai@suse.de>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tpm: acpi: Fix memory leak at tpm_read_log_acpi() error path
-Date: Mon,  9 Nov 2026 18:37:52 +0100
-Message-ID: <20261109173756.742248-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=gzaCyMM1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2301F0089F;
+	Mon,  9 Nov 2026 17:44:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux-foundation.org; s=korg; t=1794246277;
+	bh=+EpjN/DsBpVyfyR8n/gQ0lrO4LV9kbgQU5k49WPSPeE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=gzaCyMM1cJrjP8mVfAdfm9Tk0MNbUwWsCzu5aBYFwIXvHqXzHyjNWYvmsk0qAwsED
+	 GA9iUPuLXd53UNdhLXbucDDSJCBnpyT4AdCqpMXhvrVqGpYP2eidMHAWz42rUr0Xzx
+	 9ZMkq6R2Q8unfhnRO7BxhFf1Z4gUeAYDiBZoVcbY=
+Date: Mon, 9 Nov 2026 09:44:34 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "David Hildenbrand (Arm)" <david@kernel.org>
+Cc: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>, Jason Gunthorpe
+ <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu
+ <peterx@redhat.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan
+ Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, "Liam R. Howlett"
+ <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, Harry Yoo
+ <harry@kernel.org>, Jann Horn <jannh@google.com>, Lance Yang
+ <lance.yang@linux.dev>, Zi Yan <ziy@nvidia.com>, Matthew Brost
+ <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul
+ Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache
+ <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain
+ <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Usama Arif
+ <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>, Xu Xin
+ <xu.xin@linux.dev>, Chengming Zhou <chengming.zhou@linux.dev>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, "Christophe Leroy (CS GROUP)"
+ <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>,
+ Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, Shakeel
+ Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>,
+ Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Baoquan He
+ <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan
+ <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Leon Romanovsky
+ <leon@kernel.org>, SJ Park <sj@kernel.org>, Rakie Kim <rakie.kim@sk.com>,
+ David Rientjes <rientjes@google.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, James
+ Clark <james.clark@linaro.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Oleg Nesterov <oleg@redhat.com>, John Johansen
+ <john.johansen@canonical.com>, Georgia Garcia
+ <georgia.garcia@canonical.com>, Paul Moore <paul@paul-moore.com>, James
+ Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Mimi
+ Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
+ <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, Stephen Smalley
+ <stephen.smalley.work@gmail.com>, Ondrej =?UTF-8?Q?Mosn=C3=A1=C4=8Dek?=
+ <omosnacek@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm@vger.kernel.org, damon@lists.linux.dev,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 00/13] mm: continue vma_flags_t conversion
+Message-Id: <20261109094434.d23a227a869e76455ddff3b1@linux-foundation.org>
+In-Reply-To: <93fef824-9f60-4940-9ee6-80c9c8e3f945@kernel.org>
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
+	<d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org>
+	<au3r0-geuwtRYPiC@gremlin>
+	<1c0b1368-a381-4b25-bba9-7a4f8e92b764@kernel.org>
+	<au-DXpEi4wHwsz0r@gremlin>
+	<93fef824-9f60-4940-9ee6-80c9c8e3f945@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -104,66 +105,35 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spamd-Result: default: False [-11.80 / 50.00];
-	SUSE_INTERNAL_BYPASS(-9.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[gmx.de,ziepe.ca,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de]
-X-Spam-Score: -11.80
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When devm_add_action() returns an error, tpm_read_log_acpi() clears
-log->bios_event_log unnecessarily to NULL before calling
-tpm_bios_log_free(), and it would lead to a memory leak of the
-allocated log buffer.
+On Mon, 9 Nov 2026 14:40:48 +0100 "David Hildenbrand (Arm)" <david@kernel.org> wrote:
 
-Fix it by simply jumping to the err.
+> On 11/7/26 21:09, Lorenzo Stoakes (ARM) wrote:
+> > I think we're slightly talking across purposes, so to be clear - I am totally
+> > fine with you taking any of this through your tree or whatever works for you and
+> > Andrew to avoid merge pain :)
+> > 
+> > I was just talking more generally about how to merge series that touch a lot of
+> > subsystems and maintainers-who-may-never-reply, etc.
+> > 
+> > These are the edge cases that make things... fun :)
+> > 
+> > Anyway, I guess easiest resolution here is for you to take the bits that belong
+> > to your trees and Andrew takes the bits that belong elsewhere?
+> 
+> Yes, that's what I did now, applying #1,#3,#4,#5,#6
 
-Cc: <stable@vger.kernel.org>
-Fixes: a3a860bc0fd6 ("tpm: Change to kvalloc() in eventlog/acpi.c")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
-v1->v2: minor update of patch description and tags order
+Cool.
 
- drivers/char/tpm/eventlog/acpi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I'll remove the whole series from mm.git immediately for
+collision-avoidance reasons - let's sort things out later.
 
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index cf02ec646f46..50770cafa835 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -167,10 +167,8 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	}
- 
- 	ret = devm_add_action(&chip->dev, tpm_bios_log_free, log->bios_event_log);
--	if (ret) {
--		log->bios_event_log = NULL;
-+	if (ret)
- 		goto err;
--	}
- 
- 	return format;
- 
--- 
-2.53.0
+I'll get better/more accurate about this soon - I need to set up
+infrastructure to fetch everyone else's trees, do test merges and
+figure out what should be removed/fixed in mm.git.  I might just base
+mm.git on everyone-else and always route its stuff ->david.  I need to
+spend a bit of time on this and discuss with the mm-next peeps.
 
