@@ -1,62 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.194
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.50
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794189007;
-	b=EvXb+1n/wWRPjkqEzHQEbvtROXjupphQSz3iq5Gna/DXIcr2y02P7fo9Xdol7lFwt8Yc
-	 MjxxQCiOWegOw4KZADBTK+bpP02WQJSK86DFjR9cScXtfOCKOiQx2UwwhWStMV26kcgPB
-	 M3Lgs97QYMvNnQwu2Gm0oYljDqas4RpWVxG7jZb9332KrtG8GTJmWo6epD2PqYxdE5zqT
-	 H1CWoVYo0LnIqJwjEyY7ngx+gD/UWqzNoO71EXg9j+6qU7rG1b/GG83eJRwONY2LUEbvZ
-	 kGdB0okkWa27rqshJbgyfoUo+2Q4T7PRU3tZMT9dquF2/tLi6RWr1kCebcGLewfhAZg==
+	t=1794202770;
+	b=DdD2Ko5eCeFAr/j3Z4fmfwofX9sDOa24kF7xL5qdiAVn8uQ/g2lxigCbwMQ5DV2Ejsg9
+	 6LY5yzhI41rDvD3NMXTr/nmTTFI3DJd0PCSlG64WAQ0fUiZtc87I0N9tosexMjI166aP3
+	 jHmUIFeFdRRFTOZp1Ln3gWe/M6T+8VdHv3woMjt56nkuIg5/U/JWyYRf5ioX9OU5+q6AK
+	 fr1m7xae2/Zj9a89JwPqWL/y9YlAeRhq76N1JIESWLJi2lkQD05Xx0VyFba9+RhvEDfxg
+	 L7O4xa11l+pBl6MH5Axf9E4pWHCEn8tNU0wMcCgG9Ya2x74c0LPYegZ89EidxgbtU7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794189007;
-	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=0UrPyjnV+g0ulzGUI2dXxm+mkOWbP/75IbFUZ4V1ZIk=;
-	b=qzJUcBsFOIkiSHsw8BBH2Mi+DGwARq9PddsSSTx15NI6CfeEralfrQfRGfW0qZR8PaAa
-	 TRfdfbBnszdmxxBCUa4SEqY1O32B8vYS53o2C4FRoT9nBxp9MBAnY4DZImGhqxi3yuWWT
-	 g0SJ2jw3aoxDyQu8yixIrdKWbGl7OsAZel0d1nuK+MFrsg9vAtZ+iKgVOvXklxmZgbJRh
-	 +m3HEqPml2ACSrMFuQcsebv81WURoSd1iJnVVEhjDD9je/r0I5Q2fZQ7xZ0eprPPSi80i
-	 3Sqazu+awbbShAw8jEhIXmQFMc3zLXzOygeBzFoCBTE6Y+oNfvt3heRxf4AnjuERXMw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794202770;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:X-Mailer;
+	bh=4uU3D93eNb0dcAsvNYKSr00RkTcidb/i2o2hNB/WLWc=;
+	b=SMEqm6fa0Fkhzvw68uDiuLfIT6cdROhDpa3hyBlGRPqkKj2vzd51nfrQVB44MaCcLAIo
+	 k2NRUVROJGGZ4GxsKaVUCr+h4of4ZFqmPEct2AqTr576OEqaKmqSmgX/H5+0uCvaONKIL
+	 X0Lh8a1x1EeEWRU5AArjZPDwPVyYoNhcJO0MWa9yUc37lz0rNXnEy8aBgCqhSnrCercEG
+	 sG7ZuVtkshuuk/GER58+h1cGe5xuGi9S+TEKyo8EpURa3CUVVpFUw8DKh/9lngEXcnSpf
+	 BAhJf+24tdMCg7QeY3uXhrZp3G9OwzOL1qaYPYa5CveuPGPqIi7didbIsqMBhiif36Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=xiaopeng.com;
-	spf=pass smtp.mailfrom=xiaopeng.com;
-	dkim=pass header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=MJ4Kyqru;
-	arc=none smtp.remote-ip=115.124.28.194
-Received: from out28-194.mail.aliyun.com (out28-194.mail.aliyun.com [115.124.28.194])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="m/c396Cw";
+	arc=none smtp.remote-ip=209.85.221.50
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1B4606A31C;
-	Mon,  9 Nov 2026 01:50:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2F1B4606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaopeng.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889E6606A333
+	for <linux-integrity@vger.kernel.org>; Mon,  9 Nov 2026 05:39:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 889E6606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=MJ4Kyqru
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xiaopeng.com; s=default;
-	t=1794188997; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=0UrPyjnV+g0ulzGUI2dXxm+mkOWbP/75IbFUZ4V1ZIk=;
-	b=MJ4KyqruD6kJJMxEjVKC1dpsVUjZ+GlGfC525ENHfrR2SH4aywe2VF2UAz3foUWIUI0EsM3TQpzNwfkQY2yHP9QQtX1Z9lccRDipHx443oqwcQ74GOOuwPfpBugnSXh2CP9aIp018G4jARc6Omf8L+uxZH3SydX5rvWQx6jzX98=
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.1606892|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.000952147-0.000939795-0.998108;FP=13220359827208283216|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033040092104;MF=guozh23@xiaopeng.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.jziGj8I_1794188996;
-Received: from localhost(mailfrom:guozh23@xiaopeng.com fp:SMTPD_---.jziGj8I_1794188996 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Mon, 09 Nov 2026 09:49:56 +0800
-From: Guo Zihao <guozh23@xiaopeng.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] tpm: sessions: bound the parameter decryption by the response size
-Date: Mon,  9 Nov 2026 09:49:55 +0800
-Message-ID: <20261109014955.2777635-2-guozh23@xiaopeng.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20261109014955.2777635-1-guozh23@xiaopeng.com>
-References: <au3waVnY6QA8TpPl@kernel.org>
- <20261109014955.2777635-1-guozh23@xiaopeng.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=m/c396Cw
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-48e1d0e5dafso273045f8f.1
+        for <linux-integrity@vger.kernel.org>; Sun, 08 Nov 2026 21:39:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794202769; x=1794807569; darn=vger.kernel.org;
+        h=content-disposition:content-type:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=4uU3D93eNb0dcAsvNYKSr00RkTcidb/i2o2hNB/WLWc=;
+        b=m/c396CwshKMa2EHH+DQktTUWKdT+G4FYhJZRO1ZyIRIhcH4JLYWrzEMYp+ItdlBIA
+         TfrpaAz5zE0hxf52AhEiwplZI2VXfKYLCOe+FYHpU03rM56D8UVCIbC4EkcKucUXujME
+         UqLm9dyYq2Pd28HnP+Gy67SC8ArUdRCZcomkUowXHVNoiFIICmBTIVdlsiscdGA64vyO
+         RBLD8ILK91ZHqy91P5VTxFDBpvH+IqxaQ1CA0lQRBHmprYuUvpkUhVStr1VvYNw7G1dZ
+         nYRFBFec5K4S/6FdpKhkVPUYrgzt6s8D/Fsckxa/yVxaOe5ssdJEt9lk6iqQknhDSoKJ
+         IOMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794202769; x=1794807569;
+        h=content-disposition:content-type:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=4uU3D93eNb0dcAsvNYKSr00RkTcidb/i2o2hNB/WLWc=;
+        b=mIskQGW1j7WQ7BiespYAV/HgSsg0fSVv9c5884JU3K++BbIn3pBEvwldS/VKBgoXty
+         SmEjZb7BCEGe08qLdyb1rjTXtNTzkHPbcwuQXpXowlaiKfbmmpY+5Fh731RvGa0SdsEq
+         Gqtj1ws9alEhgEgA+yIgACOAPuSaAwRzlFOhzPDuiqLqto4x6XoLYqgzVfkxv1AOh1Hz
+         tTcrx3esKxU4pVxa0+RVWTJPLfWSZNLwKAAhtLZq773uirNbQPjDAHKUQBub5puajyxZ
+         Pcb6W0GHldU7BA6WH5MrSY01LmHwICrL1qkfq6xWhulaL7VeMPM/2gkadLZks+IRdPjb
+         rL4w==
+X-Forwarded-Encrypted: i=1; AL+hErFWqWV8iiWVLdK7fqXTokuLShsbAjogsSU/CsWk7TiwgGGU1uphyNp9kylUzm1jOao3uIn+N1BqXcdGHizmsy4=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8EtreHafWmzKo3VP+WVNkdHaIWJRKLubLpz2ej+eAfMeIk936a
+	VyNcF977xEvj0PwGJ7GS0Ocz4fS16hMKl9s85zRjfofgftZ7KXmfwDsiNuiMwILlViGYdUVb
+X-Gm-Gg: AYBFou14SZqdE94dXm1SlVEiQ8/9VAAbdmshahzQ9kHDMoCrXjV9pCvqbJSvZcVNqy/
+	mDLLc4n/WG2E5N22Xi4TQLAEsUp3gj/EI2RjEBSB3ZrncZKk04wymVQMm+OMhYfmE9nw5KDEn+e
+	DNFJvm7TQ+27ZYz0HrMKSAop07VKjWYHoYXkwYpkXasK7VbSrICfOs5Ri2KCUCMycdJyx0DUwu9
+	LDuBxorV/AnBjwhdYDktFPIRYy4v9BIVrZLSYljVt586lQSkUk3fbxJwZc7Zq8XJJbJvwXm3l5a
+	QL0m8bqqDJ3xFON+SGwPniGtgrsP4eYpjL5/eNhhiawU7u9BKfK3aOBeMuB8wDJ/3SPiZm3ARVB
+	h+Ahl/AKq8m8M6jUcIunmZW2ux22d2VuW3qAPfI7/0GZF2pKNjBTttqO/Xfosh9fJ23lXx5m4jr
+	HJvTVN2BZP/5ZjtViqwHpFo2bn0f635Msp9XqSqYUWoSTgt/dClBDAfo99abIwRAHwciird1Nr4
+	EJIS8BRxvjoqHjLhLxsi2iwb4A4wbENynjqtuZv+aUnUcKKwCDiqMf1vTGvBMIXI0n6nGDlq8G/
+	fUzpkAOuTZTghgY6XpvGqSwfpP1ol8+phYEb4rFCmDRa1xuCd9kwBj3VsSDoq44YrV/tpzGlVVj
+	wsBanwpLDpz7hjHZkujbSySVeldD/aTNjy49zeU1Amm25vRC1Kwl0LQq8Ec9Uk/tx0Q==
+X-Received: by 2002:a05:6000:250a:b0:48e:d40:a87c with SMTP id ffacd0b85a97d-49423997d63mr12864728f8f.16.1794202768807;
+        Sun, 08 Nov 2026 21:39:28 -0800 (PST)
+Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4967a70a35dsm4750189f8f.9.2026.11.08.21.39.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Nov 2026 21:39:27 -0800 (PST)
+Date: Mon, 9 Nov 2026 08:39:24 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] keys/trusted/tpm2: rename "bool" to "boolean"
+Message-ID: <avFcjHwnh9mrOEnz@stanley.mountain>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -66,54 +100,39 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-tpm_buf_check_hmac_response() decrypts the parameter area of a
-response for sessions with TPM2_SA_ENCRYPT set:
+In C23, "bool" is a keyword so rename this array from bool[] to boolean[]
+to avoid a conflict.
 
-	len = tpm_buf_read_u16(buf, &offset_p);
-	aes_prepareenckey(&auth->aes_key, auth->scratch, AES_KEY_BYTES);
-	aescfb_decrypt(&auth->aes_key, &buf->data[offset_p],
-		       &buf->data[offset_p], len,
-		       auth->scratch + AES_KEY_BYTES);
-
-The length is read from the response itself and never checked
-against the buffer: every other size taken from a session response
-is compared to tpm_buf_length(), but not this one. A TPM that
-reports an oversized parameter area makes aescfb_decrypt() walk
-past the end of the buffer, and since the decryption is done in
-place, this both reads and writes whatever follows the received
-data.
-
-Check that the encrypted parameters fit in the response before
-decrypting them.
-
-Signed-off-by: Guo Zihao <guozh23@xiaopeng.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
+ security/keys/trusted-keys/trusted_tpm2.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-v2: Drop the Fixes and Cc: stable tags, as suggested by Jarkko
-Sakkinen: a TPM reporting an oversized parameter area is not known
-to violate the TCG specification, so this is hardening rather
-than a bug fix. No code changes.
-
- drivers/char/tpm/tpm2-sessions.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index e140079dbc13..59c7fdc0c88e 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -872,6 +872,10 @@ int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
- 			  auth->scratch);
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 30188a0ec676..2d6cc53539c8 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -59,13 +59,13 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 			       asn1_oid_len(tpm2key_oid));
  
- 		len = tpm_buf_read_u16(buf, &offset_p);
-+		if (offset_p + len > tpm_buf_length(buf)) {
-+			rc = -EINVAL;
-+			goto out;
-+		}
- 		aes_prepareenckey(&auth->aes_key, auth->scratch, AES_KEY_BYTES);
- 		aescfb_decrypt(&auth->aes_key, &buf->data[offset_p],
- 			       &buf->data[offset_p], len,
+ 	if (private->blobauth_len == 0) {
+-		unsigned char bool[3], *w = bool;
++		unsigned char boolean[3], *w = boolean;
+ 		/* tag 0 is emptyAuth */
+-		w = asn1_encode_boolean(w, w + sizeof(bool), true);
++		w = asn1_encode_boolean(w, w + sizeof(boolean), true);
+ 		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
+ 			return PTR_ERR(w);
+ 
+-		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
++		work = asn1_encode_tag(work, end_work, 0, boolean, w - boolean);
+ 	}
+ 
+ 	/*
 -- 
-2.50.1
+2.53.0
 
