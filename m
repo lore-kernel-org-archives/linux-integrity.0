@@ -1,104 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794246636;
-	b=wjXiDl1GrWZDvZdgKpsNBRSpBU21bdwGSOk/+4p+IosNBaHkj0AbQdsZS5j+f1UyqbEE
-	 MAkLLhI6uAjctEnqJqTndJMbx929x2uTJkOewQ/noZHpLKa+ZbT7HUHkJP+2R14P6XYcR
-	 T0NmLNVUDyKVm3dc0uLZxR6lbx+GmFyLXO8tL0tEVu4GmorOwcNJN3C+DzY6B+USqU62f
-	 DfGFXxlURxnSVNtA5ItPRdfT0QC1gKZaIGaj7gNK8722AfshTODJpDWL657QHXOCCAIVg
-	 imx874Pt3WCnhrpybbrvae2gxmUKws1VGeTvos9PDtR9Lg/MAxCTdNEKWnLZ5GnCX1w==
+	t=1794248127;
+	b=fUKDfMEWHNQTxSlEy/LdOXJeMiWeNIxWLPA3Lbn7IeM1CIT73RlRQGVBoVzhl+PYe6Yc
+	 T5ltyJPQekSqBWayYNjGnfqeYKOXcO0MDyR08xktV6LH1nSg3Gi4tSd2GWEEvG0b7XvBG
+	 MUBnllrFIXBS9utVnBKGEoct4BL9vtN/irgXd0eiqF0cbbtxgBueTGNL8W3Wg5OphDyFu
+	 eBgXv68XyCx6+pHhmx6s27A+Ji8GqUE1/lYc5ubfgSX5PZFBY5X4LKnqeYhkNB7tharxt
+	 3ntzq4MqQ3KyzfCgdRZVBBaapCcJXcpiaH5zy/zdVcmBvi51IXJKkiSVI6qZdB2VBHQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794246636;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-Id:
-	 In-Reply-To:References:X-Mailer:Mime-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=4Y+apbv0moZAbIC2JZwKUuLxptoIhomU3mV95VqD+l4=;
-	b=alw7wVpnrLdRiQSkBAeTekFUEfM/Dw2tkZGVqpx/i3zLsEK7N1YPWCklRK5mBY0LWSMx
-	 9tZ637L/GQ3EZkkQ5Z5JAE8Ux2suFpN9tbIK6EDWQcG1BMzpL9lnMn3+niISwt2PLTAZa
-	 T4AwYfxwLKMDI7kVgvXNIKoEj1wVVkPiRC+XrtIrhp7Z+vpgKSZmIl8fZccbFVeJbQATg
-	 myUGBTQ8Fma9BwnSsRserOFhtslIpbaXUloYLKt8tff4FOgWj/PgdoSoO2w8V1AFneFIX
-	 OjSoYcurOKD4V270egJtXYNZDghJi0Un8heVmy7dbFS8ZrAHmIihHzrO+LsYXzDzSDQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794248127;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
+	 Received:Received:Received:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-TM-AS-GCONF:
+	 X-Proofpoint-Reinject:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=QOGAxVORIKoSEY+zTHFpf5NJugQeCAGs7Y19X5OX6SQ=;
+	b=4aH7hrYaH8CeN/FntcbuMl+pYgLi7kuwMx0k68/1/8MUcHCmgSrkJgRkRVc6hvQBe3Oe
+	 L5kAmU0UDvRC8DUiM9rdhZETUs038aV7cC+GI1ZZuy7UHiWgfJIKp/vcs3+vTJAa4Jbrz
+	 uUqA38ju4ztfZXxDGtBUkaM4MrGyJ5EUBKC3MhGetfg0O0DQBPWVJO1psn+0ebtGRFUyS
+	 6nQWdLcQqaPoXo3F4cfjOQKdcv4tMkphvglg/NuB5lhHZui10NB+/ndOanAIpOnaxGfyL
+	 8ZRzlaUbZQptd5iScjwfZK+gGbX9Y1xPAQwIk1n/qB7xYKnlH9rE5849uyGaaKLyZ/Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b="alzL5p/E";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=linux.ibm.com;
+	spf=pass smtp.mailfrom=linux.ibm.com;
+	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=UzEELR4e;
+	arc=none smtp.remote-ip=148.163.158.5
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376BE606A31C;
-	Mon,  9 Nov 2026 17:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E98606A31C;
+	Mon,  9 Nov 2026 18:15:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 13E98606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=korg header.b=alzL5p/E
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86BE51F0089F;
-	Mon,  9 Nov 2026 17:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux-foundation.org; s=korg; t=1794246636;
-	bh=4Y+apbv0moZAbIC2JZwKUuLxptoIhomU3mV95VqD+l4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=alzL5p/E5TFjU0f4S3NCoMGJBvZNjLceDHvjdf7oUnrtQutT9d/lual9TYbQaYsV8
-	 BIDjLsHSLUcOK6q2LAzWt3YlvV/WiGiPoNNU3sNfH3m3TbLCyeOWWakP21fgtRFZY7
-	 MuUKvUaoZ86WAElRGG65TDNBtS7Dp15/zVMHHz1w=
-Date: Mon, 9 Nov 2026 09:50:33 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "David Hildenbrand (Arm)" <david@kernel.org>
-Cc: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>, Jason Gunthorpe
- <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu
- <peterx@redhat.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan
- Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, "Liam R. Howlett"
- <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, Harry Yoo
- <harry@kernel.org>, Jann Horn <jannh@google.com>, Lance Yang
- <lance.yang@linux.dev>, Zi Yan <ziy@nvidia.com>, Matthew Brost
- <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul
- Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache
- <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain
- <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Usama Arif
- <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>, Xu Xin
- <xu.xin@linux.dev>, Chengming Zhou <chengming.zhou@linux.dev>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>,
- Michael Ellerman <mpe@ellerman.id.au>, "Christophe Leroy (CS GROUP)"
- <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>,
- Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, Shakeel
- Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>,
- Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Baoquan He
- <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Leon Romanovsky
- <leon@kernel.org>, SJ Park <sj@kernel.org>, Rakie Kim <rakie.kim@sk.com>,
- David Rientjes <rientjes@google.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, James
- Clark <james.clark@linaro.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Oleg Nesterov <oleg@redhat.com>, John Johansen
- <john.johansen@canonical.com>, Georgia Garcia
- <georgia.garcia@canonical.com>, Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Mimi
- Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, Stephen Smalley
- <stephen.smalley.work@gmail.com>, Ondrej =?UTF-8?Q?Mosn=C3=A1=C4=8Dek?=
- <omosnacek@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm@vger.kernel.org, damon@lists.linux.dev,
- linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH 00/13] mm: continue vma_flags_t conversion
-Message-Id: <20261109095033.ed2b0334c862ca832389ea7d@linux-foundation.org>
-In-Reply-To: <ab4be2bc-8959-4c09-a120-37e216279dae@kernel.org>
-References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
-	<d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org>
-	<au3r0-geuwtRYPiC@gremlin>
-	<1c0b1368-a381-4b25-bba9-7a4f8e92b764@kernel.org>
-	<au-DXpEi4wHwsz0r@gremlin>
-	<93fef824-9f60-4940-9ee6-80c9c8e3f945@kernel.org>
-	<20261109094434.d23a227a869e76455ddff3b1@linux-foundation.org>
-	<ab4be2bc-8959-4c09-a120-37e216279dae@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=UzEELR4e
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A9HiGHW3000769;
+	Mon, 9 Nov 2026 18:15:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=QOGAxV
+	ORIKoSEY+zTHFpf5NJugQeCAGs7Y19X5OX6SQ=; b=UzEELR4evDP/i9Ih1lNhhe
+	erZR0lwwHlM8c25CS2bgahJ0uDL0nmgt1t5j0A+SFMu1UZlo14Iroi9+ox2TJkSx
+	nkSAc7DpMmTa6tlAbUtFL49ZxJLKdIofXL0Gl86Ngiv8bfHiDgz+fm7zU9g2YdVA
+	aiO2BC5bY/uSc5NcNEu86pYEmnImtdeUNz8hh1L9YEgYPV2ecaiXLCrnSbi231XJ
+	6vXufBlaxxbglljhHTq6o7UQ61esclI+lRbTjW9gMxLYNeQu0NNQtX6rMY1Cm8T1
+	jUtr0+rCa6gcZVnxxDDbiwqiwxyqo7QbPEbqHWAJPFxKo4iwwltyb11dw4JzHqJw
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hstdfyyn6-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 09 Nov 2026 18:15:22 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6A9HKX85482206;
+	Mon, 9 Nov 2026 18:15:22 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4hth0y240h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Nov 2026 18:15:22 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6A9IFLdQ27263624
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Nov 2026 18:15:21 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7871B5805F;
+	Mon,  9 Nov 2026 18:15:21 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C46395805D;
+	Mon,  9 Nov 2026 18:15:20 +0000 (GMT)
+Received: from [9.47.158.153] (unknown [9.47.158.153])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Nov 2026 18:15:20 +0000 (GMT)
+Message-ID: <931108a5-e880-4b74-b5e1-8625307af8a9@linux.ibm.com>
+Date: Mon, 9 Nov 2026 13:15:20 -0500
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -107,48 +85,96 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] tpm: prolonged stall in vtpm_proxy_fops_release() on Linux
+ 7.3
+To: =?UTF-8?B?6ZOu?= <fengaojigui88@gmail.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, peterhuewe@gmx.de,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org
+References: <CAO-4RZ2EzuShr1dNEQt+CEjqan8SSyD=-E9g6RW1oocah+chcQ@mail.gmail.com>
+ <aud4isATIt0JOOL_@kernel.org>
+ <012799b9-aa35-4990-86df-23b012ab94e6@linux.ibm.com>
+ <CAO-4RZ0Od63iUeFkoPznV4vd84Ghjii4CGo+khybQckCv=EXkQ@mail.gmail.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <CAO-4RZ0Od63iUeFkoPznV4vd84Ghjii4CGo+khybQckCv=EXkQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=J+M/fwnS c=1 sm=1 tr=0 ts=6af20dbb cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=x6uE0WptQeE1m4LxGL8A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA5MDA3MiBTYWx0ZWRfXyUW3i0RknXUF
+ raS8l3Ry/4dDYEDhyHKllGVJ8d0qda1M8PyaaC6doxsij9JvxJUijq08VH5EqkbP2tD+C7bD0oa
+ WQjV8lRNf9RMHZqEmuBJ0RNFT4L5NRM4NBbFkhikXwjHnQVuGoZoC7dQ6eHiz6QAeb22ZdHkfJh
+ O/hCkDoiHKFUsDZSE9a+vifZA6jEzOevIpbuVpjGsdunDpf49jnt1ZoWfwoFQK8Z8ANPZ5O0yMJ
+ amAdvgCNTqJTgaJ+77uCu22OopFNH5DtEyjYtdubIh8wpfEIadYedy8lHZn63peGCfMAyLvQX44
+ +YnCBgGrToqMUCT2jgLCIvwiypjbYwAmkCyGUYocYC+25CdDOG0lAgd19106wlHuzButF4FZZi2
+ Yci4SRRSynl+rrWFmtmgmMA+JpekT/BIYvwbDu2YMvy3bWrxktVwiO3mz9oGJXaGjAYiXf7PCNY
+ jB0LKXFhGwOJ4S+k7pA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA5MDA3MiBTYWx0ZWRfX1czYllJczNuO
+ BaKSdoAj3Oy494CJAX+tYQry16avLSVoac4Qq1cdvX3Uan3sm6dRBZktQRIiIdbfOlCqMTekFfs
+ TVlpt3FcaAXWOfwc+MzplAw7UJBQYxQ=
+X-Proofpoint-GUID: 5ShWpHk0MzBRw9ysdUkXSKbyCK7Hg1zw
+X-Proofpoint-ORIG-GUID: FH1QuUAwHWdD25ZcLNplgbw5Z_bJDo6f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-09_06,2026-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 impostorscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611090072
 
-On Mon, 9 Nov 2026 18:48:07 +0100 "David Hildenbrand (Arm)" <david@kernel.org> wrote:
 
-> On 11/9/26 18:44, Andrew Morton wrote:
-> > On Mon, 9 Nov 2026 14:40:48 +0100 "David Hildenbrand (Arm)" <david@kernel.org> wrote:
-> > 
-> >> On 11/7/26 21:09, Lorenzo Stoakes (ARM) wrote:
-> >>> I think we're slightly talking across purposes, so to be clear - I am totally
-> >>> fine with you taking any of this through your tree or whatever works for you and
-> >>> Andrew to avoid merge pain :)
-> >>>
-> >>> I was just talking more generally about how to merge series that touch a lot of
-> >>> subsystems and maintainers-who-may-never-reply, etc.
-> >>>
-> >>> These are the edge cases that make things... fun :)
-> >>>
-> >>> Anyway, I guess easiest resolution here is for you to take the bits that belong
-> >>> to your trees and Andrew takes the bits that belong elsewhere?
-> >>
-> >> Yes, that's what I did now, applying #1,#3,#4,#5,#6
-> > 
-> > Cool.
-> > 
-> > I'll remove the whole series from mm.git immediately for
-> > collision-avoidance reasons - let's sort things out later.
+
+On 11/8/26 12:15 PM, 铮 wrote:
+> Hi Stefan,
 > 
-> The mm-next merge today still worked (minor conflict on #7 due to one
-> unnecessary ksm.c hunk I commented on), so you could have likely just kept all
-> but the above patches.
-
-OK, I'll take a look at re-adding things...
-
-> > 
-> > I'll get better/more accurate about this soon - I need to set up
-> > infrastructure to fetch everyone else's trees, do test merges and
-> > figure out what should be removed/fixed in mm.git.  I might just base
-> > mm.git on everyone-else and always route its stuff ->david.  I need to
-> > spend a bit of time on this and discuss with the mm-next peeps.
+> Thank you for the patch
+> ("tpm: tpm_vtpm_proxy: Set STATE_OPENED_FLAG before inode is created").
+> We applied and tested it, and we have also reproduced the boot warning
+> Stefan reported and identified a sufficient condition for
+> it (running without KVM acceleration). Two findings first; "Where to
+> look" at the end points to the exact files in our repository.
 > 
-> Ack!
+> 1. Your patch does not change the outcome of the hang
+> 
+[...]
 
-...once this is in place!
+> 
+> v7.4-rc1 is affected as well: drivers/char/tpm/tpm_vtpm_proxy.c is
+> unchanged between v7.3.0 and v7.4-rc1 (empty diff), and the same
+> reproduction hangs there 1/1 (t=402s, same signature).
+
+I have a hard time reading these .prog files. Are you closing the server 
+side file descriptor you are getting back via the ioctl to /dev/tpm? 
+Have a look below. If not, that could be the reason why its hanging. If 
+you close it, it should clear the STATE_OPENED_FLAG and wake up any 
+client waiting for a response.
+
+/**
+  * struct vtpm_proxy_new_dev - parameter structure for the
+  *                             %VTPM_PROXY_IOC_NEW_DEV ioctl
+  * @flags:	flags for the proxy TPM
+  * @tpm_num:	index of the TPM device
+  * @fd:		the file descriptor used by the proxy TPM
+  * @major:	the major number of the TPM device
+  * @minor:	the minor number of the TPM device
+  */
+struct vtpm_proxy_new_dev {
+	__u32 flags;         /* input */
+	__u32 tpm_num;       /* output */
+	__u32 fd;            /* output */    <--- this one here
+	__u32 major;         /* output */
+	__u32 minor;         /* output */
+};
+
+
+   Stefan
+
