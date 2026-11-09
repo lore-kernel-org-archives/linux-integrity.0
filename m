@@ -1,62 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794189008;
-	b=PodNdf4+t6HX9I/sYjDkjG4B0Z1/BPfO9Um0PWAseuOcnb7lvQPTUmZZ4tQCHgJcELsY
-	 562ugGjMNH2v07NosBjYwshH141+dnJuxh4GkACKAsX789x20hQlMlzGWse/kW0wXPfee
-	 e5RXbcIt83y0VpH2nZarvATkSWmuiwdCx2glutGvkcqZkcX3RMt1MbjW3OxAaH3fXKzUj
-	 28BQPvtq3TuZ7xnpGrIykE7wFSC/Kytu9E37fzUlJtu46zUlR7KXxcvgiAUi62bBCtrvj
-	 l/luCONChQyCyFn6wan/h4Ht8YhkPmyQRAg4vPRo9+ISDkJjIvjWNzsKkxDkirGsP7A==
+	t=1794189007;
+	b=3n+wNVHGOjHAA3sCt+qa0T7xKfOkdySwWXF0iGMe5NXeTdsOMQ8vq/og6r3s974yPmCb
+	 gCZVAiM929Iaz5zTtkqM21gvbZUTE0FtvX/Li/eyrChcILPBAPdxJOcJLBB6yBp7eDpKc
+	 pM9gVxeYY1E5FLBpLHhP1k7PeNLoKh8dNZaopzXvFzrljXtCcK2USdDVZ7avv/hmr4fev
+	 PQBDCdDISFYX6M4oCEu5wviI/jHJBpPNYBKldxR/ENzTQSPTQ8apCIe6WwQd3Z8kYbwK9
+	 W1j6+Tg8cFgqWdsbS/fSUXmPJPAM8P7bEhGBvCcuHGQ8KaXjE/aX9r+OhTmOE2/wNjA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794189008;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794189007;
 	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
 	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=V38T8aAeXJ9M+jcD3MoRT7yJtF10TXOXINWjQCRAFE8=;
-	b=HGGCMelS5Qn1bphwlwrUdt9+49cNpJxQ4P4zIcuMdcj9gcBEruoLAkyCLVVr11DD39E3
-	 w41hLEJIUJ3FKfxG7QopgndVtYDOvNXksuDEGrXqeSGUVpTD3I4UaOeMifUmMevOJgpm4
-	 J5x8My3PJma3X/Z/CMdO4ePw1DkmI7skZNuUi7MyJEyAcwyxBzKVXrtB22aRFr18zKNXI
-	 +pAMCVsDQfFh/AYlNZZUjQ15OkxsBXnC78FoHcYzjFCdLaGf2yDL1bO4XaqNnDaelerSZ
-	 tQUx/Nb0ouwLPxgd4Wfm0IPHFHNp8D5rxC0IEtdLQs12xx8S8dBk6E7RcjzRO5oHplw==
+	bh=u3fGTU6aueqvbRZKCGqUZQ0PvrtJ8i6SbkcYbayIwgs=;
+	b=Q2CrVctLzELvdfzkmVaKGsxVHZcPYiOL1bQGY5VpJf79tewszOWKUPJ329Z32P1dXxii
+	 ZdPpkPS5qFr9UpPoKj2v+CDrLoRCoa6ZSKvD6P3rstS3a6xMddi42MRijtMeHAopzdJ+Z
+	 a8EwIsgaINmoQpUCcYJaJP2Ai1aWaYh+mDNpz/nmgZqN92qUXWUs9nk50qeTLf4LIa/Nv
+	 L3NSWVNoJBH4cR4yX0RkX93YKfqE+I1PWj3kljZz8mwA449lN8pt/llwitHLsoKU7214F
+	 RjShbZx7tMqRHTj0m1eLeiwKEos1ZztVdHrm9ZAgK8pZADhy+8hK9bIhSl1eNCfvSdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=xiaopeng.com;
 	spf=pass smtp.mailfrom=xiaopeng.com;
-	dkim=pass header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=C53JELFA;
-	arc=none smtp.remote-ip=115.124.28.5
-Received: from out28-5.mail.aliyun.com (out28-5.mail.aliyun.com [115.124.28.5])
+	dkim=pass header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=TJ7RavfG;
+	arc=none smtp.remote-ip=115.124.28.171
+Received: from out28-171.mail.aliyun.com (out28-171.mail.aliyun.com [115.124.28.171])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997D5606A321;
-	Mon,  9 Nov 2026 01:50:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 997D5606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DAD606A320;
+	Mon,  9 Nov 2026 01:50:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 30DAD606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaopeng.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=C53JELFA
+	dkim=pass (1024-bit key) header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=TJ7RavfG
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=xiaopeng.com; s=default;
-	t=1794188998; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=V38T8aAeXJ9M+jcD3MoRT7yJtF10TXOXINWjQCRAFE8=;
-	b=C53JELFAPm/TOk9tzJLkKQxl146l103+Ek4b52U9UYZPz2KJ5QWmJa2PkhGEJ8/fNvl7PAoUFV3OpV5AkwqOW37bgIyu0y5nH7+bHGzmENWoC/wLda+gGLCy/EfVa3Gwb4bO7MAborsj7Czt6FmM3x8kA9Y05a2QoPaPygL0YPk=
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07461259|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.00469702-0.00473385-0.990569;FP=10823690688715638298|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033037028158;MF=guozh23@xiaopeng.com;NM=1;PH=DS;RN=8;RT=8;SR=0;TI=SMTPD_---.jzgjJbI_1794188997;
-Received: from localhost(mailfrom:guozh23@xiaopeng.com fp:SMTPD_---.jzgjJbI_1794188997 cluster:ay29)
+	t=1794188996; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=u3fGTU6aueqvbRZKCGqUZQ0PvrtJ8i6SbkcYbayIwgs=;
+	b=TJ7RavfGY0VhZHEAuRqZuzbmgyl9PxWi0yXZXAm+N8z3r0DbDwa0xafRDjV76mFISEvNqwzRNfRishirVhreWyH6fNj36aynMu8Zz6OUvo70xIiioPHc+Fxu6Zz46c9yaPKIIveLwyKhf0g1ZhXvbm4Oo6cHoTz5qhYO/sv8yEw=
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.2031034|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.00122131-0.000399247-0.998379;FP=16093665035493975195|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033045166233;MF=guozh23@xiaopeng.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.jziGj7E_1794188995;
+Received: from localhost(mailfrom:guozh23@xiaopeng.com fp:SMTPD_---.jziGj7E_1794188995 cluster:ay29)
           by smtp.aliyun-inc.com;
-          Mon, 09 Nov 2026 09:49:58 +0800
+          Mon, 09 Nov 2026 09:49:56 +0800
 From: Guo Zihao <guozh23@xiaopeng.com>
 To: Peter Huewe <peterhuewe@gmx.de>,
 	Jarkko Sakkinen <jarkko@kernel.org>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-	Ashley Lai <adlai@linux.vnet.ibm.com>,
-	Kent Yoder <key@linux.vnet.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
 	linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tpm: ibmvtpm: check the response size against the buffer size
-Date: Mon,  9 Nov 2026 09:49:57 +0800
-Message-ID: <20261109014957.2777790-1-guozh23@xiaopeng.com>
+Subject: [PATCH v2 1/2] tpm: sessions: bound the primary public area by the response size
+Date: Mon,  9 Nov 2026 09:49:54 +0800
+Message-ID: <20261109014955.2777635-1-guozh23@xiaopeng.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <au3w4NDX1Uqz-iqd@kernel.org>
-References: <au3w4NDX1Uqz-iqd@kernel.org>
+In-Reply-To: <au3waVnY6QA8TpPl@kernel.org>
+References: <au3waVnY6QA8TpPl@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -68,67 +67,51 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The send path validates the transfer size against the size of the
-RTCE buffer:
+tpm2_parse_create_primary() reads the size of the TPM2B_PUBLIC area
+from the response and hashes it to compute the object name:
 
-	if (count > ibmvtpm->rtce_size) {
-		dev_err(ibmvtpm->dev,
-			"Invalid size in send: count=%zd, rtce_size=%d\n",
-			count, ibmvtpm->rtce_size);
-		return -EIO;
+	len = tpm_buf_read_u16(buf, &offset_r);
+	offset_t = offset_r;
+	if (name) {
+		/*
+		 * now we have the public area, compute the name of
+		 * the object
+		 */
+		put_unaligned_be16(TPM_ALG_SHA256, name);
+		sha256(&buf->data[offset_r], len, name + 2);
 	}
 
-The receive path has no such check: the response length is whatever
-the hypervisor reported in the completion CRQ, and it is only
-compared against the size the caller asked for before being used to
-copy and clear the RTCE buffer:
+The length is only checked against the response later, after the
+hash has been taken. A TPM that reports a public area longer than
+what it actually sent makes the sha256() run past the end of the
+received data and hash whatever follows the response in the buffer.
 
-	len = ibmvtpm->res_len;
-
-	if (count < len) {
-		...
-		return -EIO;
-	}
-
-	spin_lock(&ibmvtpm->rtce_lock);
-	memcpy((void *)buf, (void *)ibmvtpm->rtce_buf, len);
-	memset(ibmvtpm->rtce_buf, 0, len);
-
-A response length larger than the RTCE buffer makes the memcpy read
-past the buffer and the memset clear past it.
-
-Reject a response that does not fit in the RTCE buffer, mirroring
-the check the send path already performs.
+Check that the public area fits in the response before hashing it.
 
 Signed-off-by: Guo Zihao <guozh23@xiaopeng.com>
 ---
 
 v2: Drop the Fixes and Cc: stable tags, as suggested by Jarkko
-Sakkinen: a hypervisor reporting an oversized response is not
-known to violate the architecture, so this is hardening rather
+Sakkinen: a TPM reporting an oversized public area is not known
+to violate the TCG specification, so this is hardening rather
 than a bug fix. No code changes.
 
- drivers/char/tpm/tpm_ibmvtpm.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/char/tpm/tpm2-sessions.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index 6fb4d30eb6f6..bfef4bc14767 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -121,6 +121,13 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 		return -EIO;
- 	}
- 
-+	if (len > ibmvtpm->rtce_size) {
-+		dev_err(ibmvtpm->dev,
-+			"Invalid size in recv: res_len=%d, rtce_size=%d\n",
-+			len, ibmvtpm->rtce_size);
-+		return -EIO;
-+	}
-+
- 	spin_lock(&ibmvtpm->rtce_lock);
- 	memcpy((void *)buf, (void *)ibmvtpm->rtce_buf, len);
- 	memset(ibmvtpm->rtce_buf, 0, len);
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index cf8f1fd6790b..e140079dbc13 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -1125,6 +1125,8 @@ static int tpm2_parse_create_primary(struct tpm_chip *chip, struct tpm_buf *buf,
+ 		return -EINVAL;
+ 	len = tpm_buf_read_u16(buf, &offset_r);
+ 	offset_t = offset_r;
++	if (offset_r + len > tpm_buf_length(buf))
++		return -EINVAL;
+ 	if (name) {
+ 		/*
+ 		 * now we have the public area, compute the name of
 -- 
 2.50.1
 
