@@ -1,47 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=134.93.178.243
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794215299;
-	b=JKVxaX5mXb7iWpEphqlN1oSdNh12f7RgPbFzgDogv8+AIUgvdYoUC7H2DnEHIRccjRft
-	 L+soDJr7TK5cqEIq91hHUmXrBlnAqciZOaya1QAIPuvvEj8Nal7D4dgF8ji6Iy/CJA7HR
-	 349pO4dckpqHslxKU5bZl9J4KJ3TUx1RQH83gjY8kVHivyLFqfs+3FYOZ2rPqUFg5KSSg
-	 +XLHTqcM/SOTJwlhN0siJSEzSCIgHJAJ1wPsyM9ktXCfXLcEGXEr4qlbMokusSJn40r/z
-	 ami8VJLNXnll/sv/fSJz6w8nTh18hoXrB2VC7SAQQ+k01xwVgOeLJ2gx5rY37sZgtmw==
+	t=1794222258;
+	b=Tw5VphnAmNWKIFy6Ixtd+HrTisQEu8hq5NLBxaSAK5KRgYL/OeMUM6ObncFtCM6owIHk
+	 +omCfiXPmTY+EGY6ttQTRmGT+JmwuKS0DI9FphJsbRZ9vHhpUxdvQuAOSdCF1Q+WQVpsz
+	 +P1aUCo8VdL1uIHhYaYLsPSW2DW5rCBAdyjzR3WHNkzJwP7C85sC+xRWVRSZSXCDC4/vM
+	 8UZoG5tyo9A7G2j0Q2ZzRvA5q9Rf+nb0UXPGxrETMxaOcG9i/yw0PBxh77G6zZvegtVB+
+	 61aUxfDbO+7nIfrUuneewjz6DxnTnMkvfdQCrIEZON/9V3IXKEahwJrDCLPAAS9zDTg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794215299;
-	h=DMARC-Filter:Received:Received:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-CM-TRANSID:
-	 X-Coremail-Antispam:X-CM-SenderInfo;
-	bh=WNYcEhnvU8wcHU8zemgPXvta2itTQnZpRv+qT216orI=;
-	b=Y3xTv58d0EL/88fJxAgb/g1b8FixWp/KUQ9iarB+1lHiUpATMHHZP6ztNrYka4AiGQn3
-	 QuFAhgD6XlMQWmw/pBvIIiGYEOYMTDsa6pT9RACu/MJkLRGtY1FqItGp8YUi4frjkkyQf
-	 OFEA8SnoE/OgxYjZVrwx+ypgoBAFXF0/kxDOoZNTlzI91FEdRGdzKs78q3COgEYfjGI1S
-	 6ImhvApYZiFfo4jyBiSnLqUZ+mySRcDL0waifTGpbrnECSGWrDlqEmjyKtCsoABWE3Lag
-	 z2ru2+WhzkMw9Qi365xAYuh39ys4ZYXGxF3Bl4YJEVINhvXzjre6zWQ5B92XpfzfA8Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794222258;
+	h=DMARC-Filter:X-CSE-ConnectionGUID:X-CSE-MsgGUID:X-IPAS-Result:
+	 IronPort-Data:IronPort-HdrOrdr:X-Talos-CUID:X-Talos-MUID:
+	 X-IronPort-Anti-Spam-Filtered:X-IronPort-AV:Received:Received:From:To:
+	 CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy;
+	bh=IAvdkeYbWNqPuHgLOFIbTsl4llsltzOBBEnlGn0o0/Q=;
+	b=GwAK+keBeAZM8vf49TcKOGS+hx+zqxV7RluwghDEZD5GkfhJIPl+lK4zNT6ADiBskJXk
+	 5jRy9uHWKaN2PUosArytUCZLvjeWCdOwxkALRqKGcNNLkxtZLZKZFOSojEubkoBNitom3
+	 sEaqr15Hk/DSA0lmuhbmkMlHGlywKVixFKC+s/PpdFe6w0e2xCT1Y0PRotDF4Gt4VLAo1
+	 Df+Xuiyy3xb9CHJzFIiqw6mVfZTe0ro05HXUdRMzXlWS3Fy5cdhpiueFfLGWm8rRxXsPI
+	 w0pnndKkgxJVrTpLywdEr7ZHyionaf8xHT3WxAAnfQdgh7D3B7RluQJIppX13YclHRA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=huaweicloud.com;
-	spf=pass smtp.mailfrom=huaweicloud.com;
-	arc=none smtp.remote-ip=14.137.139.46
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=none header.from=hs-mainz.de;
+	spf=pass smtp.mailfrom=hs-mainz.de;
+	arc=none smtp.remote-ip=134.93.178.243
+Received: from mailgate-3.ZDV.Net (mailgate-3.zdv.net [134.93.178.243])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE3B606A31C;
-	Mon,  9 Nov 2026 09:08:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BCE3B606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4jNP7h5QBLzpV8h;
-	Mon,  9 Nov 2026 17:07:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.157])
-	by mail.maildlp.com (Postfix) with ESMTP id 7ECA14055C;
-	Mon,  9 Nov 2026 17:08:07 +0800 (CST)
-Received: from [10.221.98.11] (unknown [10.221.98.11])
-	by dep2_app1 (Coremail) with UTF8SMTPA id nRC2B0AmB11vjfFqZ2IPAA--.4181S2;
-	Mon, 09 Nov 2026 10:08:07 +0100 (CET)
-Message-ID: <98d6c26c-3dc4-4659-8284-a7ab0629bb40@huaweicloud.com>
-Date: Mon, 9 Nov 2026 10:07:48 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93CC606A31C;
+	Mon,  9 Nov 2026 11:04:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E93CC606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hs-mainz.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hs-mainz.de
+X-CSE-ConnectionGUID: E54ZMBywTUO/zkDaGLm1TQ==
+X-CSE-MsgGUID: yIURpLAaRHiP40Wn8DkPug==
+X-IPAS-Result: =?us-ascii?q?A2APBABwp/Fq/z72XgpaglmDTIIJli6eJIF+DwEBAQ4BP?=
+ =?us-ascii?q?RQEAQGFBQKOHic2Bw4BAgQDAgMBAQEBAQEBAQEBAQEKAQEBBQEBAQEBAQYEA?=
+ =?us-ascii?q?YEhhglGDZATBjIBRhALRlYGDoMHAYJ0FL91gQHeSYFuBgkBgUOFdIJuAYUDh?=
+ =?us-ascii?q?XM2gVVEhEA+hCEBAW2FeQSCIoEMl0BICnh4LAFVEw0KCwcFgSVDAzUSKhUjS?=
+ =?us-ascii?q?wUtHYEjIR0XER5YGwYFEiAqQUNbgRKBB12BKyhdAQIfRi0VgXYCglGBI10CA?=
+ =?us-ascii?q?UlBDgdFUwklQxJHJCIIEgkBExosCoEaNTwJJgQ7FQxkCxoFGkcIAgsCDHQoE?=
+ =?us-ascii?q?RATHR4kLwUcJj4bCjYYDUgRLDcVGQQ+bgeSQoIwghxYdRE1H0iWFQGvbzQHg?=
+ =?us-ascii?q?jmBaoFgCAyKMJU6Tapxkk6GOo4Kmw8CBAIEBQIYgW8IggYzGiSDN1IXAg+Wf?=
+ =?us-ascii?q?MVogTUCBwIHDgMLkkgBgR0BAQ?=
+IronPort-Data: A9a23:mT7UGqqGsGZHOcXzWvjWkIJH8GVeBmJ4ZRIvgKrLsJaIsI4StFCzt
+ garIBmFO62PNjf8fYh1Pd+18k0PuJbdnddkHFBorytmRiwa8JacVYWSI27OZC7DdceroGBPt
+ JxCN4aafKjYbVeF/kv9b+e/9RGQ8YnSG9IQ3cadYngZqTdMEXln1FQ73bFp2uaEuPDhayuVo
+ 9T+vsbDD1Gs3j9wIwo85rmKwP9VlK2aVAgw4BpkOpingHeEzyNLVctHdPnoR5fFatA88tCSF
+ rurII6Rpgs1zz91Yvu5n7DydFE9Q7K6FWCmlnpMVqG+tQNJryo037xTHKJ0hZB/0mjhc3hZk
+ b2hhLToIesbFvSkdNc1CnG0JxpD0Zhuo9crF5QdXfu7lCUqe1O0qxln4dpf0Ycwoo6bCkkWn
+ RAUxaxkgh2r34qLLLyHpuZEq5l/HuzBLZwjh1Yn3zL1BNkCRMn/evCfjTNY9G9YasFmD/rAI
+ scJYjoqNlLyTyMJHFoLYH48tL7wwCijNWcE9hTL/8Lb4ECKpOB1+L7sO93Rc93MRthTglSVj
+ mLdumHwAxcIctCSodaA2ij33LWWxHKqMG4UPKyZy8RypHSa/EwSMEFOal3rjfqBl0HrDrqzL
+ GRRoELCt5Ma8E2tU8m4XhukrXGevwINc8RfHvd86wyXzKfQpQGDCQAsXDlBYcYOsM4wWCxs1
+ 1WM2djuAFRHkrSQRGnb3LCIsTS3PSUEBW8LYzQJSxMM+cXlrZsojhPXCN1kFcadlNr/FCvsx
+ HaRpTMlmp0TkMcU2qT99lfC6xqgo5nVVB9z5QzMV36m7wVRa4usZoju4l/ehd5NNoeSCEKHu
+ 2cOltKRxOcUBJqJmWqGR+BlNKmg+vKtKDTBhRtqGJ47+nKm/HvLVYJV5ytkJVxBNM8BdD6vZ
+ 1Xc0StK6YVcMVOqZKtzcoT3AMMvpYDkFNL4RrXPY9FTeJltZUqC+y1zYUO4wW/gig4vnLs5N
+ JPddtyjZV4eCKJ63H+1Sv0b3LsD2C8z3yXQSIr9whDh1qCRDEN5Up8XPEXLY/Ay7Obe5hfZ7
+ ZBZOtfiJwhjbdASqxL/qeY7RW3m51BibXwqg6S7rtK+Hzc=
+IronPort-HdrOrdr: A9a23:93f/DazCXS0knN5j30RYKrPwHb1zdoMgy1knxilNoRw8SKClfq
+ eV7ZAmPH7P+VEssR4b9+xoVJPrfZqYz+8X3WBzB8bGYOCFggqVxehZhOOI/9SjIVydygc079
+ YHT0EUMrLN5DZB4PoTt2KDYq4dKaG8kJxA0t2utktQcQ==
+X-Talos-CUID: =?us-ascii?q?9a23=3AruK6XmhqefTxDlM/F99WVkoLiDJuXyCB/lL6MlC?=
+ =?us-ascii?q?ENEEuWr65QHC0/fpYqp87?=
+X-Talos-MUID: =?us-ascii?q?9a23=3AcBzv5A0eJj0rN5/2p6AM632ppTUj8oWTMlgpuJw?=
+ =?us-ascii?q?8m8i8aXRPPWexjwyqTdpy?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.27,203,1787004000"; 
+   d="scan'208";a="23221199"
+Received: from zdv-exch-2.zdv.net ([10.94.246.62])
+  by mailgate-3.ZDV.Net with ESMTP/TLS/ECDHE-ECDSA-AES256-GCM-SHA384; 09 Nov 2026 12:04:08 +0100
+Received: from MacBook-Pro-von-Nicolai-4.fritz.box (91.37.89.206) by
+ zdv-exch-2.ZDV.Net (fd42:4323:8cdd:70e:9a03:9bff:fe77:8f92) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Mon, 9 Nov 2026 12:04:08 +0100
+From: Nicolai Kuntze <nicolai.kuntze@hs-mainz.de>
+To: <linux-integrity@vger.kernel.org>
+CC: Mimi Zohar <zohar@linux.ibm.com>, James Bottomley
+	<James.Bottomley@HansenPartnership.com>, Roberto Sassu
+	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric
+ Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James
+ Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] IMA: periodic runtime re-measurement of process .text/GOT
+Date: Mon, 9 Nov 2026 12:03:36 +0100
+Message-ID: <20261109110336.82654-1-nicolai.kuntze@hs-mainz.de>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <cf79fc0314c1984e68f683d26cbee3ac0859b5d6.camel@linux.ibm.com>
+References: <20260817102323.35950-1-nicolai.kuntze@hs-mainz.de> <b13a1741eceeba4d4ec50e1c898e011ea81a178b.camel@HansenPartnership.com> <20260822193833.98211-1-nicolai.kuntze@hs-mainz.de> <1805cb973c0e38e1ca8cbeb6dadc4f46f9475a0c.camel@linux.ibm.com> <cf79fc0314c1984e68f683d26cbee3ac0859b5d6.camel@linux.ibm.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -51,124 +98,27 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] evm: fix TOCTOU heap OOB in protected xattr reads
-To: =?UTF-8?B?SsOpcsOpbXkgSmVhbg==?= <Jeremy.Jean@oss.cyber.gouv.fr>,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20261107230514.1108379-2-Jeremy.Jean@oss.cyber.gouv.fr>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <20261107230514.1108379-2-Jeremy.Jean@oss.cyber.gouv.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:nRC2B0AmB11vjfFqZ2IPAA--.4181S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCFy7ZryDZr45KFW7trW5ZFb_yoW5Cr45pF
-	90kFW3tr45t34Ikr9rtF13Aa4Fk34DXw1Uu3yxG3W2yan09rs5ZrySgrWjgryxCrnrXwn7
-	Aa90qFnYkw1qvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Jr0_Gr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASDWrxOrk8KAACsT
+Content-Type: text/plain
+X-ClientProxiedBy: zdv-exchfe-1.ZDV.Net (2001:4c80:40:70b:21d:d8ff:feb7:30e1)
+ To zdv-exch-2.ZDV.Net (fd42:4323:8cdd:70e:9a03:9bff:fe77:8f92)
 
-On 11/8/2026 12:05 AM, Jérémy Jean wrote:
-> ima_eventinodexattrs_init_common() queries the total size of protected
-> xattrs, allocates that amount, and calls evm_read_protected_xattrs()
-> again to fill the buffer. This creates a TOCTOU window: if the
-> protected xattr changes between the two calls to
-> evm_read_protected_xattrs(), names and lengths are written without
-> checking whether the data still fits in the target buffer. This can
-> yield an OOB heap write that KASAN reports as:
-> 
->    BUG: KASAN: slab-out-of-bounds in evm_read_protected_xattrs+0x15e/0x280
->    Write of size 20 at addr ffff888002c59bcd by task init/62
-> 
-> Reject fields that no longer fit in the target buffer. For xattr
-> values, also check the length returned by the copy before accounting it.
-> This also handles the case where a size of 0 is treated as a length
-> query.
-> 
-> Fixes: 8314b6732ae4e ("ima: Define new template fields xattrnames, xattrlengths and xattrvalues")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
-> ---
-> Changes since v1 (after review from Sashiko):
-> - Handle the 0 case.
+Mimi,
 
-Hi Jeremy
+Sorry for the long silence, and thank you for the review.
 
-I already sent a patch to the mailing list to fix the same problem (it 
-is similar to yours):
+A short status note so the thread is not left hanging: I agree with
+your direction. I am reworking this as an IMA critical-data measurement
+(ima_measure_critical_data()) triggered by the securityfs write, and
+will send a v3 on that basis once it has been tested against the
+integrity tree. 
 
-https://lore.kernel.org/linux-integrity/20261029142707.2602008-1-roberto.sassu@huaweicloud.com/
+The question about extending unchanged digests in that mail needs a bit
+of consideration on my end but I agree that my earlier justification
+for it was not correct. 
 
-Thanks
+One correction: the repository URL in my RFC and in my last message is
+stale. The reference implementation now lives at
+https://gitlab.rlp.net/trusted-computing/memory_attestation
 
-Roberto
-
-> v1: https://lore.kernel.org/all/20261107194909.1061154-2-Jeremy.Jean@oss.cyber.gouv.fr/
-> Sashiko: https://sashiko.dev/#/message/20261107194909.1061154-2-Jeremy.Jean%40oss.cyber.gouv.fr
-> 
->   security/integrity/evm/evm_main.c | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
-> 
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index ac8328812e6ef..2ed0b67b9109b 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -389,6 +389,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
->   		case 'n':
->   			size = strlen(xattr->name) + 1;
->   			if (buffer) {
-> +				if (total_size > buffer_size ||
-> +				    size > buffer_size - total_size)
-> +					return -ERANGE;
-> +
->   				if (total_size)
->   					*(buffer + total_size - 1) = '|';
->   
-> @@ -398,6 +402,10 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
->   		case 'l':
->   			size = sizeof(u32);
->   			if (buffer) {
-> +				if (total_size > buffer_size ||
-> +				    size > buffer_size - total_size)
-> +					return -ERANGE;
-> +
->   				if (canonical_fmt)
->   					rc = (__force int)cpu_to_le32(rc);
->   
-> @@ -407,12 +415,20 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
->   		case 'v':
->   			size = rc;
->   			if (buffer) {
-> +				if (total_size > buffer_size ||
-> +				    size > buffer_size - total_size)
-> +					return -ERANGE;
-> +
->   				rc = __vfs_getxattr(dentry,
->   					d_backing_inode(dentry), xattr->name,
->   					buffer + total_size,
->   					buffer_size - total_size);
->   				if (rc < 0)
->   					return rc;
-> +				/* A size of 0 may be treated as a query. */
-> +				if (rc > buffer_size - total_size)
-> +					return -ERANGE;
-> +				size = rc;
->   			}
->   			break;
->   		default:
-
+Nicolai (drafted with AI assistance)
