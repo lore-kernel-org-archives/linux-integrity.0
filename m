@@ -1,54 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.97
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794274603;
-	b=zciO19AxS7q/v1B3n53aQySrskpU3pvHuiWX0N7mRpfcmLK1JJXODQzIgtQwLiKeUa9z
-	 AbxFzmeW6mNgDIsekNsuk042NBWLZlLs8RXVO/nIGTmEiGKKla7n5rsdQO9Gp+sbqfWF2
-	 +/DbOugTQyDBDiTf0f5KU69tg6I0xv74DR4+aJ7dwvUmLRvV/uBnKl1YzYPwBF5gEZMSB
-	 BB0ji/sTUR+tCVm2YdOeI/EFb1+vzYngLt7PtU1Goz2CjcSWaGcDMPyRkgmRXWP/HrGb2
-	 m+LXEKhfMdNqG5411MLdYa9WeAcVTrANcIR5VHIh4ogje5PL2/2qcSqonPuUXI+S0/g==
+	t=1794280121;
+	b=HcaRy9tyab27U3F8O940ka97nExy11qvVhzdW7xN1z4CspIb+IS2IMeKX0YvKfLd1OuP
+	 UXB4uLTjQygu9EHvJbva8dVzQW2LTMN6kaCiYbqT0Us43RIdtwKC6FwTMCxBTg1YQYfEj
+	 zKMdIppMjOk/cJbvvOaWMsZumj8CLgGf7b5rUjKLmL9PDeQCDhrlebAuu+uCWBYUNfzH/
+	 l1/Mk2V8D/zGWsNopyKPiQxJVw5L00LjOhvE/vVvmHbWDPUG7hgQvq8hCkReyoXAtQXHF
+	 Gs+mf851iuFi+fIlC92rhlpZg7bb6PgXJ7aaLLc8cVVxesDBCVKcFI2+0DJjiut9F5w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794274603;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=W9ih9ljPK6y1w9rEm0sqJKx/YKMQ1/8WtMrNwPznZJ8=;
-	b=TadC2CCg6X8kxk0VbvsDWkg4q8LDN7FNKEjlep9RKGOrxI9ov5cx6MS45jSZMa3wRxvU
-	 2IHJFtwvrJwdtHhb0jfSfKEqjtl2cwxNpEBi3E3USLvuQHA6DNls8fQDm+Iq6+43sZqZD
-	 2iLUPCR4PSlG8UU8/Hj2qqFuJ9owdw00j71t8WmP27nff1XwVwPa7mwXbaA/1M9RWSg9f
-	 QHSFGxkO5GVZm+y89svMfAnMbV7EqKTiC+hkb26PM6sfjLJy0jURlEJxYMr0xwLyJfNON
-	 NpCnNYEzh8+/O9qeRtDNFnkWOub3giKDWetLLTwDlxWOc375HLu1wZ7mmJoDaKsV+IQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794280121;
+	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
+	 Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version;
+	bh=u0WexQiYcFsTUz3TiJp+BmJsyIFP85/+eNxRbuvwdeE=;
+	b=xXABzLo2sPkOEt3jJc2bpepMxeC4Tl1Npd7IQqggA/P62LTfPrFgJmPL3J5Vb2/Z1ig6
+	 YgLjg4TJtCYQdmaHZBmuqJghL2xzMS13WEFdPSPeW2pPZKd5wqPzL3bk8VT3i+M+FhQ90
+	 co5gqz4OKNKl/PBCo/c32VBOmZ7Qxd0Tj2zLLLcqrf6GznB0ECe2k4kWtQSOHbFWEpqlS
+	 7bJlRO3hOYPk14M9tGLt3xXws+Al53yFFzL6ysjZ1L7O8MsXFBr3XL1iyluzv6iE5y4rx
+	 6rC5i5M9xTWwMZINBlbkowwvy+230ickWcX7Nh9pR89Y9urxcevkG0tvK2hJXNRKWDA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HtaOlO3y;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=xiaopeng.com;
+	spf=pass smtp.mailfrom=xiaopeng.com;
+	dkim=pass header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b="Fs0URh/P";
+	arc=none smtp.remote-ip=115.124.28.97
+Received: from out28-97.mail.aliyun.com (out28-97.mail.aliyun.com [115.124.28.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id AF63B606A31C;
-	Tue, 10 Nov 2026 01:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED45D606A334;
+	Tue, 10 Nov 2026 03:08:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ED45D606A334
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaopeng.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HtaOlO3y
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BDA6E1F0089F;
-	Tue, 10 Nov 2026 01:36:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794274602;
-	bh=W9ih9ljPK6y1w9rEm0sqJKx/YKMQ1/8WtMrNwPznZJ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HtaOlO3yEfu3PbaUhSbtedRaQuc76/w7JAA8AVcLhLpTPjBnaYJrNhP7Vpqw/9WQB
-	 OrhLJls4N2DgDmz3wW76Zj069TK/bwfACqhhq2GB2kwCQ3papadvyLKsPzL5drl7wf
-	 Y5hgtZwK0Xe10A9wzwvigrJA2MuL5t5eNBhgxPqBXRirBu+NAqHLt6jhTr+m0oR5Sj
-	 51kO2zfNFX1NOvZTC3Qnx0ySLQHSSjv/uY9i9btScCUGBTCo8Q5LD1UZUuiqzrt5+t
-	 ShalZOxC+x6VLLgQQZZq3C7UPJpZA4xtNWfQ2SSFxpNqAn9FQ8Hix3dKJz4UOLUawY
-	 sLveKrAqxCysA==
-Date: Tue, 10 Nov 2026 03:36:38 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Matthew Garrett <matthewg@nvidia.com>
-Cc: mjg59@srcf.ucam.org, keyrings@vger.kernel.org,
-	James.Bottomley@hansenpartnership.com,
-	linux-integrity@vger.kernel.org, rafael@kernel.org,
-	linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
-Subject: Re: [RFC] Make hibernation work with lockdown
-Message-ID: <avJ1JiFQApsgYT_c@kernel.org>
-References: <20261008132532.1155166-1-matthewg@nvidia.com>
+	dkim=pass (1024-bit key, unprotected) header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=Fs0URh/P
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xiaopeng.com; s=default;
+	t=1794280111; h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
+	bh=u0WexQiYcFsTUz3TiJp+BmJsyIFP85/+eNxRbuvwdeE=;
+	b=Fs0URh/PZ3u4XEEzSG/a/AQKAR/X6HgaCUBlNZnmdQqW5y3c+XyAxbMOFJJUmcDY3aSFfwTOpmMpDsNuIl2M4anr8xs9ASpjb/wKSqpVHGO3X8YaWGHvgaraBM6EsBAiHU+0XwLuZRTYE+P+c7cXjV+IPJDoZR2ghDHxF6ESp3w=
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.1069233|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0209474-0.00293205-0.976121;FP=16677591614755782120|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033045038069;MF=guozh23@xiaopeng.com;NM=1;PH=DS;RN=8;RT=8;SR=0;TI=SMTPD_---.k-dniAt_1794280109;
+Received: from 127.0.0.1(mailfrom:guozh23@xiaopeng.com fp:SMTPD_---.k-dniAt_1794280109 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 10 Nov 2026 11:08:30 +0800
+From: Guo Zihao <guozh23@xiaopeng.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Ard Biesheuvel <ardb@kernel.org>, Matthew Garrett <matthewgarrett@google.com>,
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] tpm: efi: reject a final events table with an oversized
+ preboot log
+Date: Tue, 10 Nov 2026 11:08:29 +0800
+Message-ID: <179428010969.3920616.1180194759290419954@xiaopeng.com>
+In-Reply-To: <au3xN-7onNTtgceh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -58,39 +64,42 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261008132532.1155166-1-matthewg@nvidia.com>
 
-I have a rebased branch of these patches with all the merge conflicts
-sorted out:
+Hi Jarkko,
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=hibernate
+No bus interposer is involved: the threat here is firmware shipping a
+self-contradictory final events table (preboot size larger than the
+table itself), not tampering on the wire. So the quantitative
+question - does this actually happen - does have data.
 
-And I'm finishing up refining my test environment:
+This area of efi.c has already needed fixes for real firmware tables
+four times:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/
+- 05c8c1ff81ed ("efi/tpm: Don't traverse an event log with no
+  events"): some machines return an unpopulated template table whose
+  contents are just garbage.
 
-The build recipe is:
+- b4f1874c6216 ("tpm: check event log version before reading final
+  events"): several Dell models froze at boot because the firmware
+  event log and final events table did not match each other.
+  Fixes: includes 166a2809d65b.
 
-	export LINUX_OVERRIDE_SRCDIR=<kernel tree path>
-	make build BOARD=tpmdd_amd64
+- 80a6c216b16d ("tpm/eventlog: Don't abort tpm_read_log on faulty
+  ACPI address"): a Framework laptop with an INSYDE BIOS shipped an
+  un-mappable TPM2 ACPI table.
 
-This results build/tpmdd_amd64/images/tpmdd_amd64.iso, which is a live
-ISO. Once I get remaining commits pushed (not all of them yet are),
-the image can be installed by typing:
+- 48cff270b037 ("tpm: efi: Use local variable for calculating final
+  log size"): this one is the closest. The same subtraction went
+  negative and hit __memcpy with a wrapped size, with a real oops in
+  the commit message. It carries Fixes: 166a2809d65b and went to
+  stable.
 
-	sudo npx @puu/install
+So the corrupted-table input and the negative-size memcpy path have
+both been observed in the wild, just not through this exact
+combination yet.
 
-The TUI installer duplicates the bootc image of the live ISO  to the
-target hard drive. It has a checkbox for hibernate as part of the
-installation flow.
+I'm fine either way on the tag. If you still consider this one
+hardening, I'll send a v3 without Fixes - the change itself is not
+affected by that.
 
-I'll report the results later, and at that time my testing harness
-should be fully available in public.
-
-I think this is pretty much the lcd for the required testing machinery.
-It is neither a feature very popular nor well maintained among popular
-Linux distributions.
-
-Br, Jarkko
+Thanks.
