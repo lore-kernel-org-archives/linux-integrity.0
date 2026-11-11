@@ -1,66 +1,66 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.15
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794440912;
-	b=wb8i3bxdvDD7usw7eSOZ+bvf+F24V8j1hOUkyi5zr+S14S25QoDIyvO9kaU8dVzBziEL
-	 M9qRx3WCNyvivtpxG8+TJvzKmOhetRxXBpCVA1m2zJeLGkJjun+WHmg7ZSP40pfu5rncr
-	 9KBBqBUOiojxUEpm2hl15E3kn2opiXFC4jhP6P9xXjyWrCK9b5fUWuSopVVHy9BPl50BV
-	 t0tpqqlTrw7DZwIQYnmiUDD9Wta796fwg865RngR3X3UpLMtfkGtWrNwUknDfLZQKJe4G
-	 1GgoTcbrq3xihL4aYoyGb9NB0DOGiY37iMC/YOL2dCdDuSbpqHg8yToxsBNRwSTZsjw==
+	t=1794440915;
+	b=Mxw8nA5ns7Fi2Qz9DWQnvzeVzI7+ptFINwkIzj7B1RmBr1Fvz55LOm9/sXjZ8l77ctOP
+	 vz3w0/GTqRQVHB/PQIKgk9CJsx2Us691BVgzcI3xK/njXbckGeGU1+wRnYRKrPvw+Jjcz
+	 v8IzNggiGYd3dNeKX5jqxCrdav8i2sFf3DCQ7njzCA/guJM90g8FUc65THCAB0y3xAR3Y
+	 HZSRWNBM5LwN9mYXThLOTj7RrDYaauM4HG7g4h6a6MjhkYXa67Q5WjFrQIMswDBT0idjM
+	 f+SQtc8pyZxHVL/EGLET0fhAYlfr3K3Z94EJW5lqJBKXWN+K5hd6PuitiIj3hHeXXuA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794440912;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794440915;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=Iaxxel5eQmGQTudIuvxMVFkeCpIWN6hgvbXS3j/ddMY=;
-	b=qQsUdcJylFZ3kB+y4wOnQLS2UApIfE1v1tRGUNt+WPz0HFNZlVpS8/PCy1kfj6XvSnVg
-	 P3pumpYxWXNKmQQ8K4AEk7OJ+AXOYwOeoyMK7vW+hT7ZG8yCD/3U0/ARaGosKJBkF8ksT
-	 oxnenOjdAIedL2gYNv+/9qh4vRB/Dk3T/k7GwbqhDRe+lF+BuKqREu/1Lw6s6ldhof0uN
-	 WewBccnG7njDQmUqlSqODm//EKYAi6ico+2Vz0twM5UefoSBBSsvD1QDnANoBfykGj8AO
-	 FSiELaerkFCu8II6MoRm7fs0QhfBhTBb1I3YxQQ3msuf8exU5OqAWKvq3/K4A5zRcFQ==
+	bh=NQx89/FMbumuaF97KkX7Rzg2TMLNreMdQ6e/+/UlUyQ=;
+	b=pjDGlIcYjtMkBZio0gZWqESJgoX4E4FFH39aA4EywapJBDgpRksdAaMPk135yHYzVW3a
+	 8vq8awUA03yxw1Tx3zGd17hXBNshOscVp3WxNSdWjIO9lGsuO9BPaxAEGVpLwaXjgBTkB
+	 sQIseYIS09SGs5waV9NLjc+WR1h8XAFsihxiTIW7QNx+aQKCm04ovbLi9wCEuvcdG1IhW
+	 JYZeDjsbpiy6LgHTRNCJtxt1WN1Uw3N+hGbfj1jps6Je4YBzq/whcPrO3/qPUaYmJ8BZM
+	 hAJ2WjOfzZiDn5Io+VXj7PICZwW/1O4A1ZdW/gc52nrHstDmsqaeaK9rIkReoumiUZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="YK/w9e5I";
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=CHiFtZWu;
 	arc=none smtp.remote-ip=192.198.163.15
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EC7606C0B0;
-	Wed, 11 Nov 2026 23:48:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 73EC7606C0B0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EC6606B5F7;
+	Wed, 11 Nov 2026 23:48:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 98EC6606B5F7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=YK/w9e5I
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=CHiFtZWu
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794440911; x=1825976911;
+  t=1794440914; x=1825976914;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=F2WuUYmuXTPXL+P5748IfGeMmC4KPLynQ6+J0uAEp+0=;
-  b=YK/w9e5IWHuHOGZCpyrIiUoz0lAFiaLXtm0kYASpfId+l4gbZDextDvN
-   4jK8UuJ65ggGldkyBBHxkLRGMlRrq4ODK1fOGT3l2iRR3J6EnsWkzwudK
-   EYDcUK3z776OVqqQJJ4WtFsw6F1Xa6i/dty4AZe96fBTgnFGqf4N3qOC8
-   g9GvxlO2jcQ4WVnettuz8ZQpFxqacfcTe7taY/3kKa5Os0nK+Ys/+19xg
-   Dw/hrAD4lfLx/wTqSf4yAE+GKBsAIb+3Kfl9Wigd6bkQ88Tv766WgkPLQ
-   x+zgM+4xl0n6DvoRWaeNDX2ORGtb62M81rhn4Zm83Y5vl5PfMpPRAJc6R
-   A==;
-X-CSE-ConnectionGUID: AFHQjuDlTiq5kbiHN6Yy+Q==
-X-CSE-MsgGUID: 72OqXOYOQyCXo7ACfUMtdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11963"; a="3226584"
+  bh=d/q7ALXLdCkJJkZQuQByGC710SnlqrlqU7uR1PxYHvk=;
+  b=CHiFtZWu6HhsgWUcC4X/jFNfyPXRngSvyRZUqepLBP68WhkMoRUkd5II
+   0afJi6N+xGKMx1zgnXGOb6zVsMYzsZRn7ZUKnu7t4qT7Mm7MTVvZBP1kk
+   YB6G8UNVShsgo9ptgTtdqKjsMqeDzsHg8ywz0WxPwAkdPaU2BgI23uBOp
+   WxHRbjiH0IveNvmdz2zJAEXBXSp+btqSthRIDaSwz4NJdxtPTxE/8qui5
+   o8c1h3/31NV4calu/cYYlxjWiMyxEd/fFM1MZC1tRI4mD7JQLlHY5s7zq
+   0Wv1XKwedjTfXhHC2jLkSxq3ZG8+UuCmanDtc/e3Wq4PgO6B7FOs4rfn/
+   g==;
+X-CSE-ConnectionGUID: trxomHrwQMeHF6kYW7GmNQ==
+X-CSE-MsgGUID: jutdpttVRgeMXUzpqGY4vw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11963"; a="3226601"
 X-IronPort-AV: E=Sophos;i="6.27,208,1787036400"; 
-   d="scan'208";a="3226584"
+   d="scan'208";a="3226601"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 15:48:31 -0800
-X-CSE-ConnectionGUID: L4ZeofTETcawVOXtCfTrDg==
-X-CSE-MsgGUID: WFO6/awMR/Gk2uILNvf7Cg==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 15:48:34 -0800
+X-CSE-ConnectionGUID: djsE3xf9RyyMNtRku7cWRA==
+X-CSE-MsgGUID: 80aUsZCoRNu+l8Tm+TbN1Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,208,1787036400"; 
-   d="scan'208";a="8512363"
+   d="scan'208";a="8512370"
 Received: from pavel-dev.sc.intel.com (HELO pepopov-mobl2.intel.com) ([10.3.206.11])
-  by orviesa002.jf.intel.com with ESMTP; 11 Nov 2026 15:48:28 -0800
+  by orviesa002.jf.intel.com with ESMTP; 11 Nov 2026 15:48:31 -0800
 From: Pavel Popov <pavel.e.popov@intel.com>
 To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Viresh Kumar <viresh.kumar@linaro.org>,
@@ -99,9 +99,9 @@ Cc: Pavel Popov <pavel.e.popov@intel.com>,
 	linux-arch@vger.kernel.org,
 	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] drm/i915: Include <asm/cpu_device_id.h> unconditionally
-Date: Wed, 11 Nov 2026 16:48:15 -0700
-Message-ID: <20261111234821.4814-3-pavel.e.popov@intel.com>
+Subject: [PATCH 3/7] drm/amdgpu: Include <asm/cpu_device_id.h> unconditionally
+Date: Wed, 11 Nov 2026 16:48:16 -0700
+Message-ID: <20261111234821.4814-4-pavel.e.popov@intel.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261111234821.4814-1-pavel.e.popov@intel.com>
 References: <20261111234821.4814-1-pavel.e.popov@intel.com>
@@ -119,8 +119,7 @@ Content-Transfer-Encoding: 8bit
 <asm/cpu_device_id.h> now has a generic version, so the #ifdef
 CONFIG_X86 around the include is no longer needed.
 
-<asm/intel-family.h> is included by <asm/cpu_device_id.h>. The CPU
-match table still needs CONFIG_X86 for the INTEL_* model defines.
+<asm/intel-family.h> is included by <asm/cpu_device_id.h>.
 
 Signed-off-by: Pavel Popov <pavel.e.popov@intel.com>
 ---
@@ -129,28 +128,24 @@ it is in mainline.
 
 [1] https://lore.kernel.org/r/20261111234439.4098-1-pavel.e.popov@intel.com
 
- drivers/gpu/drm/i915/intel_cpu_info.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_cpu_info.c b/drivers/gpu/drm/i915/intel_cpu_info.c
-index e52d0ac713a..a6b46cc841a 100644
---- a/drivers/gpu/drm/i915/intel_cpu_info.c
-+++ b/drivers/gpu/drm/i915/intel_cpu_info.c
-@@ -6,12 +6,11 @@
-  * intel_device_info.h by having a separate file.
-  */
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 19a566187df..fc4e7273630 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -88,10 +88,7 @@
  
-+#include <asm/cpu_device_id.h>
-+
- #include "intel_cpu_info.h"
+ #include <drm/drm_drv.h>
  
- #ifdef CONFIG_X86
--#include <asm/cpu_device_id.h>
+-#if IS_ENABLED(CONFIG_X86)
 -#include <asm/intel-family.h>
--
- static const struct x86_cpu_id g8_cpu_ids[] = {
- 	X86_MATCH_VFM(INTEL_ALDERLAKE,		NULL),
- 	X86_MATCH_VFM(INTEL_ALDERLAKE_L,	NULL),
+ #include <asm/cpu_device_id.h>
+-#endif
+ 
+ MODULE_FIRMWARE("amdgpu/vega10_gpu_info.bin");
+ MODULE_FIRMWARE("amdgpu/vega12_gpu_info.bin");
 -- 
 2.54.0
 
