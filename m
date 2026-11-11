@@ -1,63 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=82.195.75.108
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794341263;
-	b=aNGJ6O96GdEJjCXNI7Asre4bsZJLFDAJ8QzHpLnlVlnVlsDyVgQ/XidtSDup2rNy3eXv
-	 /fxapvNrN8U+4+ER8yx12bNpI8i6bpq6huASVKSwoKtSsdhgp7iTn1ZcLAqkw9HwcXzt6
-	 izmQMyprYOz83r65o8JBQKujoU4xWq9AvIj6QYocSxoIcDfZERtLgxtZ28QgXOyy2ukpb
-	 3x8t2Y+Ucc35ctKzYqb6rathNEtfAdTWk3MK2EeemEggl7gjAPz7hi8TPsZlQOfGVjDNb
-	 qFiYyMAn7rDKjgifRY/jUiJp6diwhf8SqZAjTZC5ytUpMHui2vpCat0DTqVkDr09vXg==
+	t=1794391108;
+	b=jdpt9BoaOwha4Znwvvm2Tdz2EMH3Ee3cE4Hs0v4qJjgYhl4QQ0Z8DGsxTTA7p+4aWQKG
+	 fyV3e97nL+oxeK121xu2JtyCAXWoUuZM4tVjdxDj7579kwTwxEyekVO8S15Ge379jnbxn
+	 UXaE724E0wfzrT8wPPkJJReiueQFPjZo6dEUQRVntLqHMKLx1xGCWs0nC+ep13T8ykTvc
+	 9dqHFj/sNDRU2tdP/TfHi9ML7M8QntSqjtpZbx3052YgvcePbIgvGIfB6MMEaT+0eZBm1
+	 kYZJkkGiJfPWi31YyxgLQLkATURtoYNRBfPlwGIA5aO3nWzO5ArKJfci5JpHBiAXqCw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794341263;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=fFSfGgw6bVYeUu0kiLvEaiITNG7sY4O64OeTREfeGfo=;
-	b=m8Kc2ytIr1jnNdqnaWHbfZI7StWnhCB3wWXSEaUv0JBKSgszKTNWfMCRpjDScsz7HD4y
-	 6f7OW2JvwynPDoL0smnKYjpniULWBKj+NcgGjL/bpAgs9pcfdsErimP63y2jRKcx/VJEo
-	 HoY1nbDh/8u05UuzBvBTyOmDdUh+iTtaTJVQQto2MHr3Kt2tXCP3Cz8fRYLobMYAbLnJV
-	 c3WFlE0EtPpsbIjC4C+xtAbJ/2aaWgCF5hMGOy+JCfKrpDTDs/+50wcYYVL/eK4HmAtqW
-	 /7pmiQVziHKJVjSn3sD5ziMyjPYPEUZtbBvS/hrRudsxY6vaJ+8AFe455XK5gfrkPDA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794391108;
+	h=DMARC-Filter:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Debian-User;
+	bh=tGushzrFtrW77V7rVvL3s1nIofkTvVLHjtzLyoCHfR0=;
+	b=YB2g0uH3ll+kjj7nxyhzSakRiqrr6p0xi/XEtJ8Xij/Gejt/5/f6fpKXxo1Dm0F61PnF
+	 E31W/NP+ObOazqfxJ4nlxKUP/14Xb5NDtLJA++4aWNtiCm28XF+htG9tUCqiGZujlCXyf
+	 ne0/HxtLZB/qUvksxW8Nlm1NNJrU6u1MYlSOcXk8n/XCM2JYuaEvyJWJ0hgnmbS1Zk1AJ
+	 4ETOw+fW+8pMy8vwGiFI3KqxeatI2B1NG3yHrRiujl/OnybpDWXceObdSSbK9zGlTVcsZ
+	 hUaJvEgQzIgrFySzHmcxL7HnKEsUuBYWmGEGaJpDKwcRZqpwhYotCXWkR7MK0SdUxCQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h2PAuiZb;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=debian.org;
+	spf=pass smtp.mailfrom=debian.org;
+	dkim=pass header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b="dD/jUv4H";
+	arc=none smtp.remote-ip=82.195.75.108
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683EA606A327;
-	Tue, 10 Nov 2026 20:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDF5606A331;
+	Wed, 11 Nov 2026 09:58:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BDDF5606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h2PAuiZb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C381F008A5;
-	Tue, 10 Nov 2026 20:07:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794341262;
-	bh=fFSfGgw6bVYeUu0kiLvEaiITNG7sY4O64OeTREfeGfo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=h2PAuiZbL8+C9cFGu0hLkY/GW6LSnwFsQlh72teyZqoevLpXQn9BDXr5lwI6W2S9U
-	 oTPN/ufmKJHWcds6dUuuA0Jd+trPON6z/PfR9Y1KfVFLWbP3oX4WFz8J6qpkZe/06+
-	 SRmC3dEP0M2Y63yi3A/6GIl5Q1TsPA5akE4xonvE7PWdTQ5QIefsR60dNZ2t8G/E4U
-	 +YjEWFgkB3D4cTaLXQAr5DIDR8EGa8+SvKr6hGQtH/iUmLAFkysVFTJ90fPne3SYrO
-	 F+gDw62x3g4d4og21o9Ff0IrTVbcKTKLUPM+6lJsW38SZtn/RcSSuxL2AZot1hVl4x
-	 jEt3A4OZQ/jHA==
-Date: Tue, 10 Nov 2026 22:07:35 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: =?iso-8859-1?B?Suly6W15?= Jean <Jeremy.Jean@oss.cyber.gouv.fr>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <baoquan.he@linux.dev>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] ima: fix kexec measurement buffer overflow after failed
- loads
-Message-ID: <avN5hyR2V9C_4GPR@kernel.org>
-References: <20261108190404.1397829-2-Jeremy.Jean@oss.cyber.gouv.fr>
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=dD/jUv4H
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:In-Reply-To:References:
+	Message-Id:Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:
+	From:Reply-To:Content-ID:Content-Description;
+	bh=tGushzrFtrW77V7rVvL3s1nIofkTvVLHjtzLyoCHfR0=; b=dD/jUv4HR7WhMkgCSpIrvyXvMy
+	CdQzp8TivJzNsLmT2f/ww1N1E9Pf9BsaMqseJ7w2EyKldnuJNgpGPnmA3l4G3MgzuMG672gyiHzgi
+	n7DQx8je9z7OMKes3Is0AAN607y35wMnjpnECI1irDFnOZrSAxUZVVjRcp/ll2Hc2ApS/4+kr3Wwf
+	F1F1ShwvoeMBQubmAZrfrIOcTLSrTfeUUtNwc4unBeUWBQLuZzQTKggOkmHDAvoog/sT9npN4unks
+	pBoHrlB3ZY/zL+BCLdMu/W0RWz+dbiTOB++rKkd7Uif7u1Ot5jYi7JDS5AzJrcEY+vx105WDBE/oV
+	QNdV486g==;
+Received: from authenticated-user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.96)
+	(envelope-from <leitao@debian.org>)
+	id 1xR562-00D6Ag-05;
+	Wed, 11 Nov 2026 09:58:26 +0000
+From: Breno Leitao <leitao@debian.org>
+Date: Wed, 11 Nov 2026 01:57:33 -0800
+Subject: [PATCH 1/2] tpm: Disable a TPM that stops responding
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -67,91 +62,129 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261108190404.1397829-2-Jeremy.Jean@oss.cyber.gouv.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261111-tpm_unresponsive-v1-1-42ac1b965eb9@debian.org>
+References: <20261111-tpm_unresponsive-v1-0-42ac1b965eb9@debian.org>
+In-Reply-To: <20261111-tpm_unresponsive-v1-0-42ac1b965eb9@debian.org>
+To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+ Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ surenkj@amazon.com, noodles@meta.com, Breno Leitao <leitao@debian.org>, 
+ kernel-team@meta.com
+X-Mailer: b4 0.17-dev-ce4c1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3226; i=leitao@debian.org;
+ h=from:subject:message-id; bh=8Km7/zIGwygrBCifvoU5JjUY37dEAbTHjT/QlxC2Mg0=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBq9Dw6mXcwy7JFyMKMD/gGq1CRDCXJOX/lNYyro
+ 2mvMri2EgmJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCavQ8OgAKCRA1o5Of/Hh3
+ bZFrD/98RXf5kHalz/1PQLMnbHU+hEOlg65ukjdVNPFplWDqK5hCTUZfkGdN2aClZQQrPwdbAqI
+ RTWUBcYSmFjI2ejA236zenSJpuqYWTsEV6YyHhjk0uIkbMtAC4XfirgNDx1d07ElKfVuZ0s6WfM
+ P+Zwiwmg0DI/sBdQpQdQPfSxxmji+bHG6qzDwzpu6W++70dq13JPwEjMOt+3Ect6V8BRiOGwtDf
+ RjwK4pGtNzDzv2HBkRs61s7ghHyLUgU5V7E/edjZIDvuuz0917+Ipvw7SylExpJ1b7kKvB1Yzwn
+ KohUgpWKLuUM0Ot8TjlulT4Y3xFgEwocdWXT7REFyec5tyO4v+cMZaT0Rr7axjbxrh2MIOYDs+Q
+ 0uzPGqgNVCob0toxzV+Xo4y0nyYBdTCaPSEBQPsKQx0yZtyZfPYloAkevy4LHyLKC9vaygFB9mP
+ E2tCY3X2mAFkUA1BCwSGhE6GCkcrMYbwWWYNPiN7UvgxkAmi53++1Bvu7ZhQ5O7L4TuXqrjcAYv
+ 4RW32Pu4AtPuJnvg+XneKxGWAxQoyQGtzMHkV1SUtS/+ASW6JabnStg7ngtLSs6RV12xW44rObX
+ XztVNonmw1oyJL9G497wak38ORCJlnXz/07iqiKXZXu5+bK3DeGZ7kTUUHeHxmYaMx34/F2i1TM
+ 0a+N2ssXZLNU+iA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-Debian-User: leitao
 
-On Sun, Nov 08, 2026 at 07:04:04PM +0000, Jérémy Jean wrote:
-> When kexec_file_load() fails to install a new image, it can leave the
-> global IMA scratch buffer larger than the IMA segment of the current
-> image. When that image is executed, ima_update_kexec_buffer() copies
-> the larger log past the end of its reserved segment. In a test, KASAN
-> reports it as:
+A TPM that stops responding fails each command only after the transport
+timeout, and its callers keep sending more: the hwrng thread every 10
+seconds forever, and userspace through /dev/tpmrm0. Each attempt holds
+tpm_mutex for the whole timeout and logs an error:
 
-...
+  tpm tpm0: invalid TPM_STS.x 0xff, dumping stack for forensics
+  tpm tpm0: tpm_try_transmit: send(): error -62
+  tpm tpm0: tpm_try_transmit: send(): error -62
+  ...
 
-> Limit the dump to the smaller value between the scratch size and the
-> installed image segment size. Update the IMA mapping only after
-> machine_kexec_post_load() succeeds.
+The core already stops using a TPM it cannot trust: tpm_try_get_ops()
+fails with -EIO once TPM_CHIP_FLAG_DISABLE is set, which
+tpm2_load_null() does when it cannot restore the null key. Set the same
+flag when commands have kept timing out for ten minutes, with none
+completing in between.
 
-These are two different bugs and the changelog only explains the first.
-The second one is that if machine_kexec_post_load() fails (e.g. -ENOMEM
-in trans_pgd on arm64), ima_kexec_buffer is already switched to the
-segment of the image that is about to be freed, so the installed image
-loses the IMA update and kexec -e writes into freed pages.
-Please spell this out, or better split it into a separate patch.
+A completed command, whatever its TPM return code, resets the clock. A
+disabled TPM stays disabled until the driver is rebound or the machine
+reboots.
 
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -206,11 +206,13 @@ kimage_validate_signature(struct kimage *image)
->  
->  static int kexec_post_load(struct kimage *image, unsigned long flags)
->  {
-> +	int ret = machine_kexec_post_load(image);
-> +
->  #ifdef CONFIG_IMA_KEXEC
-> -	if (!(flags & KEXEC_FILE_ON_CRASH))
-> +	if (!ret && !(flags & KEXEC_FILE_ON_CRASH))
->  		ima_kexec_post_load(image);
->  #endif
-> -	return machine_kexec_post_load(image);
-> +	return ret;
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/char/tpm/tpm-interface.c | 29 +++++++++++++++++++++++++++++
+ include/linux/tpm.h              |  2 ++
+ 2 files changed, 31 insertions(+)
 
-Nit: an early "if (ret) return ret;" reads better than folding the error
-into the IMA condition.
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index e0385b16616b46..c6278ef8d1095e 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -30,6 +30,8 @@
+ 
+ #include "tpm.h"
+ 
++#define TPM_UNRESPONSIVE_TIMEOUT	(10 * 60 * HZ)
++
+ /*
+  * Bug workaround - some TPM's don't flush the most
+  * recently changed pcr on suspend, so force the flush
+@@ -206,6 +208,31 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ 	return rc ? rc : len;
+ }
+ 
++/*
++ * Disable the TPM once commands keep timing out for TPM_UNRESPONSIVE_TIMEOUT.
++ * A few timeouts are not enough: some TPMs stall for half a minute and recover.
++ */
++static void tpm_check_unresponsive(struct tpm_chip *chip, ssize_t ret)
++{
++	if (ret >= 0) {
++		chip->nr_timeouts = 0;
++		return;
++	}
++	if (ret != -ETIME || (chip->flags & TPM_CHIP_FLAG_DISABLE))
++		return;
++	if (!chip->nr_timeouts++) {
++		chip->first_timeout = jiffies;
++		return;
++	}
++	if (time_before(jiffies,
++			chip->first_timeout + TPM_UNRESPONSIVE_TIMEOUT))
++		return;
++
++	dev_err(&chip->dev, "%u commands timed out in %lu seconds, disabling the TPM\n",
++		chip->nr_timeouts, (jiffies - chip->first_timeout) / HZ);
++	chip->flags |= TPM_CHIP_FLAG_DISABLE;
++}
++
+ /**
+  * tpm_transmit - Internal kernel interface to transmit TPM commands.
+  * @chip:	a TPM chip to use
+@@ -268,6 +295,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
+ 		delay_msec *= 2;
+ 		memcpy(buf, save, save_size);
+ 	}
++
++	tpm_check_unresponsive(chip, ret);
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 0db277af45c393..4264c87a04d98c 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -131,6 +131,8 @@ struct tpm_chip {
+ 	struct hwrng hwrng;
+ 
+ 	struct mutex tpm_mutex;	/* tpm is processing */
++	unsigned int nr_timeouts;	/* consecutive command timeouts */
++	unsigned long first_timeout;	/* jiffies */
+ 
+ 	unsigned long timeout_a; /* jiffies */
+ 	unsigned long timeout_b; /* jiffies */
 
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -98,12 +97,14 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
-> +	/* A failed replacement load may have resized the scratch buffer. */
-> +	ima_kexec_file.size = min_t(size_t, ima_kexec_file.size, segment_size);
-
-This prevents the overflow, but it treats the symptom at execute time.
-The actual problem is that ima_add_kexec_buffer() updates global state
-(ima_kexec_file and kexec_segment_size) for an image that may never be
-installed.
-
-When the failed load had a smaller measurement list (with staging the
-list can shrink), the dump is still truncated to the failed image's
-size and the next kernel gets an incomplete log. kexec_segment_size
-reported in the "kexec_execute" event is also the failed image's one.
-
-With the first hunk ima_kexec_post_load() runs only for an image that
-is going to be installed, so wouldn't it be cleaner to (re)size the
-scratch buffer and kexec_segment_size there, from image->ima_buffer_size?
-Then the comment you removed would actually become true.
-
-> @@ -239,7 +240,8 @@ static int ima_update_kexec_buffer(struct notifier_block *self,
-> -	ret = ima_dump_measurement_list(&buf_size, &buf, kexec_segment_size);
-> +	ret = ima_dump_measurement_list(&buf_size, &buf,
-> +					kexec_image->ima_buffer_size);
-
-ima_kexec_buffer is not tied to kexec_image. After a successful
-kexec_file_load() followed by KEXEC_FILE_UNLOAD or by a successful
-kexec_load(), the old image is freed but ima_kexec_buffer still maps its
-pages. kexec_image->ima_buffer_size is 0 for a kexec_load() image, so
-with this patch the dump fails, but buf_size is still the header size
-and memcpy() writes it into freed pages.
-
-That's pre-existing and not a reason to hold this patch, but it's the
-same class of bug and I think IMA should check that ima_kexec_buffer
-belongs to kexec_image (or drop the mapping when the image is replaced)
-rather than rely on sizes matching.
-
---
-Sincerely yours,
-Mike.
+-- 
+2.53.0-Meta
 
