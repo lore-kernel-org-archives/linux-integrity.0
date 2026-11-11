@@ -1,66 +1,66 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.15
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794440921;
-	b=pPBdb31EaCUk8HYxJ+BV6WMbr3VerIK/hTZkxH+Wd6xJyhg+4qG1ICYS0j/fBQQFl9om
-	 M7h1LY4jmKTr4ZPmkVIqvie5lNSApRi6X4fUgqyPGPQyApq2ZjIpNQd/x1FV1kFu73kZm
-	 BwymkNdozb+RFPfvmBwWId3PfFNhnqkhRRC/N24sMMsbBKATUTZ0/2IN1UGSWpgpzVcPZ
-	 R6bFI5iRh0jK8XIJ1HrJxwpg+2Ecmc/SWfNCI/g8ty5PgZJE7SMH8LD61flxfEPeGOyQs
-	 NIyktHikejkAaXKAmd5YV7qTo965oXlZvBKFv7n68f0L4M18bONPtFzzMUvc765DtWw==
+	t=1794440925;
+	b=YMRtp6GHORXH9ImzaoYsGw7/XZpPqS1Tw6YmHsFzrbae2DoxpDX+bnbjbzcLSBlnWGWE
+	 eSBxG7EgLZaycQMx4d1xSvCx/vAn3G+g8KzlGrPoJm1G1fkmlUSby1X/puUCaDow7E87q
+	 othcSuHEItJhMbBnj+PcMPuCeUgfQW27qqBwLRZQDqXMnXnf1J8ITt4CvEkJpnOP5/U3q
+	 PYrNY4GxwGE9ivinlGeg7I9ZbhwfLXTj4ae/6odOpshFPq/05vbPq5G/F2MOD4pYVPHrv
+	 /392WI5JXXwghv5aK5tHdDEKpDKsDIzN8aZ+tyGTYR6C8hDHDlYTvugh1wLbpSX88Gg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794440921;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794440925;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=teUkDlBsFC75QpkoWcN48OfuKOIq3Y+BujDYIw7Usi0=;
-	b=snUQJx1k5aXaeSFAqKA2V5yyuKgGRNYrkz51monfhCzcG9gjkp3dYWw4ULCuEnbycIkE
-	 6Ewp2xfglI6be1+9/FP76NzbPBRUvIdkpY/LUX9o38EQzd6QAvMqr88b8sZ5TnOFnAc4m
-	 OPu0DQig1aQgPfIr1w535kWE6uvJGFEJZsCF1FpnaWpgZGiBMyzOmw0tYkAS/f1hG9MHy
-	 39Fmuon42QLurM4hIb4vTo2uStjJC2dzPDsJbrGwOFx80g8gpLFeiG95vyKM2yJLZFgJD
-	 mW4O3g/3cJJLxciWmGlJErUBfXPjVeDCg/ijZt5DoDvH0CxNGeqXi7vc6kWg87zLPgw==
+	bh=XJOKEouKH2OpPfZtwIGRyzyFEU1XQVmfYEayBgUikfs=;
+	b=276UoTonIcqxyWEWHA8sY1U2xjnKYJZHuE51FlSO4C+TCKcavO7ngzWV/DRF0yjUVCtD
+	 Skn9lLos4o8vNicVWs0bjBJVuqcwk84Hf1D7cRFe/s0jHqPhjYFdTzIjByeTTBelEcGRR
+	 rBR9PAn1JsZbmwXe1v5nVAGHZH6pQavIIWYX9BjDhmdhiLkPtKQsE3+KLusowxsz63qfV
+	 Ewo5IJfT38lRn6+zYjwXyICRdnd5QV84NhBiSo4gt5xGwr8KCzberKertwq0x9WYzahja
+	 +YBuL5aoLI0O+50QfPCCCTV7210eW661mP113PhtV9AKY8zQFCnmh8vpl7grIhnIiOA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=OWCjr9mn;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=E2QiMpt5;
 	arc=none smtp.remote-ip=192.198.163.15
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1715460A381C;
-	Wed, 11 Nov 2026 23:48:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1715460A381C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA620606AE63;
+	Wed, 11 Nov 2026 23:48:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA620606AE63
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=OWCjr9mn
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=E2QiMpt5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794440921; x=1825976921;
+  t=1794440925; x=1825976925;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=LbqPMUJ9s/Em7VE9Jtp+i/h5pc5nAbcke2q0A+92Q/4=;
-  b=OWCjr9mn2nrc02WoAPRWSRHQ9v37iSYqrxZTgxm7zYLIhNxZ4zNc87vu
-   6qfa9ss42iJOsMKDH9GZffzbf/3z7ogkk56r8Ni2hrtRSfScDlbTYpxOJ
-   xrpWwziBFXuPjubyOxhRM3Uf7QvDILGYfOnBkaO0M5IV+ZdIWNcOPsVRX
-   S0ACPrVm+zNuiu2fb95TtznXI4hZh8+/pYoljn/WmkGhDZRJitRGqHoz/
-   Mhs7hKorIkR6gQwy3buCs2VEjXaoTl4cUH5k/JWOebinWHKDhaya+DEZP
-   TprKFgtL9Xako1nM0X+99rzX3vCj7c3htLcfPCocA9/HoybdbYHthsctn
+  bh=u5AVXTElJz7EZV2h5YwoTsJFHDCSeIjHVrhKH9eyfwI=;
+  b=E2QiMpt5MfsPpHXSQPG5TZn+rJlTRWvUM4K5ky6tXx/I0iEjnhOgOS2G
+   nxmlZF3+/u+mqIAb59MNyY7mcD30KviPBQ6TsbDBSO+mJIE9tirUDvURv
+   pV4S/4oTU5HiISeNALAXNZA0UhBp89N0doGqyarllCqrtVOuMoz+jlx8X
+   pvsltLHQvW65pHnHC3eEVwJJS814rHXnCUsab60rWdMukeOUSEtkfZ3Ml
+   g6wVdNJGed3bTFYQIKV9b3lwSL5HXDp8bKK6X6ii3OP4k9gQ9njNftHPb
+   N5/xLvwXs24XZ6muMaXE14nEpuHx2ogudzNDiPTQE8pcVUUGVKfd5uJWJ
    w==;
-X-CSE-ConnectionGUID: 7uYHuc8pS4q8h47nK4GIYA==
-X-CSE-MsgGUID: brKyZ++rQfq523FBg8z/dA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11963"; a="3226637"
+X-CSE-ConnectionGUID: wBpGsaGEQym2DyYG5weiJg==
+X-CSE-MsgGUID: Ukz2egaRT1+iGwhhRe9LSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11963"; a="3226657"
 X-IronPort-AV: E=Sophos;i="6.27,208,1787036400"; 
-   d="scan'208";a="3226637"
+   d="scan'208";a="3226657"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 15:48:40 -0800
-X-CSE-ConnectionGUID: /wS0d+LcQ1G5pwpb06qR5Q==
-X-CSE-MsgGUID: CH9XoWbpTHm6yFq5s4nd8A==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 15:48:44 -0800
+X-CSE-ConnectionGUID: o71bEf/wRTCxDbrm4F0BNA==
+X-CSE-MsgGUID: YEu72Nx6Sn6B9UBCg1VsnA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,208,1787036400"; 
-   d="scan'208";a="8512393"
+   d="scan'208";a="8512405"
 Received: from pavel-dev.sc.intel.com (HELO pepopov-mobl2.intel.com) ([10.3.206.11])
-  by orviesa002.jf.intel.com with ESMTP; 11 Nov 2026 15:48:37 -0800
+  by orviesa002.jf.intel.com with ESMTP; 11 Nov 2026 15:48:41 -0800
 From: Pavel Popov <pavel.e.popov@intel.com>
 To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Viresh Kumar <viresh.kumar@linaro.org>,
@@ -99,9 +99,9 @@ Cc: Pavel Popov <pavel.e.popov@intel.com>,
 	linux-arch@vger.kernel.org,
 	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] platform/x86: Include <asm/cpu_device_id.h> unconditionally in soc.h
-Date: Wed, 11 Nov 2026 16:48:18 -0700
-Message-ID: <20261111234821.4814-6-pavel.e.popov@intel.com>
+Subject: [PATCH 6/7] tpm: Include <asm/cpu_device_id.h> unconditionally
+Date: Wed, 11 Nov 2026 16:48:19 -0700
+Message-ID: <20261111234821.4814-7-pavel.e.popov@intel.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261111234821.4814-1-pavel.e.popov@intel.com>
 References: <20261111234821.4814-1-pavel.e.popov@intel.com>
@@ -117,12 +117,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 <asm/cpu_device_id.h> now has a generic version, so the #ifdef
-CONFIG_X86 around the include is no longer needed. The include of
-<linux/device-id/x86_cpu.h>, which is generic, moves out of the
-#ifdef as well.
-
-The soc_intel_is_*() helpers still need CONFIG_X86 for the INTEL_*
-model defines.
+CONFIG_X86 around the include is no longer needed.
 
 Signed-off-by: Pavel Popov <pavel.e.popov@intel.com>
 ---
@@ -131,29 +126,23 @@ it is in mainline.
 
 [1] https://lore.kernel.org/r/20261111234439.4098-1-pavel.e.popov@intel.com
 
- include/linux/platform_data/x86/soc.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/char/tpm/tpm.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/linux/platform_data/x86/soc.h b/include/linux/platform_data/x86/soc.h
-index a6a6b313dfa..ee696e576a0 100644
---- a/include/linux/platform_data/x86/soc.h
-+++ b/include/linux/platform_data/x86/soc.h
-@@ -9,13 +9,12 @@
- #define __PLATFORM_DATA_X86_SOC_H
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index fa554c5ad80..ad1534aa00c 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -28,9 +28,7 @@
+ #include <linux/tpm.h>
+ #include <linux/tpm_eventlog.h>
  
- #include <linux/types.h>
--
--#if IS_ENABLED(CONFIG_X86)
--
- #include <linux/device-id/x86_cpu.h>
- 
+-#ifdef CONFIG_X86
  #include <asm/cpu_device_id.h>
+-#endif
  
-+#if IS_ENABLED(CONFIG_X86)
-+
- #define SOC_INTEL_IS_CPU(soc, type)				\
- static inline bool soc_intel_is_##soc(void)			\
- {								\
+ #define TPM_MINOR		224	/* officially assigned */
+ #define TPM_NUM_DEVICES		65536
 -- 
 2.54.0
 
