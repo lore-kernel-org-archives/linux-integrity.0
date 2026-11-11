@@ -1,55 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794435633;
-	b=cOnt2WUTjc4QsCejpAB5/jvyOVXDwHuRBsIKC5wYFad4MaRiDxXySIQ+pupExEOMA+Lj
-	 dIz1iQyeuhewErmm3pBYe+HqyvplUVk6OVrKIGHrGJVt7sHAmM9s+5btD6Mchkm2uDy98
-	 2ctgXe1wjsHeXDUQGL4fGoY1fAn/fNiDq+saRUA2et1Q7fADcaMdwqV8eYvOM6rhQnifK
-	 1X/bNrAzSTOLQvsh204ZxJ+8q5wU8bPMskiYEb1E8yedGq6ysu4/NQEhVX4SukJfcsY1o
-	 3ORF+/RzdcD4EN3EM/KW4s2VjHWVmTh1W/91UlmZwumniHw73HJEgzh3B1I8B5od6rg==
+	t=1794436235;
+	b=pl9i4Y+D8GiOpcxrU5CcMN2TH3lgTzfe8/2stqoWNKX4H0uJH0J6bN+FWO7C0T/cowtM
+	 POyWDxsO05mcSMcH2W4VIBP4kpiCjuQ7gAoaB6KLjjog1dAEmN8NtbPJmq0YhClegKmt/
+	 uDUHzhYXX0ul7KwxeMCsxABTTL3wnp5J2jFTqKeg+1M1Fyqv2RXSir8+PdQoQ3wX2/HtJ
+	 PeGNFf8RmAoeVaugMOAa5Y/iD6cof3UKL2tEaiU3XJ9VKk/aX1g/L+pliDmAfFmtEOMfH
+	 ms3VE10gHhDM/U9t5c7zJvolYHxEHXXFoVFYcpGo8HBTGIQzJTx4QWHm03uK+r1sIjg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794435633;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794436235;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=K4KdjqORRmEBTUM7t1u578GKcdnKKYKwwNZ9QN2PlGg=;
-	b=t98C70ksipPFsDGk23E7qe/DV2oI0gJnBOsNFleOtOQqgcFGszijsGz9xTsKXQyJ7BTW
-	 xf1LXxF67NWKPDpHUzG6QyyyIS19/Bb4GrJVNizdFEZoKx1R4hBtYryhOKUGT70uz5EpO
-	 dforBb/GY9mv/QUj3bQ7tSjn6BYFZ7xUznAc28zNLTnPKxT2wz03st8qJQl9p1o/l5DcW
-	 +CCLeGLbxFdpUkFhHUI4mzPQvV7XlcEiXEAWmZk1a+0vmDZpc0hmqbhcPVMdjSNaFNmNW
-	 SDwSGopZl716vTOZqp0j9acdxLAr9ENRWkFHK7KlUMuwTpJmaHglk8oujlxRguKu3uQ==
+	bh=srInJ1lFttHBxQxY+VpLS4HIIUibvm9Rc8ekjajKEn0=;
+	b=T8YYgmf6xreiBcp5eeMJwS4Oen6ULGsUyw6z2T3t1/axxc6k0hLEWDICWBX6c1o0xZGZ
+	 BwkaH9iuW0KNzjM14L5h9HCm2gRE/5UH9TVWx6tCWx9/+uPryd4rACCHX73t3wAUmBMzm
+	 NjLVIQdKCjk7fWAYbT70U2g9xYQZQ4ZqC1AJNSfYIgJYPhA7waWXBQAlQ2LdXYdvvsw1H
+	 r1RacUQ4BXBP00AWEG8Kl8Bkxt1ba1VnBD1xOfebsnFfDTwWv55EhBsdcA1RnRiNXx7Al
+	 2VE5FAt5lc4kXq2mR/w6OLJsYGfGV7i2hAABq4Paw9honf/ZyWiTFlYJHkp+HGQ3NRA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LlwaUFls;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7ZH5nzw;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 3145D606A31C;
-	Wed, 11 Nov 2026 22:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A2B66606A333;
+	Wed, 11 Nov 2026 22:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LlwaUFls
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 3944E1F00A05;
-	Wed, 11 Nov 2026 22:20:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7ZH5nzw
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 034FB1F00A06;
+	Wed, 11 Nov 2026 22:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794435632;
-	bh=K4KdjqORRmEBTUM7t1u578GKcdnKKYKwwNZ9QN2PlGg=;
+	s=k20260515; t=1794436235;
+	bh=srInJ1lFttHBxQxY+VpLS4HIIUibvm9Rc8ekjajKEn0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=LlwaUFlsfzgkM6AuRKez9QzQX0TEEOJxmHs4kOCmH5iQ4veaMq20Wa6hNzuOffLGU
-	 /CEok1195hJxoq5ng6lcAX2NfMRl6Y7NtbD54nGZrSQjoaxja2xaIg2VNLgh19NZxw
-	 g4h8eufMAMmLaXCkGW3wtuyQjSsM35T58/E/NhPApSqE9Zi4Us+7FfQ5iEVVS7Beho
-	 ZyFj9YKTlYH1cSGmuYuKtXFVtgs80IeII4k8gN+O42gAxWmBAFUT+iE3lhdWkSbhFT
-	 GHMIdU0M9B7ZOb4EuA65QCTXT78ShyX6D0mQ28EN8kJVv//deO46Dy8zNL1L8P0MRt
-	 ZuBwc0lQ+ohyg==
-Date: Thu, 12 Nov 2026 00:20:28 +0200
+	b=k7ZH5nzwqYIfvrDQEzyyLu6+KZ3xKazppHoXM5EP339KqOV6fG/GxYeoiSphdvnBJ
+	 QG8RMzqybUTQxPnGBF2ztZpbjCcUCe7qq8dOmQgU27HS3UgNRPX2D2MGsXDiGnh6ca
+	 pMY7McUMDUOjOQnwaOKXwgrUNO2iX+H+7lznG+U8Cx4Z4zTWWOqYCddhywwOPZcO00
+	 2xMOGVbhW1vh+MpxavKOdgHKyHmSBfnBwSISFRUVip+wJHMWhk3UfFIC0SQ+8gM+zj
+	 a/5T1jytDV+KncNF7PMkardjaGSlhFyrixbpRFiYwZRPnJeeUpThnKPri/Z7o1WfjK
+	 Nwf/dPxih4cvQ==
+Date: Thu, 12 Nov 2026 00:30:31 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Breno Leitao <leitao@debian.org>
 Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
 	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
 	surenkj@amazon.com, noodles@meta.com, kernel-team@meta.com
-Subject: Re: [PATCH 2/2] tpm: Disable a TPM whose hwrng reads keep failing
-Message-ID: <avTqLMLZwKOb-Q_j@kernel.org>
+Subject: Re: [PATCH 0/2] tpm: Stop retrying TPMs that have stopped working
+Message-ID: <avTsh6pCI-sRGAJp@kernel.org>
 References: <20261111-tpm_unresponsive-v1-0-42ac1b965eb9@debian.org>
- <20261111-tpm_unresponsive-v1-2-42ac1b965eb9@debian.org>
- <avTpOlKixInIBmE6@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -61,19 +59,56 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avTpOlKixInIBmE6@kernel.org>
+In-Reply-To: <20261111-tpm_unresponsive-v1-0-42ac1b965eb9@debian.org>
 
-On Thu, Nov 12, 2026 at 12:16:30AM +0200, Jarkko Sakkinen wrote:
-> I'm thinking here that why not disable on first failure?
+On Wed, Nov 11, 2026 at 01:57:32AM -0800, Breno Leitao wrote:
+> On Meta's datacenter, given the size, TPMs that stop working write about
+> 54 million lines a day to the kernel log, because nothing in the kernel
+> gives up on them.
+> 
+> Two cases make up nearly all of it.
+> 
+> Some TPMs stop responding. Every command then fails only after the
+> transport timeout, while the hwrng thread and userspace keep sending
+> more.
+> 
+> The goal is to retire TPM that are not properly working, similarly to
+> what was done for EFI in commit 4b2c033b5bc971 ("efi/runtime-wrappers:
+> retire the worker if a wedged call ever returns")
+> 
+> This feature aim to disable the chip once its commands have kept timing,
+> instead of keeping it in this desolate state.
+> 
+> Disabling the chip makes the failure explicit: the log gets one line
+> saying the TPM is disabled, and every later command fails at once
+> instead of timing out. 
+> 
+> A health-check daemon, such as machine checker, can then detect
+> the broken hardware and send the machine to repair.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+> Breno Leitao (2):
+>       tpm: Disable a TPM that stops responding
+>       tpm: Disable a TPM whose hwrng reads keep failing
+> 
+>  drivers/char/tpm/tpm-chip.c      | 20 +++++++++++++++++++-
+>  drivers/char/tpm/tpm-interface.c | 29 +++++++++++++++++++++++++++++
+>  include/linux/tpm.h              |  3 +++
+>  3 files changed, 51 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 630059a5a632377b9b7b487baccde92b7ae1dd47
+> change-id: 20261110-tpm_unresponsive-a5f71c1db026
+> 
+> Best regards,
+> --  
+> Breno Leitao <leitao@debian.org>
+> 
 
-It's a more intrusive change, yes, but then again having a count
-would require assumption that there is high odds e.g., for the
-following scenario:
+I think this good stuff so existential condition for having some changes
+to address these issues is fulfilled.
 
-1. TPM hwrng fails.
-2. TPM hwrng succeeds.
-
-I don't this is very likely to ever happen... So thus I'd drill
-this even more than you did.
+I.e. debating the details through will likely lead to productive results
+:-)
 
 Br, Jarkko
