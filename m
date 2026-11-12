@@ -1,88 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794456214;
-	b=Mw2vUcXRkoGQRBnc/s2QyCrQ6bJLqrgghhMRQWAlV7gnXm2+4mY+127WhfgEk8sYAXAD
-	 dFl+Gdgnsl4IvzkfEzAz7FMkghJRtsciv+YftIycPpCreOCEv9HSlqrEwz+adZefUGKnX
-	 l3ptRQHMpkNRHhCprGep7HdjjgprFfV6YnbzYrV/xH3f2zv8er4BYygJcrpYzQDwGySSK
-	 xer3/VJVrLhH4KSerswhij849CXnUcSUyfawhOdq3QF7D3+RgYp3PYWS01Yq/XNF7DqJk
-	 RB3hCtuCJWaQMVfT6YgbLUgsNIChEBhrGQlTP2bWsfz7KMImlk+6Y41e/YbUxIk9Few==
+	t=1794458519;
+	b=P62j516bphTA8mffFw6xT+BqdQeqY1knMy274BbZvQAA9IcV/3huXNp+97bCzkBUOdyY
+	 hhq+zaeg0gr3zGL2sdGHSslPpvJMl/GKeRfJc/CsuerVZwyG9A/OaQ6VjNvTzZH7kR+oi
+	 ucT04c0FuMQR0+9z+DWXbJMJZ7LADVXnAhb7TypB/9J7955TRorcS/3gmtcpimcSkmRxo
+	 zD1RFYsdz0rMriBeubwGpfd4rxIZN8oKfRVRvm0uQs6COxkZTR55srj7RuxiGjsgeAnpn
+	 1XY0wfjlvrdk5/+C0DAN7m/RKqNg3zbmmfvkJtugfTDcpDb0SjRZZ1j+k1uOUpnfeVg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794456214;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=knxVZaWGbCIJIbZzfOnY/wGHpwl82+U5Asy2wWcfQ2c=;
-	b=ZtTW8UHRHAug06Inp1O4KTHuM7h5Qb4J8arhng0NymfN2Jc/x22aUps+hJtCLeiCJVJN
-	 ofBfjJZxOcmV2Vh+CVQZBEzkHVgEKSd0Y2plQgSGHXyvkTj3NAYK9seBFklpDWXXSP46R
-	 tTIWBWxgKNtIczD+LLOKZKk9k3Ip7rJuOrjOPWJp66/sjK9hmQQWK3grRoqYTzl3zMo22
-	 xymFuRoY4oRv2G/fsvtFGtEgmgtkUSfH0IxKeyZM9nvpKZ+a9CYgMeaxm25kQpgrs+JBr
-	 STlD+VLfb8omYOqRaLJZeoAqYtFq0Dlqa4EER9w+3tc+uWVaISgWT+3nvpLj1fspZXg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794458519;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=WBFaXiQf/AiU+Oy/oOiJP2JtXZtaF5fsy5mmLC1bpDA=;
+	b=yPsdt7zcz16YdhwaF/KTXesncmVFRtPrX7gg6HFtoOQj/1Wbjvc3ZV4CiHVKFiCZp3JD
+	 xBER7sz2twa+af2z9tZF67X2nb42MY96tRCqJWxGx7+8PAaNMTVRQZVUvz293gexjonsE
+	 yPM5iQOVY7dzCecVr9K5oCqnA9PnRaKOAQB0qSmvsKucWt1kbH6CRy7qYqQ3Lxx/nwDM5
+	 Hkfti6Fe7aiI8YSgxleJeab3ud8MgcLg/1LiT4Irbj7Kfalv/3SXTW5fk/KeRBiMcLnMF
+	 HdxXK3wR9z6d6Qs/93GjABQji50fU39/Vwzs05gVcm8kjgK5X2MKsQ0WRdmte1x869A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S8x9LEqP;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=j0HYexEU;
+	arc=none smtp.remote-ip=198.175.65.12
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 25516606C645;
-	Thu, 12 Nov 2026 04:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D67606A321;
+	Thu, 12 Nov 2026 04:41:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D7D67606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S8x9LEqP
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 55F5B1F00A07;
-	Thu, 12 Nov 2026 04:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794456214;
-	bh=knxVZaWGbCIJIbZzfOnY/wGHpwl82+U5Asy2wWcfQ2c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=S8x9LEqP9BPgwxvCcBpHn9fFtNUdXY+zAaDhMR8K4rqsZq37QS1hndAn2m5Cw9YPZ
-	 +3Ay4EkrNg8MQ4cMfdgvSl/kzgqkeyNgH0ZHM7XKeZnzIP1SjKMQ95Ymv7kd3m4SaZ
-	 p68S9FO2a/4ut0HEF1BlZCOG+bZQWrKxgJ2YpdnP+9FQwF9QOoGGotexS4Rvxm8ilN
-	 YrOx6/Y66j/ZRdJA11o2X/RI0ngsq2gII81x52lnTkRIKHFHme/EWjIt0zlCeAHrej
-	 41OnmUAgE2FLF/XH0Di82Bq+7J8iQibWV5/uLH37fTR1aTybi60KBB/msI1Bmmc511
-	 YHRKQBz6FhOdA==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	keyrings@vger.kernel.org,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Anna Schumaker <anna@kernel.org>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	James Morris <jmorris@namei.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH v6 12/13] KEYS: Remove key_type_dead
-Date: Thu, 12 Nov 2026 06:02:41 +0200
-Message-ID: <20261112040242.247168-13-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261112040242.247168-1-jarkko@kernel.org>
-References: <20261112040242.247168-1-jarkko@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=j0HYexEU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794458519; x=1825994519;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=to9WP0yYAsg2FwMUJoPAJl9KXn//Llym/25xqUG9m3o=;
+  b=j0HYexEUv97gtHZ64HDRAPDkdXQSrCwRqokDMo4PofFUgp0aGVabSlR5
+   FpHoBadUy7O2D3nY9+lMQo1ZDdydZjKs0BcTj5lB1Roe5Xgs1F64/3YDS
+   yLosYWMo7SUad6SxxMCgoq9INuA1fWfIxkEjDt1sfNYlIsgOU2l+BrHMY
+   fc1Z1qFPhRWld1yFH/oYJjmXk9ab+jqrB+Ysb2AExkPWZvhwsMaDKq9qJ
+   rX0aPbqRaHFC9CYZDh8LADPMQArxF3PeRPvDrr7XKtUXG+BZq33cy30Uo
+   XVFzHsBjPstV2oRL82QurujZsRR61qLMuXfm8enXEA//KFeQGj5uip2QA
+   g==;
+X-CSE-ConnectionGUID: b3+iCPGYTza/wsQiD6L7hQ==
+X-CSE-MsgGUID: TZRE5MKMQ0SKpXvuv2osRw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11963"; a="3112117"
+X-IronPort-AV: E=Sophos;i="6.27,209,1787036400"; 
+   d="scan'208";a="3112117"
+Received: from fmviesa013.fm.intel.com ([10.60.135.153])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 20:41:58 -0800
+X-CSE-ConnectionGUID: +omkRXtHQhGqp8nFWjl2Wg==
+X-CSE-MsgGUID: PkOyTieZTVC7Yy4/j9hDKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,209,1787036400"; 
+   d="scan'208";a="10451688"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa013.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 20:41:51 -0800
+Date: Thu, 12 Nov 2026 05:41:48 +0100
+From: Raag Jadav <raag.jadav@intel.com>
+To: Pavel Popov <pavel.e.popov@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Leon Romanovsky <leon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Arnd Bergmann <arnd@arndb.de>, Len Brown <lenb@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	"David S . Miller" <davem@davemloft.net>, x86@kernel.org,
+	linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
+Subject: Re: [PATCH 2/7] drm/i915: Include <asm/cpu_device_id.h>
+ unconditionally
+Message-ID: <avVDjIW5jd4rHw11@black.igk.intel.com>
+References: <20261111234821.4814-1-pavel.e.popov@intel.com>
+ <20261111234821.4814-3-pavel.e.popov@intel.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -92,364 +107,51 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261111234821.4814-3-pavel.e.popov@intel.com>
 
-unregister_key_type() no longer needs to retype live keys as keys and
-restrictions pin the module while they reference it.
+Cc: Andy
 
-Remove key_type_dead and associated code from the keyring GC.
+On Wed, Nov 11, 2026 at 04:48:15PM -0700, Pavel Popov wrote:
+> <asm/cpu_device_id.h> now has a generic version, so the #ifdef
+> CONFIG_X86 around the include is no longer needed.
+> 
+> <asm/intel-family.h> is included by <asm/cpu_device_id.h>. The CPU
+> match table still needs CONFIG_X86 for the INTEL_* model defines.
+> 
+> Signed-off-by: Pavel Popov <pavel.e.popov@intel.com>
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- security/keys/gc.c       | 136 ++-------------------------------------
- security/keys/internal.h |   4 --
- security/keys/key.c      |   9 +--
- security/keys/keyring.c  |  50 --------------
- 4 files changed, 9 insertions(+), 190 deletions(-)
+Reviewed-by: Raag Jadav <raag.jadav@intel.com>
 
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index 7b2f32998f58..859f331549ce 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -42,22 +42,8 @@ static void key_gc_timer_func(struct timer_list *);
- static DEFINE_TIMER(key_gc_timer, key_gc_timer_func);
- 
- static time64_t key_gc_next_run = TIME64_MAX;
--static struct key_type *key_gc_dead_keytype;
--
- static unsigned long key_gc_flags;
- #define KEY_GC_KEY_EXPIRED	0	/* A key expired and needs unlinking */
--#define KEY_GC_REAP_KEYTYPE	1	/* A keytype is being unregistered */
--#define KEY_GC_REAPING_KEYTYPE	2	/* Cleared when keytype reaped */
--
--
--/*
-- * Any key whose type gets unregistered will be re-typed to this if it can't be
-- * immediately unlinked.
-- */
--struct key_type key_type_dead = {
--	.name = ".dead",
--};
--
- /*
-  * Schedule a garbage collection run.
-  * - time precision isn't particularly important
-@@ -69,7 +55,7 @@ void key_schedule_gc(time64_t gc_at)
- 
- 	kenter("%lld", gc_at - now);
- 
--	if (gc_at <= now || test_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags)) {
-+	if (gc_at <= now) {
- 		kdebug("IMMEDIATE");
- 		queue_work(key_gc_wq, &key_gc_work);
- 	} else if (gc_at < key_gc_next_run) {
-@@ -113,36 +99,6 @@ static void key_gc_timer_func(struct timer_list *unused)
- 	key_schedule_gc_links();
- }
- 
--/*
-- * Reap keys of dead type.
-- *
-- * We use three flags to make sure we see three complete cycles of the garbage
-- * collector: the first to mark keys of that type as being dead, the second to
-- * collect dead links and the third to clean up the dead keys.  We have to be
-- * careful as there may already be a cycle in progress.
-- *
-- * The caller must be holding key_types_sem.
-- */
--void key_gc_keytype(struct key_type *ktype)
--{
--	kenter("%s", ktype->name);
--
--	key_gc_dead_keytype = ktype;
--	set_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
--	smp_mb();
--	set_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags);
--
--	kdebug("schedule");
--	queue_work(key_gc_wq, &key_gc_work);
--
--	kdebug("sleep");
--	wait_on_bit(&key_gc_flags, KEY_GC_REAPING_KEYTYPE,
--		    TASK_UNINTERRUPTIBLE);
--
--	key_gc_dead_keytype = NULL;
--	kleave("");
--}
--
- /*
-  * Garbage collect a list of unreferenced, detached keys
-  */
-@@ -201,30 +157,20 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
- static void key_garbage_collector(struct work_struct *work)
- {
- 	static LIST_HEAD(graveyard);
--	static u8 gc_state;		/* Internal persistent state */
-+	u8 gc_state = 0;
- #define KEY_GC_REAP_AGAIN	0x01	/* - Need another cycle */
- #define KEY_GC_REAPING_LINKS	0x02	/* - We need to reap links */
--#define KEY_GC_REAPING_DEAD_1	0x10	/* - We need to mark dead keys */
--#define KEY_GC_REAPING_DEAD_2	0x20	/* - We need to reap dead key links */
--#define KEY_GC_REAPING_DEAD_3	0x40	/* - We need to reap dead keys */
--#define KEY_GC_FOUND_DEAD_KEY	0x80	/* - We found at least one dead key */
- 
- 	struct rb_node *cursor;
- 	struct key *key;
- 	time64_t new_timer, limit, expiry;
- 
--	kenter("[%lx,%x]", key_gc_flags, gc_state);
-+	kenter("[%lx]", key_gc_flags);
- 
- 	limit = ktime_get_real_seconds();
- 
--	/* Work out what we're going to be doing in this pass */
--	gc_state &= KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2;
--	gc_state <<= 1;
- 	if (test_and_clear_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags))
- 		gc_state |= KEY_GC_REAPING_LINKS;
--
--	if (test_and_clear_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags))
--		gc_state |= KEY_GC_REAPING_DEAD_1;
- 	kdebug("new pass %x", gc_state);
- 
- 	new_timer = TIME64_MAX;
-@@ -246,18 +192,6 @@ static void key_garbage_collector(struct work_struct *work)
- 			goto found_unreferenced_key;
- 		}
- 
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
--			if (key->type == key_gc_dead_keytype) {
--				gc_state |= KEY_GC_FOUND_DEAD_KEY;
--				set_bit(KEY_FLAG_DEAD, &key->flags);
--				key->perm = 0;
--				goto skip_dead_key;
--			} else if (key->type == &key_type_keyring &&
--				   key->restrict_link) {
--				goto found_restricted_keyring;
--			}
--		}
--
- 		expiry = key->expiry;
- 		if (expiry != TIME64_MAX) {
- 			if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
-@@ -269,21 +203,10 @@ static void key_garbage_collector(struct work_struct *work)
- 			}
- 		}
- 
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2))
--			if (key->type == key_gc_dead_keytype)
--				gc_state |= KEY_GC_FOUND_DEAD_KEY;
--
--		if ((gc_state & KEY_GC_REAPING_LINKS) ||
--		    unlikely(gc_state & KEY_GC_REAPING_DEAD_2)) {
--			if (key->type == &key_type_keyring)
--				goto found_keyring;
--		}
--
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3))
--			if (key->type == key_gc_dead_keytype)
--				goto destroy_dead_key;
-+		if ((gc_state & KEY_GC_REAPING_LINKS) &&
-+		    key->type == &key_type_keyring)
-+			goto found_keyring;
- 
--	skip_dead_key:
- 		if (spin_is_contended(&key_serial_lock) || need_resched())
- 			goto contended;
- 	}
-@@ -309,8 +232,7 @@ static void key_garbage_collector(struct work_struct *work)
- 		key_schedule_gc(new_timer);
- 	}
- 
--	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
--	    !list_empty(&graveyard)) {
-+	if (!list_empty(&graveyard)) {
- 		/* Make sure that all pending keyring payload destructions are
- 		 * fulfilled and that people aren't now looking at dead or
- 		 * dying keys that they don't have a reference upon or a link
-@@ -318,32 +240,10 @@ static void key_garbage_collector(struct work_struct *work)
- 		 */
- 		kdebug("gc sync");
- 		synchronize_rcu();
--	}
--
--	if (!list_empty(&graveyard)) {
- 		kdebug("gc keys");
- 		key_gc_unused_keys(&graveyard);
- 	}
- 
--	if (unlikely(gc_state & (KEY_GC_REAPING_DEAD_1 |
--				 KEY_GC_REAPING_DEAD_2))) {
--		if (!(gc_state & KEY_GC_FOUND_DEAD_KEY)) {
--			/* No remaining dead keys: short circuit the remaining
--			 * keytype reap cycles.
--			 */
--			kdebug("dead short");
--			gc_state &= ~(KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2);
--			gc_state |= KEY_GC_REAPING_DEAD_3;
--		} else {
--			gc_state |= KEY_GC_REAP_AGAIN;
--		}
--	}
--
--	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3)) {
--		kdebug("dead wake");
--		clear_and_wake_up_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
--	}
--
- 	if (gc_state & KEY_GC_REAP_AGAIN)
- 		queue_work(key_gc_wq, &key_gc_work);
- 	kleave(" [end %x]", gc_state);
-@@ -361,14 +261,6 @@ static void key_garbage_collector(struct work_struct *work)
- 	gc_state |= KEY_GC_REAP_AGAIN;
- 	goto maybe_resched;
- 
--	/* We found a restricted keyring and need to update the restriction if
--	 * it is associated with the dead key type.
--	 */
--found_restricted_keyring:
--	spin_unlock(&key_serial_lock);
--	keyring_restriction_gc(key, key_gc_dead_keytype);
--	goto maybe_resched;
--
- 	/* We found a keyring and we need to check the payload for links to
- 	 * dead or expired keys.  We don't flag another reap immediately as we
- 	 * have to wait for the old payload to be destroyed by RCU before we
-@@ -378,18 +270,4 @@ static void key_garbage_collector(struct work_struct *work)
- 	spin_unlock(&key_serial_lock);
- 	keyring_gc(key, limit);
- 	goto maybe_resched;
--
--	/* We found a dead key that is still referenced.  Reset its type and
--	 * destroy its payload with its semaphore held.
--	 */
--destroy_dead_key:
--	spin_unlock(&key_serial_lock);
--	kdebug("destroy key %d", key->serial);
--	down_write(&key->sem);
--	key->type = &key_type_dead;
--	if (key_gc_dead_keytype->destroy)
--		key_gc_dead_keytype->destroy(key);
--	memset(&key->payload, KEY_DESTROY, sizeof(key->payload));
--	up_write(&key->sem);
--	goto maybe_resched;
- }
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 84f14307552b..f8918b69dc77 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -38,7 +38,6 @@ struct iovec;
- 	no_printk(KERN_DEBUG FMT"\n", ##__VA_ARGS__)
- #endif
- 
--extern struct key_type key_type_dead;
- extern struct key_type key_type_user;
- extern struct key_type key_type_logon;
- 
-@@ -166,12 +165,9 @@ extern struct work_struct key_gc_work;
- extern unsigned key_gc_delay;
- extern struct workqueue_struct *key_gc_wq;
- extern void keyring_gc(struct key *keyring, time64_t limit);
--extern void keyring_restriction_gc(struct key *keyring,
--				   struct key_type *dead_type);
- void key_set_expiry(struct key *key, time64_t expiry);
- extern void key_schedule_gc(time64_t gc_at);
- extern void key_schedule_gc_links(void);
--extern void key_gc_keytype(struct key_type *ktype);
- 
- extern int key_task_permission(const key_ref_t key_ref,
- 			       const struct cred *cred,
-diff --git a/security/keys/key.c b/security/keys/key.c
-index be68d19f91d3..80962c3ae12d 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -1294,18 +1294,14 @@ EXPORT_SYMBOL(__register_key_type);
-  * unregister_key_type - Unregister a type of key.
-  * @ktype: The key type.
-  *
-- * Unregister a key type and mark all the extant keys of this type as dead.
-- * Those keys of this type are then destroyed to get rid of their payloads and
-- * they and their links will be garbage collected as soon as possible.
-+ * Unregister a key type.
-  */
- void unregister_key_type(struct key_type *ktype)
- {
- 	down_write(&key_types_sem);
- 	list_del_init(&ktype->link);
--	downgrade_write(&key_types_sem);
--	key_gc_keytype(ktype);
- 	pr_notice("Key type %s unregistered\n", ktype->name);
--	up_read(&key_types_sem);
-+	up_write(&key_types_sem);
- }
- EXPORT_SYMBOL(unregister_key_type);
- 
-@@ -1324,7 +1320,6 @@ void __init key_init(void)
- 
- 	/* add the special key types */
- 	list_add_tail(&key_type_keyring.link, &key_types_list);
--	list_add_tail(&key_type_dead.link, &key_types_list);
- 	list_add_tail(&key_type_user.link, &key_types_list);
- 	list_add_tail(&key_type_logon.link, &key_types_list);
- 
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 6fff91d276c2..2d65356129ba 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -1793,53 +1793,3 @@ void keyring_gc(struct key *keyring, time64_t limit)
- 	up_write(&keyring->sem);
- 	kleave(" [gc]");
- }
--
--/*
-- * Garbage collect restriction pointers from a keyring.
-- *
-- * Keyring restrictions are associated with a key type, and must be cleaned
-- * up if the key type is unregistered. The restriction is altered to always
-- * reject additional keys so a keyring cannot be opened up by unregistering
-- * a key type.
-- *
-- * Not called with any keyring locks held. The keyring's key struct will not
-- * be deallocated under us as only our caller may deallocate it.
-- *
-- * The caller is required to hold key_types_sem and dead_type->sem. This is
-- * fulfilled by key_gc_keytype() holding the locks on behalf of
-- * key_garbage_collector(), which it invokes on a workqueue.
-- */
--void keyring_restriction_gc(struct key *keyring, struct key_type *dead_type)
--{
--	struct key_restriction *keyres;
--
--	kenter("%x{%s}", keyring->serial, keyring->description ?: "");
--
--	/*
--	 * keyring->restrict_link is only assigned at key allocation time
--	 * or with the key type locked, so the only values that could be
--	 * concurrently assigned to keyring->restrict_link are for key
--	 * types other than dead_type. Given this, it's ok to check
--	 * the key type before acquiring keyring->sem.
--	 */
--	if (!dead_type || !keyring->restrict_link ||
--	    keyring->restrict_link->keytype != dead_type) {
--		kleave(" [no restriction gc]");
--		return;
--	}
--
--	/* Lock the keyring to ensure that a link is not in progress */
--	down_write(&keyring->sem);
--
--	keyres = keyring->restrict_link;
--
--	keyres->check = restrict_link_reject;
--
--	key_put(keyres->key);
--	keyres->key = NULL;
--	keyres->keytype = NULL;
--
--	up_write(&keyring->sem);
--
--	kleave(" [restriction gc]");
--}
--- 
-2.47.3
-
+> ---
+> Depends on <asm-generic/cpu_device_id.h> from [1]; please apply after
+> it is in mainline.
+> 
+> [1] https://lore.kernel.org/r/20261111234439.4098-1-pavel.e.popov@intel.com
+> 
+>  drivers/gpu/drm/i915/intel_cpu_info.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_cpu_info.c b/drivers/gpu/drm/i915/intel_cpu_info.c
+> index e52d0ac713a..a6b46cc841a 100644
+> --- a/drivers/gpu/drm/i915/intel_cpu_info.c
+> +++ b/drivers/gpu/drm/i915/intel_cpu_info.c
+> @@ -6,12 +6,11 @@
+>   * intel_device_info.h by having a separate file.
+>   */
+>  
+> +#include <asm/cpu_device_id.h>
+> +
+>  #include "intel_cpu_info.h"
+>  
+>  #ifdef CONFIG_X86
+> -#include <asm/cpu_device_id.h>
+> -#include <asm/intel-family.h>
+> -
+>  static const struct x86_cpu_id g8_cpu_ids[] = {
+>  	X86_MATCH_VFM(INTEL_ALDERLAKE,		NULL),
+>  	X86_MATCH_VFM(INTEL_ALDERLAKE_L,	NULL),
+> -- 
+> 2.54.0
+> 
