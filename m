@@ -1,103 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794458519;
-	b=P62j516bphTA8mffFw6xT+BqdQeqY1knMy274BbZvQAA9IcV/3huXNp+97bCzkBUOdyY
-	 hhq+zaeg0gr3zGL2sdGHSslPpvJMl/GKeRfJc/CsuerVZwyG9A/OaQ6VjNvTzZH7kR+oi
-	 ucT04c0FuMQR0+9z+DWXbJMJZ7LADVXnAhb7TypB/9J7955TRorcS/3gmtcpimcSkmRxo
-	 zD1RFYsdz0rMriBeubwGpfd4rxIZN8oKfRVRvm0uQs6COxkZTR55srj7RuxiGjsgeAnpn
-	 1XY0wfjlvrdk5/+C0DAN7m/RKqNg3zbmmfvkJtugfTDcpDb0SjRZZ1j+k1uOUpnfeVg==
+	t=1794461789;
+	b=WssyisEsBdoIdgHbc/Cmog2dav0rjy4fhqbeB6ImPLgNGLERvcC5AW1SVsG1HBIzKEo4
+	 h7VuhFFm88NFdl3TcybrkKM9Iah8gmcAuWn7qEOcJq1JWsfd89mzWyksV6PrN6fzHv+pu
+	 LZejiu3iWiwIK/JiUgPLdxl8R4yosJkVy0w3wieeuprNUAnVuRCfaG/ajK0NrlOsJSwk+
+	 tCuRK0Xz+Ep6T7JLnBwA8ytGSzcNDBXrKXyWlLgpHr0nr0OUOktitZEZwbjaprC/gS4KM
+	 5PsQUN2reMj1rTcYAis6+aFZawvsJNlWmRsOTn5BBtN4ckQ6wpSGDT+sOoHBuBazfLQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794458519;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=WBFaXiQf/AiU+Oy/oOiJP2JtXZtaF5fsy5mmLC1bpDA=;
-	b=yPsdt7zcz16YdhwaF/KTXesncmVFRtPrX7gg6HFtoOQj/1Wbjvc3ZV4CiHVKFiCZp3JD
-	 xBER7sz2twa+af2z9tZF67X2nb42MY96tRCqJWxGx7+8PAaNMTVRQZVUvz293gexjonsE
-	 yPM5iQOVY7dzCecVr9K5oCqnA9PnRaKOAQB0qSmvsKucWt1kbH6CRy7qYqQ3Lxx/nwDM5
-	 Hkfti6Fe7aiI8YSgxleJeab3ud8MgcLg/1LiT4Irbj7Kfalv/3SXTW5fk/KeRBiMcLnMF
-	 HdxXK3wR9z6d6Qs/93GjABQji50fU39/Vwzs05gVcm8kjgK5X2MKsQ0WRdmte1x869A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794461789;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer;
+	bh=e2soeXJ852281gC+OC2yZSX9G2s4v3lG9pbKt+VP0DM=;
+	b=BasTrCqg2jQe8fvxOjAcD+Gp/Q+0xMu5pAmpvPbNbhK5lOsWC7s1Wmhxi6LL7lzbzyBz
+	 dHnMXRsq1H2ej+F2/a0SgdBSmF63cZNOp9hetr2yVhgV700SguZOLATQfleupX+pIpMGg
+	 Iaa3okS23DkDg61Df9V+RR/fYt7oUogPh9sEmeIahmf18ICLPkfTJAfglh0IFvfs0Ukub
+	 AM6fyQrnxvlFpgIKmy5MqBAXslJSfqN/QvaZwkXCTUiQ44VhZHcIu1x6DqvsmDFRK5xea
+	 NkblSmIjprJ325p3S9hfO0WPuyeRUZt4SSzzqv82wpaqfCfVF6RN/rAzc37KL5Le3ag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=j0HYexEU;
-	arc=none smtp.remote-ip=198.175.65.12
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=none header.from=gourry.net;
+	spf=pass smtp.mailfrom=gourry.net;
+	dkim=pass header.d=gourry.net header.i=@gourry.net header.a=rsa-sha256 header.s=google header.b=EzLeINlq;
+	arc=none smtp.remote-ip=209.85.222.182
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D67606A321;
-	Thu, 12 Nov 2026 04:41:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D7D67606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C179606A321
+	for <linux-integrity@vger.kernel.org>; Thu, 12 Nov 2026 05:36:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C179606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=j0HYexEU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794458519; x=1825994519;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=to9WP0yYAsg2FwMUJoPAJl9KXn//Llym/25xqUG9m3o=;
-  b=j0HYexEUv97gtHZ64HDRAPDkdXQSrCwRqokDMo4PofFUgp0aGVabSlR5
-   FpHoBadUy7O2D3nY9+lMQo1ZDdydZjKs0BcTj5lB1Roe5Xgs1F64/3YDS
-   yLosYWMo7SUad6SxxMCgoq9INuA1fWfIxkEjDt1sfNYlIsgOU2l+BrHMY
-   fc1Z1qFPhRWld1yFH/oYJjmXk9ab+jqrB+Ysb2AExkPWZvhwsMaDKq9qJ
-   rX0aPbqRaHFC9CYZDh8LADPMQArxF3PeRPvDrr7XKtUXG+BZq33cy30Uo
-   XVFzHsBjPstV2oRL82QurujZsRR61qLMuXfm8enXEA//KFeQGj5uip2QA
-   g==;
-X-CSE-ConnectionGUID: b3+iCPGYTza/wsQiD6L7hQ==
-X-CSE-MsgGUID: TZRE5MKMQ0SKpXvuv2osRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11963"; a="3112117"
-X-IronPort-AV: E=Sophos;i="6.27,209,1787036400"; 
-   d="scan'208";a="3112117"
-Received: from fmviesa013.fm.intel.com ([10.60.135.153])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 20:41:58 -0800
-X-CSE-ConnectionGUID: +omkRXtHQhGqp8nFWjl2Wg==
-X-CSE-MsgGUID: PkOyTieZTVC7Yy4/j9hDKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,209,1787036400"; 
-   d="scan'208";a="10451688"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa013.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 20:41:51 -0800
-Date: Thu, 12 Nov 2026 05:41:48 +0100
-From: Raag Jadav <raag.jadav@intel.com>
-To: Pavel Popov <pavel.e.popov@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Leon Romanovsky <leon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Arnd Bergmann <arnd@arndb.de>, Len Brown <lenb@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	"David S . Miller" <davem@davemloft.net>, x86@kernel.org,
-	linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
-Subject: Re: [PATCH 2/7] drm/i915: Include <asm/cpu_device_id.h>
- unconditionally
-Message-ID: <avVDjIW5jd4rHw11@black.igk.intel.com>
-References: <20261111234821.4814-1-pavel.e.popov@intel.com>
- <20261111234821.4814-3-pavel.e.popov@intel.com>
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.a=rsa-sha256 header.s=google header.b=EzLeINlq
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-93e6eb77f0bso350311385a.3
+        for <linux-integrity@vger.kernel.org>; Wed, 11 Nov 2026 21:36:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1794461788; x=1795066588; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=e2soeXJ852281gC+OC2yZSX9G2s4v3lG9pbKt+VP0DM=;
+        b=EzLeINlqWKLSrVyAYeG69cub/PpkhXEpvLI85c2/Wn4DBrX36De6eOjOc825yh2/s8
+         /BMocYYbFGCIGlSENImF1edskqevAV/Kuf1SeaFnM5vAAp8DG8IO1FgayCsUEWs73OHL
+         1RmURtZJc9D4dd17Nf7TyLA18R4yata5cpiLNB4SZ3wXp+wb6mfksV9V6NYOJLevPnzx
+         KS0lFdrtd+eUvcxCI5cIGAuAdA3+x/lK/g0n6XOLpuLtAwXE7FSdI5GYz16DwRhEZcI+
+         e0xi/xTmcXSNKhZMTs2dmsnafffo4Jcsb0EhR1rdi49ZUTTTqLCosCyqFBij3UK+VNvA
+         tckg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794461788; x=1795066588;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=e2soeXJ852281gC+OC2yZSX9G2s4v3lG9pbKt+VP0DM=;
+        b=t03Ac3iJGVQ3FiEM7Uw5pxCetFyC1ySh3wPQIJ1LbcHxBunoVcGeR4FAAlI6cATrKv
+         B+4/SOz3vwg3ZnEuohAEun38bUzyoouHvncfQ5CPx1XmhRduzrNmT06uUvUUxKAYEk3I
+         4cmvM7LUH++G7Num6Sfkk9qtugtXlaL3TZM+e2nlGqcJKdzgnMEfbwDCr9ZLcqyA/yNv
+         tvxF+OBcBQfjY1W1gdBWM+qpf7u2udLvvdgS6o1clATbeFp04UH/ldNIyvGYH5vVjwDF
+         83FMPz4/3I+biynI5MMBF7ylNY/v2MNsPYHavB8F550s4QkuSjry98JgY8EgW0ieTYuZ
+         dSRw==
+X-Forwarded-Encrypted: i=1; AL+hErHuWBjGbisuJajpNpMqPii6uYjNkS+REuqHp6HHYGmvJF/CtyGb7swiiyTD23Hqt9h5qX5lnwGrFqMbFILGL1g=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9HMFb5ZyABc94LKJ7xK/grqMq7d5z73KtC4ZgXA42FAJ52vpdk
+	D+BvsZRaN6hMafbrPAFdzerEImcIug7rsKzNH/6oenenj/AXyFTsNxEWD9Hbx6BnNuk=
+X-Gm-Gg: AYBFou1sS6kvR1xmnDBjJ1xtpirUT7ltZnMApltcxAxQiZhM9kh2kkl1iYSf4St7SZv
+	awjpYHgmrsxG5FjX3bmMJZm2HWDXNHQwG/9YsuFI/KEjar6kqrKx3mcZyOv4FtJb8nk7NkR0aLd
+	QvbjLsAN2miJ+9XRRcSZ29oE3wiCxjcuFZNN8dd4h+gmvDyiMgJJerB/q3EsWMQfQ9odVCRpuPV
+	+op+WAVOJ6JtLeFzt6zhcnxXgqN7vt887XUgQJn3tQptGJQnfewpARXRu5pfBC282Vy+QxS5oCk
+	I2+KPE4NTL8okoO2WL2OXCjcZ70VrGvd1QsEdj0VwxyhIX4naF/qL/BUiznuoEi/iU81CJGzd6C
+	NVrRJMs8O6eS+WSKNack/tss8CRuHeVuCWny6fYMe/yzaTz1S5wBGkaKbbZ7MLZTcn6C7F6drcD
+	KQ9u7Sdyb7GKBsWlOOyJMEtA9opXi5zBrQYVMxJ+4uXIAZlLhFQ02Sx0EjruqJtkpKSZnrCFin5
+	IGdrMEgCkQYOn5C97eRq+y58JitIVQNrPE0qqvWTEYyh624G1WjSfAbVl1cCz+Uivypz+ZKWTIv
+	5BE/cs9OD1xTF53dezLXCPeRsWhOIbyVeRLFply/ZHcqbcQUn++fA7u10mSZBPU0kSjJdtIZwfx
+	Wqgfb0w0=
+X-Received: by 2002:a05:620a:4481:b0:93c:c2c2:40eb with SMTP id af79cd13be357-947b0046fb4mr764496385a.66.1794461787830;
+        Wed, 11 Nov 2026 21:36:27 -0800 (PST)
+Received: from [192.168.50.231] (pool-71-191-145-202.washdc.fios.verizon.net. [71.191.145.202])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9479e4fa312sm647786285a.0.2026.11.11.21.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2026 21:36:27 -0800 (PST)
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -107,51 +89,85 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261111234821.4814-3-pavel.e.popov@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 08/13] mm: convert miscellaneous VMA flag tests to use
+ vma_flags_t
+From: "Gregory Price (Meta)" <gourry@gourry.net>
+To: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+ John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+ Rik van Riel <riel@surriel.com>, "Liam R. Howlett" <liam@infradead.org>, 
+ Vlastimil Babka <vbabka@kernel.org>, Harry Yoo <harry@kernel.org>, 
+ Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
+ Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>, 
+ Gregory Price <gourry@gourry.net>, 
+ Ying Huang <ying.huang@linux.alibaba.com>, 
+ Alistair Popple <apopple@nvidia.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, 
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+ Usama Arif <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>, 
+ Xu Xin <xu.xin@linux.dev>, Chengming Zhou <chengming.zhou@linux.dev>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
+ "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
+ Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
+ Shakeel Butt <shakeel.butt@linux.dev>, 
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+ Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>, 
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+ Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, 
+ SJ Park <sj@kernel.org>, Rakie Kim <rakie.kim@sk.com>, 
+ David Rientjes <rientjes@google.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ James Clark <james.clark@linaro.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+ John Johansen <john.johansen@canonical.com>, 
+ Georgia Garcia <georgia.garcia@canonical.com>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>, 
+ =?utf-8?q?Ondrej_Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>, 
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ kvm@vger.kernel.org, damon@lists.linux.dev, 
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+In-Reply-To: <20261105-late-2026-vma-flags-v1-8-0d3cd15ab75f@kernel.org>
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
+ <20261105-late-2026-vma-flags-v1-8-0d3cd15ab75f@kernel.org>
+Date: Thu, 12 Nov 2026 00:36:24 -0500
+Message-Id: <179446178440.482102.12362401790016415292.b4-reply@b4>
+X-Mailer: b4 0.17-dev
 
-Cc: Andy
+On 2026-11-05 21:30 +0000, Lorenzo Stoakes (ARM) wrote:
+> Replace use of the legacy vm_flags_t flags with vma_flags_t values in the
+> remaining straightforward VMA flag tests scattered throughout core mm, HMM
+> (and its test module), DAMON and the OOM reaper.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 
-On Wed, Nov 11, 2026 at 04:48:15PM -0700, Pavel Popov wrote:
-> <asm/cpu_device_id.h> now has a generic version, so the #ifdef
-> CONFIG_X86 around the include is no longer needed.
-> 
-> <asm/intel-family.h> is included by <asm/cpu_device_id.h>. The CPU
-> match table still needs CONFIG_X86 for the INTEL_* model defines.
-> 
-> Signed-off-by: Pavel Popov <pavel.e.popov@intel.com>
+Acked-by: Gregory Price (Meta) <gourry@gourry.net>
 
-Reviewed-by: Raag Jadav <raag.jadav@intel.com>
+-- 
+~Gregory
 
-> ---
-> Depends on <asm-generic/cpu_device_id.h> from [1]; please apply after
-> it is in mainline.
-> 
-> [1] https://lore.kernel.org/r/20261111234439.4098-1-pavel.e.popov@intel.com
-> 
->  drivers/gpu/drm/i915/intel_cpu_info.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_cpu_info.c b/drivers/gpu/drm/i915/intel_cpu_info.c
-> index e52d0ac713a..a6b46cc841a 100644
-> --- a/drivers/gpu/drm/i915/intel_cpu_info.c
-> +++ b/drivers/gpu/drm/i915/intel_cpu_info.c
-> @@ -6,12 +6,11 @@
->   * intel_device_info.h by having a separate file.
->   */
->  
-> +#include <asm/cpu_device_id.h>
-> +
->  #include "intel_cpu_info.h"
->  
->  #ifdef CONFIG_X86
-> -#include <asm/cpu_device_id.h>
-> -#include <asm/intel-family.h>
-> -
->  static const struct x86_cpu_id g8_cpu_ids[] = {
->  	X86_MATCH_VFM(INTEL_ALDERLAKE,		NULL),
->  	X86_MATCH_VFM(INTEL_ALDERLAKE_L,	NULL),
-> -- 
-> 2.54.0
-> 
