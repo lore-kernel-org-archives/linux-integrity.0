@@ -1,52 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794442692;
-	b=nzpQwt/yL0y+3zxhn/V/bQA6ote9BHV2FV4DZlXzeZCUcVf9u3b4lr0XkujC4/F+MVRG
-	 +/eUxb4/v32Ha7XVXPF5cUUsOVHe80mCzL+XOmPWytea+HwIhGB0tFF8T9yGBvcY/bzno
-	 eVJfIDpoWgYdsAiJc2j+vGk07ZAJqgwSJLiKyvqctEXySrCoYyjt6cTwAT/cLW9PHB+YP
-	 6cJ7DpZhn6QJCORAjbTCuQNeGCxbk2oNgDzz5M4ecehzNv3ylpEsZr8HDCVusud12jIws
-	 pCckrDhektcmZAHHoDiNiiKn5ZzBROoIuoqOtyWFN5VHhvlRyi0j22ko/eFaqtiJ1Ew==
+	t=1794444014;
+	b=kZ/3/ZDVB/oSWIvRyhrcIFw68cpbRXcAt28/OsLpMwJNlMH19bY0A8r2NJ9C//loFQU3
+	 WdazFeqtxYwaFOP3x0WowqavoR1ujOJlDDYJ7QsKsufVpMgLGdjgC4Pedh1V979wrKell
+	 IYpOA6tJ9FQZUr/Z+jq+LPYW9mdIBts/8dOujcnhvtNbZdysAnsOPF+/AW72NPJIIEvkW
+	 B1GP9zadyo3Pa8a3PiZgfyAuuEUDPw900WyKxW1dhPS7MFuRAJ4JLxFHqHm+LRlv0Ay5B
+	 llDXh4pqw4MXP1jQshKfrld8/HIs+rBECEyEhSRq3AhH84PKsarfTUNN6YOMrFjOtSA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794442692;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794444014;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition;
-	bh=O3I8mf8n3FTJhmHTEesrftYjlGJiq3bHpKQ86tB55E0=;
-	b=pIAAYOizWfsjVoRN+Kmvf6eQx80SRZwjcYQdNhI1u7KpXVzhFVHAXmYQM8X7x4Eb7j4P
-	 di+xdLuPS6Wp6TwM4JZNMWXe2JQNzdGyN8izdcx0ZaNGIIz8ULp8yyyKwBuvXv/bEto3M
-	 Na6Mp71cQSE2UOiMg9OlWWoNW/EPH8d48BsXG4MnWcz+bvbFZz5Wvy6YcQlJ3RRyBKVk7
-	 Um7zqrwzOYcNHOFXyWRMHsXTkulJ3W3XfeeUMyh5j26f9XldLtGZZfKqbRHie2NYTA8OS
-	 D9wLlZjCZS7VpG+YUoEreCRM6LDONz/84NHNQ0nWhZ/t/frW3MqrvpbShnh1mRni3TQ==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=LctdR/JCjxXqXaUQaTN2ULstUn/j3yJ+h0QrraA+KO8=;
+	b=UPlfktxrhSn+TrVPh1e043LARUOn6MVU5CU/lAN43E1w31n4l9TQjKGI8EL/faJXf+QU
+	 yNsbuUQpIDYibkzu4Qk/ZqlxPBNgXQ4x8u1iSgUfcVeQRGsOkq497UX7hAm2EyvfSZGLk
+	 C9yY9DfMkkHBGh5KikNEig4xA3s0RfG1ig2Y7YCEXpBT4klo+OwBowthjjhYqmAJoW2E8
+	 hDFe5mXBe/DyO7h9UseJ0P5RFD2VEGAh+OnRpNY9cSLvGa5xUY7kFWiJ0y842SoS3tNc3
+	 3Ig2+ABlHKvIxtsg+U/0pcLaAGOShP7IkVfAxyOaUqe8TsJqRw4XV/ymuL4FUQB06dA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S413R+Bc;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ays3K3pI;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 6D167606A32E;
-	Thu, 12 Nov 2026 00:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id C9D93606A335;
+	Thu, 12 Nov 2026 00:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S413R+Bc
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 932981F00A0D;
-	Thu, 12 Nov 2026 00:18:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ays3K3pI
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B06BA1F00A0F;
+	Thu, 12 Nov 2026 00:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794442692;
-	bh=O3I8mf8n3FTJhmHTEesrftYjlGJiq3bHpKQ86tB55E0=;
-	h=Date:From:To:Cc:Subject;
-	b=S413R+Bc22sJoo2RIkHceaS+59Pmlo6oabqwwvtpdBxK9l3OFjYrYKQ7dV6Go59IN
-	 4cLpBhUq5Mh8XGtjnoKmk3hTiG+E0dIWYupcKkqWyKvqeg+IIe7yV+qVgzc4nw9hom
-	 IkDFPQZPzV8yXcKaSFQ0eRMynDAbhz5GW6/gwGDj1r2+BgyPcIexkVM29lbdvu4vp/
-	 r154R11iK9Is3AFiGYsSM3fwfx+hQUkc6wFm9hWkFm6mqjRiLLk/4K284MBQgIf5zI
-	 b8PCk72rw8Z02JxuLlu+SojsccTY2Yb08ny2B7neR2aNB+6mPq8Xh8oKvWVydrjUEw
-	 wqF1AVQr/5wPw==
-Date: Thu, 12 Nov 2026 02:18:08 +0200
+	s=k20260515; t=1794444014;
+	bh=LctdR/JCjxXqXaUQaTN2ULstUn/j3yJ+h0QrraA+KO8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ays3K3pIaLgkjHtf67+YKirgb77xzOsgoaqDmEP/g+4Qe5AaNi4B39YOWoUh1lzKI
+	 Zi7/z86Ihs4YZJJ7R6sbJJTlh5U25IRSQr2M7CbZ/l7oNky3/H7pWxOAAd114X/FkD
+	 us95OeCkgMlJcVkMHJa/dfAOSB0NI5+dzyms7qN+3irdnRQ1F1OX0RH9RxzbQMO8cp
+	 6xLiuz/R5U8PMqbIT0nhOaUPAqqSFg+K4xa9+ieDK9b2fmrnW3Kzp1B2GrWtApoU8e
+	 t2UaBe6LeHGtWas9QjH/p4y+yHYGzcFiBYW/QLy86NrTZsAr71hHZWfAUUcMexFnCv
+	 5LECeq1WSVyww==
+Date: Thu, 12 Nov 2026 02:40:10 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] TPM DEVICE DRIVER changes for v7.4-rc3
-Message-ID: <avUFwDt0ZQjf2os-@kernel.org>
+To: Pavel Popov <pavel.e.popov@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Leon Romanovsky <leon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Arnd Bergmann <arnd@arndb.de>, Len Brown <lenb@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	"David S . Miller" <davem@davemloft.net>, x86@kernel.org,
+	linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] tpm: Include <asm/cpu_device_id.h> unconditionally
+Message-ID: <avUK6uzoAJax0ZKn@kernel.org>
+References: <20261111234821.4814-1-pavel.e.popov@intel.com>
+ <20261111234821.4814-7-pavel.e.popov@intel.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -58,56 +85,16 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20261111234821.4814-7-pavel.e.popov@intel.com>
 
-The following changes since commit b3dfbde62cf1981c4638939c159dfd087b7a72e9:
+On Wed, Nov 11, 2026 at 04:48:19PM -0700, Pavel Popov wrote:
+> <asm/cpu_device_id.h> now has a generic version, so the #ifdef
+> CONFIG_X86 around the include is no longer needed.
+> 
+> Signed-off-by: Pavel Popov <pavel.e.popov@intel.com>
 
-  Merge tag 'linux_kselftest-fixes-7.4-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest (2026-11-09 16:39:05 -0800)
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-are available in the Git repository at:
+Are these expected to be picked separately by subsystems?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpm-v7.4-rc3
-
-for you to fetch changes up to 03fcb358249dc715124b3616f814ea0ecc6ec36c:
-
-  tpm: acpi: Fix memory leak at tpm_read_log_acpi() error path (2026-11-10 14:52:19 +0200)
-
-----------------------------------------------------------------
-[GIT PULL] TPM DEVICE DRIVER changes for v7.4-rc3
-
-Briefly described this PR tag contains the following bug fixes:
-
-  1. Add the missing check of the return value of crypto_kpp_set_secret()
-     when creating an authenticated HMAC session.
-  2. Check the payload size of EVENT_TAG entries before reading them, in
-     order to avoid out-of-bounds reads with a truncated TPM 1.x event
-     log.
-  3. Flush the timeout work outside buffer_mutex in tpm_common_read(), as
-     the work itself takes the same mutex, which can lead to a deadlock.
-  4. Fix a memory leak of the event log buffer in the error path of
-     tpm_read_log_acpi().
-
-No other bigger story here except as I've put tpm2-sessions.c to my private
-"address the vector" TODO-list. It's something I'd really like to refurbish
-in near future as secure boot enabled hibernate will also depend on it (an
-upcoming feature).
-
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-----------------------------------------------------------------
-Eric Biggers (1):
-      tpm: Check return value of crypto_kpp_set_secret()
-
-Guanglei Zhu (1):
-      tpm: eventlog: check the payload size before reading tag events
-
-Hyunjung Ko (1):
-      tpm: flush timeout work outside buffer_mutex to avoid deadlock
-
-Takashi Iwai (1):
-      tpm: acpi: Fix memory leak at tpm_read_log_acpi() error path
-
- drivers/char/tpm/eventlog/acpi.c  |  4 +---
- drivers/char/tpm/eventlog/tpm1.c  |  7 +++++++
- drivers/char/tpm/tpm-dev-common.c | 12 +++++++++++-
- drivers/char/tpm/tpm2-sessions.c  |  4 +++-
- 4 files changed, 22 insertions(+), 5 deletions(-)
+Br, Jarkko
