@@ -1,58 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794486718;
-	b=Rc+ekqqhxxCKJG++c6AhiBWhSYVjmX4GL0U5fJ+2V19VonnCWz4XhWMPY0uGpe8aFBLT
-	 QeFylS0EGpKRefUbvMnfN8Im25e+sgylDc0UC67jqNwXMQOqzFiT8khpmNzPdOIiOdazB
-	 1MyTcv2lz1vuWqhlBEufoqeJHW4xqd4sI4GO+tl3jqy4JZ1hQgxlSZcC3U+5WQmUjIpL3
-	 aMCycsO/QpBykl9Ju01yeF5aA5yBOfASLmXuJJ3VYu8K+JFFllRXB9e+ATgHJf/XGBQ4W
-	 FKRifBAsPeDNqVvGHeqMSpTGl6/tUwDj2Mx3794Vop6IYXALJRZxrH77XTuO9RigSsw==
+	t=1794487984;
+	b=sUp8W2XdGDJ+1mY/tdBsXhDM+J7YG+UwY9qO18Gk0/iXIu/dIiWxLWMkVKybsHphlp8F
+	 26ge1VllHLQ25Z/coyazBOgXPfQqTd5eNkgw7NUdbfV42WxjY/HtvXvmyC+vNSdSlZXww
+	 q6MxI1+haTNapCcxLo0qOQm44EYmHD4Bcq1BWCu+xOVF3PDTZV6qwpfmAWVj9bLxWFpo0
+	 WeQiJV2a0CibvuYfQ9v8d8qgXeeIVsRvZv9w24SRwQHAIOGXM2y6hkikWvBroPJo7hKHU
+	 D/DGkRd0ucFRULDacRk9w+DiELdW3wSnh30PG/V/g5vljHcc3d52cmetaGSr00nvELw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794486718;
-	h=DMARC-Filter:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Debian-User;
-	bh=Rpeyy/GIznFRjlzKynCJz6ZoXdeEJu+5xi4c3nkqiRI=;
-	b=BUa1xvZNrWW/MXOK04IhCD5ex9Cx3BmACNr43meJOPIy3FpY3ugnqdo3FtFLPibfGqxL
-	 9c2rICEXYDNNaV/wJXJlxreytK25QRxuJn5vjGm5zZEr48ux3Lr/Ag8GQtfKCBHyK/V5J
-	 y4oo4pE0OwJVcubvwWIwB/gbW5Djzc3bSAvWJQdQNnANB2j+4Dt4ire5tdt1GZrlHPGbg
-	 MMT2AbsqQQI+EcttsSI8fmDs0KGqe/CYsu0SqzToqIVU5FyS+pLAr8ZBq2OGBJ7rUMAES
-	 J6IvhwbnJXiFhT/IFsCtWrvtR/VJGwfhdF14AAdubQxSC68GOD3BBnoO4ZE8SnHr24g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794487984;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
+	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
+	bh=yX/L1x4ZGZXTilXb62Za88zoxS/rAl+itZPKFnz9f2E=;
+	b=dtUGcXJeLb5SKTH1Gv/UIJuQQkjhoJhGjjJGa6LqQW7TaBCEyNAyDdbT5tBRIQiuOt4Q
+	 b6dKrMkdj2UXHG0M0ctytkUDiV+utTiU5JHR0KDNsIFZ4hfZsd6bsgWm4qwVpOHK/O2EG
+	 aLdZ88k2w2RXb/kbOErwpcbmwoMLcPcMJX8ftynmNsxx6guzZ5qgSw/Jy3dcDT7K0GJ2G
+	 uJROz9Ce1oW+u4gGdDsEFaro4xReeTDXLgiQZPTugnvgnjaZKs8WFcNNyvoykSSB09NYK
+	 4bdiIAXRLG+Qgk/8OwSzC+MuwC5iXHbevLQNi1W19JK6R+VUm7xN5ACMpxOrQw426CA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=debian.org;
-	spf=pass smtp.mailfrom=debian.org;
-	dkim=pass header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=gPnmUwHk;
-	arc=none smtp.remote-ip=82.195.75.108
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	dmarc=pass header.from=oss.cyber.gouv.fr;
+	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
+	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=SQmozrjb;
+	arc=none smtp.remote-ip=51.159.188.251
+Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A440F606A89C;
-	Thu, 12 Nov 2026 12:31:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A440F606A89C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFBA606A32E;
+	Thu, 12 Nov 2026 12:53:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7AFBA606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=gPnmUwHk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:In-Reply-To:References:
-	Message-Id:Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:
-	From:Reply-To:Content-ID:Content-Description;
-	bh=Rpeyy/GIznFRjlzKynCJz6ZoXdeEJu+5xi4c3nkqiRI=; b=gPnmUwHkDEnEofKuQeq9hgB30A
-	RQzco8XP3lHc0XXnP+2CBvpthG0W5pSDgReI19pmr59Vev26OxO8FPvE2U1N0/p+8GhQk6O37/8Yn
-	5qVjzeFRPBs/Qjxt/7sQrQ3Xupqyr5o5AiTOz1vNJ7j/8MR+/ttNjAUKD63zreofBxVsAxBFy/UhH
-	IjpVcchgH9Fm2RD8IHisjX4icO3TrnKdao2ZHA/+hp3EE0DBBwQeQnqvogBqS2QJS89UqHl2fSBLP
-	eOw5TrJXY9XuEFh3jcew9WoeU7TDcEFVZ+txtVzCqpumJ/B5eLQEFtn1sqRdaz3ybrZqSPMEoWHhY
-	GZlSGFZQ==;
-Received: from authenticated-user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <leitao@debian.org>)
-	id 1xRTy8-00DyDK-01;
-	Thu, 12 Nov 2026 12:31:56 +0000
-From: Breno Leitao <leitao@debian.org>
-Date: Thu, 12 Nov 2026 04:30:18 -0800
-Subject: [PATCH v2 2/2] tpm: Disable TPM on TPM_RC_INITIALIZE
+	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=SQmozrjb
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=yX/L1x4ZGZXTilXb62Za88zoxS/rAl+itZPKFnz9f2E=; b=SQmozrjb+tJVVe8WL8GEdZ4sYg
+	gR3uXOb0qznPCASCyqeO4KUGyqh9c7ezNkKEYwDnQrcY6nyoIdC8CHg1MNDjRtHMaepoDSauZfqKq
+	xbaQaFV8bdl/d/op5bC2rHBwKKVdWMyUHwpLzGPRBjPTVy+s09wD/0Qqvrphn1+2rQSIOy7hKy6ZC
+	BpqSr3M2e5hDqUcE/JoDNKM7sHqthj5UteJc6DqhoVOuJq5RFd2dJsUi6KzjQkQhV9o7FF7uYe5In
+	K73r26ZMk/kRkaTm8SG5TPOiJueuQOWrdVYTIp5wOMyDDohZTStWu3Cz3VdBjDYBCoFj1hBqXsKGZ
+	I/xtjRyQ==;
+Received: from [151.115.150.205] (port=38878 helo=gepetto..)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <Jeremy.Jean@oss.cyber.gouv.fr>)
+	id 1xRUIZ-00000003H1G-2a6p;
+	Thu, 12 Nov 2026 13:53:01 +0100
+From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <baoquan.he@linux.dev>,
+	Mike Rapoport <rppt@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kexec@lists.infradead.org,
+	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 1/3] kexec_file: update IMA after machine post-load
+Date: Thu, 12 Nov 2026 12:52:45 +0000
+Message-ID: <20261112125246.2715174-3-Jeremy.Jean@oss.cyber.gouv.fr>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261112125246.2715174-2-Jeremy.Jean@oss.cyber.gouv.fr>
+References: <20261112125246.2715174-2-Jeremy.Jean@oss.cyber.gouv.fr>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -62,81 +83,55 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261112-tpm_unresponsive-v2-2-7454d2c899ef@debian.org>
-References: <20261112-tpm_unresponsive-v2-0-7454d2c899ef@debian.org>
-In-Reply-To: <20261112-tpm_unresponsive-v2-0-7454d2c899ef@debian.org>
-To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
- surenkj@amazon.com, noodles@meta.com, Breno Leitao <leitao@debian.org>, 
- kernel-team@meta.com
-X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1640; i=leitao@debian.org;
- h=from:subject:message-id; bh=70GLasvP5mc5EGM4TjI3WhjxR0dBNNop5jafxcSIF/s=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBq9bGwwSXNc2OzTWlOkH8s48dvMlt9ir6LAQ3cx
- izW4ayVsGCJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCavWxsAAKCRA1o5Of/Hh3
- bYmMD/9I6//t1dCAhchfyi8UCOMxid21J/XAqFkiSheVefdOgoIcpohNWpg3sEXRROyvIAM1Pnw
- CvOYxgaUqThIjIQwhGDJHsH0nWmbT6p2+LnM4Dmf86Mgtisj5IxCkLeB+fFWWfW8LK5XOIgnRwY
- iUhK/I86qyxh3I47nYjuDJFyKtUDTwFEUloKVLw7ttzgDl4OYkYFe8ZSJ7BXBPmdez+WeR+kxDJ
- t7rD6wd1osSdXWM6fpQdC/7RF6ZPq+D7wlDyKdnDZEFiMSdCo2xmHYHbFvInd2vOERhhcN/fAFV
- TKuVKj7K5I2GTfxlZEkDuci045rtn/6MjyXeUUTIzLXSnsNCstvqvXJMKq5YzlAikQzLYP/HQY2
- tqfo1wLutrBmc1xZ5ulH1RLLjL58Ezf53mBpGYqWjr6llWuqW7F61rDJ9qDcfW+W8sJaySynbdV
- kQcKsOUnlypW1NF7mm2IttbscUXinWCEVNSa3PAkmal12k26kTjr2YbIGrFlcfge5dyYsJIxSJu
- z7N9NDR++4CCeZGWBwTtCWt3tsoiZZMaZu2HNKKK2Umh7YhJ8Ylp496qMi1C21hihxMH7Kh8BKv
- zFmKKYeSh8CsJQSA+N8wp/Z14rksws+wZDuxTtZRO4JpQVUZAijY4EoKXjPXssGd/PWLlO/R+P5
- eZeQPkQ1VIqVtUQ==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
-X-Debian-User: leitao
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Jarkko Sakkinen <jarkko@kernel.org>
+ima_kexec_post_load() replaces the global IMA mapping with a mapping for
+the new image. If machine_kexec_post_load() fails, the new image is
+freed but that mapping remains. The installed image no longer receives
+the execute-time IMA update, and the notifier can write the
+measurement list into freed pages.
 
-If the TPM has been spuriously disabled, the game is over. Let's reflect
-this truth with TPM_CHIP_FLAG_DISABLE.
+Call the machine hook first. Return its error before updating IMA so IMA
+changes the mapping only for an image which will be installed.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-[leitao@debian.org: check rc before the loop breaks out on anything but
- RETRY/TESTING, skip TPM2_Startup, which a TPM that is already started
- fails with TPM2_RC_INITIALIZE, and fix the TPM2_RC_INITIALIZE and
- chip->flags typos]
-Signed-off-by: Breno Leitao <leitao@debian.org>
+Fixes: 9f0ec4b16f2b ("ima: kexec: move IMA log copy from kexec load to execute")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
 ---
- drivers/char/tpm/tpm-interface.c | 5 +++++
- drivers/char/tpm/tpm2-cmd.c      | 2 ++
- 2 files changed, 7 insertions(+)
+ kernel/kexec_file.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index b7865ccb799289..144e2dbae66853 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -252,6 +252,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
- 		if (ret < 0)
- 			break;
- 		rc = be32_to_cpu(header->return_code);
-+		/* A TPM that is already started fails TPM2_Startup this way. */
-+		if (rc == TPM2_RC_INITIALIZE && cc != TPM2_CC_STARTUP) {
-+			chip->flags |= TPM_CHIP_FLAG_DISABLE;
-+			break;
-+		}
- 		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
- 			break;
- 		/*
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 4b2bb2ddc321a9..65928ae85b496c 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -724,6 +724,8 @@ int tpm2_auto_startup(struct tpm_chip *chip)
- 		goto out;
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index b668ce8d68ee..59f9ba1b0cd7 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -206,11 +206,17 @@ kimage_validate_signature(struct kimage *image)
  
- 	if (rc == TPM2_RC_INITIALIZE) {
-+		chip->flags &= ~TPM_CHIP_FLAG_DISABLE;
+ static int kexec_post_load(struct kimage *image, unsigned long flags)
+ {
++	int ret;
 +
- 		rc = tpm2_startup(chip);
- 		if (rc)
- 			goto out;
-
--- 
-2.53.0-Meta
-
++	ret = machine_kexec_post_load(image);
++	if (ret)
++		return ret;
++
+ #ifdef CONFIG_IMA_KEXEC
+ 	if (!(flags & KEXEC_FILE_ON_CRASH))
+ 		ima_kexec_post_load(image);
+ #endif
+-	return machine_kexec_post_load(image);
++	return 0;
+ }
+ 
+ /*
