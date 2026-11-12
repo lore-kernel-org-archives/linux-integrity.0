@@ -1,64 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794508285;
-	b=EDsCRKGCt5kQsvri2mrFDp4mNdMoA5ayXaSA3G6uoheBZs6La4SQMjyNkqO0noFpUujl
-	 c4xROfwXsd6uvYBHMk7oO4HBTdokpV9F50TuakYfutmVhYFsBtdCJo0UIj3eYZIjvNB2z
-	 CKnMzMhMqN+zoS0zdluUBX7uGdltwgGKmw/3r72HCWkgRGezm6aXcbyXJLD9kG5o7heoU
-	 yj5FwJCEUp7HbVRbiGCJGJKmJIqyMEPhZ+JI352ff5tsBLQQDfvDDcsbwvjuBkh0Zzhm2
-	 U/WMQYgVGl5ONrb022g3L0TlHiMCenW3P6CWUkU3ej1svA0nuBebOG0kgk+Vi6ysveg==
+	t=1794508792;
+	b=F3GULAXo4/+W9GWhuAS55exlPdipuK9dWFiNGOH7/hepuK6pvvAzvIl+DL5/xjI8BM+k
+	 9qRydlsRxqgWQgTnEAg5mZIWWOA0jJUEhzRBVe/fZhqWMBanJsZX2Bb87HWcTjyHs6Cah
+	 5qElGOTleSrHlRlza9n8oZEbtUJDCqo4r1fG5OIr9Z2zCt/ONeCzolPdULWzuku9iiQa8
+	 vM6I8k1/WaaPFaDwRGjB/6ytaDZBYn9FqXcxovURouUn+VpmDjjSEwJLhnGzzzfvBi+Us
+	 wCcmgMaXa9PusshFSs2iebvKsH0Zv2fmmBBK6rAWxc8VRPFwuBh0rwXg9CXyIG7oI8g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794508285;
-	h=Received:DKIM-Signature:Received:Subject:From:In-Reply-To:References:
-	 X-PR-Tracked-List-Id:X-PR-Tracked-Message-Id:X-PR-Tracked-Remote:
-	 X-PR-Tracked-Commit-Id:X-PR-Merge-Tree:X-PR-Merge-Refname:
-	 X-PR-Merge-Commit-Id:Message-Id:Date:To:Cc;
-	bh=0dN4cxCqX+qChnRZLKr0bVTTWPEQ60W0u+gzzpZJsWI=;
-	b=2S/h+Y76gf3HgG/AEyogR10oQTWqybOvz0tEmOVEJX3szZ9L5ZYAgrlpShxNonkiRWX+
-	 L63maKFKbmE5a/zLeBvv9skFaM13P7tupzu47yfu8Ekcn2VfckFhtUhZ2lQGcKpcQd9G7
-	 jVj4c2L8Ltt0f4IQCirBtFDKKa2Z6h+8m9ToDjYW7v0Y7kenzysPAYTE3mZAL11K0bZM2
-	 NTlEvPElCYf09zBVHOv1P7kPlrounQ1BslK1CMq6iA58ENj5GyTc/An8/Kxx7h+E73GiQ
-	 B5kRcbV+MN4qChhtrV2eK8Jz2V473efEONX/sxiAOILsX+pUdLDMkaX5PIH8gEelLqA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794508792;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=boAZcIvOelwzMMKehmMw/xFxPdGTILRFEwH/uKnXqRE=;
+	b=s/I0dqtaGaSnoBxa4o+fnQl/MnulXdP/MgwcXRdeN3hckEpY/ehm0Oeijoe70TR57LjP
+	 uonkKE2qCEYW4P7do/JWqcD+X/2RSzLgmdw7I0o+5RmjHixFHfarTh0u3CNg5idDPaj16
+	 1MU7TknTnpivOz6yqVgMrnTH9u7GhcGkvgAgp38yV4b8M/k6fbXQ05V/W+KIOQN+fv/Gk
+	 PbOCvIO4ucgvauE+rpi43eFvDc0Mb0qTeWvl/Kd81Z2T8v8sb+6fc7ff5lbyQCNyeheVQ
+	 D+TRpccksOCCZr4lJvD7hBOz5NERGSu7zFRONLaw9P5vvcSj5L9mOExYfNjlpfNcbMQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=C9+PJJzM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dXvxTDpc;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2EF60A260D;
-	Thu, 12 Nov 2026 18:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 37E0B606A321;
+	Thu, 12 Nov 2026 18:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=C9+PJJzM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D081F000C5;
-	Thu, 12 Nov 2026 18:31:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dXvxTDpc
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7A55F1F000CA;
+	Thu, 12 Nov 2026 18:39:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794508285;
-	bh=0dN4cxCqX+qChnRZLKr0bVTTWPEQ60W0u+gzzpZJsWI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=C9+PJJzMM/y0FVkT3esi46iKKkX2A1pGmpQOBYGiuNRNLpfeffHOKta4hYLyrnEKG
-	 K0wqNJwjwyiecbGZM8NS7MiO08T9ucBOGSJALxH6XFs/gZ3LqLw68qvFr1JMZhm1wA
-	 zFDg3yBG8U/fmyWDF8nQbx2QuesZWtQ9MOh9cuM8jJ3O5ckIbqGDnNGB3dMRH9yjKs
-	 P1Ul1Kljf4KxJ1rCCkCiBxzoKX0f4X8+AENPh7R5ex0x9YfXpHHhFDGCMvb9Z9dtR3
-	 e8sEGyH8MizMsWxO5KuesBoukod6eqUAQb/eqSejGhOicaw3uzNcd0OdnJmIIz984G
-	 0MeOZmLPCKTrg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id F1917380AAFF;
-	Thu, 12 Nov 2026 18:31:24 +0000 (UTC)
-Subject: Re: [GIT PULL] TPM DEVICE DRIVER changes for v7.4-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <avUFwDt0ZQjf2os-@kernel.org>
-References: <avUFwDt0ZQjf2os-@kernel.org>
-X-PR-Tracked-List-Id: <keyrings.vger.kernel.org>
-X-PR-Tracked-Message-Id: <avUFwDt0ZQjf2os-@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpm-v7.4-rc3
-X-PR-Tracked-Commit-Id: 03fcb358249dc715124b3616f814ea0ecc6ec36c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ae7e0f32277099a25a1d7804b8cb2f6dd30ee2f3
-Message-Id: <179450828382.579071.933992315437413665.pr-tracker-bot@kernel.org>
-Date: Thu, 12 Nov 2026 18:31:23 +0000
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20260515; t=1794508792;
+	bh=boAZcIvOelwzMMKehmMw/xFxPdGTILRFEwH/uKnXqRE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=dXvxTDpc8d9iBSmr6CH/69hwlBQCtceI42diiFBA23boeq6+MO6VBT1XPmFzX+ov5
+	 lX1oFrPDTGBfubq3yerHCdN0c0h48Gcfg+tglyzDFm4nzDZIvQfAmswjOtDuMuFV6a
+	 DCEQ0hvGZtRngg33ppHMQWNELrB2NHnvHGbG9VC7sGC4vYJDZjP8+fNVG6fi+91Dtq
+	 HVt+q1quapebwx6v6ZdiYFVlbPH3lLlbHKL7fK0W+cRON+ABFcVEOgTWf5HnaCTZIS
+	 UuGq5c2moOR/J65HrJcFOCEhbzXwaJJjgAWJxrKiLfqePfh/5Of/mzDRqKvGawGj/g
+	 1ikgOE+5eMylQ==
+Date: Thu, 12 Nov 2026 20:39:47 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Surendran Kanagaraj <surenkj@amazon.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	Jonathan McDowell <noodles@earth.li>,
+	Breno Leitao <leitao@debian.org>, nh-open-source@amazon.com,
+	Alexander Graf <graf@amazon.de>,
+	Gunnar Kudrjavets <gunnarku@amazon.com>,
+	Josh Levinson <joshlev@amazon.com>
+Subject: Re: [RFC PATCH v3 0/8] tpm: Rework timeout and duration handling
+Message-ID: <avYH8zHb23JUue6C@kernel.org>
+References: <20261112163846.97654-1-surenkj@amazon.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -67,16 +61,30 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261112163846.97654-1-surenkj@amazon.com>
 
-The pull request you sent on Thu, 12 Nov 2026 02:18:08 +0200:
+On Thu, Nov 12, 2026 at 04:38:38PM +0000, Surendran Kanagaraj wrote:
+> Review of v2 [1] asked to redesign how the timeouts and durations are
+> handled across TPM families and drivers. This series is my attempt
+> at it. Sorry for the slow progress.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpm-v7.4-rc3
+No this is great! I mean it is right even if it was in some ways wrong.
+I have zero expectations that this would be exactly right at first, but
+now we have something more relevant to debate.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ae7e0f32277099a25a1d7804b8cb2f6dd30ee2f3
+And I think this type of paradigm shift towards more architectural
+changes makes kernel development much more rewarding also for you as an
+author. I don't think anyone loves that much competing with LLMs when
+it comes to smaller details and random bugs.
 
-Thank you!
+If we don't do this, we'll all become check-and-stamp machines for LLMs.
+That would be sad.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+A bit more intrusive but at the same time well thought changes make LLM
+attention to work for our benefit as these bots help to quickly
+stabilize the landed code.
+
+Br, Jarkko
