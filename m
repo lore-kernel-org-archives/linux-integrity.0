@@ -1,59 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=82.195.75.108
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794486712;
-	b=KG5KIjK8IJ6JWHscPQgKTdzP52K0eb1MSWlHms/oUz6gdtPUcoifV2G60y5Pzxad1x6L
-	 lZxv+cgiZy8vlCduv5eX71on7B06FQrWINQSWMt6k4WQoHNYHqYpUuhlXObIZEyhP1om2
-	 GkYz9ntZWIuJxlifQDDD0KmPLqGcyhghYDJdUnd5uORbUnIwDRkubv3Xc62vVl7lclH14
-	 3clwZHhxNQMRdutePVEZZ4kNnqK9OgrJBv+CcR/svacmRJeP0bW2GmwQkY2rZcQdcNRgu
-	 HX7TL5Zh2SYO9w5EMJ8sThQmnhuKmaFnVQDZRi3hDnYT0HU8Vg/bvSdYkt3kNyFE2WA==
+	t=1794486714;
+	b=vAcze/KQDldexGg+WIe1r9ejw+Qak/xfg8DShWxo1nde63/9paWz5TtzNIrkaNxbTg9E
+	 qMi7gXBlnRsQMu3K7/E8IRoxZ38JJBH+OkeIFafibjARz+u9IIbjCr6G8cUjdpd+d5lks
+	 dDKgOqhBYJC7qBv9Z1Ev3WxBdf6vJE12LLw5IegD9Pg6YiO7yzmgi0K9yUgVIxkBs3P2J
+	 zTlDUE1olxSuuoVGJSMtP7wWKm8px4gn1ivCuhYrysq44d3anPSOaFS4iKK0n+TTBzLbI
+	 8v520nd99AULfn3YXDpE6UKLo6Mv6HaIop3UKwqjNJgAVeDiYMZdTWm9n3sESYo5g2w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794486712;
-	h=DMARC-Filter:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794486714;
+	h=DMARC-Filter:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
 	 X-Debian-User;
-	bh=M33ptlYq/wRIIxDWa10zRdP+rs2Bk1wjfkkG/z3Cth0=;
-	b=pFGScn18+mIKtku7aWsuj8ek3pdtUz3F+LwKwiCV3ZjuOWJHBJWOMfTyDzC+XNUPqr5G
-	 MGvtwpGpPWJ86Q4bP+2j6KiVHZDvyvvU5+8MvirWk3Rq1JX1dcjb1QnKsZ9HX25ze6rpb
-	 1v80wOLmcKIvbBWQLlrJum0RVzfkaVq/N2vfOMj76t9Jb0+Yk5Bgeq5yC8MDwLk7dp4Wb
-	 jnrY1knPbclJ4aT+oks8KAa+ZRpvIGTzVvsHEVrjJvGGCFeuJB+P+4S8GP288pDFeO+o6
-	 7o+euPAJ8pfhtby3p6UuJjFxuNp5IeSieb3EBXxGOjgSvuMPJP8GjU4MY25fZqQRHtw==
+	bh=zqdkTJnLLRVHqzymtxi4ag9i/Zyn88Bu/jHNWO7k3iY=;
+	b=twA4N5NZR8vDjduXnnDcqED0RN0Na4ByO5OIJrrRVDKFWiGEGcP7Cz6Ub5Iuk2pVLzF4
+	 ZOSP4OYgkVEfKTw/yza+7uZfOwTXfvgp9dwE4e8VT9HnfYJoFoFDiRMjSOqfBdFcRuRF+
+	 dyFy2KCw/s2T3y/5iSxNi9+KoLH4+TJrphB0XGG3VjznArIUURnXj77bs9JD77gGFkC9r
+	 I/9yuJVPX01780ZkSlPzC1QZAAuHvffFYdewu+x+GGmFrOsW2CX86rG3Jl0fm1uimwOei
+	 9t/9PhN8quuNgap/7B1qdmiKWcW5VI7K4W3mE7xlnK5PaUiHfU7afqrkl6stEHj9rhA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=debian.org;
 	spf=pass smtp.mailfrom=debian.org;
-	dkim=pass header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=eCb4lUiz;
+	dkim=pass header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=iqYhpoNa;
 	arc=none smtp.remote-ip=82.195.75.108
 Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A96606A31C;
-	Thu, 12 Nov 2026 12:31:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A0A96606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C41606A338;
+	Thu, 12 Nov 2026 12:31:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 29C41606A338
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=eCb4lUiz
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=iqYhpoNa
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-Id:Date:Subject:From:Reply-To:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=M33ptlYq/wRIIxDWa10zRdP+rs2Bk1wjfkkG/z3Cth0=; b=eCb4lUizdyuU6b+lkv3dVTXFNQ
-	4UPxRVi1iv6GrzxVL3cCdC5B18VBpY4h2/Q0zi25002YNA2ln6izK6pYlyFh5U9XdBDoYYQsMIVC6
-	2AND7G7fgMgnEVC617Hct7IhEwuYgk2JNqJVhnlF940vtvS31c0igomOaboOu/Mb7oEijteDxrRSk
-	Pr0BW6s+TxNLzgYx2V4dkExrtaw4cUdbd7s1DMXPN05X9of2N7Ifyy4BwZjrshUSSjDUDJbt7FYOk
-	NZXEAxsr4Pf9Z6qVXZFqDehpGiZyepV+W/zRzAtsgpWYFP1Oy6Nq1voCgYhO2nqIPyBm2fMLOZITy
-	9FzgymmQ==;
+	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:In-Reply-To:References:
+	Message-Id:Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:
+	From:Reply-To:Content-ID:Content-Description;
+	bh=zqdkTJnLLRVHqzymtxi4ag9i/Zyn88Bu/jHNWO7k3iY=; b=iqYhpoNaxyIu/72MUlOeanxVKV
+	CNCVMMoZqQCAlHUOPOBSfl5IZ7Jvj7Ch70fCLpPreBtsF4rdljeRVx6PFKHxbQTW6ZaaNZUXtRk5Z
+	rqdXA/hGmCFjQHy5fWnAnI0QcQzreJXwhiQLP793EjKELMBSrFG2UfE2F9p2XvuJeODi3kupV1hNO
+	Tyb8rwyArNTzVLy0oOXXgUgl2hUpohUqk8B1kDkrrtdWYuZh7ppjJlw70MWMJeuCfH281V4qjis1I
+	LhlzFf1M2u+c8ppApskIWjqj4NSfWpO/7OPccMPVe5Oj8S8hzOh89TViQsC/sgQ+4ptUaR9GEFCqO
+	Hx++ErJA==;
 Received: from authenticated-user
 	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.96)
 	(envelope-from <leitao@debian.org>)
-	id 1xRTy0-00DyD1-0J;
-	Thu, 12 Nov 2026 12:31:48 +0000
+	id 1xRTy4-00DyDA-0z;
+	Thu, 12 Nov 2026 12:31:52 +0000
 From: Breno Leitao <leitao@debian.org>
-Subject: [PATCH v2 0/2] tpm: Stop retrying TPMs that have stopped working
-Date: Thu, 12 Nov 2026 04:30:16 -0800
-Message-Id: <20261112-tpm_unresponsive-v2-0-7454d2c899ef@debian.org>
+Date: Thu, 12 Nov 2026 04:30:17 -0800
+Subject: [PATCH v2 1/2] tpm: Disable a TPM that stops responding
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -65,100 +64,113 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAF2x9WoC/2XNQQrCMBBA0auEWTeSCTbSrryHFEmaaTsLk5LUo
- JTcXSy4cvsX7++QKTFl6MUOiQpnjgF6oRsB42LDTJI99AK00gYRldzWx/0ZEuU1hsyFpG2nC47
- ondIGGgFroolfB3kbGgEL5y2m93Eo+K0/DP+xglLJs7Yjus605LqrJ8c2nGKaYai1fgArDhUfs
- QAAAA==
-X-Change-ID: 20261110-tpm_unresponsive-a5f71c1db026
+Message-Id: <20261112-tpm_unresponsive-v2-1-7454d2c899ef@debian.org>
+References: <20261112-tpm_unresponsive-v2-0-7454d2c899ef@debian.org>
+In-Reply-To: <20261112-tpm_unresponsive-v2-0-7454d2c899ef@debian.org>
 To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
  Jason Gunthorpe <jgg@ziepe.ca>
 Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
  surenkj@amazon.com, noodles@meta.com, Breno Leitao <leitao@debian.org>, 
  kernel-team@meta.com
 X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2563; i=leitao@debian.org;
- h=from:subject:message-id; bh=j2zx3gRlKutJqDelq8IqpNKDMv6HF9dJNyCQwT0iGCs=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBq9bGw+eohE4rUkLi34fRYlIf20Z49EdWTZ4v97
- tUHKX5Uev6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCavWxsAAKCRA1o5Of/Hh3
- bY71D/9FiolP/YFrRlA29rR7n0kz9H+sHIM1VtOPhPjCaS+ueQyiTWhh5VIe4aNgLPyEt5nJcAJ
- ljUFE4UKZ1N+GYEuHKRoii+PtRSR1S3j0SLJSh35Ahz2/sq8xxFquTJyodHxg7ps24JZeSV4A9W
- 0v7vDKgvlDpMXXovujaUW0n/YVjdugvdmJkbEsDaOVoOvEAKSBjLrC207zgy2/0r/VoBwXB/Ig8
- ZrWqqP2XkOA4rd77Ye4G2uxIRbvsfwp/ZQQJOTZ5M9PsMBaqBANON03dDpJ9s6tZlZSySgcdmWV
- LAzlBVGYS7iyslXU6FJj3dIEseQKV8Lkeki+IYn1Qg/JL4OquFx03FvjJtYagna/n4a8I/Z2YDE
- f3THZTBGHxEyZk3lxG1ZzXt0CRiAkNzX9+bZafHIscps2ehrCYIAAPuSm4ean0YpuM/xkuvxHA5
- 4iCUP+F0Il4E2iEo0WqABdTaxdQi2wLUxi4gdFbhGhF+XQ2UpSTNKaHsVVcfSfAGIe38vLR1hH8
- 0EWuwBhs6DCjbNnz/MsZNbpnpCRN9grK5sP7BB+f4MdPOaDbZKBpu/5Qy/0kZ9ze/gpO9v6wJze
- vLVGTghK7K8Ax7oGaJ2CDQoBPqNyO7m+R1aL5poPSWSO7DCCmXX7TKKCuefuLLWpdLdL7F8EF6e
- gBTatrxGZ4pVATw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3226; i=leitao@debian.org;
+ h=from:subject:message-id; bh=LZISX2BSPEGQAo2UtLJTF39lzk7RskU0tpXXGGUqmmk=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBq9bGwoaNeOJRFKG7goXJlb2SC7xRBXPLE0Twb/
+ p039DfUuY6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCavWxsAAKCRA1o5Of/Hh3
+ bVC8D/0dNZP0vmWeMowkFDTWX2LZyflTut5gyLzgsvV1TFN2thr5B7ObBmT73AZKeRMbtZzTOYi
+ ZyuwRib9NioHVBC5Gh6XtCwoqmW7jG2XmgXE8Y/Gej6vhzI6MBRhtwaEsxLqaTiKou4npjjjNqA
+ ibZrQvQul5BTk6XWDYP402y8HIRTwP10QPZ2iAAb4YvZpkapvVIHAYOARoN5mu9cZ6x0m72If9m
+ 92g9qbX0HphgvFMXFfRS8AfDsp/2bMHBinb2Vbtb21BrnVoud64LHxY90fqTfFQxN99ETby8opr
+ oTO5bLIeK6hnCsECZLIwz2tOU4AhSF1cinagVdJFYldZSeCbqT4cV2HhGJVVmO1emm1TiuT0q5W
+ M/HfC4FHSt7tz+cvSzcafA7a8CJxDSEj7acehKUJZz5hejxxTZLSYS5gP3o5nWtasXOFwdaeqhf
+ u4c8BWuw2n6jQgz9te9tMLbfvXhPdB+ce9iJdtAHZ/aRRE8Kkh7ZjVihmrbbXiF5G9Jl+ev2YOa
+ NQcm6xplr+MacKK9Pf70BFWT8Z5U/LfHIjfju+82nwYL9PF8MgkpWiCn4vn5k+VOyRLphXW7zLG
+ oQYWvwxasTJblLk2bkaeYE1bIrldcnQCODtQ/EGSGm7zGXXbNKRkpNUN5VN/br6pDOIwBDt29bf
+ zKPjZO5fGJfkJBg==
 X-Developer-Key: i=leitao@debian.org; a=openpgp;
  fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 X-Debian-User: leitao
 
-On Meta's datacenter, given the size, TPMs that stop working write about
-54 million lines a day to the kernel log, because nothing in the kernel
-gives up on them.
+A TPM that stops responding fails each command only after the transport
+timeout, and its callers keep sending more: the hwrng thread every 10
+seconds forever, and userspace through /dev/tpmrm0. Each attempt holds
+tpm_mutex for the whole timeout and logs an error:
 
-Two cases make up nearly all of it.
+  tpm tpm0: invalid TPM_STS.x 0xff, dumping stack for forensics
+  tpm tpm0: tpm_try_transmit: send(): error -62
+  tpm tpm0: tpm_try_transmit: send(): error -62
+  ...
 
-Some TPMs stop responding. Every command then fails only after the
-transport timeout, while the hwrng thread and userspace keep sending
-more.
+The core already stops using a TPM it cannot trust: tpm_try_get_ops()
+fails with -EIO once TPM_CHIP_FLAG_DISABLE is set, which
+tpm2_load_null() does when it cannot restore the null key. Set the same
+flag once 60 commands in a row have timed out.
 
-Other TPMs get reset under the running OS, and answer every command with
-TPM_RC_INITIALIZE (256) from then on, while the hwrng thread retries
-every 10 seconds:
+A completed command, whatever its TPM return code, resets the count.
+Some TPMs stall for half a minute, time out a handful of commands, and
+then recover, so a short streak must not disable them.
 
-  tpm tpm0: A TPM error (256) occurred attempting get random
+With only the hwrng retrying every 10 seconds, 60 timeouts take more
+than ten minutes. A userspace poller gets there sooner, but each of its
+commands still waits out the transport timeout.
 
-The goal is to retire TPMs that are not properly working, similarly to
-what was done for EFI in commit 4b2c033b5bc971 ("efi/runtime-wrappers:
-retire the worker if a wedged call ever returns")
-
-Patch 1 disables the chip once 60 commands in a row have timed out,
-instead of keeping it in this desolate state. Patch 2, from Jarkko,
-disables it once it answers TPM_RC_INITIALIZE to anything but
-TPM2_Startup.
-
-Disabling the chip makes the failure explicit: the log gets one last
-line about it, and every later command fails at once instead of timing
-out.
-
-A health-check daemon, such as machine checker, can then detect
-the broken hardware and send the machine to repair.
+The limit is the tpm.max_unanswered boot parameter, so that slow
+pre-production parts, such as FPGA prototypes, can raise it, or set it
+to 0 to never disable the TPM. A disabled TPM stays disabled until the
+driver is rebound or the machine reboots.
 
 Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
-Changes in v2:
-- Disable the TPM after 60 commands in a row time out, instead of after
-  ten minutes of timeouts, and make the limit the tpm.max_unanswered
-  boot parameter (Jarkko)
-- Open-code the check in tpm_transmit() and drop the "timeout" field
-  names (Jarkko)
-- Replace the hwrng failure counter with Jarkko's patch, which disables
-  the TPM on TPM_RC_INITIALIZE
-- In that patch, move the check ahead of the RETRY/TESTING break, where
-  it never ran, and skip TPM2_Startup, which a TPM that is already
-  started fails with TPM_RC_INITIALIZE
-- Fix sashiko findings:
-  - Two timeouts ten minutes apart no longer disable an idle TPM
-- Link to v1: https://patch.msgid.link/20261111-tpm_unresponsive-v1-0-42ac1b965eb9@debian.org
-
----
-Breno Leitao (1):
-      tpm: Disable a TPM that stops responding
-
-Jarkko Sakkinen (1):
-      tpm: Disable TPM on TPM_RC_INITIALIZE
-
- drivers/char/tpm/tpm-interface.c | 20 ++++++++++++++++++++
- drivers/char/tpm/tpm2-cmd.c      |  2 ++
+ drivers/char/tpm/tpm-interface.c | 15 +++++++++++++++
  include/linux/tpm.h              |  1 +
- 3 files changed, 23 insertions(+)
----
-base-commit: 630059a5a632377b9b7b487baccde92b7ae1dd47
-change-id: 20261110-tpm_unresponsive-a5f71c1db026
+ 2 files changed, 16 insertions(+)
 
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index e0385b16616b46..b7865ccb799289 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -40,6 +40,11 @@ module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
+ MODULE_PARM_DESC(suspend_pcr,
+ 		 "PCR to use for dummy writes to facilitate flush on suspend.");
+ 
++static unsigned int tpm_max_unanswered = 60;
++module_param_named(max_unanswered, tpm_max_unanswered, uint, 0444);
++MODULE_PARM_DESC(max_unanswered,
++		 "Disable the TPM after this many commands in a row time out (0 = never).");
++
+ /**
+  * tpm_calc_ordinal_duration() - calculate the maximum command duration
+  * @chip:    TPM chip to use.
+@@ -268,6 +273,16 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
+ 		delay_msec *= 2;
+ 		memcpy(buf, save, save_size);
+ 	}
++
++	if (ret >= 0) {
++		/* we are good, reset nr_unanswered */
++		chip->nr_unanswered = 0;
++	} else if (ret == -ETIME &&
++		   ++chip->nr_unanswered == tpm_max_unanswered) {
++		dev_err(&chip->dev, "%u commands in a row timed out, disabling the TPM\n",
++			chip->nr_unanswered);
++		chip->flags |= TPM_CHIP_FLAG_DISABLE;
++	}
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 0db277af45c393..e8191585a68e7a 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -131,6 +131,7 @@ struct tpm_chip {
+ 	struct hwrng hwrng;
+ 
+ 	struct mutex tpm_mutex;	/* tpm is processing */
++	unsigned int nr_unanswered;	/* commands in a row that timed out */
+ 
+ 	unsigned long timeout_a; /* jiffies */
+ 	unsigned long timeout_b; /* jiffies */
+
+-- 
+2.53.0-Meta
 
