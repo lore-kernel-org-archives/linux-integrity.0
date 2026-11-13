@@ -1,57 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794526777;
-	b=Ietjefn1Cb8QKVLD6MHPhd8sGOtcJjgA4F8EmZK9MqK6o/eRzBRordMCO141IfSVKT3P
-	 jel5b6U6nXRJgBscVSJrKtbL6mAYE9q4zoYSs0ixFVm09XpfiKT9r51hpuil7eqhXRGg9
-	 ObIUAlmSt/VJyiqC3MMHWBe3LyGai1MjYTmuKnh21VwsZc6PDQtSH7UO+DW74soKoE7Te
-	 dGsCPqq2XV0XJWuQXsX+DYgeVrHCYrLnu180bIR8KmBnmcX3uVI3c5ZVn1cpZUnVa7wkS
-	 4afPcWT/N8CpP7toKfCTLiX7KzluyyqmzbrGijl5Vrk4SGPEZVQPWkC0jZF0iG3jUZQ==
+	t=1794528374;
+	b=A6Dt/FCFqdwXe86AE/jU6DscwWIUMXEHg3wBlEdlN7tshZjwAuzu+vi7O3bRmOO0iq5Y
+	 BS8cq9sZVF9P66ei4kht+GxP823cnsXmxNnyT6K9/UJ2UXZjtPFNsDB0riUOXaV5lujp3
+	 /aX5O0aMQyNVfTvP1XFCgxK8sie0JkRqNOJ7y22I/0sqLEBuKqrIwxj3+i6VowKF7ba9A
+	 c4yUY4vokUf0MqkSwQDZp67PO235YRX7CTTr2bT5aru4Z8pdWsz35QN4KGRhNQ8CfwSpC
+	 vWdEIIRBW085y9aFeqwoZnOOJNyRxmUV23xZcStDpxz86RRWWDyLS27DEJ5kWi4J41A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794526777;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794528374;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=HPidEKJVpyateKLYCJwiGwuCGDMNYMEDcVTo1zQ0uLk=;
-	b=LbND8BYeGEjp6BudfjsasSf9UiJ2V49J6OogRjW3RDZAEc9hUIIw3eD8JgnTgx9qClCM
-	 dabLLiPzcedzrc9u7HNZq2zKSLPRth+rROzCW+7PKzmUT2Q5VpyLyvIQGdVLT4pa2WlYZ
-	 P7/KMLZln7ikoBLSbGVtSsk6iSQmFl+T+0iDPNSGPweKV7+r4E4gS/nGuU7nMTTBYtz4H
-	 eVvGgAVvBjXEMa73rMjFQKDwp7jxbTQpHtRaBk7nc0Gd+uzgca+QnwvEsxTkHqTELZyV7
-	 n7gZpSpZ+bkEla8Mdpiz67+A+IFzlEuzULbJSgsQJnQnQgvSH/h6OKY0bo581UVBD5g==
+	bh=tOPY0JlA/znfkgxSHyXmiwQi91KyGIwi3K/ptmdzr38=;
+	b=4Hkf17qmiasGd1rtgfrgDlE5sCjZYko8TCYIwALBTVlSeq/p89OxZdCEmdYhOn0u1HPO
+	 WUH9pGKMlEfqjzWu4fGAjRaPd0ibuwZ2ADFzLaR8Ef0YFX0cKkThVSIKOpseq3j12q4cF
+	 hA3gJmABO5wc+DFTa334fNrJqCUADCtIITwU8JltNxb0pRKUXlP4uS71+0uhsIn58+b7W
+	 k8fddoQuan6vzRl9beh8CWX7pGM3WFjW2Nkiu9AxV6i+SIdeAitgns2+rqpuIDbhFfNX8
+	 8rthmfs4vW6t3Ol0xy11EJ88uUHfLtEmcjuGCixcVzu6tCplgaDLKjlHjgPk209dCIQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="nq04xoU/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kjfy9lof;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 0E362606A31C;
-	Thu, 12 Nov 2026 23:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 61937606A31C;
+	Fri, 13 Nov 2026 00:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nq04xoU/
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2509F1F000C4;
-	Thu, 12 Nov 2026 23:39:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kjfy9lof
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 5AC781F000C4;
+	Fri, 13 Nov 2026 00:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794526776;
-	bh=HPidEKJVpyateKLYCJwiGwuCGDMNYMEDcVTo1zQ0uLk=;
+	s=k20260515; t=1794528373;
+	bh=tOPY0JlA/znfkgxSHyXmiwQi91KyGIwi3K/ptmdzr38=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nq04xoU/STifZQdfKCIOtXKdCgzBZ3M5AFONiyo0v4Kdeseblm9iVD38OcVV67+Wd
-	 AFPrvz6wiK8YmsKyAudZz09XHxanApmVIGvImcbhebv0ziB9vMllyp3NAAP13hzD5C
-	 XqykJPiPkMr7r1MPNAwXx1hLn+yxGrhXsSGce3+RU6xWUf88vh5MdUSvZ5745chFwg
-	 tzkwX6YjU6pTTA46ECYtFHtosXOXwQf4HEgJ9rz7orEqE705g6Vx7hvTwarhmUtXSN
-	 pt+R+Ou7ubpGsUfHaIP7qGLDH+mcKeYnN1mv7VwEgEgf0NEI3yakCtK0TsPi6iAAPW
-	 qi7PqWXtOogng==
-Date: Fri, 13 Nov 2026 01:39:33 +0200
+	b=kjfy9lofwbjzd9FFAJDce2u7ufstE8HqelEhcMCALvLNRrXCBwbtMo7X509gxtJL3
+	 FJrqnU2wNkax6dbrW7Ag9WBG/8d8WYUStUUFRO/LEel/Y3i3UPaClW8VgN9r/43n5p
+	 6L3BJXUejhVYnO7eEOluB0crkJKkGzL3JNrZgo3jjNmeUdwcD33bqjUa7hfdaOY2Vg
+	 B51ni7Y3ewjCCbFr58fzw3wGUjLBprgYlydkIloPkB93A8nrEjngDXZRL1Ln11xsNX
+	 +TqoGikIcAVTPQ4VB05C8I0da08cBcEt8TZYZhDgxlkI9WAaBpm0WnQhUFcSVnj8nV
+	 loLIRayBx3+XA==
+Date: Fri, 13 Nov 2026 02:06:10 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Breno Leitao <leitao@debian.org>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, surenkj@amazon.com, noodles@meta.com,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 2/2] tpm: Disable TPM on TPM_RC_INITIALIZE
-Message-ID: <avZONTqgc6nTlihy@kernel.org>
-References: <20261112-tpm_unresponsive-v2-0-7454d2c899ef@debian.org>
- <20261112-tpm_unresponsive-v2-2-7454d2c899ef@debian.org>
- <20261112225759.67730166@pumpkin>
- <avZMPeUtzV3JyAX0@kernel.org>
+To: Matthew Garrett <matthewg@nvidia.com>
+Cc: mjg59@srcf.ucam.org, keyrings@vger.kernel.org,
+	James.Bottomley@hansenpartnership.com,
+	linux-integrity@vger.kernel.org, rafael@kernel.org,
+	linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [RFC] Make hibernation work with lockdown
+Message-ID: <avZUcjjjNtEUfnVM@kernel.org>
+References: <20261008132532.1155166-1-matthewg@nvidia.com>
+ <avJ1JiFQApsgYT_c@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -63,30 +61,55 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avZMPeUtzV3JyAX0@kernel.org>
+In-Reply-To: <avJ1JiFQApsgYT_c@kernel.org>
 
-On Fri, Nov 13, 2026 at 01:31:13AM +0200, Jarkko Sakkinen wrote:
-> On Thu, Nov 12, 2026 at 10:57:59PM +0000, David Laight wrote:
-> > On Thu, 12 Nov 2026 04:30:18 -0800
-> > Breno Leitao <leitao@debian.org> wrote:
-> > 
-> > > From: Jarkko Sakkinen <jarkko@kernel.org>
-> > > 
-> > > If the TPM has been spuriously disabled, the game is over. Let's reflect
-> > > this truth with TPM_CHIP_FLAG_DISABLE.
-> > 
-> > Shouldn't it be completely 'game over'?
-> > (aka panic time...)
+On Tue, Nov 10, 2026 at 03:36:38AM +0200, Jarkko Sakkinen wrote:
+> I have a rebased branch of these patches with all the merge conflicts
+> sorted out:
 > 
-> There's nothing pointing to that direction. Nothing is really broken
-> except likely firmware bug or similar situation. We don't want to brick
-> the machine because of that. Neither security is endangered as
-> anything that  was sealed with TPM, it is inaccessible.
+> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=hibernate
 > 
-> It's also useful for us that any possible user has a chance to run e.g.,
-> acpidump without kernel pulling the carpet.
+> And I'm finishing up refining my test environment:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/
+> 
+> The build recipe is:
+> 
+> 	export LINUX_OVERRIDE_SRCDIR=<kernel tree path>
+> 	make build BOARD=tpmdd_amd64
+> 
+> This results build/tpmdd_amd64/images/tpmdd_amd64.iso, which is a live
+> ISO. Once I get remaining commits pushed (not all of them yet are),
+> the image can be installed by typing:
+> 
+> 	sudo npx @puu/install
+> 
+> The TUI installer duplicates the bootc image of the live ISO  to the
+> target hard drive. It has a checkbox for hibernate as part of the
+> installation flow.
+> 
+> I'll report the results later, and at that time my testing harness
+> should be fully available in public.
+> 
+> I think this is pretty much the lcd for the required testing machinery.
+> It is neither a feature very popular nor well maintained among popular
+> Linux distributions.
 
-And fTPM tripping has been reoccuring theme since they first arrived in
-2014; not something extremely rare that "almost never" would happen.
+To my surprise both my refined (installable) testing harness and the
+kernel patches worked on first trial :-) This has probably looked more
+like building an ivory tower and making noise than getting anything
+done.
+
+I also verified and traced that:
+
+1. The expected call paths are actually exercised.
+2. Secure boot is active.
+
+The next step is to review the patches properly and try to see what
+needs to be done to eventually land these patches.
+
+As far as I'm concerned it is force majeure situation with accepting the
+idea at least, as without lockdown support hibernate is a bricked
+feature overall.
 
 Br, Jarkko
