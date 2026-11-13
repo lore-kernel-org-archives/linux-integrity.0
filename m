@@ -1,58 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.224
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794531018;
-	b=ijzXhCi5GUPrJ9q8HUiuIsmSQdoicgwNvGR+B7NR/9tt+0eM3GbQmrKc2voa75JP4R3O
-	 nOJjhkkv2TNuk3BJeQzCjRre3CV1WQo3Ig3MCRp2trkfivoRhx/iuQ7ZM/Wh7FZG+j6Pu
-	 Ks1Y9iB5waJ2GDNsh5i0/jfKOOQ/Qt8EKqaKQAPQ94L9gzusHfJLUHTUDkJg9m81MAWhP
-	 vmLEHKK6EmyQ25lzBSPcSaESfgYOltGqFrnpweKBEZAyiRJkItZtR2CBgkDzU1Agd5Ys2
-	 OzVm9mir+3J7swfRBnmhdH+ZpYrv3ZKYoBlg7GT2piSLntyCL/qK3FEjmPw1dPZen4Q==
+	t=1794535692;
+	b=p+OCAdGyQTluAMXM2IMjhPqoDssF3k0v9cXs1PByJ8sQNTntlLl32u9gYFwRGQxoMsuF
+	 FpPG/uNtz8O8rMCukKoRuiXR90YdYwVEEHfhh616wlsW0OR8aRmepRvL3T0vJ7Oe+/PoU
+	 4h70MG50RqjBv4F69D6wB4lIn6PTxbuH6sLiTBTRz4YpwRIpEBaGqe7Y3kjI0ldcuXT2y
+	 RE7GRQphiYobnV4CB8aXdO9qtkyzxFSD4zKhKBTSTYrGSWn8nrhPQ784N5tWBWXnkSx6L
+	 cm/ce2LhWJlRj8jWTXMnlBy6cZxSt34FRzAUDB4jMReP09fSxH6cKHxxTMlSsaXEyKQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794531018;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=xQFcFPClXFZRCvlfFA+mRwTNyZht83bdmfpfjduJBas=;
-	b=zfvQ7MHtISce6F6P9axltcXkxhQ3DGKfE//y630FcK0Fef1807ezYphWFAUM+WQ7Tk75
-	 9O+QP0GDuD3BIFbqKMNn4KQG32pJ4aJ6yGrLdTkJTgvigoa6Maq1zqZRwbH2f/iNMEUDa
-	 +lCcMpLETtXGZTdfovxUL8zC/oacFGDlbijpKn3oP5SEyhk6ii2VCWXZ1nhCaE2gspgUX
-	 9t5M3FzCBa/dW7/1bZmCIarhlUsWc3TTCnSQIvDIJuYFf0d+viCGUzQxa40ssvM1Eke6y
-	 hxJgekJZUUf9m/COvYE+3q13CdzHOJVtYbCnlk6OMlXO2oRvKWkKmOyZw7y9pAYSgrw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794535692;
+	h=DMARC-Filter:dkim-signature:Received:Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:CC:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+	bh=fRlFnEwOyhCsf6bntFNWmv0q3cjwumqt5gvXEY0j99s=;
+	b=h/zV89+qLgaCReHEGqt6Yz7QuMFLau76PrUC64xyupskVtNCPQ+nmxOMNmYpHzOqslFo
+	 kgKw5ZY2wbzhJd0lF+zjKrlPUCmjb5IgsUFtoQqhIVm9cnGfBBQV27Zmw0SOuawfTJrqj
+	 COUDeteeu91XQma3e/4ndW4VEdrl3CeyYA6qLcmmNoBHr88AeGjUDrznix08ey7CkL7dN
+	 ATYbiJ85jaQA4TqrEF0OxrluHBWYxqRn9fPvtPMnNG9q6tAJkXdtwGsMyPUdrjdmiatZM
+	 Nm2oKKg5nghW9PZOToKPGBNxCtDI6DTaPEoBLZidyMqSogmB9o3taotFsdyv1n5vU6w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dzWbJuON;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=huawei.com;
+	spf=pass smtp.mailfrom=huawei.com;
+	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=tgB76D+u;
+	arc=none smtp.remote-ip=113.46.200.224
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 24F3B606A886;
-	Fri, 13 Nov 2026 00:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81167606A31C;
+	Fri, 13 Nov 2026 02:08:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 81167606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dzWbJuON
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 3A6F11F000C4;
-	Fri, 13 Nov 2026 00:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794531017;
-	bh=xQFcFPClXFZRCvlfFA+mRwTNyZht83bdmfpfjduJBas=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=dzWbJuONSZfASp7zQjegKNRyOjp1b3SqjfAwFiyyPI5xzHiNNG1M+UmKFyZ7bL/s5
-	 SDaXTn2qiXESWZAu8NBoeMBRQk7kz5/8+LHtcyJ1Aro+k0ANX7KjhE/VvzffKxM2D7
-	 MV6OMHDSs24v5nTijj7qX3gQk2EznC5Hg05uArsP6Xhe+SlO6TizpPS65lfIU/h1FZ
-	 EOrnMstDd6OL3fXe1U2284sfJGQiPUL3tQWDwjOh77NbHXHeMSN5cgnkd4eFUS5dOW
-	 TLNPpmtA56jISI4g6lTaMkBGgK/MAo2r+WPmwNCyn+670hqKTIm3m0eGv8+t/JXIja
-	 LyS9DtPBsmeew==
-Date: Fri, 13 Nov 2026 02:50:13 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Matthew Garrett <matthewg@nvidia.com>
-Cc: mjg59@srcf.ucam.org, keyrings@vger.kernel.org,
-	James.Bottomley@hansenpartnership.com,
-	linux-integrity@vger.kernel.org, rafael@kernel.org,
-	linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
-Subject: Re: [PATCH 01/17] tpm: Define a kernel-owned TPM NV index that can't
- be modified by userland
-Message-ID: <avZexVrCBhWgrslq@kernel.org>
-References: <20261008132532.1155166-1-matthewg@nvidia.com>
- <20261008132532.1155166-2-matthewg@nvidia.com>
- <avZcgwi7EetC2DtG@kernel.org>
- <avZdj5oROgc0HL4L@kernel.org>
+	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=tgB76D+u
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=fRlFnEwOyhCsf6bntFNWmv0q3cjwumqt5gvXEY0j99s=;
+	b=tgB76D+uPHT+xoP/MsIq5QT99tPRFyjCjYAa5bPvS0n/BLMW7GmhAJphWd0AaFaCXwNcxc4Ka
+	dPjWkV3Gm+TFWMTFawukI93MmREL5xwGs2ILp3CVZdJ2RNXEKTgDHIK4mZDlwgvononmGVpnLul
+	eI6cXevbd8zNABceS1BMSf4=
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4jQgdL6LlBz1cyTG;
+	Fri, 13 Nov 2026 10:07:50 +0800 (CST)
+Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 63B8C40572;
+	Fri, 13 Nov 2026 10:08:07 +0800 (CST)
+Received: from [10.67.110.140] (10.67.110.140) by
+ whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Fri, 13 Nov 2026 10:08:00 +0800
+Message-ID: <2dbd365b-eac5-448b-b6c2-4ed8754551a7@huawei.com>
+Date: Fri, 13 Nov 2026 10:07:59 +0800
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -62,88 +62,95 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <avZdj5oROgc0HL4L@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 -next 00/18] landlock: Add READ_METADATA and
+ WRITE_METADATA access rights
+To: Christian Brauner <brauner@kernel.org>
+CC: <mic@digikod.net>, <gnoack@google.com>, <paul@paul-moore.com>,
+	<jmorris@namei.org>, <serge@hallyn.com>, <corbet@lwn.net>,
+	<skhan@linuxfoundation.org>, <utilityemal77@gmail.com>, <ast@kernel.org>,
+	<daniel@iogearbox.net>, <andrii@kernel.org>, <eddyz87@gmail.com>,
+	<memxor@gmail.com>, <martin.lau@linux.dev>, <song@kernel.org>,
+	<yonghong.song@linux.dev>, <jolsa@kernel.org>, <emil@etsalapatis.com>,
+	<ihor.solodrai@linux.dev>, <rdunlap@infradead.org>,
+	<gregkh@linuxfoundation.org>, <rafael@kernel.org>, <dakr@kernel.org>,
+	<johan@kernel.org>, <dlemoal@kernel.org>, <hch@lst.de>, <axboe@kernel.dk>,
+	<viro@zeniv.linux.org.uk>, <jack@suse.cz>, <dhowells@redhat.com>,
+	<code@tyhicks.com>, <linkinjeon@kernel.org>, <sj1557.seo@samsung.com>,
+	<yuezhang.mo@sony.com>, <hirofumi@mail.parknet.co.jp>, <cel@kernel.org>,
+	<jlayton@kernel.org>, <neil@brown.name>, <okorniev@redhat.com>,
+	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <hyc.lee@gmail.com>,
+	<miklos@szeredi.hu>, <amir73il@gmail.com>, <senozhatsky@chromium.org>,
+	<chenxiaosong@chenxiaosong.com>, <dsterba@suse.com>, <mason@kernel.org>,
+	<kpsingh@kernel.org>, <matt@bobrowski.net>, <rostedt@goodmis.org>,
+	<mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
+	<john.johansen@canonical.com>, <georgia.garcia@canonical.com>,
+	<zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
+	<dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
+	<stephen.smalley.work@gmail.com>, <omosnacek@gmail.com>,
+	<casey@schaufler-ca.com>, <takedakn@nttdata.co.jp>,
+	<penguin-kernel@i-love.sakura.ne.jp>, <xiujianfeng@huawei.com>,
+	<nanx95726@gmail.com>, <djwong@kernel.org>, <lujialin4@huawei.com>,
+	<bpf@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<driver-core@lists.linux.dev>, <linux-block@vger.kernel.org>,
+	<linux-btrfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<netfs@lists.linux.dev>, <ecryptfs@vger.kernel.org>, <exfat@lists.linux.dev>,
+	<linux-nfs@vger.kernel.org>, <ntfs@lists.linux.dev>,
+	<linux-unionfs@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
+	<linux-integrity@vger.kernel.org>, <selinux@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>
+References: <20261027121151.1887650-1-caixinchen1@huawei.com>
+ <20261110-rekonstruieren-erbfolge-vollversammlung-26be74966211@brauner>
+Content-Language: en-US
+From: Cai Xinchen <caixinchen1@huawei.com>
+In-Reply-To: <20261110-rekonstruieren-erbfolge-vollversammlung-26be74966211@brauner>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ whupemk100010.china.huawei.com (7.152.184.41)
 
-On Fri, Nov 13, 2026 at 02:45:07AM +0200, Jarkko Sakkinen wrote:
-> On Fri, Nov 13, 2026 at 02:40:39AM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Oct 08, 2026 at 06:20:17AM -0700, Matthew Garrett wrote:
-> > > +#ifdef CONFIG_TCG_TPM_KERNEL_NVINDEX
-> > > +/*
-> > > + * Commands that undefine or modify an NV index, and the position of the
-> > > + * NV index in the command's handle area.
-> > > + */
-> > > +static const struct {
-> > > +	u32 cc;
-> > > +	unsigned int handle;
-> > > +} tpm2_nv_modify_cmds[] = {
-> > > +	{ TPM2_CC_NV_UNDEFINE_SPACE_SPECIAL,	0 },
-> > > +	{ TPM2_CC_NV_UNDEFINE_SPACE,		1 },
-> > > +	{ TPM2_CC_NV_INCREMENT,			1 },
-> > > +	{ TPM2_CC_NV_SET_BITS,			1 },
-> > > +	{ TPM2_CC_NV_EXTEND,			1 },
-> > > +	{ TPM2_CC_NV_WRITE,			1 },
-> > > +	{ TPM2_CC_NV_WRITE_LOCK,		1 },
-> > > +	{ TPM2_CC_NV_CHANGE_AUTH,		0 },
-> > > +	{ TPM2_CC_NV_READ_LOCK,			1 },
-> > > +};
-> > 
-> > There's also tpm2_ordinal_duration_map:
-> > 
-> > 	static const struct {
-> > 		unsigned long ordinal;
-> > 		unsigned long duration;
-> > 	} tpm2_ordinal_duration_map[] = {
-> > 		{TPM2_CC_STARTUP, 750},
-> > 		{TPM2_CC_SELF_TEST, 3000},
-> > 		{TPM2_CC_GET_RANDOM, 2000},
-> > 		{TPM2_CC_SEQUENCE_UPDATE, 750},
-> > 		{TPM2_CC_SEQUENCE_COMPLETE, 750},
-> > 		{TPM2_CC_EVENT_SEQUENCE_COMPLETE, 750},
-> > 		{TPM2_CC_HASH_SEQUENCE_START, 750},
-> > 		{TPM2_CC_VERIFY_SIGNATURE, 30000},
-> > 		{TPM2_CC_PCR_EXTEND, 750},
-> > 		{TPM2_CC_HIERARCHY_CONTROL, 2000},
-> > 		{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
-> > 		{TPM2_CC_GET_CAPABILITY, 750},
-> > 		{TPM2_CC_NV_READ, 2000},
-> > 		{TPM2_CC_CREATE_PRIMARY, 300000},
-> > 		{TPM2_CC_CREATE, 300000},
-> > 		{TPM2_CC_CREATE_LOADED, 300000},
-> > 	};
-> > 
-> > I'd consider something along the lines of:
-> > 
-> > 	enum tpm2_cc_nv {
-> > 		TPM2_CC_NV_NA = -1,	/* not available */
-> > 		TPM2_CC_NV_H0 = 0,
-> > 		TPM2_CC_NV_H1 = 1,
-> > 	};
-> > 
-> > 	static const struct {
-> > 		u32 cc;
-> > 		u32 duration;
-> > 		enum tpm2_cc_nv nv;
-> > 	} tpm2_cc_map[] {
-> > 		/* ... */
-> > 	};
-> > 
-> 
-> And I'd do this as a separate patch without adding new command codes or
-> other NV specific shenanigans. I.e. all entries have just TPM2_CC_NV_NA
-> set.
-> 
-> Further I'd sequence this like:
-> 
-> 1. A patch that does above refactor.
-> 2. A patch that adds the mechanics. This is a point that can be already
->    tested separately, thus it is important.
-> 3. A patch that adds the new CC's and populates the entries to
->    tpm2_cc_map.
+You are right, and thanks for catching it.
 
-Not dictating on this but I'd probably think that it is best to retain
-the array as static and move the required amount of code/wiring to
-tpm2-cmd.c.
+I have been working on these modifications over the past two weeks and 
+have deployed sashiko locally. However, my current changes are still 
+being flagged for some bugs by my local sashiko, and I am still in the 
+process of fixing them. I expect to release v4 in a few days. Regarding 
+these issues, my current fixes are as follows: - AT_EMPTY_PATH: v4 will 
+use CLASS(fd_raw, f)(dfd), the   same lookup path_init() does for an 
+empty path, so O_PATH descriptors   work again.  do_utimes_fd() 
+(futimens(2)) intentionally keeps   CLASS(fd, f), matching 
+fchmod(2)/fchown(2); AT_EMPTY_PATH returns   -EINVAL there anyway.  The 
+same patch rejects a NULL pathname with   -EFAULT before 
+CLASS(filename_maybe_null) can turn it into an empty   path relative to 
+AT_FDCWD, and adds the missing audit_file() on the   do_utimes_path() fd 
+branch. - __nullable (patches 5-9, 11-13): v4 will extend 
+kernel/bpf/bpf_lsm_proto.c (the existing   strong-override file used for 
+mmap_file) with strong definitions for   all 11 hooks that gained a file 
+argument, each declared   file__nullable, so the verifier sees 
+PTR_MAYBE_NULL and a program must   check before dereferencing. - ntfs 
+named stream setattr (patch 1): v3 forwarded with   
+__notify_change(idmap, base_dentry, ...).  v4 will use   
+notify_change_target(idmap, attr->ia_path, base_dentry, ...), so the   
+hook is checked against the path the syscall used while the attributes   
+still land on the base inode. - overlayfs fileattr (patch 8): v3 removed 
+the ovl_security_fileattr()   workaround but then called the unchecked 
+__vfs_fileattr_get()/_set()   on the real dentry, which bypasses the 
+hooks.  v4 will call the checked   vfs_fileattr_get()/_set() with the 
+real upper/lower path, so the hooks   also run for the underlying layer; 
+ecryptfs is switched the same way.
 
-Br, Jarkko
+Best regards.
+
+Cai
+
+On 11/11/2026 12:52 AM, Christian Brauner wrote:
+> This regresses AT_EMPTY_PATH. fchmodat2(), fchownat() and utimensat()
+> with an empty path now go through CLASS(fd) which is fdget() and that
+> refuses O_PATH file descriptors. IOW, this is very very broken.
+>
+> Please also go through Sashiko's review of v3 (cf. [1]). The new struct
+> file arguments need __nullable or bpf programs can dereference NULL,
+> and the ntfs3 stream setattr and overlayfs fileattr paths that bypass
+> the hooks need treatment.
