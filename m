@@ -1,55 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794594781;
-	b=aSIGsUnEqtZa7p6LLYRhFYthCwnSTKHaym8+xURBJbHwmQDUgv9RNM6usST1GK/IWpG4
-	 hMX9MtzBk/7NKEpypR8Aw+yGHuDRpKuwXBVTt+t9D3VFzlVmGfFGQzzSN1PZztjiEqbqh
-	 B9eLWME/Equ+x0yYtU/mwojPWCoyN92lqV1Za+Bys0rOXLHuQVKGUDacALFnuVZvxa0zU
-	 Zjg71Q0kRcaJDJ38o+mZ7i9P/c4V3OxETme5QE5cqih0Xk6UJys+Cxxf6KNned1bWrnx4
-	 XruLBn83eRh7PnSxREtE0Hljb4V1VfOqMVdOxzPcd9LZL7Lyl+rmZmXw/Q00tQnWs+Q==
+	t=1794597271;
+	b=YZr+UEi4qUGXlgkYoe/1c3ybkkGM/EG6LeQLgc17P8FFKzZIbeQJHTjAhf9QbNXpegGg
+	 CAs7yoKxG2z2n8NCflwShUU5xmhgXeQw5gYuDVv9MVQKQoSp96B+VU0i1UmPIBfaB9PIa
+	 d/aJc57wBPxk2uRp0N9xKHZdgpGxbOc6V6MoMlEdIhgz37ecLog6ya7BTrEE8vRpNCcS2
+	 lDutVFqFjKKaF5C08SQ0gdBbGQahEhI7aKfim9ZBGK/+5/vg8WvIKps51IUTlBtQPlz7n
+	 sxTlYOeCKUUc1H8NoX9HUfug2WiXfinSCqMx85d6KbrnxwG9NSmop1iz8o9tENUSVKw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794594781;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794597271;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=h1TQwAva+6rWjq4w3LgMg/aX6VXSZI3zzhkUPQ6ZpdU=;
-	b=sgTFMz6Bk70P7OGyx5aGoKgiOFLtkHNDZ/1kSvoD6hgV89iVezznrqmK9QL1dQ2g9Yhl
-	 SBog6Q2DehFjx7u/E5tu5ip4wfA8B0dAHNs5wNpFGUBFupwkJ1QuoP7/Itc5Uj6gDSRBf
-	 wdF1kBjMJb27yfCqvwJSrNe303jb+FBNgbDrucrR8hE8TDyWAjZ9zcFbq9u7IrUDSoNRK
-	 ivZfM0SZBknuSAWJQ52EjRjKUSvBCDm+nsNV5ELXGR5Putj6AHwttYz3JIr3502KDtJTa
-	 i4/i7Z2Ca3k0WzJXYtNhxAYPstxrgmDo5IJcxwK4Qy6sEZAkXCAO/9fGk831pXlnz8A==
+	 MIME-Version:Content-Type:Content-Disposition:X-Mailer;
+	bh=Z4yYXkmxh701AcFaXQRx0Ej7ViNSTX0++LPPaE17898=;
+	b=TOCux05iBOlbsn0uO2KTsxXfC4jFjwYz8KQSQrdpLNuFnGiDafLln4T7MXbgyFtCmU4C
+	 eMk/dpoA1k1A0lans+KxkMZ5RzKWR4Okn/YWKn7ij0vQZtsiXx6QcdnPH117XAM+Gh8sJ
+	 qjGYpL51ynL9+Lfb4foFGF4hd1jKHHEYLC4UViP0SPKtzhJ5/U+uKDOW8EmyjIYM66xMe
+	 ajIef4mysZKubQ1yaPw0Kxaa59HKX2rw33uz+E94MyRXtMiVeHCOhcgOBFEfbbozCK3qN
+	 hQpPzVuzI7ZKGW25bR0r5UR1U6mS6l4zpdzXSh5XcC6NOLfy/wWznCgZqleZ91djEdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FW6Du0v9;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IsfoCP0+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E40DC606A32E;
-	Fri, 13 Nov 2026 18:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 91510606A331;
+	Fri, 13 Nov 2026 19:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FW6Du0v9
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 078111F000C4;
-	Fri, 13 Nov 2026 18:32:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IsfoCP0+
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A4EAF1F000C4;
+	Fri, 13 Nov 2026 19:14:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794594780;
-	bh=h1TQwAva+6rWjq4w3LgMg/aX6VXSZI3zzhkUPQ6ZpdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FW6Du0v9d19yzM/y/Mn1MvIbCxnzlJ0Yf7zDN/WTnCdmCkuIqA+roMg0qL5X3Cdi9
-	 sdJZOL/S6Rqyld8MhqbAe2A/c6lNCKAXf+B78kukvIstz3fc+cbH+SPVDTQsemducB
-	 ZBRWYIbo990zuXQoHD8Y8XoKQaIb+y55jQeIn7Vq3AuhpQShOLlw+q5orN1d5sZNjw
-	 ACJq7VKqMX1mbuiBqjthBP9sm6+o+RqUolI9yg753JfrkucHezlQcrNuvS4z99WXER
-	 hCYPPiuXfn6l+ZL9mZg+StniMbS7hAPNh5lZJhqFNaHoFcaqZr/TO+XUlER/pkN5Ro
-	 nlwu8jeHBsHRg==
-Date: Fri, 13 Nov 2026 20:32:57 +0200
+	s=k20260515; t=1794597271;
+	bh=Z4yYXkmxh701AcFaXQRx0Ej7ViNSTX0++LPPaE17898=;
+	h=Date:From:To:Cc:Subject;
+	b=IsfoCP0+CDhYTRrZNsK/b4g9RK3UIcQVMNMgpANt/1EpdCj7xaIdHl42GPoBQGX22
+	 m3s3OfkXqnIanESxvpudAZx5OhG/73L8PF0wI2y0HVRlOHxMjNH1ATKBZ/K+bzyZcG
+	 4CM+YfwTuxi8LJWSED6SBAZpGS3QxsFNESup2Ep8novQzbeM5OLV8gqkAKeNsCyO6Q
+	 2J7tAzZH1Pqm4MPPKVf8mmBtHfetAI9vBwFvxbSuPm+4WgMLwilNFkux3lC5rWh7Wk
+	 voU2xPl7SmELbCpGnXNtWS7FoE/K9AhG1pLek/J4yTLwd7EIthfAN1HT9SbYi6gti1
+	 rK3r0BaokaV5A==
+Date: Fri, 13 Nov 2026 21:14:27 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, sumit.garg@oss.qualcomm.com,
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] tpm: OP-TEE transport core for discrete and
- firmware TPMs
-Message-ID: <avdX2c4vCjlQQyM0@kernel.org>
-References: <20261111215940.3503287-1-jorge.ramirez@oss.qualcomm.com>
- <avciKM_pGW6hs_so@kernel.org>
- <avdI5vZCobTmpIuM@trex>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Eric Biggers <ebiggers@kernel.org>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [GIT PULL] KEYS: changes for v7.4-rc3-2
+Message-ID: <avdhk_n9dwfd4jVk@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -61,119 +63,50 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avdI5vZCobTmpIuM@trex>
+X-Mailer: aerc
 
-On Fri, Nov 13, 2026 at 06:29:10PM +0100, Jorge Ramirez wrote:
-> On 13/11/26 16:43:52, Jarkko Sakkinen wrote:
-> > On Wed, Nov 11, 2026 at 10:59:33PM +0100, Jorge Ramirez-Ortiz wrote:
-> > > This adds a driver for a discrete TPM that OP-TEE owns and the normal
-> > > world cannot reach directly, and factors the shared OP-TEE TEE transport
-> > > into a small core so the existing fTPM driver uses it too:
-> > > 
-> > >   - a transport core shared by the OP-TEE TPM front-ends;
-> > >   - a new discrete TPM front-end;
-> > >   - the fTPM driver converted onto the core, keeping its name, its
-> > >     platform/OF binding and its shutdown path.
-> > > 
-> > > Patch 1 is the feature; patch 2 is the fTPM conversion that justifies the
-> > > core. Both front-ends were exercised on the Qualcomm Lemans EVK over the
-> > > shared core: the discrete ST33 TPM (patch 1) and the MS-TPM-20 firmware
-> > > TPM TA (patch 2), each presenting a working /dev/tpm0 (tpm2_getrandom,
-> > > PCR read). The fTPM TA is the same MS-TPM-20 reference the existing
-> > > tpm_ftpm_tee platforms use.
-> > > 
-> > > This is the normal-world half. The secure-world OP-TEE support it binds
-> > > to -- the in-core TPM2 SPI (TIS) driver and the mediator pseudo TA that
-> > > relays commands to it -- is under review separately:
-> > > 
-> > >   OP-TEE support: https://github.com/OP-TEE/optee_os/pull/8155
-> > >   locality 4:     https://github.com/OP-TEE/optee_os/issues/8160
-> > >                   (design follow-up: the secure world policing
-> > >                   normal-world locality access to the shared chip)
-> > > 
-> > > Build and test it on the Qualcomm Lemans EVK (a discrete ST33 TPM on
-> > > SPI, owned by OP-TEE):
-> > > 
-> > >   https://qualcomm-linux.github.io/qcom-buildroot/lemans/quick-start.html
-> > > 
-> > > v1: https://lore.kernel.org/linux-integrity/20261026163259.1900439-1-jorge.ramirez@oss.qualcomm.com/
-> > > v2: https://lore.kernel.org/linux-integrity/20261110141923.3100770-1-jorge.ramirez@oss.qualcomm.com/
-> > > 
-> > > Changes since v2:
-> > >  - tpm_optee_dtpm: give the discrete-TPM front-end a .shutdown callback so
-> > >    it releases its TEE session and dynamic shared memory on shutdown/kexec,
-> > >    as the fTPM front-end already did; without it the session and the
-> > >    normal-world pages stayed registered in OP-TEE across a kexec, which can
-> > >    stop the next kernel opening a session to the chip.
-> > >  - move the shared tpm_optee_shutdown() helper into the core patch so that
-> > >    patch builds on its own; the dTPM front-end no longer forward-references
-> > >    a symbol that was added in patch 2.
-> > > 
-> > > Changes since v1:
-> > >  - split the shared TEE transport into a core; the discrete chip is now a
-> > >    thin front-end, the tpm_tis_core-style solution that was asked for.
-> > >  - convert the fTPM driver onto the same core instead of duplicating it.
-> > >  - use an optee-prefixed name for the new modules; the fTPM driver keeps
-> > >    its name, no module rename.
-> > >  - rewrite the commit message with a plain description of the components
-> > >    and the rationale for a separate front-end.
-> > >  - drop the explicit zeroing in favour of initialisers, and reword the
-> > >    module description.
-> > > 
-> > > Jorge Ramirez-Ortiz (2):
-> > >   tpm: add OP-TEE transport core and a discrete TPM driver
-> > >   tpm_ftpm_tee: use the tpm_optee transport core
-> > > 
-> > >  MAINTAINERS                       |   8 +
-> > >  drivers/char/tpm/Kconfig          |  28 +++
-> > >  drivers/char/tpm/Makefile         |   2 +
-> > >  drivers/char/tpm/tpm_ftpm_tee.c   | 295 ++----------------------------
-> > >  drivers/char/tpm/tpm_ftpm_tee.h   |  35 ----
-> > >  drivers/char/tpm/tpm_optee.c      | 253 +++++++++++++++++++++++++
-> > >  drivers/char/tpm/tpm_optee.h      |  32 ++++
-> > >  drivers/char/tpm/tpm_optee_dtpm.c |  73 ++++++++
-> > >  8 files changed, 414 insertions(+), 312 deletions(-)
-> > >  delete mode 100644 drivers/char/tpm/tpm_ftpm_tee.h
-> > >  create mode 100644 drivers/char/tpm/tpm_optee.c
-> > >  create mode 100644 drivers/char/tpm/tpm_optee.h
-> > >  create mode 100644 drivers/char/tpm/tpm_optee_dtpm.c
-> > > 
-> > > 
-> > > base-commit: c03c1a14507dfaf8b856c2608f9ac216021fc222
-> > > -- 
-> > > 2.55.0
-> > > 
-> > 
-> > I applied but had to fix some merge conflicts so check up my tree.
-> > 
-> > Br, Jarkko
-> 
-> thanks and sorry about it.
-> 
-> I had a look to your tree and it looks good. But I think we could
-> perhaps add the following to the new file (see the patch below)
-> 
-> Not sure how to do it thought- shall I send it standalone?
-> 
->  drivers/char/tpm/tpm_optee.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_optee.c b/drivers/char/tpm/tpm_optee.c
-> index e2223242327e..3c17de1306a1 100644
-> --- a/drivers/char/tpm/tpm_optee.c
-> +++ b/drivers/char/tpm/tpm_optee.c
-> @@ -166,7 +166,7 @@ int tpm_optee_probe(struct device *dev, const struct tpm_optee_config *cfg)
->         struct tpm_chip *chip;
->         int rc;
->  
-> -       pvt_data = devm_kzalloc(dev, sizeof(*pvt_data), GFP_KERNEL);
-> +       pvt_data = devm_kzalloc_obj(dev, struct tpm_optee_private);
->         if (!pvt_data)
->                 return -ENOMEM;
->  
-> -- 
+The following changes since commit 7e1392a42ea288d70a266f6553fe06f57f8647ea:
 
-Send a new version of the full patch set and I'll just replace the
-current version.
+  Merge tag 'net-7.4-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2026-11-12 12:26:14 -0800)
 
-Br, Jarkko
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-v7.4-rc3-2
+
+for you to fetch changes up to bab48a1044475f62d6e910c6d7267ce4bae847f9:
+
+  KEYS: Protect pkey method checks against type removal (2026-11-13 06:28:55 +0200)
+
+----------------------------------------------------------------
+[GIT PULL] KEYS: changes for v7.4-rc3-2
+
+This second PR for v7.4-rc3 bundles two bug fixes:
+
+1. Invoke the match callback before the state checks in
+   keyring_search_iterator(), so that a non-matching revoked, expired or
+   invalidated key cannot decide the search result.
+2. Take key->sem for reading around the ->asym_*() method calls in the
+   keyctl pkey operations, as a key reference does not pin the module
+   providing the key type.
+
+I decided to send this in order to get the remaining key type fixes off
+the way.
+
+As said earlier this week, I have made a patch set, making the life-time of
+a key type dependent of the keys that use it at the kernel module level.
+My goal is to land both rhashtable changes and key type changes to v7.5,
+as that would provide a nice baseline to further improving keyrings (and
+IMHO best picks as starting points overall).
+
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+----------------------------------------------------------------
+Guixiong Wei (1):
+      KEYS: do not let an unmatched key decide the search result
+
+Yuansheng Yang (1):
+      KEYS: Protect pkey method checks against type removal
+
+ security/keys/keyctl_pkey.c | 100 +++++++++++++++++++++++++++++++++-----------
+ security/keys/keyring.c     |  12 +++---
+ 2 files changed, 82 insertions(+), 30 deletions(-)
