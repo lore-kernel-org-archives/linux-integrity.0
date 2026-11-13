@@ -1,58 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794580945;
-	b=1PNL1vX/0AzVnHoW13eWYn4bXh1ivB0RS+W0O0kXbAyKBIUcFWxyKdbbSBn6EpiFVv03
-	 LrinqJzm6d8waGOUS1DogTCr5uK7hBAngdHnV4Kpc1ZtVfdzpBdy9zXujOg3rkDLRYJRS
-	 zRjAWlC3QZJV1A0y1EOkZ9BSH24GdzO2FKykw4ZQGOi62UCyTKYLAWxOI5KszDFcmvMpH
-	 8fxCDpAVyvjh+12rhglQlcHwex8jeFRQFyVN2d7gjiULBMXVo7uplV9wsT36XLKjKyZKG
-	 jWOuXuVCcughTInxYl44SCeIcdLGyN2HhgAOr84xqEEXskJMBM3gIJalUMZY/rC7Wmg==
+	t=1794581037;
+	b=R9goSRFNZBqix4MPGd8PAy0UpEEAUhZE1ie+/AGrXogztRiHTjsMrQ0WPEaWoHnXrV2L
+	 vb8yBhyyRgd+K/6HYMp5Nw3xeKpz7OxDTCRV5OlZ+fMIV82yEPZLI8SY4EUPv0r/1m8E+
+	 uJvncjT/skWLY0xbD7Dn29xUVLpWaU8rDwI7pl3XtqbLOqU73cDRK3JgZ/gJlhpXTMXH0
+	 Oe3fy8q6DhGfilTsFCfy932PmolEYk2DrvsjRQ8AjTRiPZti5OHE8SUXqviSlNvqa7d/r
+	 3Aj3X/sni3TgqeeS2KOVw6+fVlMC7zZjBb5LAwu74qwjgyuZe5+9kjqWvO89YZxl4Gg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794580945;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794581037;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=tw0RNCHx45b0sxvoNuphiQaKWihW8yBZX9bRA3H3IZQ=;
-	b=pwfW06p0RkJI2zLO/6IncmGcG34bjlQ83GsGqZzywT1z6qfF/xuZ6w42VS+Zrg8urZ58
-	 W1FShDV7PFWWu2f2vZWVSTHNKauGoQr4ft3BEBCtFqVWGKusnaGrQRyvosx1ZLncy8rTO
-	 bIIJqSQJC3SBa6q8qauzB4HvkD+GjTO1rve9syF1E83JVNE1SOpGtHuRFPUxTzWgBKTg2
-	 29DKQK8D0JDBcAZWBlK6q08IzNV+QexGOVV4euNd/RNUPA+4q/tzZgem1T15FN/7R7bbS
-	 3EhwmcDuRmZekdohBRwyrKursgnKfJyqgJHW+TxcVGEK5O0QggIjesZzsWf5ZZxGxsA==
+	bh=s8F7tAs56qrutuDF7FDi0BwR+XXWLFTe5r16oqFJB8c=;
+	b=rOPPF8kKVYqQO6l9WnS+DSAzL7patPbxflCakmhBbMFWD0mrdA2rp+XYBg7Ffh6dUOEu
+	 2zG/A0as626L6WH/r79tBUS9e1xTLOgJMuTZEK4OBHpvJ2iQqRkCxyxr2ucxxPlDyBkG9
+	 xxnYk8zg3aSk+pYKpwWQThHfDKbuNgdOsF1aO3VZaLYbpFO0z8S+solj+TvFUrQftXrNJ
+	 iosf82s1EuKu5EN73baLiwMjlQHbcMQWKmGc4ATJoYxXFx0P5IgaVpr7OJIWoCWKGJsNA
+	 coK9Wpfs14KVzpz9gphee612HwDFHxAfqnNGpApSwZB4txnavTZZx23Wu/YnSCHt67w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RZ1S8rzG;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oJKNdsU3;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E16E7606A323;
-	Fri, 13 Nov 2026 14:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 00B7D606A880;
+	Fri, 13 Nov 2026 14:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RZ1S8rzG
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 073611F000C4;
-	Fri, 13 Nov 2026 14:42:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oJKNdsU3
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 0C7CA1F000C8;
+	Fri, 13 Nov 2026 14:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794580944;
-	bh=tw0RNCHx45b0sxvoNuphiQaKWihW8yBZX9bRA3H3IZQ=;
+	s=k20260515; t=1794581036;
+	bh=s8F7tAs56qrutuDF7FDi0BwR+XXWLFTe5r16oqFJB8c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=RZ1S8rzG7ljUrsJLih0vleRn5hAOMU/eQr9oeb8ub2PX25P6xFCKYC5ovF9P57fEz
-	 pYZ7ApM+kxEPzH+d/ixDmnBcGxO/bdI+l4Etxa1XvDtlePeR4TW8GTY/w/80WUC9p6
-	 8hlJx2IGq1UvWRiLX18CycTdamgWMUDJYVe/LALSXj0UMYVMAE/qI3rVi8ZMpIHhBg
-	 Fy3CKQu7tovXdYly632+UV19l+5kyACeJSCK5k0oKe7ql+oTbuHeNPJWBNbndelIs1
-	 XAatk8VSdyzhLqd2lq4uTRmNQYIwzvfWAxaajmVTCEpCSe0hgshqXJIKwsMi0VDsR4
-	 HRezN2hQBdZdA==
-Date: Fri, 13 Nov 2026 16:42:20 +0200
+	b=oJKNdsU3Rrcv5Lw9CxvGmPGPXFEx5M8EtSOcFhdsA27yYnCb4oIYtpk7TPTiNQH4c
+	 Ha2403PuQTemqWkYgd2frzHy5Crg9u7HAQ7BzcmmZhjTDMrsTE0mQkSZDlXwxmCiPe
+	 No+W6fLMt7+AzmlC/mF010DGU+xKb3YKz12jUgdB5wvtrL6dtoFAupLdmdv+QZOqFg
+	 4Gjfn/Oy4hjHTijHoEdFJ97Tx6cHgOas+GtFSRUlQv2F9TXiNSYu0E42rgiA+7pQcx
+	 qBl6Q6lHWXnvLM0DDQSicrH8deMqYqEYMTy3erAmcdX2PQbu32GIapAtPgw4Aay5rX
+	 i+VxH7LnPOWpw==
+Date: Fri, 13 Nov 2026 16:43:52 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	surenkj@amazon.com, noodles@meta.com, linux-doc@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v3 1/2] tpm: Disable a TPM that stops responding
-Message-ID: <avchzL3uEXHbvNv_@kernel.org>
-References: <20261113-tpm_unresponsive-v3-0-8138c8e283b8@debian.org>
- <20261113-tpm_unresponsive-v3-1-8138c8e283b8@debian.org>
+To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+Cc: peterhuewe@gmx.de, jgg@ziepe.ca, sumit.garg@oss.qualcomm.com,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] tpm: OP-TEE transport core for discrete and
+ firmware TPMs
+Message-ID: <avciKM_pGW6hs_so@kernel.org>
+References: <20261111215940.3503287-1-jorge.ramirez@oss.qualcomm.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -64,87 +59,87 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261113-tpm_unresponsive-v3-1-8138c8e283b8@debian.org>
+In-Reply-To: <20261111215940.3503287-1-jorge.ramirez@oss.qualcomm.com>
 
-On Fri, Nov 13, 2026 at 02:38:58AM -0800, Breno Leitao wrote:
-> A TPM that stops responding fails each command only after the transport
-> timeout, and its callers keep sending more: the hwrng thread every 10
-> seconds forever, and userspace through /dev/tpmrm0. Each attempt holds
-> tpm_mutex for the whole timeout and logs an error:
+On Wed, Nov 11, 2026 at 10:59:33PM +0100, Jorge Ramirez-Ortiz wrote:
+> This adds a driver for a discrete TPM that OP-TEE owns and the normal
+> world cannot reach directly, and factors the shared OP-TEE TEE transport
+> into a small core so the existing fTPM driver uses it too:
 > 
->   tpm tpm0: invalid TPM_STS.x 0xff, dumping stack for forensics
->   tpm tpm0: tpm_try_transmit: send(): error -62
->   tpm tpm0: tpm_try_transmit: send(): error -62
->   ...
+>   - a transport core shared by the OP-TEE TPM front-ends;
+>   - a new discrete TPM front-end;
+>   - the fTPM driver converted onto the core, keeping its name, its
+>     platform/OF binding and its shutdown path.
 > 
-> The core already stops using a TPM it cannot trust: tpm_try_get_ops()
-> fails with -EIO once TPM_CHIP_FLAG_DISABLE is set, which
-> tpm2_load_null() does when it cannot restore the null key. Set the same
-> flag once 60 commands in a row have timed out.
+> Patch 1 is the feature; patch 2 is the fTPM conversion that justifies the
+> core. Both front-ends were exercised on the Qualcomm Lemans EVK over the
+> shared core: the discrete ST33 TPM (patch 1) and the MS-TPM-20 firmware
+> TPM TA (patch 2), each presenting a working /dev/tpm0 (tpm2_getrandom,
+> PCR read). The fTPM TA is the same MS-TPM-20 reference the existing
+> tpm_ftpm_tee platforms use.
 > 
-> A completed command, whatever its TPM return code, resets the count.
-> Some TPMs stall for half a minute, time out a handful of commands, and
-> then recover, so a short streak must not disable them.
+> This is the normal-world half. The secure-world OP-TEE support it binds
+> to -- the in-core TPM2 SPI (TIS) driver and the mediator pseudo TA that
+> relays commands to it -- is under review separately:
 > 
-> With only the hwrng retrying every 10 seconds, 60 timeouts take more
-> than ten minutes. A userspace poller gets there sooner, but each of its
-> commands still waits out the transport timeout.
+>   OP-TEE support: https://github.com/OP-TEE/optee_os/pull/8155
+>   locality 4:     https://github.com/OP-TEE/optee_os/issues/8160
+>                   (design follow-up: the secure world policing
+>                   normal-world locality access to the shared chip)
 > 
-> The limit is the tpm.max_missed_responses boot parameter, so that slow
-> pre-production parts, such as FPGA prototypes, can raise it, or set it
-> to 0 to never disable the TPM. A disabled TPM stays disabled until the
-> driver is rebound or the machine reboots.
+> Build and test it on the Qualcomm Lemans EVK (a discrete ST33 TPM on
+> SPI, owned by OP-TEE):
 > 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
->  drivers/char/tpm/tpm-interface.c                | 14 ++++++++++++++
->  include/linux/tpm.h                             |  1 +
->  3 files changed, 23 insertions(+)
+>   https://qualcomm-linux.github.io/qcom-buildroot/lemans/quick-start.html
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1e8317483844d9..cedea8bd468aba 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -7682,6 +7682,14 @@ Kernel parameters
->  			causing a major performance hit, and the space where
->  			machines are deployed is by other means guarded.
->  
-> +	tpm.max_missed_responses= [HW,TPM]
-> +			Number of commands in a row that may time out before
-> +			the TPM is disabled. It stays disabled until the
-> +			driver is rebound or the machine reboots. Set to 0
-> +			to never disable the TPM.
-> +			Format: <unsigned int>
-> +			Default: 60
-> +
->  	tpm_crb_ffa.busy_timeout_ms= [ARM64,TPM]
->  			Maximum time in milliseconds to retry sending a message
->  			to the TPM service before giving up. This parameter controls
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index e0385b16616b46..977e205807033d 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -40,6 +40,11 @@ module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
->  MODULE_PARM_DESC(suspend_pcr,
->  		 "PCR to use for dummy writes to facilitate flush on suspend.");
->  
-> +static unsigned int tpm_max_missed_responses = 60;
+> v1: https://lore.kernel.org/linux-integrity/20261026163259.1900439-1-jorge.ramirez@oss.qualcomm.com/
+> v2: https://lore.kernel.org/linux-integrity/20261110141923.3100770-1-jorge.ramirez@oss.qualcomm.com/
+> 
+> Changes since v2:
+>  - tpm_optee_dtpm: give the discrete-TPM front-end a .shutdown callback so
+>    it releases its TEE session and dynamic shared memory on shutdown/kexec,
+>    as the fTPM front-end already did; without it the session and the
+>    normal-world pages stayed registered in OP-TEE across a kexec, which can
+>    stop the next kernel opening a session to the chip.
+>  - move the shared tpm_optee_shutdown() helper into the core patch so that
+>    patch builds on its own; the dTPM front-end no longer forward-references
+>    a symbol that was added in patch 2.
+> 
+> Changes since v1:
+>  - split the shared TEE transport into a core; the discrete chip is now a
+>    thin front-end, the tpm_tis_core-style solution that was asked for.
+>  - convert the fTPM driver onto the same core instead of duplicating it.
+>  - use an optee-prefixed name for the new modules; the fTPM driver keeps
+>    its name, no module rename.
+>  - rewrite the commit message with a plain description of the components
+>    and the rationale for a separate front-end.
+>  - drop the explicit zeroing in favour of initialisers, and reword the
+>    module description.
+> 
+> Jorge Ramirez-Ortiz (2):
+>   tpm: add OP-TEE transport core and a discrete TPM driver
+>   tpm_ftpm_tee: use the tpm_optee transport core
+> 
+>  MAINTAINERS                       |   8 +
+>  drivers/char/tpm/Kconfig          |  28 +++
+>  drivers/char/tpm/Makefile         |   2 +
+>  drivers/char/tpm/tpm_ftpm_tee.c   | 295 ++----------------------------
+>  drivers/char/tpm/tpm_ftpm_tee.h   |  35 ----
+>  drivers/char/tpm/tpm_optee.c      | 253 +++++++++++++++++++++++++
+>  drivers/char/tpm/tpm_optee.h      |  32 ++++
+>  drivers/char/tpm/tpm_optee_dtpm.c |  73 ++++++++
+>  8 files changed, 414 insertions(+), 312 deletions(-)
+>  delete mode 100644 drivers/char/tpm/tpm_ftpm_tee.h
+>  create mode 100644 drivers/char/tpm/tpm_optee.c
+>  create mode 100644 drivers/char/tpm/tpm_optee.h
+>  create mode 100644 drivers/char/tpm/tpm_optee_dtpm.c
+> 
+> 
+> base-commit: c03c1a14507dfaf8b856c2608f9ac216021fc222
+> -- 
+> 2.55.0
+> 
 
-This looks good but I started to think this number. I guess it is high
-because there's never reset-to-zero for chip->nr_missed_responses.
-
-I think three or four trials at most should be enough, and when there 
-is a successful transmission chip->nr_missed_responses should reset.
-
-One thing that bothers me in the commit message is a piece of
-information that is missing: when does it start to return error?
-From the get go?
-
-I mean based on provided information one could presume that this
-could be also fixed at driver init by doing a few smoke tests
-and don't let it fully ever initialize.
-
-"A TPM that stops responding fails" is not very locked in scenario.
+I applied but had to fix some merge conflicts so check up my tree.
 
 Br, Jarkko
