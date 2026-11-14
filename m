@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794690033;
-	b=sBLNS4YjIZEto0gMKeGdOanbZkJFPd0sDWeDE6PvPPwqpi1yrpy0vkL7ISV710nPL+5M
-	 NPxvh3cVakzZmxQmBR+wPqIYzUoyekWtt6B8taIUHYwNMMB+6N5CMM3daJTRWrl7Co6Hr
-	 LVgo9vrTZdz+F7SP5RZWsENEtFspyhgs1msVH/k0nzgD5wOuH6whnxR6Z5cOIipUxkBbU
-	 Mr9wXXchYlRl5Ha4mGYzU+oWhQqQKiA3rTV+xpRBVVwskDv9pb984E1X4oZSzyuncbsn+
-	 1+mX0tZHhzbNnvtsbaZt4E1M37Om6M1IyvkUQZ6o9bgnPWy0j3Mzqpc9bzAqCSoyKcg==
+	t=1794690692;
+	b=Ps+pMIzrvOoWg7izdZo8LBy4+EgQKfe8AA8u2j7nkBBuuiHNwvCPlUzbcmZMqPSpnBCG
+	 NJ7rlZU2IIHTb4Qr+X8tUzE92E42x0hXm9+O1c8HWQbWFL3pyCY70ftvMOWy3M3vJfnz8
+	 vwJCeyN6orLIMgAI2iPXeuyNewTAhRjT0DbEcdpobBUCMztyUJdlq9UAuHj0qkyDoVUmD
+	 wVuP3vQmQyphQOeNh95nG3YqCYwKWGzq6efyyk3KQfC4r9A7COlVWI9TDVazAc9FEkNwE
+	 Ff786n+Y2jIhcN3SZqgEcMFij9Q1BSr+rgfl92VFNxNj5+dOErItvI90PneTnTJXqyg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794690033;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794690692;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=SJH68/COfyvgePXxUDhK6tjwJvIpIRYp5jUXCkHgbaI=;
-	b=S1IBX843TPznR07XjXQCENQZX9napsHR3GYd2bZftEYipY+IbVO1BHdf/TED5d578cNh
-	 VYFNrP3Kecp0AOHAVHvMTmM3HYe576Gm1FAPJRl1q5p493uW/rKuej9q/KvZuBln21LGk
-	 94e5h2heS1fYqeS75pzXFHEMxwrqxRPzFGSqxEWTwh1NHyM+jMmbDfIYlJJX/TLnvYpEC
-	 F7+DXZFV8DhecKiMIPre3Q33Maf11JbyhBlIPbEZUxdfXlr59cJ7eYcjvMoSW8Qk3X4QH
-	 sel8wh3pv8zdk/98F59o5G6+ib0eAZ0fO3YyGcOGUMSOp4GAXaxZqeYhKMsq4oILLbg==
+	bh=Ab/t9OlRcWN3zbc3eY5ad8JX/kABGcfzSiIaPltDaFA=;
+	b=XyrDACW0GtQxklGS7hgMXoj59wZ3z9NHgX8cszO7LM9GWgpicJof+5biMfLx+65fMQ+I
+	 m+2ZAZ7Pv+JkpJhqump9vUR9rZWczSf+PTSib/DvFgT3WyZXXO4t7LRZ2IAgE60692UOG
+	 r9N9s2njLBGGD94vr3bm9RlP6HlvdHklhJmGOKGQ9gAgNQapBVvEsHNTuxb6BlcyHI3iD
+	 6v2FCPt3IDVRLVbsW4jnliqa5FL9rOruHQcvxoVv3iGQtTda2p4G9m8i+O0xqd6jxHkRx
+	 pYprpsypsrKgI+tf9mCtrcYR8GRnGJF9iL3cIwZRf5Pq79Z9xOWuC3dltUr9KFePEuA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dGSuuXIW;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Epo60wIk;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E87C3606A323;
-	Sat, 14 Nov 2026 21:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id B343C606A329;
+	Sat, 14 Nov 2026 21:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dGSuuXIW
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id ECD091F000C4;
-	Sat, 14 Nov 2026 21:00:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Epo60wIk
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id F3CC61F000C4;
+	Sat, 14 Nov 2026 21:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794690032;
-	bh=SJH68/COfyvgePXxUDhK6tjwJvIpIRYp5jUXCkHgbaI=;
+	s=k20260515; t=1794690692;
+	bh=Ab/t9OlRcWN3zbc3eY5ad8JX/kABGcfzSiIaPltDaFA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=dGSuuXIW2fiDlGuT/Ku96ytrVsVSlzF1Lgr0obnt2uXIVyVztUyEMYF/dqnXXJSIc
-	 7dRDBZY/xshq+z5uIBHlGuYFMpoup8s16BQQZ1SyKZ5tMeixtfNiYf3NjwUldaZPpQ
-	 CMm3z6wUYEt9nBO59RFM/ix8qh53Gvel0O/F0A+HQiSfJbSnP1Ul17+5HF6JHNgcuu
-	 8fgGJhUXvPD5boiNEWN+1IBvqeOewNa4OHYI6SR6+I+isCtPGOIcZeBDTA1f5aFjST
-	 GJlca8czrfp/98f6yA88gFMdQ/GSeZ0+n0RM56fVKNLTZmGFy1kondZAde7E2OWeGV
-	 lRK7HMtLTJspA==
-Date: Sat, 14 Nov 2026 23:00:28 +0200
+	b=Epo60wIkMirZbSuxFm2i6OvGJPLDjpxK4I8tjwGqzpNdVC1VYb4sVpiEtJ9w3UsVD
+	 /qopc2LRxxbPt2eT/+8B6gAbGKht0K1psVVsuskdwHK0yPK7/cpe22sO5W3ZOJGF1N
+	 cGg4LyPSdN/9jlFAlpe2EJtSlkOYgWBLuoj51EJsJh04ZGjzHe5NC/gfGfSEaknhjT
+	 30E885Bri4EQ1PkYXzxmlDf0zLt6h9uEuSdZSvDS4mTg5oSz9EuyKrX6+Opl6Bv+Jd
+	 249hMrANIWsjTuVQ2hOtMFVXbrk+CyC8zvpxE0PPNlcqNpKkaFh3H5EK7EJxOPnGOM
+	 WhjIBtQapX4GQ==
+Date: Sat, 14 Nov 2026 23:11:28 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
 Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
@@ -49,10 +49,10 @@ Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
 	rlmenge@gmail.com, hargar@linux.microsoft.com,
 	linux-integrity@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] tpm: Cache TPM2 start method
-Message-ID: <avjL7GI0qQJ47lF-@kernel.org>
+Subject: Re: [PATCH v2 4/4] tpm: tpm_crb: Use cached tpm2_acpi_start_method
+Message-ID: <avjOgDySmUiklnN1@kernel.org>
 References: <20261114193434.117714-1-sidchintamaneni@gmail.com>
- <20261114193434.117714-2-sidchintamaneni@gmail.com>
+ <20261114193434.117714-5-sidchintamaneni@gmail.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -64,15 +64,75 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261114193434.117714-2-sidchintamaneni@gmail.com>
+In-Reply-To: <20261114193434.117714-5-sidchintamaneni@gmail.com>
 
-On Sat, Nov 14, 2026 at 07:34:31PM +0000, Siddharth Chintamaneni wrote:
-> +		status = acpi_get_table(ACPI_SIG_TPM2, 1,
-> +					(struct acpi_table_header **)&tbl);
+On Sat, Nov 14, 2026 at 07:34:34PM +0000, Siddharth Chintamaneni wrote:
+> Check the cached tpm2_acpi_start_method value at the start of
+> crb_acpi_probe() before mapping the ACPI TPM2 table for CRB-specific
+> parameters. This avoids mapping the table when it is absent or when the
+> device uses ACPI_TPM2_MEMORY_MAPPED and belongs to tpm_tis.
+> 
+> Signed-off-by: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
+> ---
+>  drivers/char/tpm/tpm_crb.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> index 4749a9183726..c1c2b72459a2 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -945,18 +945,23 @@ static int crb_acpi_probe(struct platform_device *pdev)
+>  	if (!device)
+>  		return -ENODEV;
+>  
+> -	status = acpi_get_table(ACPI_SIG_TPM2, 1,
+> -				(struct acpi_table_header **) &buf);
+> -	if (ACPI_FAILURE(status) || buf->header.length < sizeof(*buf)) {
+> +	sm = tpm2_acpi_start_method;
 
-Nit: no need to split into two lines and I think you can also express
-this in more compact way:
+sm and also priv->sm should be removed
 
-	status = acpi_get_table(ACPI_SIG_TPM2, 1, (typeof(*tbl) **)&tbl);
+The global should be accessed across the board when querying start
+method. It should be the single source for it post-tpm_init.
+
+> +	if (sm == ACPI_TPM2_NOT_ALLOWED) {
+>  		dev_err(dev, FW_BUG "failed to get TPM2 ACPI table\n");
+
+Drop this message.
+
+>  		return -EINVAL;
+
+-ENODEV
+
+
+>  	}
+>  
+>  	/* Should the FIFO driver handle this? */
+> -	sm = buf->start_method;
+> -	if (sm == ACPI_TPM2_MEMORY_MAPPED) {
+> -		rc = -ENODEV;
+> -		goto out;
+> +	if (sm == ACPI_TPM2_MEMORY_MAPPED)
+> +		return -ENODEV;
+> +
+> +	status = acpi_get_table(ACPI_SIG_TPM2, 1,
+> +				(struct acpi_table_header **)&buf);
+> +	if (ACPI_FAILURE(status) || buf->header.length < sizeof(*buf)) {
+> +		dev_err(dev, FW_BUG "failed to get TPM2 ACPI table\n");
+
+Drop this message.
+
+> +		if (ACPI_SUCCESS(status))
+> +			acpi_put_table((struct acpi_table_header *)buf);
+> +		return -EINVAL;
+
+-ENODEV
+
+>  	}
+>  
+>  	priv = devm_kzalloc_obj(dev, struct crb_priv);
+> -- 
+> 2.45.4
+> 
 
 Br, Jarkko
