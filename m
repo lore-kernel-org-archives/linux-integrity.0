@@ -1,58 +1,77 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794690894;
-	b=H2RXPF1MGHeud3RFNzj6G0vV626cBlSuLp4MtI5s7pQRWex0HQXbxJEHoLdBFdpGZIWH
-	 QFFBcfIGrXS0VHZ8sM0dKpZcSznQoUTi+We9REij6tvT0zSmnia5FL7rsnaJyXW39qTW5
-	 Iye8ZtukN8DaKmHXOSHNnKprtz5hvVTtzJ/29Y5GxIJ5gFX7tg/BKx/L4+WteRA+a1on2
-	 R8WGunTU3MLuEIBn0Ptp8vR3V513u0Q2oe2rtNA7Nj/hhV9eD5fuSbAtkV62R+dEP/Yil
-	 yQ/u665VT/e7OloOwaWOUm+v8uragBO59uMvCtBRwFwO1eH2vTkBxcqrbp+NlET9ADQ==
+	t=1794698936;
+	b=CgMw6Bg2Gs3DHldM0eoXwqZuC1eh0VLt8y9QM3F5I5LMKZecT0YhCtCzqholNo9COmE6
+	 q+lFhOoabbGfwd/cIUT44MSS1H6SIHP8BcYVOw4uEJ2iK3Sq5RWdhE8TyuRYgJqTxb4Vv
+	 taVcKMxOxcnhlqAdg8b0h89YCWOE/Wix/p6v6sH+zL8Cct2jlPgdhVjLlwZoW/uXwCb5w
+	 cviGlprwLfV9A4Yrcf8btj6cNq22I3Y53m60QhpQBIWNKM/6ftDp5Z3w/8MQfp1M7FHJa
+	 zlR3zMdp2JUh48ifXorUcMILzjTlzd2gmHFYYnxC06zoz7SiV37uX+n4y1b65UrVK/A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794690894;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794698936;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=I/xn5VK9WmirnuCgk0IeQxX3/IaOL/2L/hCjRfFD/1Q=;
-	b=3ML0hfFlIGTSjeaq2jvgMhkv2q4uxOZVEY4aUMC5QHFyoxkXeYPe9DkFIEtG6ZS9lMaf
-	 kfN6VSjzDwoJm+Q1Mpg4rXpx2TY2fXt8jVCQBaj2xm+H/byr2I5zfq9QnqNDuKRzbdbtk
-	 f37RSgRr2JgtxKMcgYNc0ztZncmNlYORKgxPViTSXdSva87zZzRKVmIP0A40izrnEEYWh
-	 xiubKnupDfHVe6lSPRe3wxYgvEvwPHTW9ZBHIL3TgRri+JIXO9fDhNMUNPc9UcTH/G7/r
-	 WioMVJwYs5meP9UyAxK0KoUZG0EB+Yf86i00miL9jQtAhJR1vVY1xISns/dOZS/yR1A==
+	bh=QxgbBTCWsStn71Jsz05WFHT8X6vz351Ef2Am8WUTxSc=;
+	b=mS0Lh5pNNzAcOQOopLEgj/bb5AAeonTuXsHKjuuisEepKQuuXUZvemK/fmouZti0Ybri
+	 NGeVxuxiWPvNW/BWTF2ieJaIzfcj+s0M+3l2p+6eki1bhEN7pKRHCguV7FReCC4ffmheK
+	 fPKTUXiEf4CbJ8agOsHDOHItSZVM/ERfEXnMIDqlHu3QuX5TE9giO7cGOpfayA0pFUISI
+	 +/NsHrE69lKoAarDU7ba/v59O9lUgEvolcWZqH7PewpQsHDqT4Dc1RWPYMuAZJCEjF3su
+	 XEAru4eC+kMY7N4+ysLF9YZaUMQMx5x0vRtrAHK6OfVIe8NT9/sJ7/pAE8+ehrxJk8A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d3gNtaXa;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CcueqTvJ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 60C82606A323;
-	Sat, 14 Nov 2026 21:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id C9758606A329;
+	Sat, 14 Nov 2026 23:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d3gNtaXa
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 603081F000C4;
-	Sat, 14 Nov 2026 21:14:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CcueqTvJ
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A66691F000C4;
+	Sat, 14 Nov 2026 23:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794690893;
-	bh=I/xn5VK9WmirnuCgk0IeQxX3/IaOL/2L/hCjRfFD/1Q=;
+	s=k20260515; t=1794698936;
+	bh=QxgbBTCWsStn71Jsz05WFHT8X6vz351Ef2Am8WUTxSc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=d3gNtaXaNXqkaGoQ4AtB/oTBLMitBuphKFfRbX7Z41cO4CnPTcWHw+rd/4N9ZoO9F
-	 IeqZabYwMFiduGBtdt00T+vS7LzcuIbtpO8R/jZRuuzfFV1RLZG2cBdkSwIW7hiMuT
-	 fnA7IVj9i5W+K6bdZUrfRzi98L0Ayd05hPfq+NahLdJ5svWdmQFcPH01Y55EHLHu4l
-	 x9RrwrToIVfnfmtVrR3xdPHvbhhp6ek0M8d2pnFLircO8UnRPwG+wEoQMCWHWuvR+6
-	 YtN7+jHezeBmf3F865Dhp9siQXh1Ob3D6TZHrYzvWBpsgfs0g5Og77dJM4rIZ6Vtlv
-	 yeKyYZtaH5NzA==
-Date: Sat, 14 Nov 2026 23:14:50 +0200
+	b=CcueqTvJTGbepbaXa6N2hDzZ1Z3g3dEoia+l6XBVumHg3wnH5cZOI2Ax9aWKES13Z
+	 h6YaDY3dlt98ceXOzmF+KuXTPYAyyg3vmDfAj91SBWq3NTwJhyT6ZEF1KwcANZCvog
+	 hwwPLwHEocMzdNBaRLUMv/GolT4R3O5XVi5nwjW+p3c3caHWauTYQ+ZQ/sUZAdol9W
+	 b/7jI4hZJGKRo6phO/tkyJIrQK4ZQkx3Ul39qeLqBdhAKSQEsKEnhS589d5rl8wfHJ
+	 4n6IYPzGEb2ZqrhGzYp+r1QmdY2U59IfRpIUXj9Q/ICOO0rELmrmuRlNPYjBAQRvia
+	 zvpTNZoKShgUw==
+Date: Sun, 15 Nov 2026 01:28:52 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Stuart Yoder <stuart.yoder@arm.com>, apais@microsoft.com,
-	rlmenge@gmail.com, hargar@linux.microsoft.com,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] tpm: tpm_tis: Use cached tpm2_acpi_start_method
-Message-ID: <avjPSnd2nhnBpsfZ@kernel.org>
-References: <20261114193434.117714-1-sidchintamaneni@gmail.com>
- <20261114193434.117714-4-sidchintamaneni@gmail.com>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	James Morris <jmorris@namei.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Simon Horman <horms@kernel.org>, Sumit Garg <sumit.garg@kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>, Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v6 00/13] KEYS: Sanitize the garbage collector
+Message-ID: <avjutAro2-Q5VPvx@kernel.org>
+References: <20261112040242.247168-1-jarkko@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -64,76 +83,32 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261114193434.117714-4-sidchintamaneni@gmail.com>
+In-Reply-To: <20261112040242.247168-1-jarkko@kernel.org>
 
-On Sat, Nov 14, 2026 at 07:34:33PM +0000, Siddharth Chintamaneni wrote:
-> Use the cached tpm2_acpi_start_method value in check_acpi_tpm2() instead
-> of mapping and unmapping the ACPI TPM2 table again during probe.
+On Thu, Nov 12, 2026 at 06:02:29AM +0200, Jarkko Sakkinen wrote:
+> 1. Replace key_type_dead retyping with module reference pinning so live
+>    keys and restrictions keep their backing key_type module loaded until
+>    key_gc_unused_keys() or keyring_destroy() completes.
+> 2. Process serial-tree scans and graveyard destruction in fixed 64-key
+>    chunks to a bound workqueue execution latency without hurting overall
+>    throughput for a significant amount.
 > 
-> Signed-off-by: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
-> ---
->  drivers/char/tpm/tpm_tis.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
+> The first part has a user-space visible effect: rmmod returns -EBUSY while
+> keys or keyring restrictions still pin the backing module.
 > 
-> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> index 6f8344894ea5..a6fb6f889e7d 100644
-> --- a/drivers/char/tpm/tpm_tis.c
-> +++ b/drivers/char/tpm/tpm_tis.c
-> @@ -138,28 +138,24 @@ MODULE_DEVICE_TABLE(acpi, tpm_acpi_tbl);
->  static int check_acpi_tpm2(struct device *dev)
+> Internal key caches or transport state bottlenecks are addressed by either
+> clearing their private caches on last-client teardown or splitting key
+> types into dedicated provider modules.
 
+This passes bot+bpf-ci@kernel.org and Sashiko other than the remark
+about inline comment.
 
+I'll update the inline comment, and make the commits available at
+-next.
 
->  {
->  	const struct acpi_device_id *aid = acpi_match_device(tpm_acpi_tbl, dev);
-> -	struct acpi_table_tpm2 *tbl;
-> -	acpi_status st;
-> -	int ret = 0;
->  
->  	if (!aid || aid->driver_data != DEVICE_IS_TPM2)
->  		return 0;
->  
-> -	/* If the ACPI TPM2 signature is matched then a global ACPI_SIG_TPM2
-> -	 * table is mandatory
-> +	/*
-> +	 * If the ACPI TPM2 signature is matched then a global ACPI_SIG_TPM2
-> +	 * table is mandatory.
->  	 */
-
-Delete this comment entirely. It has a low value.
-
-> -	st = acpi_get_table(ACPI_SIG_TPM2, 1, (struct acpi_table_header **)&tbl);
-> -	if (ACPI_FAILURE(st) || tbl->header.length < sizeof(*tbl)) {
-> +	if (tpm2_acpi_start_method == ACPI_TPM2_NOT_ALLOWED) {
->  		dev_err(dev, FW_BUG "failed to get TPM2 ACPI table\n");
-
-Delete dev_err()
-
->  		return -EINVAL;
-
--ENODEV
-
->  	}
->  
->  	/* The tpm2_crb driver handles this device */
-> -	if (tbl->start_method != ACPI_TPM2_MEMORY_MAPPED)
-> -		ret = -ENODEV;
-> +	if (tpm2_acpi_start_method != ACPI_TPM2_MEMORY_MAPPED)
-> +		return -ENODEV;
->  
-> -	acpi_put_table((struct acpi_table_header *)tbl);
-> -	return ret;
-> +	return 0;
->  }
->  #else
->  static int check_acpi_tpm2(struct device *dev)
-> -- 
-> 2.45.4
-> 
-
-
-Finally after those suggestions this collapses into almost nothing i.e.,
-please remove check_acpi_tpm2 entirely and open-code to the two call
-sites.
+I'll leave S390 fixes out as they are out-of-band. They can be
+picked from this patch set; or I can later on send a separate
+patch set.
 
 Br, Jarkko
+
