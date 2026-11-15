@@ -1,100 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.51
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794754850;
-	b=xU9zeCPwTsAmqvXPRhwO0mS8YqqebY8KHWx9++JGX/15oCsIwisSe+SVHBng+XKdeOVz
-	 zIsPM39liiFEfXOUq7zrxV+hYPCuY9pv8JZ4suMzwHz0A2BvN4GmUWPChCszrCiN3dRTE
-	 aoyhRUI2qXESBk/G9UMuJHMGZASFDMFpaSuQNPbsc2QlkYYB6/mpdg1wVv6Dno9dHGLTR
-	 0r0Zqu0CPa8+Q1zrJ4Aw3wncLm21JI3H9OJY9dxQZa6XCondiOhrRap2LcSH3k8EvD2gp
-	 ISLzq/mB0c5HZOTd7kYzcTnlsiZHWN+SJCu/430ZMgkqKMG76BE5lmLUxAXlBKzStvg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794754850;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=1MVRNS3ac0YlanU0Fwb5KpLyyO9U1oXwO9vfFA3eak4=;
-	b=0d6DnBjU/M/vICcNRCktSaOln8GCpjt08L4sQPWEnMjxYJoPhqDI3OQ0rzC38tOz9C/9
-	 bx4pm6CXj9+inWJyUSlmtRlVlIg0Ucy+4CXLGhhfTjU/kOY28nSBrsDiGdLRuawLAvmAx
-	 SWcfScj5QzEggIxgdFUrDgcbo1KAY36BNZ95bbtOIhcT1xKPnoxoeOAr8pXlyNl0pwyGu
-	 tOQN7k+IXcN7YsNY6N11lWPEnaBOTRUyhj3QtVh7YdEJPbsRFrCkW1f1F4CyTqGzM+DNq
-	 dYcscooWcX+mcrmKCce/etQeWQiQYlgJaCiY2XXVTFRaNzEArIupX3EK/01RRXkFTQQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=SHyOkxQw;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.51
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794754956;
+	b=NUKhz+nKXipy2P5DcNrpIEwn/Dtp7K+5pzG9KzUPqvZO6eYOJi2TxX4/rIR8yDZOl4lW
+	 HN/oMs+opHi4STcxu21HrHnVkytVk2kVZG0KHPcdaRohBRgOJyKHZ0/Z6sg8W71YG9V+0
+	 aeXiPyx9dSoBY7fBldzXQd5zv75fIRBGo6DwCgeBl2QagQAIvFHNHL1a6fR6kaWQdyaqh
+	 8JdytOsXSU3Wi/9eD2jmG3YNDwgyf9MhOCH2BMNir7M4fE/kQSkSabptCH1G1FbBCwHtD
+	 3fzHtbqz1Yuo21J7Zr7BsiwiNbyj3NsZmQBE8/WxB43wJnUhAc2tw6a3Wab60zvkmKg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794754956;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Efp2Eh21nAolP2iJ3ysetqCKmVJ4/sRMIDo1th1WXaU=;
+	b=urTWXvR89x+WbqW0sp5Yu1+UpgfRTaWHmywSbTG1/D0UD1mw7iVzOlLmNgu3wlfUSMjz
+	 MPlqh+NEtQPbDWSi/u/LKPPqcCMYgJ9bnOuhFImFcUVfmz0TSOL/+T75Gj6Y/wmYDera9
+	 r3ZJ70LjLoGlyrujZzPjGPGw6j0Z4ZmxZ1DFIHZjedxNSThimjgRLCCkAHANWp3m3Js4C
+	 pF6olUmU0/pGIpQ161DR6RnDlZOvumUcHQlrmYE7tOqkTxgEZSx1bPqC2Q/ZJWcjG7Etf
+	 L61m8834zDvOrp2Q0Y2r6OEaneJuoj8cD9P6kG1PA//gZ6+HQKm1uzHfCD40TW9FSUQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hb72FLbY;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459D7606A329
-	for <linux-integrity@vger.kernel.org>; Sun, 15 Nov 2026 15:00:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 459D7606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 07E2A606A31A;
+	Sun, 15 Nov 2026 15:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=SHyOkxQw
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c4395d31228so439662666b.1
-        for <linux-integrity@vger.kernel.org>; Sun, 15 Nov 2026 07:00:50 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794754849; cv=none;
-        d=google.com; s=arc-20260327;
-        b=rgU+0Jj+lK0rxNXHkHqMMt0BxCp8aO1eOKySQwQ52eIkEe4F1A6UEJR11LkBuu6Di8
-         8wCzLNhJ+6qOQvVm1x9xQQwmIBua0EC7IQD95VGK7ujcsN04CoYOE0po9+2KQcHIFLkJ
-         TFhomfV0rh0FutHqEeVA78scKCXS7l/4UWvPumKedxCUEtfF1CTp3CcsuO52yYbQeJor
-         G4/K2u7rIqwGtRHO7zubZwgrFOXVy7f0dXV3kqA5Q4O6ddxrqH5z5czxjuZ4wB9O5X5g
-         8cymgv7NJaahO2WH1mkNPCz+I+RsHEwonA6u6iXEUkOTU+YurUdU2CGcBKfTRk4ZC7kp
-         tM+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=1MVRNS3ac0YlanU0Fwb5KpLyyO9U1oXwO9vfFA3eak4=;
-        fh=fzokn+ZuqebSDkeXvU8AL0pQZagZZysaBHPSd9rn2Tk=;
-        b=GQXgduZ2BwkjkmUc8W13fQw3SZLlCrp6wq+yZU7g3GjGT1wcolea2HYS0goJt/QBrO
-         llOU62StuFdQ1k5V4E6oNDr0ZzNbypTq5kVoqAvPFfkIxvEyvKNihQXMio6a17nGH//8
-         9aaUV1LqrJTvVgspCTqePZ5+ls3w9l2euuTVAXfK8S6ZLdpgFZKI6SO7HleZOjq+MOBF
-         OnLCQakq8hCcjKDz2NXRCBdJCRybQAoJVpkhw15+nRdQUbWj82ovCk+WoRyogM11ZG/d
-         QMLs0BXBBll68fm13ooBGTBtU1K5ldE52u/rNIOH+YNREdTOEN6uZTuFe0Os7K2BrIh6
-         D1mw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794754849; x=1795359649; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=1MVRNS3ac0YlanU0Fwb5KpLyyO9U1oXwO9vfFA3eak4=;
-        b=SHyOkxQwYuLtL0+Qa53+jCNHfMYZrDoIhK10usTnr/SPlsQtxy3DYcaURrAaqZRP6p
-         j9KX2LwDO7WvpxAFvRbeGvPMOpBnbsJEvuh/a+pWnWLMDcViXZq6b/VVaPZ68EhpaptP
-         zHr4LucIEpdLZQDJogd72JZdMAkBHyXTxsReEVunL/+oJmqoO/hXoqxPt2Qr8UINUk8W
-         PKisRAodcZl5vzpIsG78e9fRi2Mkv3dgu35W/QqWyi6fF9QsZX61BfySIbEHZ7oFXuQb
-         7fuxV2YOwjcp9LUN7zRZYNpbm5Ey2kJzr2xgJrjMsYP1vCyRno2ESPfdF+IIuftfMTEI
-         HtQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794754849; x=1795359649;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=1MVRNS3ac0YlanU0Fwb5KpLyyO9U1oXwO9vfFA3eak4=;
-        b=WfV5BpAgUg/TjXlga5s3LXRq2NC2dnDTTYqBLDDS7Q1UVnYTKuyu+DziY3HvH/SuuM
-         fVefn/ndf/ogl2X08EPvpWMfaGXEbOJ2Ez1RD70p6xD/KbqEmupvkxYEhAyaFfjuSEPo
-         iQUkeMY+VVGeRj1g727hc77L/qLoy4sCzyYAN/Nl8xxv2lnO2YFqPL7ymDcuEqGsOj2H
-         /5Q+mcwZNn3mqOtlkftlcQ3mR2eC6wFvN16j7jifXV20PRRb5+mQF9zrbV124F/Z7Msp
-         YgJg78S4Ve0Sb0Wk7Q0VIRHlrUSt9aywenpGovQkLawnouGBplusluFSdlGUzJcsLRIB
-         EpRg==
-X-Forwarded-Encrypted: i=1; AL+hErHOUW5OqRArPpYDSBR10IEkFgM25T1kfoHFfO/g70ftvHG901l77uIYyAkK7L/SRsIF2eoqhuHmS7OV0EAoja0=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+4iZjBm790eQrXG8gEDKNnOoNOeuEbilZ9hlmKXkA0LXEv5h2O
-	EkuRmKmW2ewRgonkic/sBu0YDTOGD+rOEGh8384STPIWaLCbrrenb5r3AdmExGNEoBA23AeTcy0
-	96FMWDR/wh6YDWcA8TYS09BRVZSO0dO0=
-X-Gm-Gg: AYBFou2A3mAXsFBTFQfYCalaWkTXlySRybA523V00PYJbRmZN+cUZIQ5hM3Jl96vbCK
-	cOatuziQlB7W0RfaWm4yyVgNuc0wSNi+Jafjq0vykKLLDczcEUP74MUOoaYolWorbzyk279jhsi
-	OhFiJFrsu2uXtjkmylTwFV5nzO3lubq5uiFhhJEIBapYpg8R2ySdTS/V8y1WRKvJyzr7rquunjB
-	DBtX77NW0dAoQybcUaGw5rG5HdbtnCestPVni0KCNCWE2Tli6awRgdjd/mgjPIFQZfnlwN+ImEQ
-	GEpkdDQkSulpo8016h2CTMbchsBMQSuxs/0x1van13dSoQkb1n09Xi1SpMjRxqt61i6OT6QnN0c
-	YvWjhGaBZf7nr8a5Mf2iIurGGDv5CugftkC8SKNDrtUwSH2fG1urBPDVKAKAjIbCUaZm02Q==
-X-Received: by 2002:a17:907:6d11:b0:c26:2a2:b91d with SMTP id
- a640c23a62f3a-c509612a23fmr694079266b.6.1794754848470; Sun, 15 Nov 2026
- 07:00:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hb72FLbY
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 10FC41F000C9;
+	Sun, 15 Nov 2026 15:02:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794754955;
+	bh=Efp2Eh21nAolP2iJ3ysetqCKmVJ4/sRMIDo1th1WXaU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=hb72FLbYjSIIjPKbvouZiUN9wy1FyIQ6a5Ss4ymLhls4436CguKJIbLmWfoVhU6qr
+	 PoJXxlnzUqGo16dmJY/f4StKe2qJUItk7JsnRM7kaqe6r6mZYEnknbZFJYxH/a9APx
+	 8f1XHYHg1etxngHJ7RKgrVRc4kkCJIFuht9wI51MI8i36WfKFQ1bXJgF1juhhT5Rep
+	 Jqk0ty7nTQEvipre4C4W6VRqE6BgWxxthVIRwn758oc2QB4v3l96n9tFI8Hmn81JqD
+	 VHjTruv1Y+x+uPDVGA7iwTKMm6z/ZqWcHzQc4yQN+aEt2Jto7wVhgv+6jEXbCiz2L9
+	 2DkKT7D5IThyw==
+Date: Sun, 15 Nov 2026 17:02:31 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Matthew Garrett <matthewg@nvidia.com>
+Cc: mjg59@srcf.ucam.org, keyrings@vger.kernel.org,
+	James.Bottomley@hansenpartnership.com,
+	linux-integrity@vger.kernel.org, rafael@kernel.org,
+	linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [RFC] Make hibernation work with lockdown
+Message-ID: <avnJh0nsORR45i4m@kernel.org>
+References: <20261008132532.1155166-1-matthewg@nvidia.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -104,141 +58,243 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org> <20261115-work-ovl-d_real-v1-2-ca155efbcb2e@kernel.org>
-In-Reply-To: <20261115-work-ovl-d_real-v1-2-ca155efbcb2e@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 15 Nov 2026 16:00:36 +0100
-X-Gm-Features: AclHuK_wHYShIpzO3KRe2QttGftKj9EtJqTGjYXExDCpgXdtVHvMQ3jGuPVE7gY
-Message-ID: <CAOQ4uxjoHbevvu8auB4m8AVcY9H6uHdDAP6mfi9OOMh+3775xA@mail.gmail.com>
-Subject: Re: [PATCH 02/13] fs: add d_real_data_inode() and d_real_metadata_inode()
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Chris Down <chris@chrisdown.name>, 
-	Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="qRLgJTZqCtI/Ye0N"
+Content-Disposition: inline
+In-Reply-To: <20261008132532.1155166-1-matthewg@nvidia.com>
 
-On Sun, Nov 15, 2026 at 3:02=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> Currently, d_real() can't fail. When overlayfs fails to look up the data
-> of a metacopy file in a data-only layer it hands back the overlayfs
-> dentry and callers silently work with the overlayfs inode. That's more
-> problematic than current callers realize.
->
-> For trace_uprobe and bpf's uprobe_multi it means uprobe_register() fails
-> with an -EIO that has nothing to do with the actual problem. For IMA it
-> means the stacked change detection is skipped and for IPE the file is
-> evaluated against an inode that has none of the properties of the real
-> file.
->
-> Teach d_real() to fail and teach all callers to handle errors. This adds
-> two helpers for the callers to switch over to:
->
-> - d_real_data_inode() returns the inode hosting the data or an ERR_PTR()
->   if that can't be resolved.
->
-> - d_real_metadata_inode() returns the inode hosting the metadata. It
->   never has to look anything up and so never fails (but no promises for
->   the future).
 
-About those promises...
+--qRLgJTZqCtI/Ye0N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->
-> d_real() can't fail yet so this is a pure preparation. d_real_inode()
-> stays around until all callers are converted.
->
-> No functional changes.
->
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Link: https://lore.kernel.org/all/CAOQ4uxhGxpBtMZ5kfuzR1tQAewiecoX7UjXQRo=
-91QjJHH9T_Yw@mail.gmail.com
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> ---
->  include/linux/dcache.h | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->
-> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> index 84b0cfe4ed0e7..674bc50b81827 100644
-> --- a/include/linux/dcache.h
-> +++ b/include/linux/dcache.h
-> @@ -3,6 +3,7 @@
->  #define __LINUX_DCACHE_H
->
->  #include <linux/atomic.h>
-> +#include <linux/err.h>
->  #include <linux/list.h>
->  #include <linux/math.h>
->  #include <linux/rculist.h>
-> @@ -660,6 +661,49 @@ static inline struct inode *d_real_inode(const struc=
-t dentry *dentry)
->         return d_inode(d_real((struct dentry *) dentry, D_REAL_DATA));
->  }
->
-> +/**
-> + * d_real_data_inode - Return the real inode hosting the data
-> + * @dentry: The dentry to query
-> + *
-> + * If @dentry is a regular file on a union/overlay, then return the
-> + * underlying, real inode that hosts its data. Otherwise return d_inode(=
-).
-> + *
-> + * The union/overlay may have to look up the data first. This can sleep =
-and it
-> + * can fail, e.g., because the data is missing or because its verity dig=
-est
-> + * doesn't match.
-> + *
-> + * Return: The real inode hosting the data of @dentry, or an ERR_PTR() i=
-f it
-> + * can't be resolved.
-> + */
-> +static inline struct inode *d_real_data_inode(const struct dentry *dentr=
-y)
-> +{
-> +       struct dentry *real;
-> +
-> +       /* This usage of d_real() results in const dentry */
-> +       real =3D d_real((struct dentry *)dentry, D_REAL_DATA);
-> +       if (IS_ERR(real))
-> +               return ERR_CAST(real);
-> +       return d_inode(real);
-> +}
-> +
-> +/**
-> + * d_real_metadata_inode - Return the real inode hosting the metadata
-> + * @dentry: The dentry to query
-> + *
-> + * If @dentry is a regular file on a union/overlay, then return the
-> + * underlying, real inode that hosts its metadata. Otherwise return d_in=
-ode().
-> + *
-> + * Unlike d_real_data_inode() this never has to look anything up and so =
-it
-> + * never fails.
-> + *
-> + * Return: The real inode hosting the metadata of @dentry.
-> + */
-> +static inline struct inode *d_real_metadata_inode(const struct dentry *d=
-entry)
-> +{
-> +       /* This usage of d_real() results in const dentry */
-> +       return d_inode(d_real((struct dentry *)dentry, D_REAL_METADATA));
-> +}
-> +
+Here's a patch that encapsulates my thoughts.
 
-Wondering out loud - since you needed to change IMA anyway and need
-IMA patches reviews, do you think it is hard to also gracefully deal with e=
-rrors
-from d_real_metadata_inode() and not have to promise that it never fails?
+Br, Jarkko
 
-This question is not intended to block your patches.
-If there is a reason we should keep this promise for now,
-I have no problem with it, so
+--qRLgJTZqCtI/Ye0N
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-tpm-Deny-access-to-the-hibernate-NV-index.patch"
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+From c9a5b8d99278874bdd79d19bddd1d4a56ad8a38a Mon Sep 17 00:00:00 2001
+From: Jarkko Sakkinen <jarkko@kernel.org>
+Date: Sun, 15 Nov 2026 17:00:47 +0200
+Subject: [PATCH] tpm: Deny access to the hibernate NV index
 
-Thanks,
-Amir.
+1. Add the TPM2 command codes mutating the reserved NV index, and describe
+   their target handles.
+2. Replace tpm2_ordinal_duration_map with tpm2_cc_map providing handle
+   indices for the commands mutating NV indices.
+3. Add tpm2_is_user_command() for identifying commands allowed from user
+   space. It will block commands trying to mutate the reserve NV index.
+
+NV index should be protected regardless whether hibernate is used or not
+because not doing that introduces unwanted asymmetry.
+
+Co-developed-by: Matthew Garrett <matthewg@nvidia.com>
+Signed-off-by: Matthew Garrett <matthewg@nvidia.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/tpm-dev-common.c |  4 ++
+ drivers/char/tpm/tpm.h            |  1 +
+ drivers/char/tpm/tpm2-cmd.c       | 96 +++++++++++++++++++++++--------
+ include/linux/tpm.h               |  6 ++
+ include/linux/tpm_command.h       |  9 +++
+ 5 files changed, 91 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index ee91f456f975..4394b8f59012 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -27,6 +27,10 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	struct tpm_header *header = (void *)buf;
+ 	ssize_t ret, len;
+ 
++	if ((chip->flags & TPM_CHIP_FLAG_TPM2) &&
++	    !tpm2_is_user_command(buf, bufsiz))
++		return -EPERM;
++
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		tpm2_end_auth_session(chip);
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index fa554c5ad80b..2b18acaae920 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -107,6 +107,7 @@ static inline void tpm_add_ppi(struct tpm_chip *chip)
+ }
+ #endif
+ 
++bool tpm2_is_user_command(const u8 *buf, size_t bufsiz);
+ int tpm2_get_timeouts(struct tpm_chip *chip);
+ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+ 		  struct tpm_digest *digest, u16 *digest_size_ptr);
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 4b2bb2ddc321..50c7ada9a4d6 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -51,29 +51,43 @@ int tpm2_get_timeouts(struct tpm_chip *chip)
+ 	return 0;
+ }
+ 
+-/*
+- * Contains the maximum durations in milliseconds for TPM2 commands.
+- */
++enum tpm2_cc_nv {
++	TPM2_CC_NV_NA = -1, /* not available */
++	TPM2_CC_NV_H0 = 0,
++	TPM2_CC_NV_H1 = 1,
++};
++
++/* Command durations in milliseconds and NV index handle positions. */
+ static const struct {
+-	unsigned long ordinal;
+-	unsigned long duration;
+-} tpm2_ordinal_duration_map[] = {
+-	{TPM2_CC_STARTUP, 750},
+-	{TPM2_CC_SELF_TEST, 3000},
+-	{TPM2_CC_GET_RANDOM, 2000},
+-	{TPM2_CC_SEQUENCE_UPDATE, 750},
+-	{TPM2_CC_SEQUENCE_COMPLETE, 750},
+-	{TPM2_CC_EVENT_SEQUENCE_COMPLETE, 750},
+-	{TPM2_CC_HASH_SEQUENCE_START, 750},
+-	{TPM2_CC_VERIFY_SIGNATURE, 30000},
+-	{TPM2_CC_PCR_EXTEND, 750},
+-	{TPM2_CC_HIERARCHY_CONTROL, 2000},
+-	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
+-	{TPM2_CC_GET_CAPABILITY, 750},
+-	{TPM2_CC_NV_READ, 2000},
+-	{TPM2_CC_CREATE_PRIMARY, 300000},
+-	{TPM2_CC_CREATE, 300000},
+-	{TPM2_CC_CREATE_LOADED, 300000},
++	u32 cc;
++	u32 duration;
++	enum tpm2_cc_nv nv;
++} tpm2_cc_map[] = {
++	{TPM2_CC_STARTUP, 750, TPM2_CC_NV_NA},
++	{TPM2_CC_SELF_TEST, 3000, TPM2_CC_NV_NA},
++	{TPM2_CC_GET_RANDOM, 2000, TPM2_CC_NV_NA},
++	{TPM2_CC_SEQUENCE_UPDATE, 750, TPM2_CC_NV_NA},
++	{TPM2_CC_SEQUENCE_COMPLETE, 750, TPM2_CC_NV_NA},
++	{TPM2_CC_EVENT_SEQUENCE_COMPLETE, 750, TPM2_CC_NV_NA},
++	{TPM2_CC_HASH_SEQUENCE_START, 750, TPM2_CC_NV_NA},
++	{TPM2_CC_VERIFY_SIGNATURE, 30000, TPM2_CC_NV_NA},
++	{TPM2_CC_PCR_EXTEND, 750, TPM2_CC_NV_NA},
++	{TPM2_CC_HIERARCHY_CONTROL, 2000, TPM2_CC_NV_NA},
++	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000, TPM2_CC_NV_NA},
++	{TPM2_CC_GET_CAPABILITY, 750, TPM2_CC_NV_NA},
++	{TPM2_CC_NV_READ, 2000, TPM2_CC_NV_NA},
++	{TPM2_CC_CREATE_PRIMARY, 300000, TPM2_CC_NV_NA},
++	{TPM2_CC_CREATE, 300000, TPM2_CC_NV_NA},
++	{TPM2_CC_CREATE_LOADED, 300000, TPM2_CC_NV_NA},
++	{TPM2_CC_NV_UNDEFINE_SPACE_SPECIAL, TPM2_DURATION_DEFAULT, TPM2_CC_NV_H0},
++	{TPM2_CC_NV_UNDEFINE_SPACE, TPM2_DURATION_DEFAULT, TPM2_CC_NV_H1},
++	{TPM2_CC_NV_INCREMENT, TPM2_DURATION_DEFAULT, TPM2_CC_NV_H1},
++	{TPM2_CC_NV_SET_BITS, TPM2_DURATION_DEFAULT, TPM2_CC_NV_H1},
++	{TPM2_CC_NV_EXTEND, TPM2_DURATION_DEFAULT, TPM2_CC_NV_H1},
++	{TPM2_CC_NV_WRITE, TPM2_DURATION_DEFAULT, TPM2_CC_NV_H1},
++	{TPM2_CC_NV_WRITE_LOCK, TPM2_DURATION_DEFAULT, TPM2_CC_NV_H1},
++	{TPM2_CC_NV_CHANGE_AUTH, TPM2_DURATION_DEFAULT, TPM2_CC_NV_H0},
++	{TPM2_CC_NV_READ_LOCK, TPM2_DURATION_DEFAULT, TPM2_CC_NV_H1},
+ };
+ 
+ /**
+@@ -87,13 +101,45 @@ unsigned long tpm2_calc_ordinal_duration(u32 ordinal)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(tpm2_ordinal_duration_map); i++)
+-		if (ordinal == tpm2_ordinal_duration_map[i].ordinal)
+-			return msecs_to_jiffies(tpm2_ordinal_duration_map[i].duration);
++	for (i = 0; i < ARRAY_SIZE(tpm2_cc_map); i++)
++		if (ordinal == tpm2_cc_map[i].cc)
++			return msecs_to_jiffies(tpm2_cc_map[i].duration);
+ 
+ 	return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+ }
+ 
++/* Check whether a command is permitted through the userspace interface. */
++bool tpm2_is_user_command(const u8 *buf, size_t bufsiz)
++{
++	const struct tpm_header *header = (const void *)buf;
++	size_t len, offset;
++	u32 cc, index;
++	int i;
++
++	if (bufsiz < TPM_HEADER_SIZE)
++		return true;
++
++	len = min_t(size_t, be32_to_cpu(header->length), bufsiz);
++	if (len < TPM_HEADER_SIZE)
++		return true;
++
++	cc = be32_to_cpu(header->ordinal);
++
++	for (i = 0; i < ARRAY_SIZE(tpm2_cc_map); i++) {
++		if (tpm2_cc_map[i].cc != cc || tpm2_cc_map[i].nv == TPM2_CC_NV_NA)
++			continue;
++
++		offset = TPM_HEADER_SIZE + tpm2_cc_map[i].nv * sizeof(u32);
++		if (len < offset + sizeof(u32))
++			return true;
++
++		index = get_unaligned_be32(&buf[offset]);
++		return index != TPM2_KERNEL_NV_INDEX;
++	}
++
++	return true;
++}
++
+ /**
+  * tpm2_pcr_read() - read a PCR value
+  * @chip:	TPM chip to use.
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 0db277af45c3..2a114c0ffcf9 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -178,6 +178,12 @@ static inline enum tpm2_mso_type tpm2_handle_mso(u32 handle)
+ 	return handle >> 24;
+ }
+ 
++/*
++ * Provisional kernel-owned NV index. Userspace is not permitted to undefine
++ * or modify it. The allocation has not yet been finalized.
++ */
++#define TPM2_KERNEL_NV_INDEX	0x014c4853
++
+ #define TPM_VID_INTEL    0x8086
+ #define TPM_VID_WINBOND  0x1050
+ #define TPM_VID_STM      0x104A
+diff --git a/include/linux/tpm_command.h b/include/linux/tpm_command.h
+index 9ea1ee3cbef1..9224e81cb8f2 100644
+--- a/include/linux/tpm_command.h
++++ b/include/linux/tpm_command.h
+@@ -208,14 +208,23 @@ enum tpm2_return_codes {
+ 
+ enum tpm2_command_codes {
+ 	TPM2_CC_FIRST			= 0x011F,
++	TPM2_CC_NV_UNDEFINE_SPACE_SPECIAL = 0x011F,
+ 	TPM2_CC_HIERARCHY_CONTROL	= 0x0121,
++	TPM2_CC_NV_UNDEFINE_SPACE	= 0x0122,
+ 	TPM2_CC_HIERARCHY_CHANGE_AUTH	= 0x0129,
+ 	TPM2_CC_CREATE_PRIMARY		= 0x0131,
++	TPM2_CC_NV_INCREMENT		= 0x0134,
++	TPM2_CC_NV_SET_BITS		= 0x0135,
++	TPM2_CC_NV_EXTEND		= 0x0136,
++	TPM2_CC_NV_WRITE			= 0x0137,
++	TPM2_CC_NV_WRITE_LOCK		= 0x0138,
++	TPM2_CC_NV_CHANGE_AUTH		= 0x013B,
+ 	TPM2_CC_SEQUENCE_COMPLETE	= 0x013E,
+ 	TPM2_CC_SELF_TEST		= 0x0143,
+ 	TPM2_CC_STARTUP			= 0x0144,
+ 	TPM2_CC_SHUTDOWN		= 0x0145,
+ 	TPM2_CC_NV_READ			= 0x014E,
++	TPM2_CC_NV_READ_LOCK		= 0x014F,
+ 	TPM2_CC_CREATE			= 0x0153,
+ 	TPM2_CC_LOAD			= 0x0157,
+ 	TPM2_CC_SEQUENCE_UPDATE		= 0x015C,
+-- 
+2.47.3
+
+
+--qRLgJTZqCtI/Ye0N--
