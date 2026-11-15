@@ -1,59 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794749563;
-	b=qaVglolbn8JOO7ywq9h8Q2LKhwU+mIu1gTu3TOElueFxeMaMNJjZUzuPzFsnqQYZ92Eb
-	 KtFvnfVITmPf/0u8Stg1xfC/ygwqkdsFqH3tGHsEKp/Bg+04pvllbtx7Se1bVuPZDEibH
-	 tOffPlHBIJLFp2HVC07aYyeI5IpBFMbeJwUtAZb/QqZpP7wtL9xfG/D3zplA0jN8z9TNw
-	 iLjsUc4mbJ1lhUmLl71nUlFP2aARRwH9bZAWg57ABuxWOh2RqjCFvN1HlTKcuBpmQToK9
-	 Hf5O3GAysmSQXMG4Y5Oq13FqON/4pxFR3pwBWyH0yBBfeQZ7Fbh6q+dVQPJrmN/mBYg==
+	t=1794751333;
+	b=gOcqrr008jr0lmSy4sQlOfCga4d64py5MxBwfnfrFARwW6yas912Mobv1s6kGKy3CNLH
+	 xnbi2vhAZj6cL1I+fwj73DqcPhmo4uS0j5uzggom1pp9QNB3zQeMOjmyC5rhGak5UoYxg
+	 pIhHb1aCFEtwKKTClRB5rZ/PWg4kbXluMVgc9LmAO9PWmyb7TNjWZkqKyMs1fII0mWTBM
+	 cjlUPuhDTPG5NRtfMdS3ReOR//JgZgv8JPBFCaXAj4ATEmN8eNy0MXQGHnAKtmucnnTTr
+	 Kf7v5NMPPy2snlEEPhcdiJOlJmVyS1FHpOYOT43pXUhHHvuY1AO6AnCn7AN5HlIpCJg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794749563;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=DOuKLQTv6yFSfHDgE4gwPAhy1aGA7qa0gtGA9y3WDVU=;
-	b=K0ScnedrLg3JYUMww0SUuobQsjfEE7kel+UPRCBfo6Anv3EfrT7sH9D9BgrNOPa59eCi
-	 yPTNddaAFbefRnmLjY/SR1518+TWi3p4+MWf41qbAElnES25nvkCluvJjwsRY93S3ee90
-	 2acOt4PGyg9PlDuoIQiovsKKxL8PdEShmHUU/Zkhg5sHQl1aVTny/47Z9QHPO7fA0ynrY
-	 6RLxO5RPURG+U11+bJbcZgQmzdOMs8TPnzQpE4Gayb0ZgsYN4Ur6s54xbFEX0IpDHfYyt
-	 2+lGvnnqLB62BOELEojwQPGCx+HERuh/UYui0YwBdPd6Wl40i104LpgolCNN/bLlBmw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794751333;
+	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=C0hZCZ1HlArCnNua5WGJXPR4s/dAC6fjh9Brf5xLf/I=;
+	b=W/3U+seu0eiSNU1FhefTu/lo879ac/tagtIXPJ+Egy6yptHA16acTNbzsIY8sT8Qkej1
+	 82ZFGcjFLYfCwRjO0nYeNiyg8ggVf1xCSxSzaGRlW0n2beTNTw5adLuBuw2gwFUApebBA
+	 nihxPmruiCGh3vbacdlaGAhqU4bi6NJnt8n82n+TV6YOnI6NLlfN5qlOIUmYSZxmO7TdN
+	 SiIyTb/XBS8AFu24g6OYcmCtDv7LEPttKJNqMiSaZ8xTauRQSq8jki7V4+U/tqfeaijOs
+	 gzLjPtj4IuZhD2xi9BMwdpijlz6UYA3+/qp9oMxUkdjvuOsPCLTatwMcPuaBizJ8lIQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dYZNTrwz;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lCmT3vgU;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 61DA2606A327;
-	Sun, 15 Nov 2026 13:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C644606A31D;
+	Sun, 15 Nov 2026 14:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dYZNTrwz
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7A2301F000C4;
-	Sun, 15 Nov 2026 13:32:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lCmT3vgU
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E7041F000C4;
+	Sun, 15 Nov 2026 14:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794749563;
-	bh=DOuKLQTv6yFSfHDgE4gwPAhy1aGA7qa0gtGA9y3WDVU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=dYZNTrwzCzvsmlvCKwiOB52eIoDDv/uMnNNFHuR9K21pgNtP5jQ2fiLmqSWkcgC6/
-	 JJY/F2Vd1QOnFfeviaLg3LA+9l+6GDh5FkprS4WzlZwH6Yz1OJiZUGl5FT7auVNtzY
-	 3MCB1x4jwybHNtlx4cTNcla47ijKkBEWvi/1VjhevTYkjaovg7gLg5nIJ3z0s+5oxR
-	 hTYDTvqSZxYhILTFp0r613hnQITDD3FO8nL6aUb6vzRhLHj4fJAb4QwNe61+RB3SSl
-	 F4QDBuBqU+2XeM0lx9szir6IiwzegEfNwZQTBRxCNfR/e6KQ2d9Vu/TaRAgq5ZjmSX
-	 2Gkbe/scHQmXA==
-Date: Sun, 15 Nov 2026 15:32:39 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Siddharth Chintamaneni <sidchintamaneni@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Stuart Yoder <stuart.yoder@arm.com>, apais@microsoft.com,
-	rachelmenge@linux.microsoft.com, hargar@linux.microsoft.com,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] tpm: tpm_tis: Use cached tpm2_acpi_start_method
-Message-ID: <avm0d4iOX6V9O0-p@kernel.org>
-References: <20261115013456.212141-1-sidchintamaneni@gmail.com>
- <20261115013456.212141-4-sidchintamaneni@gmail.com>
+	s=k20260515; t=1794751333;
+	bh=C0hZCZ1HlArCnNua5WGJXPR4s/dAC6fjh9Brf5xLf/I=;
+	h=From:Subject:Date:To:Cc;
+	b=lCmT3vgUByzTeA9R757hy9aa0HZE4kCVK0A5FBSbwAooKZHJJK5oK2QqoPEHWyoRJ
+	 swdVTlXDdJUVBnvWkHnXkipTzyAaAqAS70tC39ZUzbXkKiiE+btYREERd5StseDTbn
+	 zcWzdziNnXo7X8mLYhlfZiPFvM6GhaTPKVNQ4SNKWtudv3284JWjz5NKhzyuvhykbo
+	 ovdYHOZj3BYLhEEY0IXslCiJifUqNJRF1mJ/5GrBXZVB7wuVcQMnbQQ4wxPOeBmK1F
+	 BFH5jgiZxb185bU/PJcIc3uCfdbR8kKmCpMNI1ltjBdq0NvcTQJfswD215TGXdMxuI
+	 HmHiQHeWiNVOg==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 00/13] fs: let d_real() fail
+Date: Sun, 15 Nov 2026 15:01:30 +0100
+Message-Id: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -63,96 +53,97 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261115013456.212141-4-sidchintamaneni@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMWw6CMBBA0a2Q+XYaWoJJ3YoxpI9BqqQ1U0UTw
+ t5p5fPO46yQiQNluDQrMC0hhxRLyFMDbjLxThh8aVCtOkspe/wmfmJaZvQDk5lRSa271o+aXAf
+ l68U0ht9fvN6Ozh/7IPeuTL2wJhNaNtFNdVRBUUBxgKKuYdt2HWulIpoAAAA=
+X-Change-ID: 20261115-work-ovl-d_real-219930df9ec3
+To: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc: Chris Down <chris@chrisdown.name>, Miklos Szeredi <mszeredi@redhat.com>, 
+ linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-mm@kvack.org, "Christian Brauner (Amutable)" <brauner@kernel.org>, 
+ stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
+X-Mailer: b4 0.17-dev-ce4c1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3833; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=pa24T6yCoOSBNbgGCY6AwfmcBlLS5Ar6zkTbMn0Wgmg=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT93O2vqVrhsEVk8w8bwRPB9mu2b58txH/6hPzbCzOYZ
+ 7yfu3bL5Y5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ7DvK8D+374Hlzv9ipvZl
+ Rq1dFcfahVq2mU5V8n4bsrj5WOOGjjhGhnYt3WqWp77Lo13D994t4tVteLmD2d3HMMT838fvTsd
+ uMAAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Sun, Nov 15, 2026 at 01:34:55AM +0000, Siddharth Chintamaneni wrote:
-> Use the cached tpm2_acpi_start_method value instead of mapping and
-> unmapping the ACPI TPM2 table again during probe. Remove
-> check_acpi_tpm2() and open-code the start method check directly in
-> tpm_tis_init(), returning -ENODEV when the device does not use
-> ACPI_TPM2_MEMORY_MAPPED.
-> 
-> Signed-off-by: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
-> ---
->  drivers/char/tpm/tpm_tis.c | 45 +++++---------------------------------
->  1 file changed, 6 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> index 6f8344894ea5..df2d8c1c2be0 100644
-> --- a/drivers/char/tpm/tpm_tis.c
-> +++ b/drivers/char/tpm/tpm_tis.c
-> @@ -127,45 +127,11 @@ static inline int is_itpm(struct acpi_device *dev)
->  #endif
->  
->  #if defined(CONFIG_ACPI)
-> -#define DEVICE_IS_TPM2 1
-> -
->  static const struct acpi_device_id tpm_acpi_tbl[] = {
-> -	{"MSFT0101", DEVICE_IS_TPM2},
-> +	{"MSFT0101"},
->  	{},
->  };
->  MODULE_DEVICE_TABLE(acpi, tpm_acpi_tbl);
-> -
-> -static int check_acpi_tpm2(struct device *dev)
-> -{
-> -	const struct acpi_device_id *aid = acpi_match_device(tpm_acpi_tbl, dev);
-> -	struct acpi_table_tpm2 *tbl;
-> -	acpi_status st;
-> -	int ret = 0;
-> -
-> -	if (!aid || aid->driver_data != DEVICE_IS_TPM2)
-> -		return 0;
+overlayfs looks up the data of a metacopy file in a data-only layer
+lazily and validates its verity digest when it's first needed. Both can
+fail but d_real() has no way to report it. So ovl_d_real() warns and
+hands back the overlayfs dentry and every caller silently works with an
+inode that doesn't host the data:
 
+- uprobes get created just fine and fail later with a bogus -EIO. Every
+  new uprobe warns again for each of them. With panic_on_warn that's a
+  panic.
+- IMA skips detecting changes to the backing file and hands out a cached
+  verdict.
+- IPE evaluates its policy against an inode that has none of the
+  dm-verity or fs-verity properties of the real file.
 
-Jason, can you remind me what was the deal with this flag?
+And that's not limited to files nobody opened yet. A metadata-only
+copy-up of an open file makes overlayfs validate the digest again.
 
-> -
-> -	/* If the ACPI TPM2 signature is matched then a global ACPI_SIG_TPM2
-> -	 * table is mandatory
-> -	 */
-> -	st = acpi_get_table(ACPI_SIG_TPM2, 1, (struct acpi_table_header **)&tbl);
-> -	if (ACPI_FAILURE(st) || tbl->header.length < sizeof(*tbl)) {
-> -		dev_err(dev, FW_BUG "failed to get TPM2 ACPI table\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* The tpm2_crb driver handles this device */
-> -	if (tbl->start_method != ACPI_TPM2_MEMORY_MAPPED)
-> -		ret = -ENODEV;
-> -
-> -	acpi_put_table((struct acpi_table_header *)tbl);
-> -	return ret;
-> -}
-> -#else
-> -static int check_acpi_tpm2(struct device *dev)
-> -{
-> -	return 0;
-> -}
->  #endif
->  
->  static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
-> @@ -222,11 +188,12 @@ static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
->  {
->  	struct tpm_tis_tcg_phy *phy;
->  	int irq = -1;
-> -	int rc;
->  
-> -	rc = check_acpi_tpm2(dev);
-> -	if (rc)
-> -		return rc;
-> +#ifdef CONFIG_ACPI
-> +	if (acpi_match_device(tpm_acpi_tbl, dev) &&
-> +	    tpm2_acpi_start_method != ACPI_TPM2_MEMORY_MAPPED)
-> +		return -ENODEV;
-> +#endif
->  
->  	phy = devm_kzalloc_obj(dev, struct tpm_tis_tcg_phy);
->  	if (phy == NULL)
-> -- 
-> 2.45.4
-> 
+As Amir pointed out the correct fix is to teach the callers to deal with
+an error. So d_real() may now fail for D_REAL_DATA and all callers
+handle it: uprobes fail when they're created, IMA treats it like failing
+to hash the file, IPE denies and the bpf kfunc returns NULL. Then
+d_real_inode() goes away so nobody can ignore the error again. The first
+patch only drops the WARN.
 
-Br, Jarkko
+This came out of the same work as the freeze protection fixes for
+backing files (cf. [1]). I ran into it with the pseudo filesystem
+series (cf. [2]) where file_check_backing() looks at the file hosting
+the data of O_PATH files registered for fuse passthrough. With this
+series it can just return the error. But this stands on its own.
+
+[1]: https://lore.kernel.org/r/20261114-work-fs-frozen_writes-v1-0-f5ae61c898b1@kernel.org
+[2]: https://lore.kernel.org/r/20261114-work-loop-pseudo-v2-0-98639a2286fb@kernel.org
+
+Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+---
+Christian Brauner (13):
+      ovl: don't warn when the lazy lowerdata lookup fails in ovl_d_real()
+      fs: add d_real_data_inode() and d_real_metadata_inode()
+      tracing/uprobes: handle errors from resolving the real inode
+      bpf: handle errors from resolving the real inode in uprobe_multi
+      selftests/bpf: handle d_real_data_inode() errors in bpf_testmod
+      ima: handle errors from resolving the real inode
+      ima,evm: use d_real_metadata_inode()
+      ipe: handle errors from resolving the real inode
+      bpf: return NULL from bpf_real_data_inode() on errors
+      ovl: return the error from the lazy lowerdata lookup in ovl_d_real()
+      fs: remove d_real_inode()
+      selftests/ftrace: add uprobe tests on overlayfs
+      selftests/bpf: add uprobe_multi test on overlayfs without data
+
+ Documentation/filesystems/porting.rst              |  10 ++
+ Documentation/filesystems/vfs.rst                  |   6 +
+ fs/bpf_fs_kfuncs.c                                 |  13 +-
+ fs/overlayfs/super.c                               |  19 ++-
+ include/linux/dcache.h                             |  47 ++++++-
+ kernel/trace/bpf_trace.c                           |   9 +-
+ kernel/trace/trace_probe.h                         |   1 +
+ kernel/trace/trace_uprobe.c                        |  57 +++++++--
+ security/integrity/evm/evm_crypto.c                |   2 +-
+ security/integrity/ima/ima_api.c                   |  17 ++-
+ security/integrity/ima/ima_main.c                  |  11 +-
+ security/ipe/eval.c                                |  15 ++-
+ security/ipe/eval.h                                |   1 +
+ .../selftests/bpf/prog_tests/uprobe_multi_test.c   | 141 +++++++++++++++++++++
+ .../testing/selftests/bpf/test_kmods/bpf_testmod.c |  11 +-
+ .../test.d/dynevent/add_remove_uprobe_overlayfs.tc |  92 ++++++++++++++
+ 16 files changed, 408 insertions(+), 44 deletions(-)
+---
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+change-id: 20261115-work-ovl-d_real-219930df9ec3
+
