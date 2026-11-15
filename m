@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.179
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794706501;
-	b=mxcOSluLr/jUtHMUAqCh+rUS8/4LQ4EJ60SjyUd3YJdUQWwhlvSxQJbLSCcsdCXF0iaZ
-	 OBc+Gw6thBG7xSbsX7yf9EM8tjRPP0Rp8+6TbEB+V+Ky8M/FpmJMAnYGwlKKq8ZLOxP9Z
-	 fC8aZ8LwFya/9MPYQVDUIzGNLnE+6nGDLWSInnNX7jHmUD83noONXYxfrd14iQ4n8o6C8
-	 8BRMk15XkPk+5PHK53a90uvEOdY4/JpCCPRuqGMYC3W0JI2rjZEVkbQgPc7jKYWHDi1Or
-	 hR5iwmgL1ImNoojXfUA+nqBjqqDu1NhVhZF50zejDQK4ogEWYBt8+BRpaUKTx/H+1Gg==
+	t=1794706502;
+	b=G7+RKmZ8stNEvbd/afPI95U0iclE6vkVLX73sb8dXaVNxHjJjktJAyXHyVkA7ZJsWLiS
+	 jTIE9flxHGgN7ejeZ9uNfE4G9zGkG4KSQLd/5vKq3/43kxJRekA23qSsdMzC+gsg67d6L
+	 KsCTZ4pDUbLsQNSpojUVfit+Rnng4hYE/n3YFNmKfwxhsbI1I1BiyxEvI2fgT4w0F1Zyo
+	 +39EP8G1LOlTC14CtRTJhDlaKNbkQgQVvnJ7akK/VN3bZDkzdquzvf5fuDRd3um7KgTxz
+	 2z6eWGKU4mAzgZec3Q4sLSuZdWb7nReclZ6Xp4CyLNDHf1bi4rDIcpl9dNAhUnxJQ+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794706501;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794706502;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=CRGAUvOGM7cXeBiNifNubn0WANT9Nl+imZXj5mUQRV4=;
-	b=KSnEfjPb8VXX4Cm/sORzfwsckHe8muMPuZ0Ab8UHUe7OF/9cpOKzaJZhjRJznC5WL9se
-	 f22kVJqpyuEEghahbHOrfr41UQ3OJiPIAMy3KT3DQ4OT4CaoKSX9qJce+PhExDyciGhGa
-	 h48BfhGCApoJ9PSyALUNsB4jMWJ3smL7ECVIXWGPhYlUxd3npfjTvLKPTRElB04i6SZOx
-	 pSwtPaaZ6y1tuZBnHTVSc8jDxxQA7hNTt5xKSRcp2RlNLhTLrNFV37saj7dOjQySNl7aB
-	 rVYqI649RLkZRUkWBa7bcxef0HEPwhzFjRQUsoeqBnNFlTwZSYKrjpmsyj1OU9GUgQw==
+	bh=4XRaUjntmnwgXMBa6bG6H6t68ZP5x01BzH1Lhm94CSs=;
+	b=Wbaik/OY+QMnYuXPy430RjCOsonUURlwPUoJk1TGaEl6dLeenNrZg3lKZa02A01GzdnJ
+	 p3MLpLLX6utbCMB99TvumTk3IYlGU8eMdc8WCPlZmJdTMs10LmDyHklQkRbfG72S4KbGr
+	 lIS7gl/n2IuVR8zAdoVlxFxe4ohqj8Oiwe5YfhdSENtdhtw7qLqzrdY3/EzaXG0t8ax+s
+	 MNLXgfVf2VcOslCQpKjcMlrQwlgVI6eKzRRaG5+r8dWzJv6kPU+ZaJW32cUivLI8vmk10
+	 PijTr6KsFJWIj267ZhTicmJ6qcak+F/tJIen7lBJUskUlDlJm7/GXG9Bj3L9IVGoXzw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L7Z9GksH;
-	arc=none smtp.remote-ip=209.85.214.177
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="nDBdINC/";
+	arc=none smtp.remote-ip=209.85.214.179
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BBF606A883
-	for <linux-integrity@vger.kernel.org>; Sun, 15 Nov 2026 01:35:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66BBF606A883
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E37606A893
+	for <linux-integrity@vger.kernel.org>; Sun, 15 Nov 2026 01:35:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 77E37606A893
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L7Z9GksH
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2e95bd1c14cso32204615ad.2
-        for <linux-integrity@vger.kernel.org>; Sat, 14 Nov 2026 17:35:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=nDBdINC/
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2eb18f4da15so10810755ad.1
+        for <linux-integrity@vger.kernel.org>; Sat, 14 Nov 2026 17:35:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794706501; x=1795311301; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794706502; x=1795311302; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=CRGAUvOGM7cXeBiNifNubn0WANT9Nl+imZXj5mUQRV4=;
-        b=L7Z9GksHVQp6Gvhb1y7Dp1+wrzgzxQeF609lfKbG8erVBH8cWqLDDYDQ+LCpK/PpMe
-         eFLIUVzl0Dt6RBXN01kpQO/iyjLHhudWnfNpLN01Bk6f+0DOlzg7sJUDzeeD9byT0vnL
-         2b0CgqzT1w3QRw70UtYWIMcxpJRassQU4JXxwjnRjw+LhfrZ6aV6WPpfpvA3H17+fCgY
-         Z+Wqp3cZHgmjZ/VsLwiuDvmhotmDocgHyC9tnp6pjKdbeZgsMyDX/5go7INkFwuz8sjR
-         SR8LZ+RvnCS6vfvIhD8JIMx4nu6978l0bLUxsYg251DBDzzQSOy6gB+QUIVsW0PW1B0b
-         0Ssw==
+        bh=4XRaUjntmnwgXMBa6bG6H6t68ZP5x01BzH1Lhm94CSs=;
+        b=nDBdINC/NsxSZSM6PLA2D/CKz0RnGopbUkW/xBfoJ5CakPtA6l5JXiJLCBbeHqQ9oZ
+         cPOT4KtfQoYBaZWn4N8MYYyPHlx2gxMDOPQqQe+zb5VuB/aM/S0DEUh9ZkhVC6hOOBU4
+         pZkSs+AhXmsjt95zXhaWjs0Pdszwfmo0hquzbBvS7Nj18dj6rfqOY9QVEKuKQUTM0xGK
+         7kNiYWxQK1UxnD5ZnNZnETKRG5CGOsoGTHvF+lBzxFoeFLlwn7S+Adl++uZPXADtuuWF
+         VGEa3L0leSUnhUe3xit/dNaruJc8zEkM1aqg0ZnJYqsOVwM1UQEUraE7v/IJnc2EHztx
+         NJmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794706501; x=1795311301;
+        d=1e100.net; s=20260707; t=1794706502; x=1795311302;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CRGAUvOGM7cXeBiNifNubn0WANT9Nl+imZXj5mUQRV4=;
-        b=xuIhgx+TO/d4EG60xDzqMmwVfTrHLZEJR7Kexsj5GNKYgeI7XE1tPuoPMmq+8XU6rM
-         FE0zRA168op1EGMnZE7HW3Gwxk4ZGpoKBGYnf+/D95+Gc7P9d1cDcr+Qt2/6N+tPk3QJ
-         1c3pRl4l4BeQWWTr+/JFDZHK2X3aOI+JeShBdtYARsf9Ulp+hi2Alty1BxgxcXVMq/08
-         5zIeOH2NhFvgIiTEqk9QGgo1snijdAyrasCi/5/wcLrXM5ndoSpxmVi1ARfC+kkElzIo
-         Nf7OMXcvjRr5omobE3D3zYf0Y4cZRy0zvsRKxF53Uvhmgrm4Fh/zKWK9pRK1NKnT1h1o
-         YqGw==
-X-Forwarded-Encrypted: i=1; AL+hErHFoFIDdvPqOujiE7dBwze7ViTKpnbqY6xGMrLvY3ByOUIA9Pm48N3FxYR3MtPee0JhnjNR4WXw8/WFAtLWBbQ=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/aS9ocrCT1Nw5of9mhcOdRaqE74d7h/75VTkE5A+XEwrgbxf5A
-	4Ne739PHOGaPZwOWEP2R8CQ17c2o8Io0ZFbZPx3a0EpXzF2bXGZYFa+2
-X-Gm-Gg: AYBFou0jI93IuQ+7TdzDT1JkFGqZ1GYh8Ep2YWcN8kQ6HCKFBnzwSU4Oc/nFhBlJQcY
-	/Gg2/QHFhoOIjqzC/hffU3fr04jc1BQtiGxJAW+y+ppvxF6NghDdGK60vOB1ChbskfnaeC/ss3u
-	+7/lpU6zTAh63n2i5AB/kHB8M9mZXiQjl6n903gdlWUUJdPP5iX70OBx/OuF5ksVMDA6zEzahaT
-	u6goe8c/HAuz2TidgRa7RJtOaZlz1ebD2pqI85YlHEeMxaiPAgAeK28mtcMdkMziUnzD7FgEWyZ
-	DICGi2oilFdMIqRqG9Mg9RfoOrtQPAyuBw5MH3BfGWWaIyxpb8cn094f5BfCTuDY8E2WruffhKQ
-	rqkQVihFGNLZg/CZSU1DAA+NWS2nnx1gusSrXT4WEeDsyss+qGLqUsLu9Xag4f4o55rk5eDvGqK
-	lOfwOwnEbr3U3/PeI5GMuo+TkDvziv48U6swmUjuMOPkdgkipxbUg6DTH1OHtNBJZNgfUZfHXJp
-	Uf8T+0bgiKZudUDRqqbRnf4/EulkDF10+16V1pLUdXl0CNyRKzwkN78XsCTsoGsgUlXOhWFKg5l
-	NfPqWt8y5EhwsDKP41B11KRyw/NpUKgr/A1W+fkS+3Osuxpq2zvjTJ6rRD0gG+Xa0n4hjmXGnX3
-	Iv1WMos+dKQ4tCaxJjP6pmblcSvi0u8RKHXGTN6q8fgsnLYkJWMUYP0SkQjXGNM4icQPduYxLeA
-	sPwaDsy/gUUQJEd28HmmbXOowmrPHuu0jTOwDocliUPl0GiDUf6V/nBwD0xGuK+g==
-X-Received: by 2002:a17:902:e5c9:b0:2ed:84c6:5d5 with SMTP id d9443c01a7336-2ee0de3e85emr70675995ad.42.1794706500714;
-        Sat, 14 Nov 2026 17:35:00 -0800 (PST)
+        bh=4XRaUjntmnwgXMBa6bG6H6t68ZP5x01BzH1Lhm94CSs=;
+        b=qUmTtwz4YiXD5++5IgFhZcufDxIXj0oAnJE85EO863BYmzr5I4VMQ0yMflcIdmrPxq
+         0semxfY1JCPvbn/Q6/OApniFdAK1gp3NBY5git46SIpPUnlWV91bqC/zVLdoobSlC0zl
+         irv3+lsnPbvVXGfNv+0ZZ4HODD0HyUt+Ee37X1pv3EVgAtpksPe84qxVPCApN+n03rDS
+         32dVTZt8ThLG64QnB6tJRlM66sny0rt/OJ8yYKk79IeVFu/l7NsN7P6s6tUHY77pbcJL
+         AIDjgtJ9qfTJLUqxZlh+NJvplKgPU090WWpxZ2ru38oe7vQAwFraQEsL98eASUCfdGRb
+         n1dw==
+X-Forwarded-Encrypted: i=1; AL+hErFfQEP5Qnpoy4eDeyHg7HD+O49jbX+C21/w7HtRSJuQcey6sk55LbbUKfyVjiz0uYZYKFRPIxVRNts954C2MKc=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8EORF0MA4wcp4hYCvpNWaH7yU90ZhwBPzTVGa5I2ukwGdQ4lR1
+	UNTwPfZtwCQ7tiI7g1BF4HL3BEymFTmGUZcXvLW/UCF4CaPKaxI2R/uI
+X-Gm-Gg: AYBFou0pb8A7keRWN0pVzqr6WBymPlCoAXLKVTGecxd5vmzMqDev+KdlmLb/US6CY4G
+	2Ip1M3K5zpZovzJtr/f3egu+BWO5x4eZdyesl7/VX4iOi+QZgY9Z0G2v5pfGbiB12hcUJeS0OwG
+	IebaSEmhJqqYKWWYUm3KHoaakCdbpt01klJNH9iAqG8aRFiLtXC+ce6dF25POnH2D1TdjYp7H8h
+	Ay8sC4yEbujFex7gNIoyZ6rbzI3T8MdYDoeDyCzw2ODjj3wrz4B5f36kxuD2WqACxCR+78/QKfz
+	tV0XMQFcJELdb9IMtTxLsqlUYIrX2rMqhlOv7qkxrZJgusKAmL+ct0znpgo6G9Sta5kmQQndj7u
+	11iZmFqu9IyUQXExKmrV6pxPpjLKPPENKPZisnebQQTy5d6bFLSBepqzYx9dIUva+PjtO/i505+
+	lqPKYbo8NqXmaOoTsjicn6N9j4Y+S1Ysu+xnv4GUyDOhSovA0J72XBX9M7l/mnUn4zSLC9BGDef
+	+Dg7haUJOzxOMBKpSAV6QuuI5stnhHVREeLqBLHqB3yQ8MAndBan3qxlwmyufjOQlemycXENm9r
+	/yop/qSKmeIxutZjXKmBfLFfkTgklmvvdVOmnswA/vnIYgfcIspvgeRq1shQ0xSfaI3Q5Es49Ta
+	GaB174ALlIBzAxMOfk0hbG+T1BtKG1UgyPbEGVNw/2QBm680PUaOH/bObLJx5fYBkvfKWNU9PNX
+	2O/MMMF29glrPwm/3FGactEyXHn2kZe9hY6gR3r6Q9eA==
+X-Received: by 2002:a17:902:e84a:b0:2df:9556:6848 with SMTP id d9443c01a7336-2ee0d66ebd8mr59520075ad.4.1794706501770;
+        Sat, 14 Nov 2026 17:35:01 -0800 (PST)
 Received: from sid-dev-env.cgrhrlrrq2nuffriizdlnb1x4b.xx.internal.cloudapp.net ([4.155.54.158])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ee0f75dde9sm23671935ad.22.2026.11.14.17.34.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ee0f75dde9sm23671935ad.22.2026.11.14.17.35.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Nov 2026 17:35:00 -0800 (PST)
+        Sat, 14 Nov 2026 17:35:01 -0800 (PST)
 From: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
 To: Peter Huewe <peterhuewe@gmx.de>,
 	Jarkko Sakkinen <jarkko@kernel.org>
@@ -94,9 +94,9 @@ Cc: Jason Gunthorpe <jgg@ziepe.ca>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Siddharth Chintamaneni <sidchintamaneni@gmail.com>
-Subject: [PATCH v3 1/4] tpm: Cache TPM2 start method
-Date: Sun, 15 Nov 2026 01:34:53 +0000
-Message-ID: <20261115013456.212141-2-sidchintamaneni@gmail.com>
+Subject: [PATCH v3 2/4] tpm: tpm_crb_ffa: Only probe when ACPI TPM2 uses FF-A
+Date: Sun, 15 Nov 2026 01:34:54 +0000
+Message-ID: <20261115013456.212141-3-sidchintamaneni@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261115013456.212141-1-sidchintamaneni@gmail.com>
 References: <20261115013456.212141-1-sidchintamaneni@gmail.com>
@@ -111,80 +111,80 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jarkko Sakkinen <jarkko@kernel.org>
+Prior to commit 677042afb97a ("tpm: tpm_crb_ffa: revert defered_probed
+when tpm_crb_ffa is built-in"), built-in tpm_crb_ffa only registered
+tpm_crb_ffa_driver from tpm_crb_ffa_init() after crb_acpi_probe()
+confirmed start_method == ACPI_TPM2_CRB_WITH_ARM_FFA. After that
+commit, tpm_crb_ffa unconditionally registers on the FF-A bus at
+device_initcall time (and when loaded as a module) without checking
+the platform's ACPI TPM2 start method.
 
-Both tpm_tis and tpm_crb retrieve the start method from the ACPI TPM2
-table during device probe, and tpm_crb_ffa also needs it before chip
-allocation.
+A platform's firmware may expose a TPM CRB over FF-A Secure Partition
+for UEFI boot services while advertising a non-FF-A start method to
+the OS in the ACPI TPM2 table. When the ACPI TPM2 table designates a
+non-FF-A start method, Linux has no consumer for tpm_crb_ffa and
+should not probe the FF-A TPM service.
 
-Cache the start method in tpm2_acpi_start_method during tpm_init(), log
-it when a TPM2 ACPI table is present, and export it for the leaf
-drivers, defaulting to ACPI_TPM2_NOT_ALLOWED when the table is absent or
-invalid.
+On Microsoft Cobalt 200 systems, the ACPI TPM2 table does not use
+ACPI_TPM2_CRB_WITH_ARM_FFA, yet ffa_init() discovers the FF-A TPM
+partition and tpm_crb_ffa_probe() unconditionally sends
+CRB_FFA_GET_INTERFACE_VERSION via FFA_MSG_SEND_DIRECT_REQ2/REQ SMC.
+That request wedges the calling CPU in Secure World (with Non-Secure
+interrupts and GICv3 pseudo-NMIs masked), hanging boot with an RCU CPU
+stall:
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-Co-developed-by: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
+  [    5.507519] ARM FF-A: Driver version 1.2
+  [    5.507519] ARM FF-A: Firmware version 1.2 found
+  [    5.507551] ARM FF-A: Notification setup failed -61, not enabled
+  [    7.150580] Freeing initrd memory: 293640K
+  [   65.515248] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+  [   65.521346] rcu:     10-...0: (3 GPs behind) idle=dd9c/1/0x4000000000000000 softirq=37/37 fqs=5262
+  [   65.530031] rcu:              hardirqs   softirqs   csw/system
+  [   65.535589] rcu:      number:        0          0            0
+  [   65.541146] rcu:     cputime:        0          0            0   ==> 30028(ms)
+  [   65.548102] rcu:     (detected by 66, t=15010 jiffies, g=-951, q=1384 ncpus=132)
+  [   65.555228] Sending NMI from CPU 66 to CPUs 10:
+  [   75.560686] After 10 seconds, these CPUS still haven't responded to the NMI: 10
+
+Check tpm2_acpi_start_method in tpm_crb_ffa_probe() and return -ENODEV
+unless it equals ACPI_TPM2_CRB_WITH_ARM_FFA. Checking in probe() rather
+than module_init allows tpm_crb_ffa.ko to load as a symbol dependency
+of tpm_crb.ko on non-FF-A platforms when built as modules, while
+skipping FF-A TPM requests unless ACPI advertises the FF-A start
+method.
+
+Fixes: eb93f0734ef1 ("tpm_crb: ffa_tpm: Implement driver compliant to CRB over FF-A")
 Signed-off-by: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
 ---
- drivers/char/tpm/tpm-interface.c | 21 +++++++++++++++++++++
- drivers/char/tpm/tpm.h           |  1 +
- 2 files changed, 22 insertions(+)
+ drivers/char/tpm/tpm_crb_ffa.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index e0385b16616b..c18b060d7da2 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -534,8 +534,17 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- }
- EXPORT_SYMBOL_GPL(tpm_get_random);
+diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+index 025c4d4b17ca..da676da6f3f0 100644
+--- a/drivers/char/tpm/tpm_crb_ffa.c
++++ b/drivers/char/tpm/tpm_crb_ffa.c
+@@ -9,9 +9,11 @@
  
-+#ifdef CONFIG_ACPI
-+u32 tpm2_acpi_start_method = ACPI_TPM2_NOT_ALLOWED;
-+EXPORT_SYMBOL_GPL(tpm2_acpi_start_method);
-+#endif
-+
- static int __init tpm_init(void)
- {
-+#ifdef CONFIG_ACPI
-+	struct acpi_table_tpm2 *tbl;
-+	acpi_status status;
-+#endif
+ #define pr_fmt(fmt) "CRB_FFA: " fmt
+ 
++#include <linux/acpi.h>
+ #include <linux/arm_ffa.h>
+ #include <linux/delay.h>
+ #include <linux/moduleparam.h>
++#include "tpm.h"
+ #include "tpm_crb_ffa.h"
+ 
+ static unsigned int busy_timeout_ms = 2000;
+@@ -324,6 +326,9 @@ static int tpm_crb_ffa_probe(struct ffa_device *ffa_dev)
+ 	struct tpm_crb_ffa *p;
  	int rc;
  
- 	rc = class_register(&tpm_class);
-@@ -562,6 +571,18 @@ static int __init tpm_init(void)
- 		goto out_unreg_chrdev;
- 	}
- 
-+#ifdef CONFIG_ACPI
-+	if (!acpi_disabled) {
-+		status = acpi_get_table(ACPI_SIG_TPM2, 1, (typeof(tbl->header) **)&tbl);
-+		if (ACPI_SUCCESS(status)) {
-+			if (tbl->header.length >= sizeof(*tbl))
-+				tpm2_acpi_start_method = tbl->start_method;
-+			acpi_put_table((struct acpi_table_header *)tbl);
-+			pr_info("tpm: TPM2 ACPI start method: 0x%02x\n", tpm2_acpi_start_method);
-+		}
-+	}
-+#endif
++	if (tpm2_acpi_start_method != ACPI_TPM2_CRB_WITH_ARM_FFA)
++		return -ENODEV;
 +
- 	return 0;
- 
- out_unreg_chrdev:
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index fa554c5ad80b..212ca2410c93 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -100,6 +100,7 @@ void tpm_sysfs_add_device(struct tpm_chip *chip);
- 
- 
- #ifdef CONFIG_ACPI
-+extern u32 tpm2_acpi_start_method;
- extern void tpm_add_ppi(struct tpm_chip *chip);
- #else
- static inline void tpm_add_ppi(struct tpm_chip *chip)
-
-base-commit: 7e52fc165aa50e70e8df3c879d04fc0ff1673d4a
+ 	/* only one instance of a TPM partition is supported */
+ 	if (tpm_crb_ffa && !IS_ERR_VALUE(tpm_crb_ffa))
+ 		return -EEXIST;
 -- 
 2.45.4
 
