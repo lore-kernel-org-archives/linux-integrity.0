@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.51
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794754480;
-	b=gJJazoM9zoteRr+AMdhX50PI+RQTunMoy4AAJpsuV6yw0sZOyYqCEnsB99oSqEe43Meh
-	 m50OHi6HDVTzpXVRcUQWXjfpyDi4/dqoMgAW22gj/EP27HVLECkGbBSAvBfy5vkqfhGkb
-	 v69Kd3XRoFKSf0gm82fVNE0hg1NjXuAZXSFzK6dnKmYSg0yaY8GpMuREQ2NePE7zB2ThT
-	 rcJf2HxkcmJcAm9qtgSzP8VsNrEUByNBTErpZxMtbiqPgrBpVKrXftQSPnPa8qjanZ0J2
-	 D+kEWbEAvQeNx5+ppGlzvHuqp8IGdgOT8qCgk9DxeCzfYsqmfMLgNuvf7pUhJV29mwQ==
+	t=1794754850;
+	b=xU9zeCPwTsAmqvXPRhwO0mS8YqqebY8KHWx9++JGX/15oCsIwisSe+SVHBng+XKdeOVz
+	 zIsPM39liiFEfXOUq7zrxV+hYPCuY9pv8JZ4suMzwHz0A2BvN4GmUWPChCszrCiN3dRTE
+	 aoyhRUI2qXESBk/G9UMuJHMGZASFDMFpaSuQNPbsc2QlkYYB6/mpdg1wVv6Dno9dHGLTR
+	 0r0Zqu0CPa8+Q1zrJ4Aw3wncLm21JI3H9OJY9dxQZa6XCondiOhrRap2LcSH3k8EvD2gp
+	 ISLzq/mB0c5HZOTd7kYzcTnlsiZHWN+SJCu/430ZMgkqKMG76BE5lmLUxAXlBKzStvg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794754480;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794754850;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=oqISismNDREzK3BapMQL3oVfFqMKLBzQ11G0pwa4rCw=;
-	b=OYRiSwj/Xt2j3x2jSiGeil943fKVmF8qsXFv0B2kp5kzFjIpv0IA2H8GDmcsu66OS9M7
-	 vAh7XUBZQBVPoGQpwiRN7KUihEikTnioazNieGwCGV7Fyo+qYth3iyoM6QI/X+5jboqrW
-	 2vQuh6TGZfG2D8ShXINFGcGMQXVkhbIemMwtbryJtuW2p+jd1IFZsVDt4tTl0yPfjlKtL
-	 F04+EvhD+CawJrAp9jxySP6E5GsIVmmtbdkwoxcOfV+hSblOua81yxDrt9BXEr/fX2xkt
-	 kgaspx/RkQmhj7p/xXVZQQrP4B6uQxFGhHwYeoCfSIGNOu92CgASiqPt8T9+5wsI+xg==
+	bh=1MVRNS3ac0YlanU0Fwb5KpLyyO9U1oXwO9vfFA3eak4=;
+	b=0d6DnBjU/M/vICcNRCktSaOln8GCpjt08L4sQPWEnMjxYJoPhqDI3OQ0rzC38tOz9C/9
+	 bx4pm6CXj9+inWJyUSlmtRlVlIg0Ucy+4CXLGhhfTjU/kOY28nSBrsDiGdLRuawLAvmAx
+	 SWcfScj5QzEggIxgdFUrDgcbo1KAY36BNZ95bbtOIhcT1xKPnoxoeOAr8pXlyNl0pwyGu
+	 tOQN7k+IXcN7YsNY6N11lWPEnaBOTRUyhj3QtVh7YdEJPbsRFrCkW1f1F4CyTqGzM+DNq
+	 dYcscooWcX+mcrmKCce/etQeWQiQYlgJaCiY2XXVTFRaNzEArIupX3EK/01RRXkFTQQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Nene7tW5;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.54
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=SHyOkxQw;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.51
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E3D606A32D
-	for <linux-integrity@vger.kernel.org>; Sun, 15 Nov 2026 14:54:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 36E3D606A32D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459D7606A329
+	for <linux-integrity@vger.kernel.org>; Sun, 15 Nov 2026 15:00:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 459D7606A329
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Nene7tW5
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6b167ffd132so4466940a12.1
-        for <linux-integrity@vger.kernel.org>; Sun, 15 Nov 2026 06:54:39 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794754478; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=SHyOkxQw
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c4395d31228so439662666b.1
+        for <linux-integrity@vger.kernel.org>; Sun, 15 Nov 2026 07:00:50 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794754849; cv=none;
         d=google.com; s=arc-20260327;
-        b=jbxO63zPYgg3wqqHOqAl5+9zffmt1ksht/woW9nEAj89grNbFXvAvAeZl6W7XytjIS
-         Nki+9jFVz8nN7BVF6tUR7zVhsvzd9Yb587/feN230dtKv2FIUCbQdBXSdjCJEQADxKWC
-         qmRtbCev1kpcijaATn7PB7x5g0aSA5Q5NcJQflnMbBsNPmlaxfAZNEFBwGaPt9thb/N/
-         1FlDnY2nTGcEqMSLmzg+uLzp8Q5rR65mTjnqmRNlZp9AQSzY5s+I+2J+hcJ2jquuwLfG
-         7LzHkWARH9baes/zYHV8oDRoDx/mqv9tOSj3fhrlBT0iMROrgg+BDAhTHiEVXZmVYdan
-         GL2g==
+        b=rgU+0Jj+lK0rxNXHkHqMMt0BxCp8aO1eOKySQwQ52eIkEe4F1A6UEJR11LkBuu6Di8
+         8wCzLNhJ+6qOQvVm1x9xQQwmIBua0EC7IQD95VGK7ujcsN04CoYOE0po9+2KQcHIFLkJ
+         TFhomfV0rh0FutHqEeVA78scKCXS7l/4UWvPumKedxCUEtfF1CTp3CcsuO52yYbQeJor
+         G4/K2u7rIqwGtRHO7zubZwgrFOXVy7f0dXV3kqA5Q4O6ddxrqH5z5czxjuZ4wB9O5X5g
+         8cymgv7NJaahO2WH1mkNPCz+I+RsHEwonA6u6iXEUkOTU+YurUdU2CGcBKfTRk4ZC7kp
+         tM+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=oqISismNDREzK3BapMQL3oVfFqMKLBzQ11G0pwa4rCw=;
-        fh=UWUJTsFyB8yFMldJT8kxNntR54fbRK3yEqJpZ3i8YQU=;
-        b=Td38grM3L5xJCjT6j3y9LR14ZX7pjC1/ztWmyTVffGvONbDwu5Ntb3Apr3/DqmFo0q
-         lsT0aer5GQL/o5er/cAmpNqFXNQ1L5p5icFQNxyb8H+6J6sw+qJ51HfcmUhtIq2kIfHp
-         LCunT7pLZH9uAeNWRXWhtpuuDaka5ho1Z8KpGEfwqBMkuEYSBVxJamk+MwPkuEjXprMg
-         vwIXmFxgjjrqFxEkLUVBEt2i8foAMp8uG5H62vFvCdN9CAVXWfwks8yKRXjOUXOV6Y3Q
-         4QssJN/E3Hc9/4rlxe4CMcENOyuRvmDMLQxwLFjnShosgacCmT5VZTfDs1FrS+VRFrcI
-         C00w==;
+        bh=1MVRNS3ac0YlanU0Fwb5KpLyyO9U1oXwO9vfFA3eak4=;
+        fh=fzokn+ZuqebSDkeXvU8AL0pQZagZZysaBHPSd9rn2Tk=;
+        b=GQXgduZ2BwkjkmUc8W13fQw3SZLlCrp6wq+yZU7g3GjGT1wcolea2HYS0goJt/QBrO
+         llOU62StuFdQ1k5V4E6oNDr0ZzNbypTq5kVoqAvPFfkIxvEyvKNihQXMio6a17nGH//8
+         9aaUV1LqrJTvVgspCTqePZ5+ls3w9l2euuTVAXfK8S6ZLdpgFZKI6SO7HleZOjq+MOBF
+         OnLCQakq8hCcjKDz2NXRCBdJCRybQAoJVpkhw15+nRdQUbWj82ovCk+WoRyogM11ZG/d
+         QMLs0BXBBll68fm13ooBGTBtU1K5ldE52u/rNIOH+YNREdTOEN6uZTuFe0Os7K2BrIh6
+         D1mw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794754478; x=1795359278; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794754849; x=1795359649; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=oqISismNDREzK3BapMQL3oVfFqMKLBzQ11G0pwa4rCw=;
-        b=Nene7tW5gi/n28xM9GPcsrsbApaftwN+5VLijlNSUx682MtoFHHSTEvDl1z11fpu1X
-         HvQApdaPQrGfQyiS3FbYQVWjhD4Evwt6P0rS5BC7bOQTZVXFLWaPO4OPsg6ddRko0o+q
-         9oJBo3AXuMJZvhtMaEl5yxlnDv3/Y+/ZTOoPRzC8SnU76nRTNG9VsBQOFmcVN+eTzILI
-         pLq9xeN6fA01RGoB9NuHnqix3fuxZlQryfHYntRw18u5V1gyWgLisGhonGsU8L2T6Lkf
-         J6bkZRN93M/WAUT22qxzPXNMWojuGB568xJ5NJFT1QuthxcS4hfC3ctLRiOXitSCJ+gM
-         bTMg==
+        bh=1MVRNS3ac0YlanU0Fwb5KpLyyO9U1oXwO9vfFA3eak4=;
+        b=SHyOkxQwYuLtL0+Qa53+jCNHfMYZrDoIhK10usTnr/SPlsQtxy3DYcaURrAaqZRP6p
+         j9KX2LwDO7WvpxAFvRbeGvPMOpBnbsJEvuh/a+pWnWLMDcViXZq6b/VVaPZ68EhpaptP
+         zHr4LucIEpdLZQDJogd72JZdMAkBHyXTxsReEVunL/+oJmqoO/hXoqxPt2Qr8UINUk8W
+         PKisRAodcZl5vzpIsG78e9fRi2Mkv3dgu35W/QqWyi6fF9QsZX61BfySIbEHZ7oFXuQb
+         7fuxV2YOwjcp9LUN7zRZYNpbm5Ey2kJzr2xgJrjMsYP1vCyRno2ESPfdF+IIuftfMTEI
+         HtQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794754478; x=1795359278;
+        d=1e100.net; s=20260707; t=1794754849; x=1795359649;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=oqISismNDREzK3BapMQL3oVfFqMKLBzQ11G0pwa4rCw=;
-        b=E3NBx2wXLJg3DMp/JlaNB6y8MY29NfFLDRUR8M5/p5P3NsIBjoPnKQ62zEFdUWqwaa
-         7/+u+pP8lzkltYf3AasPvIT551Q2ILLUdgs4N8V7eo5ghPNImTDhHozMpQmLyzsjUvC/
-         9F5WbHcSOgAVF7vcWJGw5RyeLbu2Oie5k97SI80WuXh2O4hnHd0Jm0Kvz42jFxzYkZSw
-         jr4A4gdypF9usGUtIF2u0PRX4ngRN+p0eo/k8rdLnCU5SxP3PDRNMg3j9j+DX/vZSvdh
-         wZnCLTGyZnYnn2m6i6vRqxkRFhuQDbSkxa0LK7KWT+JrCcpKp2Yd5+l6mJLg1MC1vjA2
-         /bxw==
-X-Forwarded-Encrypted: i=1; AL+hErGo2w/HIgkCPu2/az4v/JACDMuYDtdCQy8/gdjszNdsnefHH2dt2GJgZJXR0xqp5xQqZR19c7MOSe9dEH/wkk0=@vger.kernel.org
-X-Gm-Message-State: APuU4Z85ES1LW6IuVf3D4NbKtR3M4PUhRqlapTTbI4Y5oMAsRdMigv1g
-	siLEDJkQu1AYSLP58cqeF3jnm9XHne67zHDLm3HBJ7pOyEceq0e2wvIueG1X9Of7uUBjuK0skVY
-	AG/yCUQ99y6bOb8ZY1BeNoGtVxRXk3I8=
-X-Gm-Gg: AYBFou1bk/F0qDDFhAxwTbZjfFw6fgBUumTYOlaqZBZJjUZ1nQs2Jf1jkYIMyEreOGm
-	+5IhPZofmLosnZ+F9ZtB7XoRXQpLNBj0JEJwcnY6xRfi6vnNoau4DYYsZ8Fs1hiv9Pjx25xWbfZ
-	QAE35gx96JsPcfrrnGGI1J7zNFXra9HpdA897gdKpZz7gt3jEf2K2c4yIbbSsBs4Okgb8u0nmdS
-	xnwTAGOi6YEuwGGuy9XntV+mlFbfTjBDl1vEAw3tmQi8PcDWhgUnrsG6B0kwm8jHnZCl40Sz8jO
-	peVJh6LgjS5mUgQ3hAh9TYKrEw8kvyMpZA/B1SiC9tU5uknjymUag6zJ2kAWtHi+vm0Ufezyd/S
-	YVasUg4QrqOfa2YQo0DxZqidTx4cNp5QWfkOpqcirBVBCBQiZCt9qqo4ukphZcU/BAOkkjQ==
-X-Received: by 2002:aa7:d1ca:0:b0:6b1:c2cd:db0c with SMTP id
- 4fb4d7f45d1cf-6b7c0957c1emr4306146a12.10.1794754478075; Sun, 15 Nov 2026
- 06:54:38 -0800 (PST)
+        bh=1MVRNS3ac0YlanU0Fwb5KpLyyO9U1oXwO9vfFA3eak4=;
+        b=WfV5BpAgUg/TjXlga5s3LXRq2NC2dnDTTYqBLDDS7Q1UVnYTKuyu+DziY3HvH/SuuM
+         fVefn/ndf/ogl2X08EPvpWMfaGXEbOJ2Ez1RD70p6xD/KbqEmupvkxYEhAyaFfjuSEPo
+         iQUkeMY+VVGeRj1g727hc77L/qLoy4sCzyYAN/Nl8xxv2lnO2YFqPL7ymDcuEqGsOj2H
+         /5Q+mcwZNn3mqOtlkftlcQ3mR2eC6wFvN16j7jifXV20PRRb5+mQF9zrbV124F/Z7Msp
+         YgJg78S4Ve0Sb0Wk7Q0VIRHlrUSt9aywenpGovQkLawnouGBplusluFSdlGUzJcsLRIB
+         EpRg==
+X-Forwarded-Encrypted: i=1; AL+hErHOUW5OqRArPpYDSBR10IEkFgM25T1kfoHFfO/g70ftvHG901l77uIYyAkK7L/SRsIF2eoqhuHmS7OV0EAoja0=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+4iZjBm790eQrXG8gEDKNnOoNOeuEbilZ9hlmKXkA0LXEv5h2O
+	EkuRmKmW2ewRgonkic/sBu0YDTOGD+rOEGh8384STPIWaLCbrrenb5r3AdmExGNEoBA23AeTcy0
+	96FMWDR/wh6YDWcA8TYS09BRVZSO0dO0=
+X-Gm-Gg: AYBFou2A3mAXsFBTFQfYCalaWkTXlySRybA523V00PYJbRmZN+cUZIQ5hM3Jl96vbCK
+	cOatuziQlB7W0RfaWm4yyVgNuc0wSNi+Jafjq0vykKLLDczcEUP74MUOoaYolWorbzyk279jhsi
+	OhFiJFrsu2uXtjkmylTwFV5nzO3lubq5uiFhhJEIBapYpg8R2ySdTS/V8y1WRKvJyzr7rquunjB
+	DBtX77NW0dAoQybcUaGw5rG5HdbtnCestPVni0KCNCWE2Tli6awRgdjd/mgjPIFQZfnlwN+ImEQ
+	GEpkdDQkSulpo8016h2CTMbchsBMQSuxs/0x1van13dSoQkb1n09Xi1SpMjRxqt61i6OT6QnN0c
+	YvWjhGaBZf7nr8a5Mf2iIurGGDv5CugftkC8SKNDrtUwSH2fG1urBPDVKAKAjIbCUaZm02Q==
+X-Received: by 2002:a17:907:6d11:b0:c26:2a2:b91d with SMTP id
+ a640c23a62f3a-c509612a23fmr694079266b.6.1794754848470; Sun, 15 Nov 2026
+ 07:00:48 -0800 (PST)
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -104,121 +104,141 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org> <20261115-work-ovl-d_real-v1-1-ca155efbcb2e@kernel.org>
-In-Reply-To: <20261115-work-ovl-d_real-v1-1-ca155efbcb2e@kernel.org>
+References: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org> <20261115-work-ovl-d_real-v1-2-ca155efbcb2e@kernel.org>
+In-Reply-To: <20261115-work-ovl-d_real-v1-2-ca155efbcb2e@kernel.org>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 15 Nov 2026 15:54:26 +0100
-X-Gm-Features: AclHuK8KXHVL-duO-F-YZ8XPwW63n9hxew9z3khJWwo4KtxA0bTnHEz-HW4OPxU
-Message-ID: <CAOQ4uxhkqQE+ONrcgJNw2Jah59bKruxUAsLohTtKnsgTVQBw-A@mail.gmail.com>
-Subject: Re: [PATCH 01/13] ovl: don't warn when the lazy lowerdata lookup
- fails in ovl_d_real()
+Date: Sun, 15 Nov 2026 16:00:36 +0100
+X-Gm-Features: AclHuK_wHYShIpzO3KRe2QttGftKj9EtJqTGjYXExDCpgXdtVHvMQ3jGuPVE7gY
+Message-ID: <CAOQ4uxjoHbevvu8auB4m8AVcY9H6uHdDAP6mfi9OOMh+3775xA@mail.gmail.com>
+Subject: Re: [PATCH 02/13] fs: add d_real_data_inode() and d_real_metadata_inode()
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Chris Down <chris@chrisdown.name>, 
 	Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
 	linux-trace-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-mm@kvack.org, 
-	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
+	linux-security-module@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Sun, Nov 15, 2026 at 3:02=E2=80=AFPM Christian Brauner <brauner@kernel.o=
 rg> wrote:
 >
-> ovl_d_real() looks up the data of a metacopy file in a data-only layer
-> itself if nothing has done that yet. If that lookup fails it WARN()s and
-> returns the overlayfs dentry.
+> Currently, d_real() can't fail. When overlayfs fails to look up the data
+> of a metacopy file in a data-only layer it hands back the overlayfs
+> dentry and callers silently work with the overlayfs inode. That's more
+> problematic than current callers realize.
 >
-> Commit 42dd69ae1af4 ("ovl: implement lazy lookup of lowerdata in
-> data-only layers") assumed that the file would be read before
-> trace_uprobe places a uprobe on it so the data would be there already.
+> For trace_uprobe and bpf's uprobe_multi it means uprobe_register() fails
+> with an -EIO that has nothing to do with the actual problem. For IMA it
+> means the stacked change detection is skipped and for IPE the file is
+> evaluated against an inode that has none of the properties of the real
+> file.
 >
-> But nothing actually guarantees that. trace_uprobe takes the path from
-> kern_path() and calls d_real_inode() on it when the event is created and
-> again when it is enabled. So a uprobe on a metacopy file whose redirect
-> points at nothing warns twice:
+> Teach d_real() to fail and teach all callers to handle errors. This adds
+> two helpers for the callers to switch over to:
 >
->   ovl_d_real(/f, 0): real dentry not found
->   WARNING: fs/overlayfs/super.c:79 at ovl_d_real+0xc9/0x210, CPU#2: sh/27=
-9
->   Call Trace:
->    <TASK>
->    __trace_uprobe_create+0x1869/0x25b0
->    trace_probe_create+0xcc/0xe0
->    dyn_event_create+0x46/0x70
->    create_or_delete_trace_uprobe+0x3c/0x70
->    trace_parse_run_command+0x1a6/0x320
->    vfs_write+0x1cd/0xfa0
->    ksys_write+0x116/0x250
->    do_syscall_64+0x10e/0x5e0
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
->    </TASK>
+> - d_real_data_inode() returns the inode hosting the data or an ERR_PTR()
+>   if that can't be resolved.
 >
-> bpf's uprobe_multi does the same.
->
-> A failed lookup isn't a bug though. The data can be missing, its verity
-> digest can be wrong or a signal can interrupt the wait for the inode
-> lock. ovl_open() simply fails in that case and
-> ovl_maybe_lookup_lowerdata() already warns ratelimited about failed
-> lookups. So return the overlayfs dentry without warning. That's what the
-> WARN() path returned anyway.
->
-> Fixes: 42dd69ae1af4 ("ovl: implement lazy lookup of lowerdata in data-onl=
-y layers")
-> Fixes: 184996e92e86 ("ovl: Validate verity xattr when resolving lowerdata=
-")
+> - d_real_metadata_inode() returns the inode hosting the metadata. It
+>   never has to look anything up and so never fails (but no promises for
+>   the future).
 
-Nit: 42dd69ae1af4 came first and opened the possibility of goto bug
-and then 184996e92e86 came later and depends on 42dd69ae1af4.
-I don't really see the benefit from stable POV to name the later as Fixes
+About those promises...
 
-> Cc: stable@vger.kernel.org # v6.5+
-> Reported-by: Sashiko <sashiko-bot@kernel.org>
-> Closes: https://lore.kernel.org/all/sashiko-outbox-214581@kernel.org
-> Reported-by: Chris Down <chris@chrisdown.name>
-> Closes: https://lore.kernel.org/all/20261114120557.4bc1eb6e57218cdc@chris=
-down.name
+>
+> d_real() can't fail yet so this is a pure preparation. d_real_inode()
+> stays around until all callers are converted.
+>
+> No functional changes.
+>
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Link: https://lore.kernel.org/all/CAOQ4uxhGxpBtMZ5kfuzR1tQAewiecoX7UjXQRo=
+91QjJHH9T_Yw@mail.gmail.com
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> ---
+>  include/linux/dcache.h | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>
+> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+> index 84b0cfe4ed0e7..674bc50b81827 100644
+> --- a/include/linux/dcache.h
+> +++ b/include/linux/dcache.h
+> @@ -3,6 +3,7 @@
+>  #define __LINUX_DCACHE_H
+>
+>  #include <linux/atomic.h>
+> +#include <linux/err.h>
+>  #include <linux/list.h>
+>  #include <linux/math.h>
+>  #include <linux/rculist.h>
+> @@ -660,6 +661,49 @@ static inline struct inode *d_real_inode(const struc=
+t dentry *dentry)
+>         return d_inode(d_real((struct dentry *) dentry, D_REAL_DATA));
+>  }
+>
+> +/**
+> + * d_real_data_inode - Return the real inode hosting the data
+> + * @dentry: The dentry to query
+> + *
+> + * If @dentry is a regular file on a union/overlay, then return the
+> + * underlying, real inode that hosts its data. Otherwise return d_inode(=
+).
+> + *
+> + * The union/overlay may have to look up the data first. This can sleep =
+and it
+> + * can fail, e.g., because the data is missing or because its verity dig=
+est
+> + * doesn't match.
+> + *
+> + * Return: The real inode hosting the data of @dentry, or an ERR_PTR() i=
+f it
+> + * can't be resolved.
+> + */
+> +static inline struct inode *d_real_data_inode(const struct dentry *dentr=
+y)
+> +{
+> +       struct dentry *real;
+> +
+> +       /* This usage of d_real() results in const dentry */
+> +       real =3D d_real((struct dentry *)dentry, D_REAL_DATA);
+> +       if (IS_ERR(real))
+> +               return ERR_CAST(real);
+> +       return d_inode(real);
+> +}
+> +
+> +/**
+> + * d_real_metadata_inode - Return the real inode hosting the metadata
+> + * @dentry: The dentry to query
+> + *
+> + * If @dentry is a regular file on a union/overlay, then return the
+> + * underlying, real inode that hosts its metadata. Otherwise return d_in=
+ode().
+> + *
+> + * Unlike d_real_data_inode() this never has to look anything up and so =
+it
+> + * never fails.
+> + *
+> + * Return: The real inode hosting the metadata of @dentry.
+> + */
+> +static inline struct inode *d_real_metadata_inode(const struct dentry *d=
+entry)
+> +{
+> +       /* This usage of d_real() results in const dentry */
+> +       return d_inode(d_real((struct dentry *)dentry, D_REAL_METADATA));
+> +}
+> +
+
+Wondering out loud - since you needed to change IMA anyway and need
+IMA patches reviews, do you think it is hard to also gracefully deal with e=
+rrors
+from d_real_metadata_inode() and not have to promise that it never fails?
+
+This question is not intended to block your patches.
+If there is a reason we should keep this promise for now,
+I have no problem with it, so
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-> ---
->  fs/overlayfs/super.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 08695a99f4f93..1985b553a47b7 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -58,15 +58,13 @@ static struct dentry *ovl_d_real(struct dentry *dentr=
-y, enum d_real_type type)
->
->         /*
->          * Best effort lazy lookup of lowerdata for D_REAL_DATA case to r=
-eturn
-> -        * the real lowerdata dentry.  The only current caller of d_real(=
-) with
-> -        * D_REAL_DATA is d_real_inode() from trace_uprobe and this calle=
-r is
-> -        * likely going to be followed reading from the file, before plac=
-ing
-> -        * uprobes on offset within the file, so lowerdata should be avai=
-lable
-> -        * when setting the uprobe.
-> +        * the real lowerdata dentry. Callers may ask for files that were=
- never
-> +        * opened, e.g. for uprobes or O_PATH files, so the lookup can fa=
-il
-> +        * here. Return the overlayfs dentry then.
->          */
->         err =3D ovl_verify_lowerdata(dentry);
->         if (err)
-> -               goto bug;
-> +               return dentry;
->         lower =3D ovl_dentry_lowerdata(dentry);
->         if (!lower)
->                 goto bug;
->
-> --
-> 2.53.0
->
+Thanks,
+Amir.
