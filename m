@@ -1,47 +1,70 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794776456;
-	b=qRfKHGUtGlBKTsqpC97IIjfxR58CYhruTmnVPNo0N4u4Yp9xIwaiDp7wnMYk8ivtj9hG
-	 zyrGAdizivcT7sEnOXvF/6hUG4eayIuEk/erS9t1NAteM3ZD1mOIQOWqPga7gOHoSYzv1
-	 h60aBD0iWQxP2eZfyWOv53wMBBfAftD0ufK4IncT/5grKAaJkZQtQ+QO0a7SneKxe6DEI
-	 UC7RV9NUa6PTWTqVT7SkOzlgIMLBpBaiKXgDdNHFThqPmFLEeWyHSjLSE+oai4JlJhqHg
-	 0GzY8aXlfXI3iP4WOV3lrYDVKrUqPB+/O7P1iT5oA8lg2+ufYyN/hOpUv2M2kKGoVUQ==
+	t=1794782863;
+	b=VP6OQzAsv2GmYkn1bvLnEidxV7e2VSK3UNh2KSUuUlP4KzhN4iTu7Bdhqe4odTweIc+6
+	 CC2wuqJWFdNA4fWa7u/ILqjlp414fuLBLBQBK1uOlRF9cpXarUkG4h/+q/F0JjV84Wuqp
+	 yZpalcZXfZLREZROJ2sCcj+m7FCJxjSEEgSY+mVLsm4o0ug1PnXD2YN546nWvn0uM+v7o
+	 f71SsYX27bSsCbzWHG5gNd0iT3aruTfEX5jp3LHO5Z5KpK/gs51e1PIvxcWjalApL0ION
+	 wOQAdDeq4oIiBH4JYXOCHTtdaahOpK4ILNmcZ9chn8RoJ+9US/xyiPF+CeWLZ980OHg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794776456;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=lEm6igHXIFAAgEEuRJ/bqCUFcve2TkljyAexsixdkJo=;
-	b=2H8pfDaEXmsKlC2U2lb08m1K9ezfqQ5pD1hkVteEqiJdxFTjYqFPsO4CYkPuVZLYxRvy
-	 oZDQmxfLc7BSjEzE+36VjZvksuNiePi/zYiRHXNViElWpyI+7wVcTEOlS9ChMJkBqrO9P
-	 zOPxztEANPndFBisYEslj1N6UAd7GICzesDF/CbfBsdcviDoyrrGRf6SiSCrBioWqkJ3U
-	 lpxodnPLyGnCmPJpjMsEuNIT0ocmPJO7LWkLEkatgcPclFiBS8Fl3WgHgGJoGI3rt9xVy
-	 Fk4zZ2MlrpEJC/PrUNCCO1rDDmb1qeZO7Z3r/AIiWeLSu2cCE3jYKMa+OGn5UzwO7KQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794782863;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=vmIQUtngFlNvhyn0Se9v5OKBcLzkjaEzyL4mMCGL7iA=;
+	b=rC//sBMHJ1B48QWcoMpU8CQgeRgv+H0zvB2MGvJq3wbbgftmWrWi6OGDzBZ+cv22s3eb
+	 FMwE4/qXSXt5ntm8sw+CLghXdUQMsyppoEES6tkldkauYsrDzN/3OtQyGzeSLTstm66mH
+	 oObIGvz0qSDzEzRRyZQYR9YyJ1KJL5q28fqQff759t2T9UIcBzvFB2Jx2VN01C0AjXF/z
+	 IScasL7MRbT5O8JqxiB4CPNsJ4gOO74iGTke+dQzX8ALZFseorJL1rpXz3PZpVetVzWVQ
+	 etNpBilgb53yLCiIrOnlmeqtnqeVRgrqOajTg3YwQw4h6cieHj9I34cCdSLpT5ePFKg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fTFSmfz6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="drQzCY/z";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C50E606A31F;
-	Sun, 15 Nov 2026 21:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id D5FEC606A323;
+	Sun, 15 Nov 2026 22:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fTFSmfz6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B04B61F000C8;
-	Sun, 15 Nov 2026 21:00:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=drQzCY/z
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E90411F000C4;
+	Sun, 15 Nov 2026 22:47:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794776455;
-	bh=lEm6igHXIFAAgEEuRJ/bqCUFcve2TkljyAexsixdkJo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=fTFSmfz62R/xzgkMpYRbTZzSO1fAaOTf4jflJ+BI1Scxj9kPgQQRUJh5ePp5hBeOu
-	 +Bd9/jFgUX/Vr3SrSaL7NiWng2cleM7I5eVUET0CxCOxtD3z3JtobCtoEK1uZsrk9O
-	 iAGU9e2NNbHTnHUUm1WhpTgrGJI9DxfNtXj3ZbOqcBeV+X0YOubFg16rMVAG4n816S
-	 meAMgeXKPUTzQXxkWxbQZTL7zIU7+61yO8ddDum1vZdciy3700YyDsvoCC6X0U8Z75
-	 isgWalRVkoXJWNKjU4wQOTcFTO3/feMNx7FHCW3f8rR417/NwmEPrn+s1XJbm2eRIP
-	 zaZrd+FRk8kcA==
-Message-ID: <4e9a39ac-9ad5-49d8-b0c4-09e665504609@kernel.org>
-Date: Sun, 15 Nov 2026 13:00:55 -0800
+	s=k20260515; t=1794782863;
+	bh=vmIQUtngFlNvhyn0Se9v5OKBcLzkjaEzyL4mMCGL7iA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=drQzCY/zcArnVbkrH5ozxrhbHxqvht7G5xLpBAoI+YzqGK+JcpE/xcvkqSmbKVfaX
+	 hUknJ2m/scdAQ1vGQrUQcbTAlzt8mA9/4MypJ/z8/z6ydej3XdsKgsnEg/DGjm8FJR
+	 xgAk60otF/V76ETgpC2RHPkqLfV0Juhyenbzi9XAHy/Ng/xU7etn9PQXycThvub3D1
+	 MVacsJulj5FAsIQT8lsvz0zGk+32N7RriJpbC+V6dp+FKHuO84wRbfBl4y0T/VK4pS
+	 0aI3Y18+YEh+BLJ3LSqlxVJJB+yz1LZap90XZ+JlCt9yZG4YA5pOzEKc525Dq3yi0/
+	 eiNJbwFYvbZCg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Alec Brown <alec.r.brown@oracle.com>,
+	"Daniel P. Smith" <dpsmith@apertussolutions.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	James Morris <jmorris@namei.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan McDowell <noodles@earth.li>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Ross Philipson <ross.philipson@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/4] tpm2-sessions: Drop TPM2_NAME_SIZE
+Date: Mon, 16 Nov 2026 00:47:19 +0200
+Message-ID: <20261115224722.1450498-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261115224722.1450498-1-jarkko@kernel.org>
+References: <20261115224722.1450498-1-jarkko@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -51,97 +74,74 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/13] ipe: handle errors from resolving the real inode
-To: Christian Brauner <brauner@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
-Cc: Chris Down <chris@chrisdown.name>, Miklos Szeredi <mszeredi@redhat.com>,
- linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-mm@kvack.org
-References: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org>
- <20261115-work-ovl-d_real-v1-8-ca155efbcb2e@kernel.org>
-Content-Language: en-US
-From: Fan Wu <wufan@kernel.org>
-In-Reply-To: <20261115-work-ovl-d_real-v1-8-ca155efbcb2e@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/15/2026 6:01 AM, Christian Brauner wrote:
+TPM2_NAME_SIZE was left to include/linux/tpm.h when the base definitions
+were consolidated. Switch struct tpm2_auth to TPM2_MAX_NAME_SIZE and
+convert TPM2_NAME_SIZE users to TPM2_NULL_NAME_SIZE, removing the
+redundant TPM2_NAME_SIZE definition.
 
-...
+Cc: stable@vger.kernel.org # v7.3+
+Fixes: 88c5a62c3af7 ("tpm: Move TPM common base definitions to the command header")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/tpm-sysfs.c     | 2 +-
+ drivers/char/tpm/tpm2-sessions.c | 2 +-
+ include/linux/tpm.h              | 8 +-------
+ 3 files changed, 3 insertions(+), 9 deletions(-)
 
-> 
-> diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-> index 4a7be96c84f03..3751963509df4 100644
-> --- a/security/ipe/eval.c
-> +++ b/security/ipe/eval.c
-> @@ -102,7 +102,11 @@ void ipe_build_eval_ctx(struct ipe_eval_ctx *ctx,
->  
->  	if (file) {
->  		build_ipe_sb_ctx(ctx, file);
-> -		ino = d_real_inode(file->f_path.dentry);
-> +		ino = d_real_data_inode(file->f_path.dentry);
-> +		if (IS_ERR(ino)) {
-> +			ctx->file_err = PTR_ERR(ino);
-> +			return;
-> +		}
->  		build_ipe_bdev_ctx(ctx, ino);
->  		build_ipe_inode_ctx(ctx, ino);
-
-
-I think we only need to change this part like:
-
-	/*
-	 * If the real data inode cannot be resolved, leave the bdev
-	 * and inode fields unset so the file is evaluated without
-	 * dm-verity/fs-verity state.
-	 */
-	ino = d_real_data_inode(file->f_path.dentry);
-	if (!IS_ERR(ino)) {
-		build_ipe_bdev_ctx(ctx, ino);
-		build_ipe_inode_ctx(ctx, ino);
-	}
-
-
-This also avoids the missing audit issue noted by the bpf bot, and we
-don't need to add file_err to struct ipe_eval_ctx.
-
-With the above change, feel free to add:
-
-Acked-by: Fan Wu <wufan@kernel.org>
-
-Fan
-
->  	}
-> @@ -335,6 +339,15 @@ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
->  		return 0;
->  	}
->  
-> +	/*
-> +	 * Without the inode hosting the data none of the properties of the
-> +	 * file can be evaluated. Refuse it unless IPE is permissive.
-> +	 */
-> +	if (ctx->file_err) {
-> +		rcu_read_unlock();
-> +		return READ_ONCE(enforce) ? -EACCES : 0;
-> +	}
-> +
->  	if (ctx->op == IPE_OP_INVALID) {
->  		if (pol->parsed->global_default_action == IPE_ACTION_INVALID) {
->  			WARN(1, "no default rule set for unknown op, ALLOW it");
-> diff --git a/security/ipe/eval.h b/security/ipe/eval.h
-> index b26d1147d0708..58ca50987b2b5 100644
-> --- a/security/ipe/eval.h
-> +++ b/security/ipe/eval.h
-> @@ -42,6 +42,7 @@ struct ipe_eval_ctx {
->  	enum ipe_hook_type hook;
->  
->  	const struct file *file;
-> +	int file_err;
->  	bool initramfs;
->  #ifdef CONFIG_IPE_PROP_DM_VERITY
->  	const struct ipe_bdev *ipe_bdev;
-> 
+diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+index d915307ae833..0f726cf65189 100644
+--- a/drivers/char/tpm/tpm-sysfs.c
++++ b/drivers/char/tpm/tpm-sysfs.c
+@@ -318,7 +318,7 @@ static ssize_t null_name_show(struct device *dev, struct device_attribute *attr,
+ 			      char *buf)
+ {
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+-	int size = TPM2_NAME_SIZE;
++	int size = TPM2_NULL_NAME_SIZE;
+ 
+ 	bin2hex(buf, chip->null_key_name, size);
+ 	size *= 2;
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index 9608e545602c..94c11135beb3 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -137,7 +137,7 @@ struct tpm2_auth {
+ 	 * we must compute and remember
+ 	 */
+ 	u32 name_h[AUTH_MAX_NAMES];
+-	u8 name[AUTH_MAX_NAMES][2 + SHA512_DIGEST_SIZE];
++	u8 name[AUTH_MAX_NAMES][TPM2_MAX_NAME_SIZE];
+ };
+ 
+ #ifdef CONFIG_TCG_TPM2_HMAC
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 0db277af45c3..84c8fe226235 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -94,12 +94,6 @@ struct tpm_chip_seqops {
+ /* Fixed define for the curve we use which is NIST_P256 */
+ #define EC_PT_SZ	32
+ 
+-/*
+- * fixed define for the size of a name.  This is actually HASHALG size
+- * plus 2, so 32 for SHA256
+- */
+-#define TPM2_NAME_SIZE	34
+-
+ /*
+  * The maximum size for an object context
+  */
+@@ -166,7 +160,7 @@ struct tpm_chip {
+ 	/* saved context for NULL seed */
+ 	u8 null_key_context[TPM2_MAX_CONTEXT_SIZE];
+ 	 /* name of NULL seed */
+-	u8 null_key_name[TPM2_NAME_SIZE];
++	u8 null_key_name[TPM2_NULL_NAME_SIZE];
+ 	u8 null_ec_key_x[EC_PT_SZ];
+ 	u8 null_ec_key_y[EC_PT_SZ];
+ 	struct tpm2_auth *auth;
+-- 
+2.47.3
 
