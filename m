@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794918904;
-	b=gVGVg6hMynZ2OkIBULuGLIHuNQyRO2mUnHTdv0VG9GJF6XUMyiFwG1lgZWL9kdjTVcyk
-	 JZE3sG+E+lWZAGmLrOdJ1X8Abv78mqka6rwSX+Uj79pYFeapw/br3xZyKQ3sMYS8TylGr
-	 CJ3VYR7o2XbSqDw3cNV4KlcsztA3vcE3KhmNoHcRc+CUjsUxSuAq2fuLbmPnj1wQJC7L5
-	 8819d2Js0DP5o6nDDf2O0UbcqdUeZdUNpO3xs/KElqzCMD8O26XlmdZx/nFL8u+DGdcnT
-	 PfEuSRj1OiwIeCcxizcr/eLKi8IwhiUWa3Adw4wJ7+CcMzADZGRl8QyVJsAIiACbBJg==
+	t=1794919086;
+	b=hJlWAgZwnhNmTweGUksVyezP7CM0CGqLCmSkzUIZsYp7LjNUjX1UPbCVk0JwVu4RltQA
+	 hzbyakM/8TqUfBDHxWfr+VpXY/NMCrDjGendbAvWdt/I+J285e6pV3oF6fwe7h2nxpPLh
+	 VZ7BypzcBQHtrysvmL5v3spxusZ/GonHxxrb5UgEbPJ313Fkmn53oVgYcW4YQ+VzdGjua
+	 NiOjxqAQOEAALB/l/e2CCQDgrZgtMxyayeKs1EmGiOF7VSCoJEau8aQXTWAo/o/gVE9PB
+	 cMPjRjqGiq5TzN2+pafm86JqgAALBJLiLlFu2em17qIZXgb74eC1n5lCCkLmvl6CltQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794918904;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794919086;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=DwNMiD1mt8wNJhdYDB5v0+WOkSAHN5ASRcYPM0VYogQ=;
-	b=cpKfEcalhMuxjJajph7KoXkbVo6u/lCTidaKRUZlVZT23USu5zk91sdHAG4Zxtq7rz2+
-	 +fWnTsirxax3CxATRREOj/JyPGoCVEJ0LNEDvs5JS9cmZtRDa1BHH5TMAyNLNWG6mBT4K
-	 EZE57JpHnyu6HhJvJMjSXtfBNQkVQQgApCVtpy4xqVfmYs91nEec7qAFKion3IAY4cF4B
-	 tRpAUAKK5UVyJEKRWGyqKql3rtWnQ9j1TISm43SWt2fuD1tu+6Rzoq/W99Pi6F9T6sQug
-	 m5E2LPPDQZM7bmWzg5s9H2dZCxcDz3ZV0DNoN3DoSkMrFaDVJRweyvSqjgmt0ybZWzw==
+	bh=O3Eobrwyq5oOakeAIYkUyc+GNwviFP9RCRghw5eCfbo=;
+	b=Iw5c6kELl+ACMUHsHSIIPturJsqMqAUuqP9xjPeh6iQjVjuaojX/euDeoFLmfMAU1QHJ
+	 yMyvI4I8VhUbxg0yl53zy+Uk2UvGxiFXC+yD2Jf9njCXqIGIgxr8oUnMM88xMlIKLgv7k
+	 GV/ldEykTKrL1epNkNa7jeb4FjttLJa7R/xmaACEPZT0h9kTwG3gC5R/Dc9UYbXJK0MI4
+	 8boYO46F6Fb9/AL/nBfKA7yOjFuNG+89UClfhxKrXlSlrMaY0sLjgojfhiOYTzNEnZS6X
+	 jSugzMm8p6d2UbzXkUkY7i/zuAP9aiSZZme8zQwNQuZd/wPyTgfQbIsf6L0FrwxpaUg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="aV/RjyD3";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R7fOeIOI;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 9BBB8606A31C;
-	Tue, 17 Nov 2026 12:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 69551606A31C;
+	Tue, 17 Nov 2026 12:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aV/RjyD3
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A7B3F1F000C4;
-	Tue, 17 Nov 2026 12:35:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R7fOeIOI
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B754D1F000C4;
+	Tue, 17 Nov 2026 12:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794918904;
-	bh=DwNMiD1mt8wNJhdYDB5v0+WOkSAHN5ASRcYPM0VYogQ=;
+	s=k20260515; t=1794919086;
+	bh=O3Eobrwyq5oOakeAIYkUyc+GNwviFP9RCRghw5eCfbo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=aV/RjyD3docplm2Ps767K6vpqBSGwAouRbESZWLZ32z2I6dBCiYF2KaCxPUMTbCif
-	 0aY6yyEXISOTVV/VZFhCrPoRPjeiE9o/8bIJOPSPQZEQUqo1WX2BPiYLkBt8KSTtMH
-	 24Bhv+HAYi9/U2QznKnP00m+qY8BGHTaitzHigUJQRfoqLOwE4UIfLNJaI5kKEYWlW
-	 bHwXs+bCl3PW9TUE8KdQq8GeqkDUvfojckr4gvyzOXIWr0oZ090wySSH9zQdOJKEJh
-	 UFrclnPOSzV2Heb3NGOR8iKkIZJCsGWzdVA67yh2FS74WBmurdS7arZGPGMUtWQFox
-	 tiRtQ/4WhD1pg==
-Date: Tue, 17 Nov 2026 14:35:00 +0200
+	b=R7fOeIOIRPoY8+oP7zpF/On0647DP/j0922IzQS0EGdYL7zviM3kw2GpZmpgSM4MH
+	 xqMr4EnOqxDCoVs7I5IpabgXmVCB593y4wvmknU6ssJc5hMgA8pHdxhnTgyhrU4A+5
+	 JFs3VjlHQ9F5qxJoW2/sFS1KlV2d91w9yfbTBx88kZo+4Oi3RFs3zDFkBN5OzjT6D2
+	 Vp3WEA+o5Ce3NmNgpGkgg4Ao1lSVo3wDQRhpYtzjmVqWMX+nK62RMuy50NbWYpaQs3
+	 Nm++vzc+Q4THgxLWfn5GOSxG7FoEVBaE3yFe1Ez4kgz5c/KBZKxUgo8fI8/sHRkK9V
+	 GGLaP1WTFQrkg==
+Date: Tue, 17 Nov 2026 14:38:02 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Rustam Mustafin <rmustafin@cloudlinux.com>
 Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
@@ -49,10 +49,11 @@ Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
 	stable@vger.kernel.org
 Subject: Re: [PATCH] tpm: track the response read position internally, not
  via the file offset
-Message-ID: <avxJ9MxZ0PoWbQTc@kernel.org>
+Message-ID: <avxKqn-PlzJyxVdK@kernel.org>
 References: <alvD5nOP15O5B8Ai@kernel.org>
  <20261117104838.2650999-1-rmustafin@cloudlinux.com>
  <avwzid1Ovl4ACkaQ@kernel.org>
+ <avxJ9MxZ0PoWbQTc@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -64,21 +65,27 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avwzid1Ovl4ACkaQ@kernel.org>
+In-Reply-To: <avxJ9MxZ0PoWbQTc@kernel.org>
 
-On Tue, Nov 17, 2026 at 12:59:25PM +0200, Jarkko Sakkinen wrote:
->  ...
+On Tue, Nov 17, 2026 at 02:35:04PM +0200, Jarkko Sakkinen wrote:
+> On Tue, Nov 17, 2026 at 12:59:25PM +0200, Jarkko Sakkinen wrote:
+> >  ...
+> 
+> I think this would be more feasible:
+> 
+>         if (current->flags & PF_IO_WORKER)
+>                 return -EIO;
+> 
+>         if ((current->flags & PF_KTHREAD) && current->io_uring)
+>                 return -EIO;
+> 
+> I.e., block io_uring entirely.
 
-I think this would be more feasible:
+And kselftest can then be extended to address this case (as a
+separate patch) making this two-patch patch set.
 
-        if (current->flags & PF_IO_WORKER)
-                return -EIO;
+Short summary would be e.g. (or use your imagination):
 
-        if ((current->flags & PF_KTHREAD) && current->io_uring)
-                return -EIO;
-
-I.e., block io_uring entirely.
+"tpm: Do not allow io_uring for /dev/tpm{,rm0}"
 
 Br, Jarkko
-
-
