@@ -1,102 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.178
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794850321;
-	b=xPfYFbB1Lg28qadYNt44J+SP8qI4jOMaxGLRGG+L0SIkMS8lD+4pF93Exo4WQQdaSoll
-	 t9BE+EDbW2pkS3ZBPsK22l4wvEw38TT2P6sByoBZ44YkHfdlKi24v57YF6UDfidIYkKyK
-	 8KhdH+GFOuI+jPhGJCljZvdniljFSnVXTWHvCDnb//nVCiIaTrNWZO+ZWceGY7zBmF5fc
-	 Y+L+5VWKhoVnVrECwdCZEzPiDkrpTCQUEzKsUdwUCgn/GgP61DaxUi+5z2IF4psMyXN46
-	 TSlggWiJtCoCCK7Ii0QL/JCBxvduX1/XVxJ2ZYIucBHMS5hSGBtzZ6nBmP8YpiHJj8A==
+	t=1794912531;
+	b=gUanZhu1HZmAegNjcQYxBY3ymIIccpCeWs3jQ47pcnSO/7j/05AlUOKwDeNkX03B4gHh
+	 1WD4lS6vBXMBWvL+MOFcONcfd6fPr12VdH+ZhjigAY4wnGZyWw4xXnirs+I28Al3/prqu
+	 C3ukt2YT1r4HVd2GLrj0cz3D7cG2O1eZ4EdJtbZ0le7TYpXM8O75UPNdcNFscftOquAaZ
+	 bVkYSPOQcbQXB7ufBs67YbkkPgs0fH3oSeez7HmGv7RmUTKATCU8jFGWOU9Nau3DZZmmy
+	 YnW7ySRrJ5H0UjtppD4XBnjC1pBAV1adCre5xwJP1KuMvZtWSlJm/8e/lQrUa2faRwA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794850321;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
-	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
-	 MIME-Version:User-Agent:X-TM-AS-GCONF:X-Proofpoint-Reinject:
-	 X-Proofpoint-GUID:X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=a+KpZeppcL0h3A/NiYESCTD3zYkLvfoDHcGbKEQvCZg=;
-	b=UNiZY09NHtXmsLP5D3Sba8n/Q+n+ejDHuXe8TbYFaKc/0F/lkYAba6fQimToFVSuoWJt
-	 ESinxr4sekAYweHXQnknAOOn8at8TryKYh+kIfHRQdiD1fk52D+Vic48tmFmoz23uaUH0
-	 kdz492OKi5VOrZ3mr9yzTb+M0KS3YovXh3CvYVfkf+9g/p7TwK2HAQMSVxtwilpu337Tz
-	 HbyMc4nBOwjO13upbNaImDI1J0y+/h0a9lBy74T0niSreJipz96nIRRBAtK7xEhf6P9oC
-	 rWsiFa8rPMDlSgbCixLxjZkV96Vy3H+1ctLBX5BwdWbN7nApZ42MSASFw5ra5Ksszkw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794912531;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=jow4/NJXPlMxTDwWdHpqgFrgbPhIO+nXQtLiDfMR1tU=;
+	b=HsMFN8eqxkP1kyUYfb7WlLg56Q5BZysxTLQwN6q7qLASb0A/yfh3zpNPAS2Lf0Jmc9Ff
+	 rNLU1m7MIkoXF5Zpr9p3AhE6AWNZkPB6fmwXmbV4P/dBHRyv+kdgMaunWA4gs/FTSKYc4
+	 lnCvFfoN4iGLE/rvvo30c1+4OGGPoeWKNWJ5AaOzJ8mGvF0VXgWkOrj0O81CXocYNpGWN
+	 v/Mvq4xS7cNFoMWNXkrVwqlcwx6WO/r7O1M33nnOrbNUjKNqPGxsp6/qd1sY/bEnaGxX8
+	 jnYwLF20CyVEi9yP574fq1j1zqYZ6tg05zQrE5jKOQgZG4LoDsC7iADwpEfNMu+6IAQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.ibm.com;
-	spf=pass smtp.mailfrom=linux.ibm.com;
-	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=PHilDGng;
-	arc=none smtp.remote-ip=148.163.158.5
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=cloudlinux.com;
+	spf=pass smtp.mailfrom=cloudlinux.com;
+	dkim=pass header.d=cloudlinux.com header.i=@cloudlinux.com header.a=rsa-sha256 header.s=google header.b=jbp6nkMn;
+	arc=none smtp.remote-ip=209.85.215.178
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D650606A323;
-	Mon, 16 Nov 2026 17:32:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1D650606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5910606A329
+	for <linux-integrity@vger.kernel.org>; Tue, 17 Nov 2026 10:48:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E5910606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cloudlinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudlinux.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=PHilDGng
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AGGQBKB3773693;
-	Mon, 16 Nov 2026 17:30:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=a+KpZe
-	ppcL0h3A/NiYESCTD3zYkLvfoDHcGbKEQvCZg=; b=PHilDGnghmv8mW1BkhBjxL
-	Y40eFFoXnu7kdAUQFEr7V1r0E997s0UPLQuBHMqSHvfHgbLF1nGwURZyUmXVAS79
-	Pb1wkrAQ2uTq2gcOuK0ez/DJv4QCTg1JShOu8qpL6D34f7NqeVS36+R7txGvsXMq
-	kcrm/yHoq6VYngUTNUiAdP6ML7JIKK+XiYq3dg0iBd9bP8ZwihopBZsmilJiAyRS
-	Qn/PF5DpRDF+Sr6M3BveBUa+yWc9sAYWJ0oSl5MOb4HwYXtYAs5p5/EZvrPzwgRD
-	gDmM2k7OwnbWLs+TOsPtPLsrT6dLHucQOeFxLDjIFxwrljCaRXu1RMDiWC5azdBQ
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hxf9ve6dk-575
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 16 Nov 2026 17:30:21 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6AFBo6xq781221;
-	Sun, 15 Nov 2026 12:17:46 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4hy2yjgc7n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 15 Nov 2026 12:17:46 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6AFCHkFj22151770
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 15 Nov 2026 12:17:46 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 64B9058053;
-	Sun, 15 Nov 2026 12:17:46 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 115EB58043;
-	Sun, 15 Nov 2026 12:17:45 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.95.218])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 15 Nov 2026 12:17:44 +0000 (GMT)
-Message-ID: <93cd2ed8c7b004898084742f28622d977f026b70.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 3/3] ima: clear kexec state when replacing file image
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: =?ISO-8859-1?Q?J=E9r=E9my?= Jean <Jeremy.Jean@oss.cyber.gouv.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He
- <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>,
-        Pasha Tatashin
- <pasha.tatashin@soleen.com>,
-        Pratyush Yadav <pratyush@kernel.org>,
-        Roberto
- Sassu	 <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, stable@vger.kernel.org
-In-Reply-To: <20261112125246.2715174-5-Jeremy.Jean@oss.cyber.gouv.fr>
-References: <20261112125246.2715174-2-Jeremy.Jean@oss.cyber.gouv.fr>
-	 <20261112125246.2715174-5-Jeremy.Jean@oss.cyber.gouv.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 07:17:44 -0500
+	dkim=pass (2048-bit key) header.d=cloudlinux.com header.i=@cloudlinux.com header.a=rsa-sha256 header.s=google header.b=jbp6nkMn
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-cc4aa18f9afso1970334a12.3
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Nov 2026 02:48:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudlinux.com; s=google; t=1794912530; x=1795517330; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=jow4/NJXPlMxTDwWdHpqgFrgbPhIO+nXQtLiDfMR1tU=;
+        b=jbp6nkMn3Sl5/l4KnQ/hOPVilhm8/tredrSh9cE+mITEKvqCj+pGhcWraU2Z4Lymme
+         XQJAGKiA3y3AYvT8LHXNFQYivJOstSYxhbDzuU1ygyKLXHLiQAeD9Gm6DtobXSVc0XZu
+         4wb7OwiZjU+DgDp3YDXg6ob0FYtrwKCFVjjAs/lKLrte88fmY1pgBuFsWSSpqTWb0ddp
+         3L4yRu+5nXRg38a28tUpgANDKOQXQcvwvdp53RuGTcFmY9TqmHcJ1KBShagqBIOuvS45
+         GdEV27Kq78inM40Q4HNz8CdbscUBvgRlinI2cnehJn2fpTymEymSVqLm+FZlzZ++qPms
+         Oo3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794912530; x=1795517330;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=jow4/NJXPlMxTDwWdHpqgFrgbPhIO+nXQtLiDfMR1tU=;
+        b=eOVcgeY7rr0n7Qt5DDJFg0YaiNcEN6G+frkpjXn9vmF3+NAOlklYlxGMRyfQQ8qrmQ
+         4PZ247xTyoypbDdjbl/RGi8vVN+TI2hqZAteRM+HSn8OQwEdx0Cp4zA1yclJo5B5ehM9
+         K/O4yMrdrKbBLSHDZ5rtXuoNn4NN7p5G1jPiL6dumybD4b6H6Ox1dOvnj3I14nIWtkLz
+         5fOFV7lbiezUnzM4pww+PEcXWM65wpdpd1WdtsA5eKX2uGLuyixfRCGP3P839LBRxBFL
+         vIifPWf0cl7es503zgFz0vchAQP0M32g1Dpv61UFT0TiJDxM3ik/QO0oxFl9arnlgPZ4
+         pTvA==
+X-Forwarded-Encrypted: i=1; AL+hErGDy840g1JTGWJtneUjm0s8xGlM8IKfruTIeTGhlO6JuJzQuN8MNo7W1OzNxH7Pfe1CTaOlSAcbCOanBhTllko=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+EfMQA6XSq60Cd2OdZjTQ4I+6G4MTPxsq1U30nJivWfgmplF5v
+	PpHAV9YEsTsudKfWfRvY3Zqe/20rYZLK7EJzfFTFOk8v4F5xx84HLeLhJpnpPCkldvM=
+X-Gm-Gg: AZFdTZdiEbhcvc2i2A2lowQOqS/SC/TJYibR0YNUN9RcvIaOCYp43rvzR4z7Z+RMmIU
+	qJCkvY8NLLVIOeDwbAJe1adSPqQmVBsfutZx1PIExm7/qYVq868Jce4bXvRaWWQooKlQMVBnWqk
+	g8J0b565n0GwkLv8+QOgcbGz45bEoSIJFQ+mDshYFDOefSZtbgcd3xzm46MpE45B3EkfOd8dxYP
+	aPaefSobI5MaDoaD/hXwL00JmmmpX36pKEkVkptx860tZfrpi7BAcO/2EuZ73zSyYXN6jUBaJVK
+	vccOytungyfUeJ0O0PjTGMiTn0qqgt8n+U9Yn1hrfIwYhR1ExmGUN/OHBagoIZmR1YYkJZKvGvC
+	QoyFhY124Y2wk0I88OYY1b8djRokOIyHxNGjAqBmmnNda8EGTB9D45jlkyE0/sKPA4oK0w7qgO/
+	k4M5bRn14NVNXDzDw4+hGyIjuSUe/ThwYI7CVyfpo+GuuLFMd2MZt9PtP2sr0mmQ1hxTsRAvLv4
+	y6wvGOrDORmmfn5J2nfJr1zrpYrDYsLpT2WVPFvlxJVp+S8znM54RMcKPISUIACc8Kxl0n+tW36
+	U7YlU/p/9JtBO2czSJLzLons62yXLGab4DbQ
+X-Received: by 2002:a17:90b:1d03:b0:3ac:c005:cf07 with SMTP id 98e67ed59e1d1-3b1b0b47a08mr12777836a91.42.1794912530250;
+        Tue, 17 Nov 2026 02:48:50 -0800 (PST)
+Received: from rmustafin-laptop ([27.79.41.63])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cddc13275cfsm5904135a12.0.2026.11.17.02.48.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Nov 2026 02:48:49 -0800 (PST)
+From: Rustam Mustafin <rmustafin@cloudlinux.com>
+To: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+	Jaewon Yang <yong010301@gmail.com>,
+	Tadeusz Struk <tadeusz.struk@intel.com>,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rustam Mustafin <rmustafin@cloudlinux.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] tpm: track the response read position internally, not via the file offset
+Date: Tue, 17 Nov 2026 17:48:38 +0700
+Message-ID: <20261117104838.2650999-1-rmustafin@cloudlinux.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <alvD5nOP15O5B8Ai@kernel.org>
+References: <alvD5nOP15O5B8Ai@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -106,81 +103,102 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-GUID: AA8kf3Ywixs2hpOKyns0HrNznCdx5sw5
-X-Authority-Analysis: v=2.4 cv=dtxOmFg4 c=1 sm=1 tr=0 ts=6afb3dad cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=VwQbUJbxAAAA:8
- a=j6353hJr_xf9VQ38shYA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE2MDA2OSBTYWx0ZWRfX4iCfsz5fwoDm
- D0udGNqsSjOH11XRhnoyxUj7ogAXgm8g3cJ73mtre5O4hm6tofDRX6tLkD+0SFDU7pM+F3lF8/w
- 7oyhLssgYFc8wc5NYrLn/p8nKPzzd0rMQU5k3UtSLhoCVP3zqj5D1uwFLHKdqLlrKoLtb0LW1ss
- YvWPeAwN+cw7YhTKGqoRMEdLPfdmD7ttGX6Z1eczOUwDNLDYeT0YpKnVvRdU/TQaZhb9lD8NDJ1
- IYR8hl7/beDgugsMbjOAI15O1CubGQ7esmsPrX0NFvi6i9ChU4vHxj1Hbvgkec0L5W0O54qxakW
- 5cDBZ/heGQjv6uzAPAwC5k6v5Bf4D8xnqjK173OiZRiO5IKpya0F05Vs9MpO0uCy+JuCZKwk0Gt
- VmQ0ARvHAJ0deer3bq9TvfYTBp2LnBVmF4lMo9SVFshWeTRKKitpVnXOFLtzm6jdXfyviSpHTjp
- JjV0hcQ/EgNvZtfzj/g==
-X-Proofpoint-ORIG-GUID: VR-E2jzzkvwbyAeeeDKyPu_dOrjzRJZT
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE2MDA2OSBTYWx0ZWRfXwC/7sRvkiI5U
- T0baiM+IFsEvJOtCG8Kltha4V6prZvi6jnLpz7N24myVbAZZpoEG45Mykz5dV9LaRVPv7AXuGlA
- 7Ms5arn4v4I7qaixvI6ZJevbUQx4IXM=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-16_05,2026-11-16_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- spamscore=0 malwarescore=0 phishscore=0 clxscore=1015 adultscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611160069
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2026-11-12 at 12:52 +0000, J=C3=A9r=C3=A9my Jean wrote:
-> ima_kexec_buffer remains mapped to the IMA segment of the installed
-> kexec_file_load image. KEXEC_FILE_UNLOAD and a successful normal
-> kexec_load can replace and free that image without clearing the mapping.
-> Executing a later kexec_load image can then write the measurement list
-> into the freed pages. The new image has an IMA segment size of zero, but
-> size does not establish ownership of the mapping.
->=20
-> Record the image whose segment is mapped and verify it before the
-> execute-time update. Clear the mapping and scratch state under kexec_lock
-> when a normal image is removed without another file image taking its
-> place.
->=20
-> Fixes: 9f0ec4b16f2b ("ima: kexec: move IMA log copy from kexec load to ex=
-ecute")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: J=C3=A9r=C3=A9my Jean <Jeremy.Jean@oss.cyber.gouv.fr>
-> ---
->  include/linux/ima.h                |  1 +
->  kernel/kexec.c                     | 11 +++++++++++
->  kernel/kexec_file.c                |  7 ++++++-
->  security/integrity/ima/ima_kexec.c | 24 ++++++++++++++++++++++++
->  4 files changed, 42 insertions(+), 1 deletion(-)
->=20
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 8e08baf16c2f..d61b7b7756b7 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -34,6 +34,7 @@ static inline void ima_appraise_parse_cmdline(void) {}
->  #ifdef CONFIG_IMA_KEXEC
->  extern void ima_add_kexec_buffer(struct kimage *image);
->  extern void ima_kexec_post_load(struct kimage *image);
-> +void ima_kexec_cleanup(void);
->  #else
->  static inline void ima_kexec_post_load(struct kimage *image) {}
->  #endif
+Commit f20d61c22bca ("tpm: Make the TPM character devices non-seekable")
+made pread() fail with -ESPIPE, but tpm_common_read() still indexes
+data_buffer with *off, and io_uring can still set it: IORING_OP_READ
+copies sqe->off into ki_pos without checking FMODE_PREAD, and
+loop_rw_iter() passes it to ->read(). With sqe->off = 0x1400 the read
+copies heap memory past data_buffer to user space and then zeroes it:
 
-Could ima_kexec_cleanup() get a stub, next to the ima_add_kexec_buffer() st=
-ub in
-the !CONFIG_IMA_KEXEC block at the bottom of ima.h? That would also cover
-CONFIG_IMA=3Dn, and the callers in kexec.c and kexec_file.c wouldn't need t=
-he
-#ifdefs.
+  BUG: KASAN: slab-out-of-bounds in _copy_to_user+0x4b/0x70
+  Read of size 16 by task iou-wrk-148/149
+  Call Trace:
+   _copy_to_user+0x4b/0x70
+   tpm_common_read+0x16e/0x2c0
+   loop_rw_iter+0x235/0x5a0
+   __io_read+0xc6e/0x11a0
+   io_read+0x8a/0x180
 
-thanks,
+Keep the read position in file_priv, protected by buffer_mutex, and
+ignore *off. This also closes a race where read() samples f_pos before
+taking buffer_mutex and a concurrent write() replaces the response in
+between.
 
-Mimi
+Fixes: 9488585b21be ("tpm: add support for partial reads")
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/CAHk-=wi8aXM9=Y8othMb1oxTv-PDw4isj-FPbXu0MXsm_EPE1g@mail.gmail.com/
+Signed-off-by: Rustam Mustafin <rmustafin@cloudlinux.com>
+---
+- A C reproducer for the io_uring path is available on request.
+- nonseekable_open() only closes the VFS doors (lseek(), pread()); io_uring
+  bypasses both, so with this patch an IORING_OP_READ that passes an
+  explicit sqe->off ignores the offset and reads sequentially.
+
+ drivers/char/tpm/tpm-dev-common.c | 11 ++++++-----
+ drivers/char/tpm/tpm-dev.h        |  1 +
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index ee91f456f975..553fc6aca94d 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -107,6 +107,7 @@ static void tpm_timeout_work(struct work_struct *work)
+ 	mutex_lock(&priv->buffer_mutex);
+ 	priv->response_read = true;
+ 	priv->response_length = 0;
++	priv->read_pos = 0;
+ 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	wake_up_interruptible(&priv->async_wait);
+@@ -149,21 +150,21 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 			goto out;
+ 		}
+ 
+-		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
++		rc = copy_to_user(buf, priv->data_buffer + priv->read_pos, ret_size);
+ 		if (rc) {
+ 			memset(priv->data_buffer, 0, TPM_BUFSIZE);
+ 			priv->response_length = 0;
+ 			ret_size = -EFAULT;
+ 		} else {
+-			memset(priv->data_buffer + *off, 0, ret_size);
++			memset(priv->data_buffer + priv->read_pos, 0, ret_size);
+ 			priv->response_length -= ret_size;
+-			*off += ret_size;
++			priv->read_pos += ret_size;
+ 		}
+ 	}
+ 
+ out:
+ 	if (!priv->response_length) {
+-		*off = 0;
++		priv->read_pos = 0;
+ 		timer_delete_sync(&priv->user_read_timer);
+ 		flush = true;
+ 	}
+@@ -214,7 +215,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 
+ 	priv->response_length = 0;
+ 	priv->response_read = false;
+-	*off = 0;
++	priv->read_pos = 0;
+ 
+ 	/*
+ 	 * If in nonblocking mode schedule an async job to send
+diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+index f3742bcc73e3..34efb1ffa491 100644
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -15,6 +15,7 @@ struct file_priv {
+ 	struct work_struct async_work;
+ 	wait_queue_head_t async_wait;
+ 	ssize_t response_length;
++	size_t read_pos;
+ 	bool response_read;
+ 	bool command_enqueued;
+ 
+-- 
+2.52.0
+
