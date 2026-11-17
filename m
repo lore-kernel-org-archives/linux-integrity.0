@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794913165;
-	b=4nJs583MZrMpi+6vHADto+cJNRXfW71XPBt7rVHSufLLHsjpSVFfjmgUvN9DcmFFKhL7
-	 oqmv9XOjMwW41ObiP2DHcM2X3cHack9NfoxhyPnAdo9+Gr9JUdQwNYN9AoUw7xcDr4HV2
-	 2mzBaveWhPcn0WMLYLfNYH3sgTt1M0byoK1tvk+2oEiJgO3HA2Iag2tZJ9xDv66Bw2NRf
-	 efsL2UIpYbaSNgOJ1kGPKiJQhlFViOepNYdFwf5AkijVHTxJ14LnHwhb34hFHrTGtx0mk
-	 EoA+O+CC4azA4oIDVcpzRAaIbjhOXOJ6Hkr2b8krGBsOWZzT403UL450u4Po6IkOaNA==
+	t=1794918904;
+	b=gVGVg6hMynZ2OkIBULuGLIHuNQyRO2mUnHTdv0VG9GJF6XUMyiFwG1lgZWL9kdjTVcyk
+	 JZE3sG+E+lWZAGmLrOdJ1X8Abv78mqka6rwSX+Uj79pYFeapw/br3xZyKQ3sMYS8TylGr
+	 CJ3VYR7o2XbSqDw3cNV4KlcsztA3vcE3KhmNoHcRc+CUjsUxSuAq2fuLbmPnj1wQJC7L5
+	 8819d2Js0DP5o6nDDf2O0UbcqdUeZdUNpO3xs/KElqzCMD8O26XlmdZx/nFL8u+DGdcnT
+	 PfEuSRj1OiwIeCcxizcr/eLKi8IwhiUWa3Adw4wJ7+CcMzADZGRl8QyVJsAIiACbBJg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794913165;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794918904;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=8eW6/+VtufNXs6nUVXwIqQ9eydkypxI9gUCA9iysrS0=;
-	b=E7OX1514SEfrlN+9rXi0kKJiav3sFQW95Eb5kVuppGeLqN8KRxuz2R09M3ltqHevDsTf
-	 OxPpBjVzsYyhtlonlv0ALKAtal2aVDm7RFop1H4omQreXnHpAa0AMdKt1JB41S+kX0OfG
-	 mZtI+gTGCcyRj/1O2W8Rr2ApVxK+eGiGdc4CK34jcUWzQ8tT7V2kbIQ05Bo2ArWaaadIl
-	 oVl9jGsjHqYHYd7GYSVMgj+ijJxMhfjHn8TEJ2xf5hBqYQGbx+IElkxIOQNa1LTmbxwck
-	 M/RBueMwI8jFSzelNYv36ee4TbIlPZY9PtSHMNMKNJo1W68ohbzQTlvpkujvfN8+fKg==
+	bh=DwNMiD1mt8wNJhdYDB5v0+WOkSAHN5ASRcYPM0VYogQ=;
+	b=cpKfEcalhMuxjJajph7KoXkbVo6u/lCTidaKRUZlVZT23USu5zk91sdHAG4Zxtq7rz2+
+	 +fWnTsirxax3CxATRREOj/JyPGoCVEJ0LNEDvs5JS9cmZtRDa1BHH5TMAyNLNWG6mBT4K
+	 EZE57JpHnyu6HhJvJMjSXtfBNQkVQQgApCVtpy4xqVfmYs91nEec7qAFKion3IAY4cF4B
+	 tRpAUAKK5UVyJEKRWGyqKql3rtWnQ9j1TISm43SWt2fuD1tu+6Rzoq/W99Pi6F9T6sQug
+	 m5E2LPPDQZM7bmWzg5s9H2dZCxcDz3ZV0DNoN3DoSkMrFaDVJRweyvSqjgmt0ybZWzw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ajlkMD/k";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="aV/RjyD3";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 779BB606A323;
-	Tue, 17 Nov 2026 10:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 9BBB8606A31C;
+	Tue, 17 Nov 2026 12:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ajlkMD/k
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8D7021F000CC;
-	Tue, 17 Nov 2026 10:59:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aV/RjyD3
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A7B3F1F000C4;
+	Tue, 17 Nov 2026 12:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794913165;
-	bh=8eW6/+VtufNXs6nUVXwIqQ9eydkypxI9gUCA9iysrS0=;
+	s=k20260515; t=1794918904;
+	bh=DwNMiD1mt8wNJhdYDB5v0+WOkSAHN5ASRcYPM0VYogQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ajlkMD/krL+lSXAegaa8+3mjbypBV2BigEGUHlJ+srJYfsgtSK9F0itQ6RAl+NV8/
-	 EppBum2pVYRHAY6vqVila4McXYDCWzTJaHVA0pqJLaNMyOBf6WmoWYtNP64soRYbS0
-	 gCERj1LJsWT8Pml+zI7RmDlz7mOD113Md95RH5w5gBt30kkkMkqDSZEvFNceSVVav+
-	 nVDVvjzL6jHPeW0uyE+/wp6wbEBsAfMcgv9Mc8GFGMaDW7ZcPq1EFKNBpIYpLfa4ww
-	 hxeKPQGtJMBVKEyKHHjeqD2H7folUTauZJksxEPlkzQcN/P8RTVZ7uqjAoGlqen9TE
-	 2vJtDdQPzxoRA==
-Date: Tue, 17 Nov 2026 12:59:21 +0200
+	b=aV/RjyD3docplm2Ps767K6vpqBSGwAouRbESZWLZ32z2I6dBCiYF2KaCxPUMTbCif
+	 0aY6yyEXISOTVV/VZFhCrPoRPjeiE9o/8bIJOPSPQZEQUqo1WX2BPiYLkBt8KSTtMH
+	 24Bhv+HAYi9/U2QznKnP00m+qY8BGHTaitzHigUJQRfoqLOwE4UIfLNJaI5kKEYWlW
+	 bHwXs+bCl3PW9TUE8KdQq8GeqkDUvfojckr4gvyzOXIWr0oZ090wySSH9zQdOJKEJh
+	 UFrclnPOSzV2Heb3NGOR8iKkIZJCsGWzdVA67yh2FS74WBmurdS7arZGPGMUtWQFox
+	 tiRtQ/4WhD1pg==
+Date: Tue, 17 Nov 2026 14:35:00 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Rustam Mustafin <rmustafin@cloudlinux.com>
 Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
@@ -49,9 +49,10 @@ Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
 	stable@vger.kernel.org
 Subject: Re: [PATCH] tpm: track the response read position internally, not
  via the file offset
-Message-ID: <avwzid1Ovl4ACkaQ@kernel.org>
+Message-ID: <avxJ9MxZ0PoWbQTc@kernel.org>
 References: <alvD5nOP15O5B8Ai@kernel.org>
  <20261117104838.2650999-1-rmustafin@cloudlinux.com>
+ <avwzid1Ovl4ACkaQ@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -63,126 +64,21 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261117104838.2650999-1-rmustafin@cloudlinux.com>
+In-Reply-To: <avwzid1Ovl4ACkaQ@kernel.org>
 
+On Tue, Nov 17, 2026 at 12:59:25PM +0200, Jarkko Sakkinen wrote:
+>  ...
 
-Please remove that claude'ism from short summary (, not.. uaargh).
+I think this would be more feasible:
 
+        if (current->flags & PF_IO_WORKER)
+                return -EIO;
 
-On Tue, Nov 17, 2026 at 05:48:38PM +0700, Rustam Mustafin wrote:
-> Commit f20d61c22bca ("tpm: Make the TPM character devices non-seekable")
+        if ((current->flags & PF_KTHREAD) && current->io_uring)
+                return -EIO;
 
-Duplicate information to fixes tag.
-
-> made pread() fail with -ESPIPE, but tpm_common_read() still indexes
-> data_buffer with *off, and io_uring can still set it: IORING_OP_READ
-
-io_uring is a data structure, not an active actor and IORING_OP_READ
-is a constant.
-
-> copies sqe->off into ki_pos without checking FMODE_PREAD, and
-> loop_rw_iter() passes it to ->read(). With sqe->off = 0x1400 the read
-> copies heap memory past data_buffer to user space and then zeroes it:
-> 
->   BUG: KASAN: slab-out-of-bounds in _copy_to_user+0x4b/0x70
->   Read of size 16 by task iou-wrk-148/149
->   Call Trace:
->    _copy_to_user+0x4b/0x70
->    tpm_common_read+0x16e/0x2c0
->    loop_rw_iter+0x235/0x5a0
->    __io_read+0xc6e/0x11a0
->    io_read+0x8a/0x180
-> 
-> Keep the read position in file_priv, protected by buffer_mutex, and
-
-Why open code variable names in English?
-
-> ignore *off. This also closes a race where read() samples f_pos before
-> taking buffer_mutex and a concurrent write() replaces the response in
-> between.
-> 
-> Fixes: 9488585b21be ("tpm: add support for partial reads")
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/r/CAHk-=wi8aXM9=Y8othMb1oxTv-PDw4isj-FPbXu0MXsm_EPE1g@mail.gmail.com/
-> Signed-off-by: Rustam Mustafin <rmustafin@cloudlinux.com>
-> ---
-> - A C reproducer for the io_uring path is available on request.
-> - nonseekable_open() only closes the VFS doors (lseek(), pread()); io_uring
->   bypasses both, so with this patch an IORING_OP_READ that passes an
->   explicit sqe->off ignores the offset and reads sequentially.
-
-Why weren't you able to realize this in the kselftest?
-
-> 
->  drivers/char/tpm/tpm-dev-common.c | 11 ++++++-----
->  drivers/char/tpm/tpm-dev.h        |  1 +
->  2 files changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> index ee91f456f975..553fc6aca94d 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -107,6 +107,7 @@ static void tpm_timeout_work(struct work_struct *work)
->  	mutex_lock(&priv->buffer_mutex);
->  	priv->response_read = true;
->  	priv->response_length = 0;
-> +	priv->read_pos = 0;
-
-I did search read_pos but it had zero hits in the commit message.
-
-
->  	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
->  	mutex_unlock(&priv->buffer_mutex);
->  	wake_up_interruptible(&priv->async_wait);
-> @@ -149,21 +150,21 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
->  			goto out;
->  		}
->  
-> -		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
-> +		rc = copy_to_user(buf, priv->data_buffer + priv->read_pos, ret_size);
->  		if (rc) {
->  			memset(priv->data_buffer, 0, TPM_BUFSIZE);
->  			priv->response_length = 0;
->  			ret_size = -EFAULT;
->  		} else {
-> -			memset(priv->data_buffer + *off, 0, ret_size);
-> +			memset(priv->data_buffer + priv->read_pos, 0, ret_size);
->  			priv->response_length -= ret_size;
-> -			*off += ret_size;
-> +			priv->read_pos += ret_size;
->  		}
->  	}
->  
->  out:
->  	if (!priv->response_length) {
-> -		*off = 0;
-> +		priv->read_pos = 0;
->  		timer_delete_sync(&priv->user_read_timer);
->  		flush = true;
->  	}
-> @@ -214,7 +215,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
->  
->  	priv->response_length = 0;
->  	priv->response_read = false;
-> -	*off = 0;
-> +	priv->read_pos = 0;
->  
->  	/*
->  	 * If in nonblocking mode schedule an async job to send
-> diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-> index f3742bcc73e3..34efb1ffa491 100644
-> --- a/drivers/char/tpm/tpm-dev.h
-> +++ b/drivers/char/tpm/tpm-dev.h
-> @@ -15,6 +15,7 @@ struct file_priv {
->  	struct work_struct async_work;
->  	wait_queue_head_t async_wait;
->  	ssize_t response_length;
-> +	size_t read_pos;
->  	bool response_read;
->  	bool command_enqueued;
->  
-> -- 
-> 2.52.0
-> 
+I.e., block io_uring entirely.
 
 Br, Jarkko
+
+
