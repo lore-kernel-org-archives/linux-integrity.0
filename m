@@ -1,59 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794919086;
-	b=hJlWAgZwnhNmTweGUksVyezP7CM0CGqLCmSkzUIZsYp7LjNUjX1UPbCVk0JwVu4RltQA
-	 hzbyakM/8TqUfBDHxWfr+VpXY/NMCrDjGendbAvWdt/I+J285e6pV3oF6fwe7h2nxpPLh
-	 VZ7BypzcBQHtrysvmL5v3spxusZ/GonHxxrb5UgEbPJ313Fkmn53oVgYcW4YQ+VzdGjua
-	 NiOjxqAQOEAALB/l/e2CCQDgrZgtMxyayeKs1EmGiOF7VSCoJEau8aQXTWAo/o/gVE9PB
-	 cMPjRjqGiq5TzN2+pafm86JqgAALBJLiLlFu2em17qIZXgb74eC1n5lCCkLmvl6CltQ==
+	t=1794924303;
+	b=Mxh6YFzWs+5KChwK5nedd9rv1jLHqg1Q7MUUL41Tmiomt7jAbu1ZGaT6nMiM6ogOqFp/
+	 0Eh6lcORN8ajp/xZ6GRUlA7/YjJR1Ady8Fjk8GJQgb2Yp90MJT+3v0RcXJwdoi/sPb2GP
+	 z823Lfnu3TPppltrP2yxgoY/5ATpJ1xFoTwbP5tOnKvWc3aBg1i/gStaxDGYC4IODbrtt
+	 DhYfDUqDNc0fgNcFQB89wbDSP7nBntqLRHXFl2evl8bsqq0e0b4a3xKmoYR3HRYsjOAeR
+	 Q+DWem0I8vcte8XHeg+uS/yd3EeypuSHKlZ4PX5DlLofbXovbwddpZoVceY9mCQzLIA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794919086;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794924303;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=O3Eobrwyq5oOakeAIYkUyc+GNwviFP9RCRghw5eCfbo=;
-	b=Iw5c6kELl+ACMUHsHSIIPturJsqMqAUuqP9xjPeh6iQjVjuaojX/euDeoFLmfMAU1QHJ
-	 yMyvI4I8VhUbxg0yl53zy+Uk2UvGxiFXC+yD2Jf9njCXqIGIgxr8oUnMM88xMlIKLgv7k
-	 GV/ldEykTKrL1epNkNa7jeb4FjttLJa7R/xmaACEPZT0h9kTwG3gC5R/Dc9UYbXJK0MI4
-	 8boYO46F6Fb9/AL/nBfKA7yOjFuNG+89UClfhxKrXlSlrMaY0sLjgojfhiOYTzNEnZS6X
-	 jSugzMm8p6d2UbzXkUkY7i/zuAP9aiSZZme8zQwNQuZd/wPyTgfQbIsf6L0FrwxpaUg==
+	bh=OrI4q83Nj/+lj2o4EIMNcwkzJoh69UNQ1KQ0/cpUzbQ=;
+	b=md6pNCEIZJrDDhlcP0LonMz6QAk+uKh/+skqbLai3sqbzRQTYCcJ+wY9ScldkJorB80u
+	 CqhwmgNf//WRC9Y75JaKLf2+kWr+YkiX+B9/ID5NfYcQIm/PDVZxzaHuNatrZym+5vQPx
+	 rAw5wxZ1+gY3d7OTiOj3uBaFLPeL4kMA8GiaaYghNNljqm42S4wh+YfKHBK5j9aVuRlkz
+	 CloBDtGEb+iDAJ82TBYhxzddsk7THxa10Ju3E3JyA0I6llllmV5rtfWl4jsnMzB+NSaEp
+	 Sd1REXGqCnr+Br7pdZ9qna268otYDyxA0Ye2jCb13o+ApIakK+qTPV0xXtmGRDty/YQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R7fOeIOI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Pj7JVLyC;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 69551606A31C;
-	Tue, 17 Nov 2026 12:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27260606A894;
+	Tue, 17 Nov 2026 14:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R7fOeIOI
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B754D1F000C4;
-	Tue, 17 Nov 2026 12:38:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Pj7JVLyC
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0E51F000C6;
+	Tue, 17 Nov 2026 14:04:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794919086;
-	bh=O3Eobrwyq5oOakeAIYkUyc+GNwviFP9RCRghw5eCfbo=;
+	s=k20260515; t=1794924303;
+	bh=OrI4q83Nj/+lj2o4EIMNcwkzJoh69UNQ1KQ0/cpUzbQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=R7fOeIOIRPoY8+oP7zpF/On0647DP/j0922IzQS0EGdYL7zviM3kw2GpZmpgSM4MH
-	 xqMr4EnOqxDCoVs7I5IpabgXmVCB593y4wvmknU6ssJc5hMgA8pHdxhnTgyhrU4A+5
-	 JFs3VjlHQ9F5qxJoW2/sFS1KlV2d91w9yfbTBx88kZo+4Oi3RFs3zDFkBN5OzjT6D2
-	 Vp3WEA+o5Ce3NmNgpGkgg4Ao1lSVo3wDQRhpYtzjmVqWMX+nK62RMuy50NbWYpaQs3
-	 Nm++vzc+Q4THgxLWfn5GOSxG7FoEVBaE3yFe1Ez4kgz5c/KBZKxUgo8fI8/sHRkK9V
-	 GGLaP1WTFQrkg==
-Date: Tue, 17 Nov 2026 14:38:02 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Rustam Mustafin <rmustafin@cloudlinux.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jaewon Yang <yong010301@gmail.com>,
-	Tadeusz Struk <tadeusz.struk@intel.com>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] tpm: track the response read position internally, not
- via the file offset
-Message-ID: <avxKqn-PlzJyxVdK@kernel.org>
-References: <alvD5nOP15O5B8Ai@kernel.org>
- <20261117104838.2650999-1-rmustafin@cloudlinux.com>
- <avwzid1Ovl4ACkaQ@kernel.org>
- <avxJ9MxZ0PoWbQTc@kernel.org>
+	b=Pj7JVLyCOMMKiDLxpVsAkhBMfZwYBbWsh9hu+jHLrvZGWAuEE/2aUzsqcN9JDVnuo
+	 cfQsjhPIFW4/EaepFMLtAWZOFpKJhlMf/YpYZ+BZVNVA5D55mtlHWr5dUIRzgNKJK7
+	 fgJEjoS/4kcszG76+J4fw+oaBLMpR3KLk/Wwu1Ehds8py4kurNxV9LAUmv6MnwKjth
+	 1FrBBZ5n+pe4WPrk6V/bR9xXEYxsEC6jpfgKpLg/CmHer+SIrky0p4Jb8sHmn9OVE9
+	 XE4UhTLs9iU/s6Z+f7KcYsJIG08bz4UIct0NOBCAcoz9nUrNhfRnBx9d8x/PKdSsBr
+	 GrH+RmOmUqvrw==
+Date: Tue, 17 Nov 2026 15:04:54 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
+	Danny Hu <dannyhu@arista.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Jan Kara <jack@suse.cz>, Victor Kamensky <kamensky@cisco.com>, 
+	Taras Kondratiuk <takondra@cisco.com>, Zheng Zengkai <zhengzengkai@huawei.com>, 
+	zhangguangzhi <zhangguangzhi3@huawei.com>, Jason Yan <yanaijie@huawei.com>, silviu.vlasceanu@huawei.com, 
+	hpa@zytor.com, arnd@arndb.de, james.w.mcmechan@gmail.com, niveditas98@gmail.com, 
+	pierre@arista.com, julien@arista.com, kbharathi@arista.com, 
+	alexandr.lobakin@intel.com, linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org, initramfs@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, bug-cpio@gnu.org
+Subject: Re: [PATCH v6 0/4] initramfs: add support for xattrs in the initial
+ ram disk
+Message-ID: <20261117-makaber-paranoia-gefilde-7d976e97e12a@brauner>
+References: <20261105193743.2654656-1-dannyhu@arista.com>
+ <20261110-hengst-tontechnik-ausfuhr-265b06d68611@brauner>
+ <a9edb8a433e8efcba3d11b2a06fa1063df41a24d.camel@huaweicloud.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -63,29 +69,33 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <avxJ9MxZ0PoWbQTc@kernel.org>
+In-Reply-To: <a9edb8a433e8efcba3d11b2a06fa1063df41a24d.camel@huaweicloud.com>
 
-On Tue, Nov 17, 2026 at 02:35:04PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Nov 17, 2026 at 12:59:25PM +0200, Jarkko Sakkinen wrote:
-> >  ...
-> 
-> I think this would be more feasible:
-> 
->         if (current->flags & PF_IO_WORKER)
->                 return -EIO;
-> 
->         if ((current->flags & PF_KTHREAD) && current->io_uring)
->                 return -EIO;
-> 
-> I.e., block io_uring entirely.
+On Wed, Nov 11, 2026 at 02:45:34PM +0100, Roberto Sassu wrote:
+> Similarly, the archive can already ship arbitrary binaries that get
+> executed as root. If you want, we could restrict it to security.ima and
+> security.evm only.
 
-And kselftest can then be extended to address this case (as a
-separate patch) making this two-patch patch set.
+That doesn't change anything about my main objection. It's still
+in-band signalling via a magic filename that changes the meaning of
+what came before it in the stream and that no cpio tool knows about.
+We're not complicating cpio. It's point was to be so dumb that the
+kernel can safely unpack it.
 
-Short summary would be e.g. (or use your imagination):
+> I agree when the image is prebuilt and has a known reference value. As
+> far as I know, there is no reference value when the initial ram disk is
+> dynamically generated on the host. In the latter case, using finer-
+> granularity measurement/appraisal is the only option.
 
-"tpm: Do not allow io_uring for /dev/tpm{,rm0}"
+Whatever generates the initrd on the host can sign or measure the image
+it produces. That's not a reason to teach the kernel to apply xattrs
+from magic files during early boot.
 
-Br, Jarkko
+If you want xattrs in the initramfs then that needs to be a proper,
+versioned cpio format that userspace tooling understands. I'm not
+taking METADATA!!!. So still no, sorry.
+
+And to Mimi's point that nobody maintained initramfs back then: it's
+part of the VFS entry in MAINTAINERS now and we maintain it.
