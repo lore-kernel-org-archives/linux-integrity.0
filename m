@@ -1,70 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=34.218.115.239
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=35.155.198.111
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794987543;
-	b=yFiwjJ5tV8hUzekvKVZROUy0eZSXutEBA6zaNCP7Ec1VPyo6j60U0seydsV0JtPzj7Q5
-	 lcz5f2KU3VdJvPh2efQlZg9NFBYZSBjtr2l/5VZMszrLhi694F28Wh5G1LYmjar9IKU1Q
-	 h7rlZYmptvWclxgrKevuJ1D/j9VJVu113LSRVbrM2Tttxq4GHFX7K/NcEwIUHLRk+9Bov
-	 5F6RhT3W5B+YhM8V58DcvAVYd0oDPeuuKhhgXp/7/QVWpS0KKm2HTxfGurXYZ/MUXfNz2
-	 yOd9Y9152RdVw6Ep5v+Luu1c1aeOuVfzHcc7l2f/R2rj8qqT58q8dUJkXJmC6JdrWSQ==
+	t=1794988153;
+	b=1v5NPmVksprgarFGUN1z5snTYcCAqVCd0l95xHOiCLGMDGqjKeBopZv+FeBp7skWulkT
+	 +mYVbsKCfw+TY1wwVjaqC+77n+UEBCPmOe7CGidPzJwS1B+MnMUjzJmjJaIky+SyvSXWB
+	 A1VcbwEpkZdOQrUoC/jW4ZrDLOs4szzo6AoO1nJ4J6gZQA4WUjzQ9CmHLGiZAAbBCCKKO
+	 izW/nFFRHXmLzSUG3fqRTlYPneQ0tnUJ1DDGUQikTLhlNo9KGmkAiW69M2fR7ug/bDU3D
+	 lVZuc+V/Y56DmHkdFrqxKgEQd++9/1OBYTQq9Y3IPFQkQvAYlW8tFB8XxKR8KDE93XA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794987543;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794988153;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:Received:Received:X-Farcaster-Flow-ID:Received:Received:
 	 From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
 	 X-ClientProxiedBy;
-	bh=/Duw7FWdjjcfTeTy38nlUJPJCof8LUY2CFos66lZLKk=;
-	b=wr8F+M468c0Fn8PbpFH78NecRA71bxIFa8zmsm3ZQP/wg6li2wlqgkQ21fPihWdYXthT
-	 HYkNzT76+Y4ygyP5VfyG55XPol/1ZuIAS3Mr8S66dCUSB0oi1wLKNhYSGkFJr1FiiD8mb
-	 B0USDhrhdFfIk/yhy4v+TJuuPKSrm5/I5hTeIuhiM77rDltSAtyPFc79WRY8s0b0g/eBN
-	 n/pTtL9fgP3icHd4D9U33958Q5i5+o97srmiZuLo4SnbEpQAD6gkI/eoNhmm5RPywqkEH
-	 Kap4EDKgXvmzJny7rY1LF+jjCR4UFyTiQVX/LfD5tTxoIVBDb2WiNRR4G6DOc8wjZpQ==
+	bh=nVZAAVuLf1aSEHcWU6BvK/DwkdncU+SDrQkGzhOvQE4=;
+	b=0JD4pLOXXeSmszvHmnEKPklgs12f/7afhKtwDMSlLuC7yi9kqBJzyB+zwZlcO/HWCzgK
+	 J79SdeRXybSQ3lZarN+MG5AbyvsWWd3h7WlUxqULqSMDntm6ljEnoCCeHF7dCiasP8Hor
+	 JKnVF+zvxhl0HIWrfGVRepel4olvyCHsaJp2gwHbIc5EpEXziFYBWUGUqNURIbQXAIwFG
+	 HuUYJhZBLia1Q+3GtML8SeTTyvGue4evQPbPWCDyd+CEnGbYt5DaAmi9VWD/evvMEbJ8q
+	 zxpV8uGvlpmKhes3RuhmhODY/C7OiSMx5GKFpX59pK7pWRTnSc+i5khbEat17np6Sqg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=amazon.com;
 	spf=pass smtp.mailfrom=amazon.com;
-	dkim=pass header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=ZUQ6gTGD;
-	arc=none smtp.remote-ip=34.218.115.239
-Received: from pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com [34.218.115.239])
+	dkim=pass header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=lZAs5ZFX;
+	arc=none smtp.remote-ip=35.155.198.111
+Received: from pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.155.198.111])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B9A606A891;
-	Wed, 18 Nov 2026 07:39:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A9B9A606A891
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083E0606A332;
+	Wed, 18 Nov 2026 07:49:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 083E0606A332
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=ZUQ6gTGD
+	dkim=pass (2048-bit key, unprotected) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=lZAs5ZFX
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1794987542; x=1826523542;
+  t=1794988153; x=1826524153;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=/Duw7FWdjjcfTeTy38nlUJPJCof8LUY2CFos66lZLKk=;
-  b=ZUQ6gTGDJohf/HnuUySNWxO0RqCT7gdL8kO4wHrRvsFstASHm5wJWCwM
-   xqkFZNwGYJJ/6HlkFIdYNu40EzztGbp20l3W8FKCFLwtix2mTL4LibjYy
-   mU1P2VbKdhZeQhvA16rBv6t7yfkhcqAh3AQgmXBS2eN5MjO//BoEa20Vb
-   bYTEqOAVnlhPuQAGIbTYA8/dZacm+2UozJyhamZihUXJL0lbXXu1noeFd
-   rcz2tg2yLDAvvWUAXbfsG6l1DNZaHa8jV8G4tAyWy41oci8Mk3EpEmSFS
-   CB8R11lZRpRBsSTl8CmXQVemPDJkeVC8UBZV9Xo7eAVVvmzGjJmlIQxQI
+  bh=nVZAAVuLf1aSEHcWU6BvK/DwkdncU+SDrQkGzhOvQE4=;
+  b=lZAs5ZFXAvlC8vaqHvJoa7QenQOTCEifzpBQOPRoawzEycu326q9D2rb
+   xKEzpMez8CUlTnuxjCs0qE0AlDfgPAg90wwVEJ+DW/9/tjaeAGSHlIIgy
+   LiIpzOOGHskN3sM6YBtWJ1XlEpjD7/2QvKJ9lc53CsTPviWSEWHQthnjy
+   C6RcFP/GBVrvjtdOFwBL6EE+9ow9rGWzWYjsikNkKZgJ7c1NUmXm69Xg/
+   w4dhHmLd1Xwwrkhuqacs0PcSMfLlAYtjy5vLEEGiBlNIKLaU86Pg/0IWE
+   Tc0nryXgl+Q2dw8lOFbFcFr04uMZZN/ZWjRsQ5RYEELRA2ZNbG0O8CNvB
    g==;
-X-CSE-ConnectionGUID: 0iKDV3UMQMmVNsovtQ2nqA==
-X-CSE-MsgGUID: HZgzsWzhTXyytgytKUShwQ==
+X-CSE-ConnectionGUID: KGX2Srj3RYOgz3kuTkhQKA==
+X-CSE-MsgGUID: 89Kft63eQ1qwjJXR1Y9Iew==
 X-IronPort-AV: E=Sophos;i="6.27,219,1787011200"; 
-   d="scan'208";a="34240132"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 07:38:59 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.178:12579]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.46.128:2525] with esmtp (Farcaster)
- id f7f0fdeb-fe19-4a15-aeb5-52094f1d39b5; Wed, 18 Nov 2026 07:38:58 +0000 (UTC)
-X-Farcaster-Flow-ID: f7f0fdeb-fe19-4a15-aeb5-52094f1d39b5
+   d="scan'208";a="34351802"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 07:49:09 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.53:17624]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.5.141:2525] with esmtp (Farcaster)
+ id 189fe113-b801-4a54-bc0e-dc2c55200a22; Wed, 18 Nov 2026 07:49:09 +0000 (UTC)
+X-Farcaster-Flow-ID: 189fe113-b801-4a54-bc0e-dc2c55200a22
 Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56;
- Wed, 18 Nov 2026 07:38:58 +0000
+ Wed, 18 Nov 2026 07:49:09 +0000
 Received: from dev-dsk-surenkj-2b-416930d2.us-west-2.amazon.com (10.169.26.94)
  by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56;
- Wed, 18 Nov 2026 07:38:57 +0000
+ Wed, 18 Nov 2026 07:49:09 +0000
 From: Surendran Kanagaraj <surenkj@amazon.com>
 To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>
 CC: Jason Gunthorpe <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>,
@@ -74,9 +74,9 @@ CC: Jason Gunthorpe <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>,
  Leitao" <leitao@debian.org>, <nh-open-source@amazon.com>, Alexander Graf
 	<graf@amazon.de>, Gunnar Kudrjavets <gunnarku@amazon.com>, Josh Levinson
 	<joshlev@amazon.com>
-Subject: [RFC PATCH v4 4/8] tpm: Bound core and CRB waits by the limits table
-Date: Wed, 18 Nov 2026 07:38:48 +0000
-Message-ID: <20261118073852.81107-5-surenkj@amazon.com>
+Subject: [RFC PATCH v4 5/8] tpm: Drop the jiffies timing fields from struct tpm_chip
+Date: Wed, 18 Nov 2026 07:49:01 +0000
+Message-ID: <20261118074904.60624-1-surenkj@amazon.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261118073852.81107-1-surenkj@amazon.com>
 References: <20261118073852.81107-1-surenkj@amazon.com>
@@ -91,362 +91,691 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWC003.ant.amazon.com (10.13.139.252) To
+X-ClientProxiedBy: EX19D031UWC004.ant.amazon.com (10.13.139.246) To
  EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-Polls in tpm_try_transmit() still use fixed 1 ms sleeps and
-tpm_transmit() stops retrying once the next backoff would pass
-TPM2_DURATION_LONG and tpm_crb always waits TPM2_TIMEOUT_C.
-A value set through ->adjust_limits() reaches neither the retry
-loop nor the crb waits.
+timeout_a to timeout_d and duration[] in struct tpm_chip now only
+mirror the limits table. Some drivers still write initial values
+into the timeout fields at probe and tpm_limits_update() overwrites
+them.
 
-Poll for completion with tpm_poll_timeout(). Its sleeps start at 100 us
-and double up to 1 ms. It checks the condition once more after the
-deadline and an expired wait logs the limit and where its value came
-from. Bound the total sleep of the retry loop  by the LONG duration,
-whose 3 s TPM 2.0 default keeps the current seven retries. Until the
-timing query sets the family, LONG holds the 120 s TPM 1.x default,
-so the loop uses the TPM 2.0 one instead. tpm_crb waits on TIMEOUT_C
-through tpm_poll_timeout(). The Pluton doorbell's completion wait,
-which no spec names keeps its 200 ms through tpm_poll_timeout_us().
+Remove the fields and enum tpm_duration which only indexed
+duration[]. Add tpm_limits_jiffies(), which returns the value the
+field held, for the drivers that wait in jiffies. The timeouts and
+durations sysfs files read the table directly.
 
-Two waits behave differently. Completion polling first sleeps at most
-100 us instead of 1 ms. Until tpm2_get_timeouts() runs, tpm_crb waits
-up to 750 ms for TIMEOUT_C, the larger of the two families' defaults,
-instead of 200 ms. From then on it waits 200 ms as before.
+Two things behave differently. Until the timing query runs at
+registration, st33zp24, tpm_i2c_infineon and tpm_i2c_nuvoton wait up
+to 4 s for TIMEOUT_B, the larger of the two families' defaults,
+instead of 2 s. tpm_i2c_atmel also set 2 s but never waits on an
+interface timeout, and tpm_tis_i2c_cr50 already used 4 s. The
+timeouts and durations files print exact microseconds instead of a
+value rounded to a jiffy.
 
 Signed-off-by: Surendran Kanagaraj <surenkj@amazon.com>
 ---
- drivers/char/tpm/tpm-interface.c | 57 +++++++++++++-------------
- drivers/char/tpm/tpm-limits.c    | 19 +++++++++
- drivers/char/tpm/tpm.h           |  2 +-
- drivers/char/tpm/tpm_crb.c       | 70 +++++++++++++++++---------------
- 4 files changed, 87 insertions(+), 61 deletions(-)
+ drivers/char/tpm/st33zp24/st33zp24.c | 28 ++++++++----------------
+ drivers/char/tpm/tpm-limits.c        | 15 +------------
+ drivers/char/tpm/tpm-sysfs.c         | 27 ++++++++++-------------
+ drivers/char/tpm/tpm.h               |  6 ++++++
+ drivers/char/tpm/tpm1-cmd.c          |  4 ++--
+ drivers/char/tpm/tpm_i2c_atmel.c     |  9 --------
+ drivers/char/tpm/tpm_i2c_infineon.c  | 25 +++++++---------------
+ drivers/char/tpm/tpm_i2c_nuvoton.c   | 32 +++++++++++++---------------
+ drivers/char/tpm/tpm_tis_core.c      | 31 +++++++++++++++------------
+ drivers/char/tpm/tpm_tis_i2c_cr50.c  | 15 +++++--------
+ drivers/char/tpm/xen-tpmfront.c      | 10 +++++----
+ include/linux/tpm.h                  | 15 -------------
+ 12 files changed, 80 insertions(+), 137 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 8cb4cbc9e2a6..abd16e71f79c 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -103,6 +103,16 @@ static void tpm_go_idle(struct tpm_chip *chip)
- 		chip->ops->go_idle(chip);
- }
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index 91d1278fe95a..5a2cf76ddea7 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -56,11 +56,6 @@ enum st33zp24_int_flags {
+ 	TPM_INTF_DATA_AVAIL_INT = 0x001,
+ };
  
-+/* Poll condition: the command completed or was canceled. */
-+static bool tpm_cmd_done(struct tpm_chip *chip, void *arg)
-+{
-+	u8 *status = arg;
-+
-+	*status = tpm_chip_status(chip);
-+	return tpm_transmit_completed(*status, chip) ||
-+	       tpm_chip_req_canceled(chip, *status);
-+}
-+
- DEFINE_FREE(tpm_go_idle, struct tpm_chip *, if (_T) tpm_go_idle(_T))
- 
- static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-@@ -112,7 +122,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
- 	int rc;
- 	ssize_t len = 0;
- 	u32 count, ordinal;
--	unsigned long stop;
-+	u8 status;
- 
- 	if (bufsiz < TPM_HEADER_SIZE)
- 		return -EINVAL;
-@@ -173,31 +183,19 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
- 	if (chip->flags & TPM_CHIP_FLAG_IRQ)
- 		goto out_recv;
- 
--	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
--	do {
--		u8 status = tpm_chip_status(chip);
--		if (tpm_transmit_completed(status, chip))
--			goto out_recv;
+-enum tis_defaults {
+-	TIS_SHORT_TIMEOUT = 750,
+-	TIS_LONG_TIMEOUT = 2000,
+-};
 -
--		if (tpm_chip_req_canceled(chip, status)) {
--			dev_err(&chip->dev, "Operation Canceled\n");
--			return -ECANCELED;
--		}
--
--		tpm_msleep(TPM_TIMEOUT_POLL);
--		rmb();
--	} while (time_before(jiffies, stop));
--
--	/*
--	 * Check for completion one more time, just in case the device reported
--	 * it while the driver was sleeping in the busy loop above.
--	 */
--	if (tpm_transmit_completed(tpm_chip_status(chip), chip))
--		goto out_recv;
-+	if (tpm_poll_timeout(chip, tpm_duration_limit(chip, ordinal),
-+			     tpm_cmd_done, &status)) {
-+		tpm_chip_cancel(chip);
-+		dev_err(&chip->dev, "Operation Timed out\n");
-+		return -ETIME;
-+	}
-+	/* Read the response only after the status reported completion. */
-+	rmb();
+ /*
+  * clear the pending interrupt.
+  */
+@@ -132,7 +127,7 @@ static int request_locality(struct tpm_chip *chip)
+ 	if (ret < 0)
+ 		return ret;
  
--	tpm_chip_cancel(chip);
--	dev_err(&chip->dev, "Operation Timed out\n");
--	return -ETIME;
-+	if (!tpm_transmit_completed(status, chip)) {
-+		dev_err(&chip->dev, "Operation Canceled\n");
-+		return -ECANCELED;
-+	}
+-	stop = jiffies + chip->timeout_a;
++	stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_A);
  
- out_recv:
- 	len = chip->ops->recv(chip, buf, bufsiz);
-@@ -220,8 +218,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-  * @bufsiz:	length of the TPM command buffer
-  *
-  * A wrapper around tpm_try_transmit() that handles TPM2_RC_RETRY returns from
-- * the TPM and retransmits the command after a delay up to a maximum wait of
-- * TPM2_DURATION_LONG.
-+ * the TPM and retransmits the command after a doubling delay, for as long as
-+ * the sleeps fit in the chip's LONG duration limit.
-  *
-  * Note that TPM 1.x never returns TPM2_RC_RETRY so the retry logic is TPM 2.0
-  * only.
-@@ -236,6 +234,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
- 	/* space for header and handles */
- 	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
- 	unsigned int delay_msec = TPM2_DURATION_SHORT;
-+	unsigned int slept_msec = 0;
- 	u32 rc = 0;
- 	ssize_t ret;
- 	const size_t save_size = min(sizeof(save), bufsiz);
-@@ -263,7 +262,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
- 		if (rc == TPM2_RC_TESTING && cc == TPM2_CC_SELF_TEST)
- 			break;
+ 	/* Request locality is usually effective after the request */
+ 	do {
+@@ -165,7 +160,7 @@ static int get_burstcount(struct tpm_chip *chip)
+ 	int burstcnt, status;
+ 	u8 temp;
  
--		if (delay_msec > TPM2_DURATION_LONG) {
-+		if ((slept_msec + delay_msec) * USEC_PER_MSEC >
-+		    tpm_limits_retry_us(chip)) {
- 			if (rc == TPM2_RC_RETRY)
- 				dev_err(&chip->dev, "in retry loop\n");
- 			else
-@@ -272,6 +272,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
- 			break;
+-	stop = jiffies + chip->timeout_d;
++	stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_D);
+ 	do {
+ 		status = tpm_dev->ops->recv(tpm_dev->phy_id, TPM_STS + 1,
+ 					    &temp, 1);
+@@ -270,7 +265,7 @@ static int recv_data(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	while (size < count &&
+ 	       wait_for_stat(chip,
+ 			     TPM_STS_DATA_AVAIL | TPM_STS_VALID,
+-			     chip->timeout_c,
++			     tpm_limits_jiffies(chip, TPM_LIMIT_C),
+ 			     &tpm_dev->read_queue, true) == 0) {
+ 		burstcnt = get_burstcount(chip);
+ 		if (burstcnt < 0)
+@@ -320,9 +315,9 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
+ 	status = st33zp24_status(chip);
+ 	if ((status & TPM_STS_COMMAND_READY) == 0) {
+ 		st33zp24_cancel(chip);
+-		if (wait_for_stat
+-		    (chip, TPM_STS_COMMAND_READY, chip->timeout_b,
+-		     &tpm_dev->read_queue, false) < 0) {
++		if (wait_for_stat(chip, TPM_STS_COMMAND_READY,
++				  tpm_limits_jiffies(chip, TPM_LIMIT_B),
++				  &tpm_dev->read_queue, false) < 0) {
+ 			ret = -ETIME;
+ 			goto out_err;
  		}
- 		tpm_msleep(delay_msec);
-+		slept_msec += delay_msec;
- 		delay_msec *= 2;
- 		memcpy(buf, save, save_size);
- 	}
+@@ -467,11 +462,6 @@ int st33zp24_probe(void *phy_id, const struct st33zp24_phy_ops *ops,
+ 	tpm_dev->ops = ops;
+ 	dev_set_drvdata(&chip->dev, tpm_dev);
+ 
+-	chip->timeout_a = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-	chip->timeout_b = msecs_to_jiffies(TIS_LONG_TIMEOUT);
+-	chip->timeout_c = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-	chip->timeout_d = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-
+ 	tpm_dev->locality = LOCALITY0;
+ 
+ 	if (ACPI_COMPANION(dev)) {
+@@ -569,9 +559,9 @@ int st33zp24_pm_resume(struct device *dev)
+ 
+ 	if (tpm_dev->io_lpcpd) {
+ 		gpiod_set_value_cansleep(tpm_dev->io_lpcpd, 1);
+-		ret = wait_for_stat(chip,
+-				TPM_STS_VALID, chip->timeout_b,
+-				&tpm_dev->read_queue, false);
++		ret = wait_for_stat(chip, TPM_STS_VALID,
++				    tpm_limits_jiffies(chip, TPM_LIMIT_B),
++				    &tpm_dev->read_queue, false);
+ 	} else {
+ 		ret = tpm_pm_resume(dev);
+ 		if (!ret)
 diff --git a/drivers/char/tpm/tpm-limits.c b/drivers/char/tpm/tpm-limits.c
-index 5b984cb636f0..bdaa0339195e 100644
+index bdaa0339195e..0efca95eec62 100644
 --- a/drivers/char/tpm/tpm-limits.c
 +++ b/drivers/char/tpm/tpm-limits.c
-@@ -259,6 +259,25 @@ void tpm_limits_driver_set(struct tpm_limits *p, enum tpm_limit limit, u32 us)
- }
- EXPORT_SYMBOL_GPL(tpm_limits_driver_set);
+@@ -4,6 +4,7 @@
+  * timeouts and the SHORT to DEFAULT command durations. Each chip owns one
+  * table, built from the family defaults, the values a TPM chip reports and
+  * the driver's ->adjust_limits() hook, each overriding the one before.
++ * Every TPM wait on one of these limits reads it from this table.
+  */
  
-+/**
-+ * tpm_limits_retry_us() - the total sleep allowed between resubmissions
-+ * @chip:	the TPM chip
-+ *
-+ * The LONG duration bounds how long tpm_transmit() keeps resubmitting a
-+ * command the TPM asked to retry. Until the timing query sets the family,
-+ * LONG holds the larger TPM 1.x default, so use the TPM 2.0 one: only a
-+ * TPM 2.0 chip asks for a retry.
-+ *
-+ * Return: the bound in microseconds.
-+ */
-+u32 tpm_limits_retry_us(struct tpm_chip *chip)
-+{
-+	if (chip->limits.family == TPM_FAMILY_UNKNOWN)
-+		return tpm2_defaults[TPM_LIMIT_LONG];
-+
-+	return chip->limits.entry[TPM_LIMIT_LONG].time_us;
-+}
-+
- /**
-  * tpm_limits_us() - the value of a limit
-  * @chip:	the TPM chip, or NULL before tpm_chip_alloc()
+ #include <linux/kernel.h>
+@@ -177,20 +178,6 @@ static void tpm_limits_commit(struct tpm_chip *chip,
+ 
+ 	chip->limits = *p;
+ 
+-	/* Copy the limits into the jiffies fields that the waits still read. */
+-	chip->timeout_a = usecs_to_jiffies(e[TPM_LIMIT_A].time_us);
+-	chip->timeout_b = usecs_to_jiffies(e[TPM_LIMIT_B].time_us);
+-	chip->timeout_c = usecs_to_jiffies(e[TPM_LIMIT_C].time_us);
+-	chip->timeout_d = usecs_to_jiffies(e[TPM_LIMIT_D].time_us);
+-	chip->duration[TPM_SHORT] =
+-		usecs_to_jiffies(e[TPM_LIMIT_SHORT].time_us);
+-	chip->duration[TPM_MEDIUM] =
+-		usecs_to_jiffies(e[TPM_LIMIT_MEDIUM].time_us);
+-	chip->duration[TPM_LONG] =
+-		usecs_to_jiffies(e[TPM_LIMIT_LONG].time_us);
+-	chip->duration[TPM_LONG_LONG] =
+-		usecs_to_jiffies(e[TPM_LIMIT_LONG_LONG].time_us);
+-
+ 	for (limit = 0; limit < TPM_NR_LIMITS; limit++)
+ 		dev_dbg(&chip->dev, "limit %s = %u us (%s%s)\n",
+ 			tpm_limit_names[limit], e[limit].time_us,
+diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+index d915307ae833..b289a7f6f085 100644
+--- a/drivers/char/tpm/tpm-sysfs.c
++++ b/drivers/char/tpm/tpm-sysfs.c
+@@ -275,16 +275,13 @@ static ssize_t durations_show(struct device *dev, struct device_attribute *attr,
+ 			      char *buf)
+ {
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
++	const struct tpm_limit_entry *e = chip->limits.entry;
+ 
+-	if (chip->duration[TPM_LONG] == 0)
+-		return 0;
+-
+-	return sprintf(buf, "%d %d %d [%s]\n",
+-		       jiffies_to_usecs(chip->duration[TPM_SHORT]),
+-		       jiffies_to_usecs(chip->duration[TPM_MEDIUM]),
+-		       jiffies_to_usecs(chip->duration[TPM_LONG]),
+-		       chip->duration_adjusted
+-		       ? "adjusted" : "original");
++	return sysfs_emit(buf, "%u %u %u [%s]\n",
++			  e[TPM_LIMIT_SHORT].time_us,
++			  e[TPM_LIMIT_MEDIUM].time_us,
++			  e[TPM_LIMIT_LONG].time_us,
++			  chip->duration_adjusted ? "adjusted" : "original");
+ }
+ static DEVICE_ATTR_RO(durations);
+ 
+@@ -292,14 +289,12 @@ static ssize_t timeouts_show(struct device *dev, struct device_attribute *attr,
+ 			     char *buf)
+ {
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
++	const struct tpm_limit_entry *e = chip->limits.entry;
+ 
+-	return sprintf(buf, "%d %d %d %d [%s]\n",
+-		       jiffies_to_usecs(chip->timeout_a),
+-		       jiffies_to_usecs(chip->timeout_b),
+-		       jiffies_to_usecs(chip->timeout_c),
+-		       jiffies_to_usecs(chip->timeout_d),
+-		       chip->timeout_adjusted
+-		       ? "adjusted" : "original");
++	return sysfs_emit(buf, "%u %u %u %u [%s]\n",
++			  e[TPM_LIMIT_A].time_us, e[TPM_LIMIT_B].time_us,
++			  e[TPM_LIMIT_C].time_us, e[TPM_LIMIT_D].time_us,
++			  chip->timeout_adjusted ? "adjusted" : "original");
+ }
+ static DEVICE_ATTR_RO(timeouts);
+ 
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 223998f99386..b3dc5c7161cf 100644
+index b3dc5c7161cf..29161a142306 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -40,7 +40,6 @@ enum tpm_timeout {
- 	TPM_TIMEOUT = 5,	/* msecs */
- 	TPM_TIMEOUT_RETRY = 100, /* msecs */
- 	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
--	TPM_TIMEOUT_POLL = 1,	/* msecs */
- 	TPM_TIMEOUT_USECS_MIN = 100,      /* usecs */
- 	TPM_TIMEOUT_USECS_MAX = 500      /* usecs */
- };
-@@ -79,6 +78,7 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- void tpm_limits_init(struct tpm_chip *chip);
+@@ -79,6 +79,12 @@ void tpm_limits_init(struct tpm_chip *chip);
  void tpm_limits_update(struct tpm_chip *chip, const u32 *reported);
  void tpm_limits_driver_set(struct tpm_limits *p, enum tpm_limit limit, u32 us);
-+u32 tpm_limits_retry_us(struct tpm_chip *chip);
+ u32 tpm_limits_retry_us(struct tpm_chip *chip);
++static inline unsigned long tpm_limits_jiffies(struct tpm_chip *chip,
++					       enum tpm_limit limit)
++{
++	return usecs_to_jiffies(chip->limits.entry[limit].time_us);
++}
++
  u32 tpm_limits_us(struct tpm_chip *chip, enum tpm_limit limit);
  int __tpm_poll(struct tpm_chip *chip, u32 timeout_us, enum tpm_limit limit,
  	       bool (*cond)(struct tpm_chip *chip, void *arg), void *arg);
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 8585c73fb25b..5f29eabf2413 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -111,6 +111,7 @@ struct crb_priv {
- 	u8 ffa_flags;
- 	u8 ffa_attributes;
- 	u32 intf_id;
-+	struct tpm_chip *chip;	/* NULL until tpmm_chip_alloc() */
- };
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 853bb1cee2ed..f0f733904d6f 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -406,8 +406,8 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
  
- struct tpm2_crb_smc {
-@@ -134,6 +135,12 @@ struct tpm2_crb_pluton {
- 	u64 reply_addr;
- };
+ 	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
+ 	 * value wrong and apparently reports msecs rather than usecs. So we
+-	 * fix up the resulting too-small TPM_SHORT value to make things work.
+-	 * We also scale the TPM_MEDIUM and -_LONG values by 1000.
++	 * fix up the resulting too-small SHORT value to make things work.
++	 * We also scale the MEDIUM and LONG values by 1000.
+ 	 */
+ 	if ((mask & BIT(TPM_LIMIT_SHORT)) &&
+ 	    val[TPM_LIMIT_SHORT] < 10 * USEC_PER_MSEC) {
+diff --git a/drivers/char/tpm/tpm_i2c_atmel.c b/drivers/char/tpm/tpm_i2c_atmel.c
+index ab058bfc9c99..78b193eb3da6 100644
+--- a/drivers/char/tpm/tpm_i2c_atmel.c
++++ b/drivers/char/tpm/tpm_i2c_atmel.c
+@@ -24,9 +24,6 @@
  
-+struct crb_reg_wait {
-+	u32 __iomem *reg;
-+	u32 mask;
-+	u32 value;
-+};
-+
- /*
-  * Returns true if the start method supports idle.
-  */
-@@ -144,39 +151,40 @@ static inline bool tpm_crb_has_idle(void)
- 		 tpm2_acpi_start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC);
- }
+ #define I2C_DRIVER_NAME "tpm_i2c_atmel"
  
--static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
--				unsigned long timeout)
-+static bool crb_reg_matches(struct tpm_chip *chip, void *arg)
- {
--	ktime_t start;
--	ktime_t stop;
-+	struct crb_reg_wait *w = arg;
- 
--	start = ktime_get();
--	stop = ktime_add(start, ms_to_ktime(timeout));
+-#define TPM_I2C_SHORT_TIMEOUT  750     /* ms */
+-#define TPM_I2C_LONG_TIMEOUT   2000    /* 2 sec */
 -
--	do {
--		if ((ioread32(reg) & mask) == value)
--			return true;
-+	return (ioread32(w->reg) & w->mask) == w->value;
-+}
+ #define ATMEL_STS_OK 1
  
--		usleep_range(50, 100);
--	} while (ktime_before(ktime_get(), stop));
-+/* Wait up to TIMEOUT_C for the @mask bits of @reg to read as @value. */
-+static bool crb_wait_for_reg_32(struct crb_priv *priv, u32 __iomem *reg,
-+				u32 mask, u32 value)
-+{
-+	struct crb_reg_wait w = { .reg = reg, .mask = mask, .value = value };
+ struct priv_data {
+@@ -174,12 +171,6 @@ static int i2c_atmel_probe(struct i2c_client *client)
+ 	if (!priv)
+ 		return -ENOMEM;
  
--	return ((ioread32(reg) & mask) == value);
-+	return !tpm_poll_timeout(priv->chip, TPM_LIMIT_C, crb_reg_matches, &w);
- }
+-	/* Default timeouts */
+-	chip->timeout_a = msecs_to_jiffies(TPM_I2C_SHORT_TIMEOUT);
+-	chip->timeout_b = msecs_to_jiffies(TPM_I2C_LONG_TIMEOUT);
+-	chip->timeout_c = msecs_to_jiffies(TPM_I2C_SHORT_TIMEOUT);
+-	chip->timeout_d = msecs_to_jiffies(TPM_I2C_SHORT_TIMEOUT);
+-
+ 	dev_set_drvdata(&chip->dev, priv);
  
- static int crb_try_pluton_doorbell(struct crb_priv *priv, bool wait_for_complete)
- {
-+	struct crb_reg_wait w = {
-+		.reg = priv->pluton_start_addr, .mask = 0xffffffff, .value = 0,
-+	};
-+
- 	if (tpm2_acpi_start_method != ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON)
- 		return 0;
+ 	/*
+diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
+index fffa235068df..0e7d08e0851d 100644
+--- a/drivers/char/tpm/tpm_i2c_infineon.c
++++ b/drivers/char/tpm/tpm_i2c_infineon.c
+@@ -299,11 +299,6 @@ enum tis_status {
+ 	TPM_STS_DATA_EXPECT = 0x08,
+ };
  
--	if (!crb_wait_for_reg_32(priv->pluton_reply_addr, ~0, 1, TPM2_TIMEOUT_C))
-+	if (!crb_wait_for_reg_32(priv, priv->pluton_reply_addr, ~0, 1))
- 		return -ETIME;
+-enum tis_defaults {
+-	TIS_SHORT_TIMEOUT = 750,	/* ms */
+-	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
+-};
+-
+ #define	TPM_ACCESS(l)			(0x0000 | ((l) << 4))
+ #define	TPM_STS(l)			(0x0001 | ((l) << 4))
+ #define	TPM_DATA_FIFO(l)		(0x0005 | ((l) << 4))
+@@ -352,7 +347,7 @@ static int request_locality(struct tpm_chip *chip, int loc)
+ 	iic_tpm_write(TPM_ACCESS(loc), &buf, 1);
  
- 	iowrite32(1, priv->pluton_start_addr);
- 	if (wait_for_complete == false)
- 		return 0;
+ 	/* wait for burstcount */
+-	stop = jiffies + chip->timeout_a;
++	stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_A);
+ 	do {
+ 		if (check_locality(chip, loc))
+ 			return loc;
+@@ -394,7 +389,7 @@ static ssize_t get_burstcount(struct tpm_chip *chip)
  
--	if (!crb_wait_for_reg_32(priv->pluton_start_addr,
--				 0xffffffff, 0, 200))
-+	if (tpm_poll_timeout_us(priv->chip, 200 * USEC_PER_MSEC,
-+				crb_reg_matches, &w))
- 		return -ETIME;
- 
- 	return 0;
-@@ -218,10 +226,9 @@ static int __crb_go_idle(struct device *dev, struct crb_priv *priv, int loc)
- 	if (rc)
- 		return rc;
- 
--	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
-+	if (!crb_wait_for_reg_32(priv, &priv->regs_t->ctrl_req,
- 				 CRB_CTRL_REQ_GO_IDLE/* mask */,
--				 0, /* value */
--				 TPM2_TIMEOUT_C)) {
-+				 0 /* value */)) {
- 		dev_warn(dev, "goIdle timed out\n");
- 		return -ETIME;
- 	}
-@@ -272,10 +279,9 @@ static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv, int loc)
- 	if (rc)
- 		return rc;
- 
--	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
-+	if (!crb_wait_for_reg_32(priv, &priv->regs_t->ctrl_req,
- 				 CRB_CTRL_REQ_CMD_READY /* mask */,
--				 0, /* value */
--				 TPM2_TIMEOUT_C)) {
-+				 0 /* value */)) {
- 		dev_warn(dev, "cmdReady timed out\n");
- 		return -ETIME;
- 	}
-@@ -308,8 +314,8 @@ static int __crb_request_locality(struct device *dev,
- 			return rc;
- 	}
- 
--	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
--				 TPM2_TIMEOUT_C)) {
-+	if (!crb_wait_for_reg_32(priv, &priv->regs_h->loc_state, value,
-+				 value)) {
- 		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
- 		return -ETIME;
- 	}
-@@ -342,8 +348,8 @@ static int __crb_relinquish_locality(struct device *dev,
- 			return rc;
- 	}
- 
--	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, mask, value,
--				 TPM2_TIMEOUT_C)) {
-+	if (!crb_wait_for_reg_32(priv, &priv->regs_h->loc_state, mask,
-+				 value)) {
- 		dev_warn(dev, "TPM_LOC_STATE_x.Relinquish timed out\n");
- 		return -ETIME;
- 	}
-@@ -428,9 +434,8 @@ static int tpm_crb_recv_chunks(struct tpm_chip *chip, u8 *buf, size_t count,
- 		if (rc)
- 			return rc;
- 
--		expired = !crb_wait_for_reg_32(&priv->regs_t->ctrl_start,
--						CRB_START_NEXT_CHUNK, 0,
--						TPM2_TIMEOUT_C);
-+		expired = !crb_wait_for_reg_32(priv, &priv->regs_t->ctrl_start,
-+						CRB_START_NEXT_CHUNK, 0);
- 		if (expired) {
- 			dev_err(&chip->dev,
- 				"Timeout waiting for backend response\n");
-@@ -587,9 +592,9 @@ static int tpm_crb_send_chunks(struct tpm_chip *chip, u8 *buf, size_t len)
- 			rc = tpm_crb_start(chip, CRB_START_NEXT_CHUNK);
- 			if (rc)
- 				return rc;
--			expired = !crb_wait_for_reg_32(&priv->regs_t->ctrl_start,
--							CRB_START_NEXT_CHUNK, 0,
--							TPM2_TIMEOUT_C);
-+			expired = !crb_wait_for_reg_32(priv,
-+							&priv->regs_t->ctrl_start,
-+							CRB_START_NEXT_CHUNK, 0);
- 			if (expired) {
- 				dev_err(&chip->dev,
- 					"Timeout waiting for backend to consume chunk\n");
-@@ -1021,6 +1026,7 @@ static int crb_acpi_probe(struct platform_device *pdev)
+ 	/* wait for burstcount */
+ 	/* which timeout value, spec has 2 answers (c & d) */
+-	stop = jiffies + chip->timeout_d;
++	stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_D);
+ 	do {
+ 		/* Note: STS is little endian */
+ 		if (iic_tpm_read(TPM_STS(tpm_dev.locality)+1, buf, 3) < 0)
+@@ -497,7 +492,8 @@ static int tpm_tis_i2c_recv(struct tpm_chip *chip, u8 *buf, size_t count)
  		goto out;
  	}
  
-+	priv->chip = chip;
+-	wait_for_stat(chip, TPM_STS_VALID, chip->timeout_c, &status);
++	wait_for_stat(chip, TPM_STS_VALID,
++		      tpm_limits_jiffies(chip, TPM_LIMIT_C), &status);
+ 	if (status & TPM_STS_DATA_AVAIL) {	/* retry? */
+ 		dev_err(&chip->dev, "Error left over data\n");
+ 		size = -EIO;
+@@ -534,7 +530,7 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 		tpm_tis_i2c_ready(chip);
+ 		if (wait_for_stat
+ 		    (chip, TPM_STS_COMMAND_READY,
+-		     chip->timeout_b, &status) < 0) {
++		     tpm_limits_jiffies(chip, TPM_LIMIT_B), &status) < 0) {
+ 			rc = -ETIME;
+ 			goto out_err;
+ 		}
+@@ -566,7 +562,7 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 		}
+ 
+ 		wait_for_stat(chip, TPM_STS_VALID,
+-			      chip->timeout_c, &status);
++			      tpm_limits_jiffies(chip, TPM_LIMIT_C), &status);
+ 
+ 		if ((status & TPM_STS_DATA_EXPECT) == 0) {
+ 			rc = -EIO;
+@@ -576,7 +572,8 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 
+ 	/* write last byte */
+ 	iic_tpm_write(TPM_DATA_FIFO(tpm_dev.locality), &(buf[count]), 1);
+-	wait_for_stat(chip, TPM_STS_VALID, chip->timeout_c, &status);
++	wait_for_stat(chip, TPM_STS_VALID,
++		      tpm_limits_jiffies(chip, TPM_LIMIT_C), &status);
+ 	if ((status & TPM_STS_DATA_EXPECT) != 0) {
+ 		rc = -EIO;
+ 		goto out_err;
+@@ -622,12 +619,6 @@ static int tpm_tis_i2c_init(struct device *dev)
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
+ 
+-	/* Default timeouts */
+-	chip->timeout_a = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-	chip->timeout_b = msecs_to_jiffies(TIS_LONG_TIMEOUT);
+-	chip->timeout_c = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-	chip->timeout_d = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-
+ 	if (request_locality(chip, 0) != 0) {
+ 		dev_err(dev, "could not request locality\n");
+ 		rc = -ENODEV;
+diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
+index b01e42ad121e..15b70939ee39 100644
+--- a/drivers/char/tpm/tpm_i2c_nuvoton.c
++++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+@@ -82,9 +82,6 @@ static s32 i2c_nuvoton_write_buf(struct i2c_client *client, u8 offset, u8 size,
+ #define TPM_STS_RESPONSE_RETRY 0x02
+ #define TPM_STS_ERR_VAL        0x07    /* bit2...bit0 reads always 0 */
+ 
+-#define TPM_I2C_SHORT_TIMEOUT  750     /* ms */
+-#define TPM_I2C_LONG_TIMEOUT   2000    /* 2 sec */
+-
+ /* read TPM_STS register */
+ static u8 i2c_nuvoton_read_status(struct tpm_chip *chip)
+ {
+@@ -136,7 +133,7 @@ static void i2c_nuvoton_ready(struct tpm_chip *chip)
+ static int i2c_nuvoton_get_burstcount(struct i2c_client *client,
+ 				      struct tpm_chip *chip)
+ {
+-	unsigned long stop = jiffies + chip->timeout_d;
++	unsigned long stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_D);
+ 	s32 status;
+ 	int burst_count = -1;
+ 	u8 data;
+@@ -235,10 +232,11 @@ static int i2c_nuvoton_recv_data(struct i2c_client *client,
+ 	struct priv_data *priv = dev_get_drvdata(&chip->dev);
+ 	s32 rc;
+ 	int burst_count, bytes2read, size = 0;
++	unsigned long timeout_c = tpm_limits_jiffies(chip, TPM_LIMIT_C);
+ 
+ 	while (size < count &&
+ 	       i2c_nuvoton_wait_for_data_avail(chip,
+-					       chip->timeout_c,
++					       timeout_c,
+ 					       &priv->read_queue) == 0) {
+ 		burst_count = i2c_nuvoton_get_burstcount(client, chip);
+ 		if (burst_count < 0) {
+@@ -275,6 +273,7 @@ static int i2c_nuvoton_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	int retries;
+ 	int size = 0;
+ 	u32 expected;
++	unsigned long timeout_c = tpm_limits_jiffies(chip, TPM_LIMIT_C);
+ 
+ 	if (count < TPM_HEADER_SIZE) {
+ 		i2c_nuvoton_ready(chip);    /* return to idle */
+@@ -292,7 +291,7 @@ static int i2c_nuvoton_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 		 * tag, paramsize, and result
+ 		 */
+ 		status = i2c_nuvoton_wait_for_data_avail(
+-			chip, chip->timeout_c, &priv->read_queue);
++			chip, timeout_c, &priv->read_queue);
+ 		if (status != 0) {
+ 			dev_err(dev, "%s() timeout on dataAvail\n", __func__);
+ 			size = -ETIMEDOUT;
+@@ -332,7 +331,7 @@ static int i2c_nuvoton_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 		}
+ 		if (i2c_nuvoton_wait_for_stat(
+ 			    chip, TPM_STS_VALID | TPM_STS_DATA_AVAIL,
+-			    TPM_STS_VALID, chip->timeout_c,
++			    TPM_STS_VALID, timeout_c,
+ 			    NULL)) {
+ 			dev_err(dev, "%s() error left over data\n", __func__);
+ 			size = -ETIMEDOUT;
+@@ -362,12 +361,14 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 	unsigned long duration;
+ 	size_t count = 0;
+ 	int burst_count, bytes2write, retries, rc = -EIO;
++	unsigned long timeout_b = tpm_limits_jiffies(chip, TPM_LIMIT_B);
++	unsigned long timeout_c = tpm_limits_jiffies(chip, TPM_LIMIT_C);
+ 
+ 	for (retries = 0; retries < TPM_RETRY; retries++) {
+ 		i2c_nuvoton_ready(chip);
+ 		if (i2c_nuvoton_wait_for_stat(chip, TPM_STS_COMMAND_READY,
+ 					      TPM_STS_COMMAND_READY,
+-					      chip->timeout_b, NULL)) {
++					      timeout_b, NULL)) {
+ 			dev_err(dev, "%s() timeout on commandReady\n",
+ 				__func__);
+ 			rc = -EIO;
+@@ -399,7 +400,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 						       TPM_STS_EXPECT,
+ 						       TPM_STS_VALID |
+ 						       TPM_STS_EXPECT,
+-						       chip->timeout_c,
++						       timeout_c,
+ 						       NULL);
+ 			if (rc < 0) {
+ 				dev_err(dev, "%s() timeout on Expect\n",
+@@ -424,7 +425,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 		rc = i2c_nuvoton_wait_for_stat(chip,
+ 					       TPM_STS_VALID | TPM_STS_EXPECT,
+ 					       TPM_STS_VALID,
+-					       chip->timeout_c, NULL);
++					       timeout_c, NULL);
+ 		if (rc) {
+ 			dev_err(dev, "%s() timeout on Expect to clear\n",
+ 				__func__);
+@@ -554,12 +555,6 @@ static int i2c_nuvoton_probe(struct i2c_client *client)
+ 
+ 	init_waitqueue_head(&priv->read_queue);
+ 
+-	/* Default timeouts */
+-	chip->timeout_a = msecs_to_jiffies(TPM_I2C_SHORT_TIMEOUT);
+-	chip->timeout_b = msecs_to_jiffies(TPM_I2C_LONG_TIMEOUT);
+-	chip->timeout_c = msecs_to_jiffies(TPM_I2C_SHORT_TIMEOUT);
+-	chip->timeout_d = msecs_to_jiffies(TPM_I2C_SHORT_TIMEOUT);
+-
  	dev_set_drvdata(&chip->dev, priv);
- 	chip->acpi_dev_handle = device->handle;
- 	chip->flags = TPM_CHIP_FLAG_TPM2;
+ 
+ 	/*
+@@ -578,6 +573,9 @@ static int i2c_nuvoton_probe(struct i2c_client *client)
+ 		if (rc) {
+ 			priv->irq = 0;
+ 		} else {
++			unsigned long timeout_b =
++				tpm_limits_jiffies(chip, TPM_LIMIT_B);
++
+ 			chip->flags |= TPM_CHIP_FLAG_IRQ;
+ 			/* Clear any pending interrupt */
+ 			i2c_nuvoton_ready(chip);
+@@ -585,7 +583,7 @@ static int i2c_nuvoton_probe(struct i2c_client *client)
+ 			rc = i2c_nuvoton_wait_for_stat(chip,
+ 						       TPM_STS_COMMAND_READY,
+ 						       TPM_STS_COMMAND_READY,
+-						       chip->timeout_b,
++						       timeout_b,
+ 						       NULL);
+ 			if (rc == 0) {
+ 				/*
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 384468920b5d..6f06739c05a8 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -137,7 +137,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+ static int wait_startup(struct tpm_chip *chip, int l)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+-	unsigned long stop = jiffies + chip->timeout_a;
++	unsigned long stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_A);
+ 
+ 	do {
+ 		int rc;
+@@ -210,7 +210,7 @@ static int __tpm_tis_request_locality(struct tpm_chip *chip, int l)
+ 	if (rc < 0)
+ 		return rc;
+ 
+-	stop = jiffies + chip->timeout_a;
++	stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_A);
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+ again:
+@@ -303,9 +303,9 @@ static int get_burstcount(struct tpm_chip *chip)
+ 
+ 	/* wait for burstcount */
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-		stop = jiffies + chip->timeout_a;
++		stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_A);
+ 	else
+-		stop = jiffies + chip->timeout_d;
++		stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_D);
+ 	do {
+ 		rc = tpm_tis_read32(priv, TPM_STS(priv->locality), &value);
+ 		if (rc < 0)
+@@ -327,7 +327,7 @@ static int recv_data(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	while (size < count) {
+ 		rc = wait_for_tpm_stat(chip,
+ 				 TPM_STS_DATA_AVAIL | TPM_STS_VALID,
+-				 chip->timeout_c,
++				 tpm_limits_jiffies(chip, TPM_LIMIT_C),
+ 				 &priv->read_queue, true);
+ 		if (rc < 0)
+ 			return rc;
+@@ -382,8 +382,9 @@ static int tpm_tis_try_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 		goto out;
+ 	}
+ 
+-	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+-				&priv->int_queue, false) < 0) {
++	if (wait_for_tpm_stat(chip, TPM_STS_VALID,
++			      tpm_limits_jiffies(chip, TPM_LIMIT_C),
++			      &priv->int_queue, false) < 0) {
+ 		size = -ETIME;
+ 		goto out;
+ 	}
+@@ -447,9 +448,9 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 	status = tpm_tis_status(chip);
+ 	if ((status & TPM_STS_COMMAND_READY) == 0) {
+ 		tpm_tis_ready(chip);
+-		if (wait_for_tpm_stat
+-		    (chip, TPM_STS_COMMAND_READY, chip->timeout_b,
+-		     &priv->int_queue, false) < 0) {
++		if (wait_for_tpm_stat(chip, TPM_STS_COMMAND_READY,
++				      tpm_limits_jiffies(chip, TPM_LIMIT_B),
++				      &priv->int_queue, false) < 0) {
+ 			rc = -ETIME;
+ 			goto out_err;
+ 		}
+@@ -470,8 +471,9 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 
+ 		count += burstcnt;
+ 
+-		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+-					&priv->int_queue, false) < 0) {
++		if (wait_for_tpm_stat(chip, TPM_STS_VALID,
++				      tpm_limits_jiffies(chip, TPM_LIMIT_C),
++				      &priv->int_queue, false) < 0) {
+ 			if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
+ 				rc = -EAGAIN;
+ 			else
+@@ -492,8 +494,9 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 	if (rc < 0)
+ 		goto out_err;
+ 
+-	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+-				&priv->int_queue, false) < 0) {
++	if (wait_for_tpm_stat(chip, TPM_STS_VALID,
++			      tpm_limits_jiffies(chip, TPM_LIMIT_C),
++			      &priv->int_queue, false) < 0) {
+ 		if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
+ 			rc = -EAGAIN;
+ 		else
+diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+index 0acfc36eff16..3a39ec49d3f3 100644
+--- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
++++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+@@ -95,6 +95,7 @@ static irqreturn_t tpm_cr50_i2c_int_handler(int dummy, void *tpm_info)
+ static int tpm_cr50_i2c_wait_tpm_ready(struct tpm_chip *chip)
+ {
+ 	struct tpm_i2c_cr50_priv_data *priv = dev_get_drvdata(&chip->dev);
++	unsigned long timeout = tpm_limits_jiffies(chip, TPM_LIMIT_A);
+ 
+ 	/* Use a safe fixed delay if interrupt is not supported */
+ 	if (priv->irq <= 0) {
+@@ -103,7 +104,7 @@ static int tpm_cr50_i2c_wait_tpm_ready(struct tpm_chip *chip)
+ 	}
+ 
+ 	/* Wait for interrupt to indicate TPM is ready to respond */
+-	if (!wait_for_completion_timeout(&priv->tpm_ready, chip->timeout_a)) {
++	if (!wait_for_completion_timeout(&priv->tpm_ready, timeout)) {
+ 		dev_warn(&chip->dev, "Timeout waiting for TPM ready\n");
+ 		return -ETIMEDOUT;
+ 	}
+@@ -362,7 +363,7 @@ static int tpm_cr50_request_locality(struct tpm_chip *chip, int loc)
+ 	if (rc < 0)
+ 		goto unlock_out;
+ 
+-	stop = jiffies + chip->timeout_a;
++	stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_A);
+ 	do {
+ 		if (tpm_cr50_check_locality(chip, loc) == loc)
+ 			return loc;
+@@ -433,7 +434,7 @@ static int tpm_cr50_i2c_get_burst_and_status(struct tpm_chip *chip, u8 mask,
+ 	*status = 0;
+ 
+ 	/* wait for burstcount */
+-	stop = jiffies + chip->timeout_b;
++	stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_B);
+ 
+ 	do {
+ 		if (tpm_cr50_i2c_read(chip, TPM_I2C_STS(chip->locality), buf, sizeof(buf)) < 0) {
+@@ -563,7 +564,7 @@ static int tpm_cr50_i2c_tis_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 	int rc;
+ 
+ 	/* Wait until TPM is ready for a command */
+-	stop = jiffies + chip->timeout_b;
++	stop = jiffies + tpm_limits_jiffies(chip, TPM_LIMIT_B);
+ 	while (!(tpm_cr50_i2c_tis_status(chip) & TPM_STS_COMMAND_READY)) {
+ 		if (time_after(jiffies, stop)) {
+ 			rc = -ETIMEDOUT;
+@@ -738,12 +739,6 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client)
+ 	if (tpm_cr50_i2c_is_firmware_power_managed(dev))
+ 		chip->flags |= TPM_CHIP_FLAG_FIRMWARE_POWER_MANAGED;
+ 
+-	/* Default timeouts */
+-	chip->timeout_a = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-	chip->timeout_b = msecs_to_jiffies(TIS_LONG_TIMEOUT);
+-	chip->timeout_c = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-	chip->timeout_d = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-
+ 	dev_set_drvdata(&chip->dev, priv);
+ 	init_completion(&priv->tpm_ready);
+ 
+diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+index 3c0cce57c4ae..b1624345891a 100644
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -148,8 +148,9 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 		return -EINVAL;
+ 
+ 	/* Wait for completion of any existing command or cancellation */
+-	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, chip->timeout_c,
+-			&priv->read_queue, true) < 0) {
++	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE,
++			      tpm_limits_jiffies(chip, TPM_LIMIT_C),
++			      &priv->read_queue, true) < 0) {
+ 		vtpm_cancel(chip);
+ 		return -ETIME;
+ 	}
+@@ -185,8 +186,9 @@ static int vtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 		return -ECANCELED;
+ 
+ 	/* In theory the wait at the end of _send makes this one unnecessary */
+-	if (wait_for_tpm_stat(chip, VTPM_STATUS_RESULT, chip->timeout_c,
+-			&priv->read_queue, true) < 0) {
++	if (wait_for_tpm_stat(chip, VTPM_STATUS_RESULT,
++			      tpm_limits_jiffies(chip, TPM_LIMIT_C),
++			      &priv->read_queue, true) < 0) {
+ 		vtpm_cancel(chip);
+ 		return -ETIME;
+ 	}
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 25c30f3fc269..506b81ed3239 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -59,16 +59,6 @@ struct tpm_class_ops {
+ 
+ #define TPM_NUM_EVENT_LOG_FILES		3
+ 
+-/* Indexes the duration array */
+-enum tpm_duration {
+-	TPM_SHORT = 0,
+-	TPM_MEDIUM = 1,
+-	TPM_LONG = 2,
+-	TPM_LONG_LONG = 3,
+-	TPM_UNDEFINED,
+-	TPM_NUM_DURATIONS = TPM_UNDEFINED,
+-};
+-
+ enum tpm_limit {
+ 	/* Interface handshake timeouts */
+ 	TPM_LIMIT_A,
+@@ -175,12 +165,7 @@ struct tpm_chip {
+ 
+ 	struct mutex tpm_mutex;	/* tpm is processing */
+ 
+-	unsigned long timeout_a; /* jiffies */
+-	unsigned long timeout_b; /* jiffies */
+-	unsigned long timeout_c; /* jiffies */
+-	unsigned long timeout_d; /* jiffies */
+ 	bool timeout_adjusted;
+-	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
+ 	bool duration_adjusted;
+ 
+ 	struct tpm_limits limits;
 -- 
 2.47.3
 
