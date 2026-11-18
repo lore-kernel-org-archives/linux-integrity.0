@@ -1,66 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.246.1.125
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.246.68.102
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794987541;
-	b=WJkATfrIJOukxRPmMKWEeHlqpJk13K/ZRMeIODHskLkc5RxXMY+2wOof+wOscGIyzg8v
-	 tR0x9M8++gn66lL2EIcLNzIAhCyjvgzmYaOFN1QfYRSL6N5Ud+uJZOQlDCS51f/HmdxEg
-	 uG9Oep7nNmLlLzifvAyQnPAfcNBdlRH/BBMUZ2HVWHGF7XDnS1QSpzsdh5DJ+kQhMlGJt
-	 LWnUYxgMyliIKvgjjVSPOD14at8QIRrLYQEGlTVHj44Ykb1R5MKVFF7pVXTTT7+E5y9k+
-	 mEQA9HFclO6hkN7z2LupczDSF4zy81KL5pYzozu55JYbZ9x7RNo332kgJu26+FiSAlA==
+	t=1794987542;
+	b=Nn8KLRwQ+6HeHDoSMyHncQ9kQxxixnbemmnfVFokitsPtNbLzwJ4uCv1VhOgysFwfN7h
+	 sRT3kaSC/PSzI9J/xEBCqvY5+Y9t1G5iCBQEzUY2teAGfKMvOkQghKn6ESHDRbr6yCxEj
+	 ujSrUIMLMJ1majI/uuiLeP0AnA1kh2K8YIVBzmwhC75i/MDS7qWzBDFXMwEigeNWY4oph
+	 8UxHlmNunTO446cIULHZ63GDPaJPwlFEw2bare7kTUjANCKl7e5v77bb7PEE/uGbHfzXI
+	 +a/LE0VA2ejcz1MSslqdFVfQc1RgItfS7KkWUDrt/DthbuSZ1jNqAZMwkVpunwISMyA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794987541;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794987542;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:Received:Received:X-Farcaster-Flow-ID:Received:Received:
 	 From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
 	 X-ClientProxiedBy;
-	bh=g409skIBE5QnOJnhrUZ6oj1QzklISW5q/kf1QfamMtE=;
-	b=RiIYwUT7578wHG3NVFuXlb/boSRbuQSOEkQbcy7p7yZ42yV4gemuHmrk2qWdEiwGbeP5
-	 u1Xh7ETtfIhoNAOsK87eNLynJyibCjclnuBHue+z0nLVVmEPXyqEsnTyiJmnJ71xzxkhY
-	 iWdBs/HxZ5NK+r+TtrqqAF0/IKSABwqNjJxprCE/LV468Xc9UBMWsPELXEfRmspIat4Bc
-	 bmR6r/EZE9UrbBLDLUSmNyJwA7wtaclibHriniLLfPxT4QlEHptUJasABacE+IsAaH/eQ
-	 N/U66H9JL9Uiielb3cz3YrjqS30nmrJ6MOryhKzVXTYGhF0TVO9TfiRyal7tjhXereQ==
+	bh=q8bq/5un/Sz605ZcVUoAJNomM5fX2Q33o06/HGFnUcs=;
+	b=LS32ZoEYpdd7bbCnhFrptHMfIQtnZr9GA4Bxz0ujqw7Lp2s8f+LqYpj6A0mNotBA+/0u
+	 TUTQ+vIm+D9ZOd64YgRY4TE7bfUDd3YerCmCJAxonS2+/ghqg2qjFRtq2cXNySmKShIpH
+	 c0uh9UsqL0FLPFLMUbx6LxYqstpsi+NP1rl2gGl7d1aVLMI7MY/QHFeE7+uzaMXRCU9PN
+	 Ud8GGrNJVdr5UNKNwB/mAKtGCnqxDqpYYLVBTT96OFLlfx/jzlMIQu6WE5daXnfJa0ZeQ
+	 aXhhqQdkTkeUZJLPQrjylVqaZH3E8hcKr6sgHtxsoXJnKvW+75xHgkJz8SHDH6DkAhA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=amazon.com;
 	spf=pass smtp.mailfrom=amazon.com;
-	dkim=pass header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=gh8Z4eDz;
-	arc=none smtp.remote-ip=44.246.1.125
-Received: from pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.1.125])
+	dkim=pass header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=Qunw+sId;
+	arc=none smtp.remote-ip=44.246.68.102
+Received: from pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.68.102])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B41606A32A;
-	Wed, 18 Nov 2026 07:39:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 10B41606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2469C606A331;
+	Wed, 18 Nov 2026 07:39:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2469C606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=gh8Z4eDz
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=Qunw+sId
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
   t=1794987541; x=1826523541;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=g409skIBE5QnOJnhrUZ6oj1QzklISW5q/kf1QfamMtE=;
-  b=gh8Z4eDzwlrDNaC5UzuAKmB8BZJn/zCHv7y+0MGqjT8roR1tXT6yuAms
-   J9cKJBMP0pA52nQt/XuKRjOZajD0AJ1S8hKUM4CfPf+t+/l3x/ONyCpRW
-   YRYmJ2Eg+wvDqm+f3h9FRd0IqlREFwQBwlNN0eRes7rL2hEMXKU1GhSy9
-   z4IXxGIqj7DJLJtSiRRPHzlC6A2CvaK6j/TvdXuNuN8lIJgEuzvHGnKpg
-   uXYuS7uCQR+dkViwS4ioRCy7rHHB9llmSAQFQ4wkScTPB6S9PeIyL1Y01
-   NveJUw1N4/JE7zqBo0ogQe9XAY17l8yzU0pbiLjxSVmO/zK7AHXn34CRZ
-   g==;
-X-CSE-ConnectionGUID: dFNkqFMmRh+Iff+l5XZZaQ==
-X-CSE-MsgGUID: 909moT+SQ7Wj9s9zEsaq1A==
+  bh=q8bq/5un/Sz605ZcVUoAJNomM5fX2Q33o06/HGFnUcs=;
+  b=Qunw+sIdQS2KlICV3hbuDBvjybXMyA2P61vVs6iTAJ9ojt/UT/68H9Jo
+   Zx+pV/aljqeSnbjlE23vbh5wTwmGvNvuQNrTaCjEgC4ZCklc4Q0GqvneD
+   lQCc0UgdhCMTSwiZY5HuYzXhfwUQ4NPb1/sR9cRHT00qe2LlsXoFpeP67
+   /aPIhhgV7qRX+BzwOks/HVcdzWI3wb0hB+DdIn3lwPf5RBE6uDis0e9Zw
+   YSo8HwPrdE1RFK8FHiE9Uqw68DqZiV1ilqIErLvNcBMraKT3E/OxpyqqX
+   aB2v/IkBjJEQMlnnhVsyVKtaz7xDX767KSMguqblacBsHKf4hyc5uH870
+   A==;
+X-CSE-ConnectionGUID: lt9Qmu69Sh603CsmsMF5SA==
+X-CSE-MsgGUID: +sSj0LR7QAOLfyW+DRTDZw==
 X-IronPort-AV: E=Sophos;i="6.27,219,1787011200"; 
-   d="scan'208";a="34417935"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 07:38:58 +0000
+   d="scan'208";a="34341914"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 07:38:58 +0000
 Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.178:12579]
  by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.46.128:2525] with esmtp (Farcaster)
- id cb797244-b32d-4105-b333-144ab2b16c5e; Wed, 18 Nov 2026 07:38:58 +0000 (UTC)
-X-Farcaster-Flow-ID: cb797244-b32d-4105-b333-144ab2b16c5e
+ id 01b3f888-d495-49f1-8fb3-efe3cc5df8f6; Wed, 18 Nov 2026 07:38:58 +0000 (UTC)
+X-Farcaster-Flow-ID: 01b3f888-d495-49f1-8fb3-efe3cc5df8f6
 Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
  EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56;
- Wed, 18 Nov 2026 07:38:57 +0000
+ Wed, 18 Nov 2026 07:38:58 +0000
 Received: from dev-dsk-surenkj-2b-416930d2.us-west-2.amazon.com (10.169.26.94)
  by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56;
@@ -74,9 +74,9 @@ CC: Jason Gunthorpe <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>,
  Leitao" <leitao@debian.org>, <nh-open-source@amazon.com>, Alexander Graf
 	<graf@amazon.de>, Gunnar Kudrjavets <gunnarku@amazon.com>, Josh Levinson
 	<joshlev@amazon.com>
-Subject: [RFC PATCH v4 2/8] tpm: Wire the timing setup to the limits table
-Date: Wed, 18 Nov 2026 07:38:46 +0000
-Message-ID: <20261118073852.81107-3-surenkj@amazon.com>
+Subject: [RFC PATCH v4 3/8] tpm: Take command durations from the limits table
+Date: Wed, 18 Nov 2026 07:38:47 +0000
+Message-ID: <20261118073852.81107-4-surenkj@amazon.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261118073852.81107-1-surenkj@amazon.com>
 References: <20261118073852.81107-1-surenkj@amazon.com>
@@ -94,528 +94,709 @@ Content-Type: text/plain
 X-ClientProxiedBy: EX19D031UWC003.ant.amazon.com (10.13.139.252) To
  EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-tpm1_get_timeouts() and tpm2_get_timeouts() still write the jiffies
-fields of struct tpm_chip directly and tpm_tis patches the TPM 1.x
-values through ->update_timeouts() and ->update_durations(). Build the
-limits table instead.
+TPM 2.0 commands still get their wait from a fixed map of durations.
+The limits table never sees those values so they have no bounds and a
+driver cannot adjust them. TPM 1.x already maps each ordinal to a class
+through tpm1_ordinal_duration[] but reads the value from the jiffies
+copies in struct tpm_chip.
 
-Both functions now call tpm_limits_update(). The TPM 1.x path passes
-what the chip reported after the existing fixups for chips. The table
-already keeps the default where the chip reports a zero. When the final
-values differ from the reported ones tpm1_get_timeouts() logs both
-for the durations as well as the timeouts.
+Map each TPM 2.0 ordinal to a class too and have
+tpm_calc_ordinal_duration() read the class's limit from the table for
+both families. An ordinal neither table knows gets DEFAULT.
 
-The waits/polls still read the jiffies fields so tpm_limits_commit()
-copies the table into them. Since that already fills them with the
-defaults at tpm_chip_alloc(), tpm_tis_core_init() no longer uses
-TIS_TIMEOUT_*_MAX macros which are removed and xen-tpmfront gets
-a nonzero TIMEOUT_C for its timeout query.
-
-The Atmel 3204 timeout quirk and the STMicroelectronics 0x104a
-duration quirk move to tpm_tis_adjust_limits() and the two old hooks
-are removed. The quirks use the DID/VID that tpm_tis_core_init()
-already reads so they no longer read the register under ->clk_enable().
-
-The "[adjusted]" marker in the timeouts and durations sysfs files now
-means that a final value differs from what the chip reported. That
-was already true for the quirks and the fixups above. A value changed
-by validation is the new case. Update the ABI text which only
-described the msec scaling.
+With the default limits, TPM2_VerifySignature is the only command whose
+wait changes. Its 30 s matched no class, so it now gets DEFAULT 120 s.
+On TPM 1.x an unknown ordinal still waits two minutes, unless LONG
+ends up above that and validation raises DEFAULT to match.
 
 Signed-off-by: Surendran Kanagaraj <surenkj@amazon.com>
 ---
- Documentation/ABI/stable/sysfs-class-tpm |  12 +-
- drivers/char/tpm/tpm-limits.c            |  14 +++
- drivers/char/tpm/tpm1-cmd.c              | 147 +++++++++++------------
- drivers/char/tpm/tpm2-cmd.c              |   5 +-
- drivers/char/tpm/tpm_tis_core.c          | 137 ++++++---------------
- include/linux/tpm.h                      |   5 +-
- include/linux/tpm_ptp.h                  |   9 --
- 7 files changed, 129 insertions(+), 200 deletions(-)
+ drivers/char/tpm/tpm-interface.c |  15 +-
+ drivers/char/tpm/tpm.h           |   4 +-
+ drivers/char/tpm/tpm1-cmd.c      | 518 +++++++++++++++----------------
+ drivers/char/tpm/tpm2-cmd.c      |  58 ++--
+ 4 files changed, 294 insertions(+), 301 deletions(-)
 
-diff --git a/Documentation/ABI/stable/sysfs-class-tpm b/Documentation/ABI/stable/sysfs-class-tpm
-index 411d5895bed4..73b69f63b298 100644
---- a/Documentation/ABI/stable/sysfs-class-tpm
-+++ b/Documentation/ABI/stable/sysfs-class-tpm
-@@ -61,10 +61,10 @@ Description:	The "durations" property shows the 3 vendor-specific values
- 		Here the short, medium and long durations are displayed in
- 		usecs. "[original]" indicates that the values are displayed
- 		unmodified from when they were queried from the chip.
--		Durations can be modified in the case where a buggy chip
--		reports them in msec instead of usec and they need to be
--		scaled to be displayed in usecs. In this case "[adjusted]"
--		will be displayed in place of "[original]".
-+		"[adjusted]" is displayed in place of "[original]" when a
-+		value differs from what the chip reported, for example
-+		because the chip reported msecs instead of usecs or a driver
-+		quirk replaced the value.
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index c18b060d7da2..8cb4cbc9e2a6 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -40,6 +40,14 @@ module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
+ MODULE_PARM_DESC(suspend_pcr,
+ 		 "PCR to use for dummy writes to facilitate flush on suspend.");
  
- What:		/sys/class/tpm/tpmX/device/enabled
- Date:		April 2006
-@@ -181,8 +181,8 @@ Description:	The "timeouts" property shows the 4 vendor-specific values
- 		  750000 750000 750000 750000 [original]
- 
- 		The four timeout values are shown in usecs, with a trailing
--		"[original]" or "[adjusted]" depending on whether the values
--		were scaled by the driver to be reported in usec from msecs.
-+		"[adjusted]" if any value differs from what the chip
-+		reported, and "[original]" otherwise.
- 
- What:		/sys/class/tpm/tpmX/tpm_version_major
- Date:		October 2019
-diff --git a/drivers/char/tpm/tpm-limits.c b/drivers/char/tpm/tpm-limits.c
-index 0d3729839e05..5b984cb636f0 100644
---- a/drivers/char/tpm/tpm-limits.c
-+++ b/drivers/char/tpm/tpm-limits.c
-@@ -177,6 +177,20 @@ static void tpm_limits_commit(struct tpm_chip *chip,
- 
- 	chip->limits = *p;
- 
-+	/* Copy the limits into the jiffies fields that the waits still read. */
-+	chip->timeout_a = usecs_to_jiffies(e[TPM_LIMIT_A].time_us);
-+	chip->timeout_b = usecs_to_jiffies(e[TPM_LIMIT_B].time_us);
-+	chip->timeout_c = usecs_to_jiffies(e[TPM_LIMIT_C].time_us);
-+	chip->timeout_d = usecs_to_jiffies(e[TPM_LIMIT_D].time_us);
-+	chip->duration[TPM_SHORT] =
-+		usecs_to_jiffies(e[TPM_LIMIT_SHORT].time_us);
-+	chip->duration[TPM_MEDIUM] =
-+		usecs_to_jiffies(e[TPM_LIMIT_MEDIUM].time_us);
-+	chip->duration[TPM_LONG] =
-+		usecs_to_jiffies(e[TPM_LIMIT_LONG].time_us);
-+	chip->duration[TPM_LONG_LONG] =
-+		usecs_to_jiffies(e[TPM_LIMIT_LONG_LONG].time_us);
-+
- 	for (limit = 0; limit < TPM_NR_LIMITS; limit++)
- 		dev_dbg(&chip->dev, "limit %s = %u us (%s%s)\n",
- 			tpm_limit_names[limit], e[limit].time_us,
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 7a8606e8c711..c02d46eab8c3 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -332,12 +332,48 @@ static int tpm1_startup(struct tpm_chip *chip)
- 	return tpm_transmit_cmd(chip, buf, 0, "attempting to start the TPM");
- }
- 
-+/*
-+ * Set the "[adjusted]" flags that sysfs shows, and log the reported and final
-+ * values, when a final value differs from what the chip sent.
-+ */
-+static void tpm1_report_adjusted(struct tpm_chip *chip, const u32 *raw,
-+				 unsigned long mask)
++static enum tpm_limit tpm_duration_limit(struct tpm_chip *chip, u32 ordinal)
 +{
-+	const struct tpm_limit_entry *e = chip->limits.entry;
-+	unsigned long changed = 0;
-+	int limit;
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		return tpm2_duration_limit(ordinal);
 +
-+	for_each_set_bit(limit, &mask, TPM_NR_LIMITS) {
-+		if (e[limit].time_us != raw[limit])
-+			changed |= BIT(limit);
-+	}
-+
-+	chip->timeout_adjusted = changed & TPM_LIMIT_INTF_MASK;
-+	chip->duration_adjusted = changed & TPM1_LIMIT_DURATION_MASK;
-+
-+	if (chip->timeout_adjusted)
-+		dev_info(&chip->dev, "Adjusting reported timeouts: A %u->%uus B %u->%uus C %u->%uus D %u->%uus\n",
-+			 raw[TPM_LIMIT_A], e[TPM_LIMIT_A].time_us,
-+			 raw[TPM_LIMIT_B], e[TPM_LIMIT_B].time_us,
-+			 raw[TPM_LIMIT_C], e[TPM_LIMIT_C].time_us,
-+			 raw[TPM_LIMIT_D], e[TPM_LIMIT_D].time_us);
-+
-+	if (chip->duration_adjusted)
-+		dev_info(&chip->dev, "Adjusting reported durations: SHORT %u->%uus MEDIUM %u->%uus LONG %u->%uus\n",
-+			 raw[TPM_LIMIT_SHORT], e[TPM_LIMIT_SHORT].time_us,
-+			 raw[TPM_LIMIT_MEDIUM], e[TPM_LIMIT_MEDIUM].time_us,
-+			 raw[TPM_LIMIT_LONG], e[TPM_LIMIT_LONG].time_us);
++	return tpm1_duration_limit(ordinal);
 +}
 +
- int tpm1_get_timeouts(struct tpm_chip *chip)
+ /**
+  * tpm_calc_ordinal_duration() - calculate the maximum command duration
+  * @chip:    TPM chip to use.
+@@ -52,10 +60,9 @@ MODULE_PARM_DESC(suspend_pcr,
+  */
+ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
  {
-+	unsigned long mask = TPM_LIMIT_INTF_MASK;
-+	u32 reported[TPM_NR_LIMITS] = {};
-+	u32 raw[TPM_NR_LIMITS] = {};
-+	u64 val[TPM_NR_LIMITS];	/* u64 so the scaling by 1000 cannot overflow */
- 	cap_t cap;
--	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
--	unsigned long durations[3];
- 	ssize_t rc;
-+	int limit;
- 
- 	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
- 			 sizeof(cap.timeout));
-@@ -356,83 +392,28 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 		return rc;
- 	}
- 
--	timeout_old[0] = jiffies_to_usecs(chip->timeout_a);
--	timeout_old[1] = jiffies_to_usecs(chip->timeout_b);
--	timeout_old[2] = jiffies_to_usecs(chip->timeout_c);
--	timeout_old[3] = jiffies_to_usecs(chip->timeout_d);
--	timeout_chip[0] = be32_to_cpu(cap.timeout.a);
--	timeout_chip[1] = be32_to_cpu(cap.timeout.b);
--	timeout_chip[2] = be32_to_cpu(cap.timeout.c);
--	timeout_chip[3] = be32_to_cpu(cap.timeout.d);
--	memcpy(timeout_eff, timeout_chip, sizeof(timeout_eff));
--
--	/*
--	 * Provide ability for vendor overrides of timeout values in case
--	 * of misreporting.
--	 */
--	if (chip->ops->update_timeouts)
--		chip->ops->update_timeouts(chip, timeout_eff);
--
--	if (!chip->timeout_adjusted) {
--		/* Restore default if chip reported 0 */
--		unsigned int i;
--
--		for (i = 0; i < ARRAY_SIZE(timeout_eff); i++) {
--			if (timeout_eff[i])
--				continue;
--
--			timeout_eff[i] = timeout_old[i];
--			chip->timeout_adjusted = true;
--		}
--
--		if (timeout_eff[0] != 0 && timeout_eff[0] < 1000) {
--			/* timeouts in msec rather usec */
--			for (i = 0; i != ARRAY_SIZE(timeout_eff); i++)
--				timeout_eff[i] *= 1000;
--			chip->timeout_adjusted = true;
--		}
--	}
--
--	/* Report adjusted timeouts */
--	if (chip->timeout_adjusted) {
--		dev_info(&chip->dev, HW_ERR "Adjusting reported timeouts: A %lu->%luus B %lu->%luus C %lu->%luus D %lu->%luus\n",
--			 timeout_chip[0], timeout_eff[0],
--			 timeout_chip[1], timeout_eff[1],
--			 timeout_chip[2], timeout_eff[2],
--			 timeout_chip[3], timeout_eff[3]);
--	}
--
--	chip->timeout_a = usecs_to_jiffies(timeout_eff[0]);
--	chip->timeout_b = usecs_to_jiffies(timeout_eff[1]);
--	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
--	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
-+	raw[TPM_LIMIT_A] = be32_to_cpu(cap.timeout.a);
-+	raw[TPM_LIMIT_B] = be32_to_cpu(cap.timeout.b);
-+	raw[TPM_LIMIT_C] = be32_to_cpu(cap.timeout.c);
-+	raw[TPM_LIMIT_D] = be32_to_cpu(cap.timeout.d);
- 
- 	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
- 			 "attempting to determine the durations",
- 			  sizeof(cap.duration));
--	if (rc)
--		return rc;
-+	if (!rc) {
-+		raw[TPM_LIMIT_SHORT] = be32_to_cpu(cap.duration.tpm_short);
-+		raw[TPM_LIMIT_MEDIUM] = be32_to_cpu(cap.duration.tpm_medium);
-+		raw[TPM_LIMIT_LONG] = be32_to_cpu(cap.duration.tpm_long);
-+		mask |= TPM1_LIMIT_DURATION_MASK;
-+	}
- 
--	chip->duration[TPM_SHORT] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_short));
--	chip->duration[TPM_MEDIUM] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
--	chip->duration[TPM_LONG] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
--	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
-+	for (limit = 0; limit < TPM_NR_LIMITS; limit++)
-+		val[limit] = raw[limit];
- 
--	/*
--	 * Provide the ability for vendor overrides of duration values in case
--	 * of misreporting.
--	 */
--	if (chip->ops->update_durations)
--		chip->ops->update_durations(chip, durations);
--
--	if (chip->duration_adjusted) {
--		dev_info(&chip->dev, HW_ERR "Adjusting reported durations.");
--		chip->duration[TPM_SHORT] = durations[0];
--		chip->duration[TPM_MEDIUM] = durations[1];
--		chip->duration[TPM_LONG] = durations[2];
-+	/* TIMEOUT_A below 1000 means the four timeouts are in milliseconds. */
-+	if (val[TPM_LIMIT_A] && val[TPM_LIMIT_A] < 1000) {
-+		for (limit = TPM_LIMIT_A; limit <= TPM_LIMIT_D; limit++)
-+			val[limit] *= 1000;
- 	}
- 
- 	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
-@@ -440,14 +421,22 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	 * fix up the resulting too-small TPM_SHORT value to make things work.
- 	 * We also scale the TPM_MEDIUM and -_LONG values by 1000.
- 	 */
--	if (chip->duration[TPM_SHORT] < (HZ / 100)) {
--		chip->duration[TPM_SHORT] = HZ;
--		chip->duration[TPM_MEDIUM] *= 1000;
--		chip->duration[TPM_LONG] *= 1000;
--		chip->duration_adjusted = true;
--		dev_info(&chip->dev, "Adjusting TPM timeout parameters.");
-+	if ((mask & BIT(TPM_LIMIT_SHORT)) &&
-+	    val[TPM_LIMIT_SHORT] < 10 * USEC_PER_MSEC) {
-+		val[TPM_LIMIT_SHORT] = USEC_PER_SEC;
-+		val[TPM_LIMIT_MEDIUM] *= 1000;
-+		val[TPM_LIMIT_LONG] *= 1000;
- 	}
- 
-+	for_each_set_bit(limit, &mask, TPM_NR_LIMITS)
-+		reported[limit] = min_t(u64, val[limit], U32_MAX);
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-		return tpm2_calc_ordinal_duration(ordinal);
+-	else
+-		return tpm1_calc_ordinal_duration(chip, ordinal);
++	enum tpm_limit limit = tpm_duration_limit(chip, ordinal);
 +
-+	/* The reported timeouts apply even when the durations query failed. */
-+	tpm_limits_update(chip, reported);
-+	tpm1_report_adjusted(chip, raw, mask);
-+	if (rc)
-+		return rc;
-+
- 	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
- 	return 0;
++	return usecs_to_jiffies(chip->limits.entry[limit].time_us);
  }
+ EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index bc029c54623d..223998f99386 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -66,7 +66,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr);
+ int tpm1_auto_startup(struct tpm_chip *chip);
+ int tpm1_do_selftest(struct tpm_chip *chip);
+ int tpm1_get_timeouts(struct tpm_chip *chip);
+-unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
++enum tpm_limit tpm1_duration_limit(u32 ordinal);
+ int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+ 		    const char *log_msg);
+ int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+@@ -171,7 +171,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
+ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
+ int tpm2_auto_startup(struct tpm_chip *chip);
+ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
+-unsigned long tpm2_calc_ordinal_duration(u32 ordinal);
++enum tpm_limit tpm2_duration_limit(u32 ordinal);
+ int tpm2_probe(struct tpm_chip *chip);
+ int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip);
+ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index c02d46eab8c3..853bb1cee2ed 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -31,279 +31,267 @@
+  * from the chip during initialization with a call to tpm_get_timeouts.
+  */
+ static const u8 tpm1_ordinal_duration[TPM_MAX_ORDINAL] = {
+-	TPM_UNDEFINED,		/* 0 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 5 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 10 */
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_LONG,
+-	TPM_LONG,
+-	TPM_MEDIUM,		/* 15 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_LONG,
+-	TPM_SHORT,		/* 20 */
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_SHORT,		/* 25 */
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_MEDIUM,		/* 30 */
+-	TPM_LONG,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 35 */
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,		/* 40 */
+-	TPM_LONG,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 45 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_LONG,
+-	TPM_MEDIUM,		/* 50 */
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 55 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,		/* 60 */
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_MEDIUM,		/* 65 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 70 */
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 75 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_LONG,		/* 80 */
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,
+-	TPM_LONG,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,		/* 85 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 90 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,		/* 95 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,		/* 100 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 105 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 110 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 115 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_LONG,		/* 120 */
+-	TPM_LONG,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 125 */
+-	TPM_SHORT,
+-	TPM_LONG,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 130 */
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,		/* 135 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 140 */
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 145 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 150 */
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,		/* 155 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 160 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 165 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_LONG,		/* 170 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 175 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,		/* 180 */
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,		/* 185 */
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 190 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 195 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 200 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 205 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_MEDIUM,		/* 210 */
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,		/* 215 */
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 220 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,		/* 225 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 230 */
+-	TPM_LONG,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 235 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 240 */
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,
++	TPM_LIMIT_DEFAULT,	/* 0 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 5 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 10 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_MEDIUM,	/* 15 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_SHORT,	/* 20 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_SHORT,	/* 25 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_MEDIUM,	/* 30 */
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,	/* 35 */
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_MEDIUM,	/* 40 */
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,	/* 45 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_MEDIUM,	/* 50 */
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 55 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_MEDIUM,	/* 60 */
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_MEDIUM,	/* 65 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 70 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 75 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_LONG,		/* 80 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,	/* 85 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 90 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,	/* 95 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_MEDIUM,	/* 100 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 105 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 110 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,	/* 115 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_LONG,		/* 120 */
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,	/* 125 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,	/* 130 */
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_DEFAULT,	/* 135 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 140 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 145 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 150 */
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,	/* 155 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 160 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 165 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_LONG,		/* 170 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 175 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_MEDIUM,	/* 180 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,	/* 185 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 190 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 195 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 200 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,	/* 205 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_MEDIUM,	/* 210 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_DEFAULT,	/* 215 */
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,	/* 220 */
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_SHORT,
++	TPM_LIMIT_DEFAULT,	/* 225 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 230 */
++	TPM_LIMIT_LONG,
++	TPM_LIMIT_MEDIUM,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,	/* 235 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_SHORT,	/* 240 */
++	TPM_LIMIT_DEFAULT,
++	TPM_LIMIT_MEDIUM,
+ };
+ 
+ /**
+- * tpm1_calc_ordinal_duration() - calculate the maximum command duration
+- * @chip:    TPM chip to use.
++ * tpm1_duration_limit() - the execution class of a TPM 1.x command
+  * @ordinal: TPM command ordinal.
+  *
+- * The function returns the maximum amount of time the chip could take
+- * to return the result for a particular ordinal in jiffies.
+- *
+- * Return: A maximal duration time for an ordinal in jiffies.
++ * Return: The limit that bounds the execution of @ordinal.
+  */
+-unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
++enum tpm_limit tpm1_duration_limit(u32 ordinal)
+ {
+-	int duration_idx = TPM_UNDEFINED;
+-	int duration = 0;
+-
+ 	/*
+-	 * We only have a duration table for protected commands, where the upper
+-	 * 16 bits are 0. For the few other ordinals the fallback will be used.
++	 * The table covers protected commands, where the upper 16 bits are 0.
++	 * The few other ordinals use the DEFAULT limit.
+ 	 */
+-	if (ordinal < TPM_MAX_ORDINAL)
+-		duration_idx = tpm1_ordinal_duration[ordinal];
+-
+-	if (duration_idx != TPM_UNDEFINED)
+-		duration = chip->duration[duration_idx];
+-	if (duration <= 0)
+-		return 2 * 60 * HZ;
+-	else
+-		return duration;
++	if (ordinal >= TPM_MAX_ORDINAL)
++		return TPM_LIMIT_DEFAULT;
++
++	return tpm1_ordinal_duration[ordinal];
+ }
+ 
+ /**
+@@ -612,7 +600,7 @@ int tpm1_do_selftest(struct tpm_chip *chip)
+ 	unsigned long duration;
+ 	u8 dummy[TPM_DIGEST_SIZE];
+ 
+-	duration = tpm1_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
++	duration = tpm_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
+ 
+ 	loops = jiffies_to_msecs(duration) / delay_msec;
+ 
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 4b2bb2ddc321..f943f1c05721 100644
+index f943f1c05721..629caaeffa17 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -43,10 +43,7 @@ EXPORT_SYMBOL_GPL(tpm2_find_hash_alg);
- 
- int tpm2_get_timeouts(struct tpm_chip *chip)
- {
--	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
--	chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
--	chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
--	chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
-+	tpm_limits_update(chip, NULL);
- 	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
+@@ -48,47 +48,45 @@ int tpm2_get_timeouts(struct tpm_chip *chip)
  	return 0;
  }
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 143ef160820e..384468920b5d 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -626,81 +626,16 @@ static int tpm_tis_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
- struct tis_vendor_durations_override {
- 	u32 did_vid;
- 	struct tpm1_version version;
--	unsigned long durations[3];
-+	u32 durations_us[3];
- };
- 
--static const struct  tis_vendor_durations_override vendor_dur_overrides[] = {
-+static const struct tis_vendor_durations_override vendor_dur_overrides[] = {
- 	/* STMicroelectronics 0x104a */
- 	{ 0x0000104a,
- 	  { 1, 2, 8, 28 },
--	  { (2 * 60 * HZ), (2 * 60 * HZ), (2 * 60 * HZ) } },
-+	  { 120 * USEC_PER_SEC, 120 * USEC_PER_SEC, 120 * USEC_PER_SEC } },
- };
- 
--static void tpm_tis_update_durations(struct tpm_chip *chip,
--				     unsigned long *duration_cap)
--{
--	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
--	struct tpm1_version *version;
--	u32 did_vid;
--	int i, rc;
--	cap_t cap;
--
--	chip->duration_adjusted = false;
--
--	if (chip->ops->clk_enable != NULL)
--		chip->ops->clk_enable(chip, true);
--
--	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &did_vid);
--	if (rc < 0) {
--		dev_warn(&chip->dev, "%s: failed to read did_vid. %d\n",
--			 __func__, rc);
--		goto out;
--	}
--
--	/* Try to get a TPM version 1.2 or 1.1 TPM_CAP_VERSION_INFO */
--	rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
--			 "attempting to determine the 1.2 version",
--			 sizeof(cap.version2));
--	if (!rc) {
--		version = &cap.version2.version;
--	} else {
--		rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
--				 "attempting to determine the 1.1 version",
--				 sizeof(cap.version1));
--
--		if (rc)
--			goto out;
--
--		version = &cap.version1;
--	}
--
--	for (i = 0; i != ARRAY_SIZE(vendor_dur_overrides); i++) {
--		if (vendor_dur_overrides[i].did_vid != did_vid)
--			continue;
--
--		if ((version->major ==
--		     vendor_dur_overrides[i].version.major) &&
--		    (version->minor ==
--		     vendor_dur_overrides[i].version.minor) &&
--		    (version->rev_major ==
--		     vendor_dur_overrides[i].version.rev_major) &&
--		    (version->rev_minor ==
--		     vendor_dur_overrides[i].version.rev_minor)) {
--
--			memcpy(duration_cap,
--			       vendor_dur_overrides[i].durations,
--			       sizeof(vendor_dur_overrides[i].durations));
--
--			chip->duration_adjusted = true;
--			goto out;
--		}
--	}
--
--out:
--	if (chip->ops->clk_enable != NULL)
--		chip->ops->clk_enable(chip, false);
--}
--
- struct tis_vendor_timeout_override {
- 	u32 did_vid;
- 	unsigned long timeout_us[4];
-@@ -712,38 +647,50 @@ static const struct tis_vendor_timeout_override vendor_timeout_overrides[] = {
- 			(TIS_SHORT_TIMEOUT*1000), (TIS_SHORT_TIMEOUT*1000) } },
- };
- 
--static void tpm_tis_update_timeouts(struct tpm_chip *chip,
--				    unsigned long *timeout_cap)
-+static void tpm_tis_adjust_limits(struct tpm_chip *chip, struct tpm_limits *p)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
--	int i, rc;
--	u32 did_vid;
-+	const struct tis_vendor_timeout_override *t;
-+	const struct tis_vendor_durations_override *o;
-+	struct tpm1_version *version;
-+	cap_t cap;
-+	int i, j;
- 
--	chip->timeout_adjusted = false;
-+	if (p->family != TPM_FAMILY_1)
-+		return;
- 
--	if (chip->ops->clk_enable != NULL)
--		chip->ops->clk_enable(chip, true);
-+	for (i = 0; i < ARRAY_SIZE(vendor_timeout_overrides); i++) {
-+		t = &vendor_timeout_overrides[i];
-+		if (t->did_vid != priv->did_vid)
-+			continue;
- 
--	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &did_vid);
--	if (rc < 0) {
--		dev_warn(&chip->dev, "%s: failed to read did_vid: %d\n",
--			 __func__, rc);
--		goto out;
-+		for (j = 0; j < ARRAY_SIZE(t->timeout_us); j++)
-+			tpm_limits_driver_set(p, TPM_LIMIT_A + j,
-+					      t->timeout_us[j]);
- 	}
- 
--	for (i = 0; i != ARRAY_SIZE(vendor_timeout_overrides); i++) {
--		if (vendor_timeout_overrides[i].did_vid != did_vid)
--			continue;
--		memcpy(timeout_cap, vendor_timeout_overrides[i].timeout_us,
--		       sizeof(vendor_timeout_overrides[i].timeout_us));
--		chip->timeout_adjusted = true;
--	}
-+	if (!tpm1_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
-+			 "attempting to determine the 1.2 version",
-+			 sizeof(cap.version2)))
-+		version = &cap.version2.version;
-+	else if (!tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
-+			      "attempting to determine the 1.1 version",
-+			      sizeof(cap.version1)))
-+		version = &cap.version1;
-+	else
-+		return;
- 
--out:
--	if (chip->ops->clk_enable != NULL)
--		chip->ops->clk_enable(chip, false);
-+	for (i = 0; i < ARRAY_SIZE(vendor_dur_overrides); i++) {
-+		o = &vendor_dur_overrides[i];
-+		if (o->did_vid != priv->did_vid ||
-+		    memcmp(&o->version, version, sizeof(*version)))
-+			continue;
- 
--	return;
-+		tpm_limits_driver_set(p, TPM_LIMIT_SHORT, o->durations_us[0]);
-+		tpm_limits_driver_set(p, TPM_LIMIT_MEDIUM, o->durations_us[1]);
-+		tpm_limits_driver_set(p, TPM_LIMIT_LONG, o->durations_us[2]);
-+		return;
-+	}
- }
- 
- /*
-@@ -1112,8 +1059,7 @@ static const struct tpm_class_ops tpm_tis = {
- 	.recv = tpm_tis_recv,
- 	.send = tpm_tis_send,
- 	.cancel = tpm_tis_ready,
--	.update_timeouts = tpm_tis_update_timeouts,
--	.update_durations = tpm_tis_update_durations,
-+	.adjust_limits = tpm_tis_adjust_limits,
- 	.req_complete_mask = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
- 	.req_complete_val = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
- 	.req_canceled = tpm_tis_req_canceled,
-@@ -1145,11 +1091,6 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 
- 	chip->hwrng.quality = priv->rng_quality;
- 
--	/* Maximum timeouts */
--	chip->timeout_a = msecs_to_jiffies(TIS_TIMEOUT_A_MAX);
--	chip->timeout_b = msecs_to_jiffies(TIS_TIMEOUT_B_MAX);
--	chip->timeout_c = msecs_to_jiffies(TIS_TIMEOUT_C_MAX);
--	chip->timeout_d = msecs_to_jiffies(TIS_TIMEOUT_D_MAX);
- 	priv->chip = chip;
- 	priv->timeout_min = TPM_TIMEOUT_USECS_MIN;
- 	priv->timeout_max = TPM_TIMEOUT_USECS_MAX;
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 57d9356055fc..25c30f3fc269 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -49,10 +49,6 @@ struct tpm_class_ops {
- 		    size_t cmd_len);
- 	void (*cancel) (struct tpm_chip *chip);
- 	u8 (*status) (struct tpm_chip *chip);
--	void (*update_timeouts)(struct tpm_chip *chip,
--				unsigned long *timeout_cap);
--	void (*update_durations)(struct tpm_chip *chip,
--				 unsigned long *duration_cap);
- 	void (*adjust_limits)(struct tpm_chip *chip, struct tpm_limits *p);
- 	int (*go_idle)(struct tpm_chip *chip);
- 	int (*cmd_ready)(struct tpm_chip *chip);
-@@ -91,6 +87,7 @@ enum tpm_limit {
- };
- 
- #define TPM_LIMIT_INTF_MASK		GENMASK(TPM_LIMIT_D, TPM_LIMIT_A)
-+#define TPM1_LIMIT_DURATION_MASK	GENMASK(TPM_LIMIT_LONG, TPM_LIMIT_SHORT)
- 
- enum tpm_family {
- 	TPM_FAMILY_1,		/* TPM 1.1 and 1.2 */
-diff --git a/include/linux/tpm_ptp.h b/include/linux/tpm_ptp.h
-index e80ed810a269..3b6e7a854f70 100644
---- a/include/linux/tpm_ptp.h
-+++ b/include/linux/tpm_ptp.h
-@@ -79,15 +79,6 @@ enum tis_x86_defaults {
- 	LPC_CLKRUN_EN			= (1 << 2),
- };
  
 -/*
-- * Some timeout values are needed before it is known whether the chip is
-- * TPM 1.0 or TPM 2.0.
+- * Contains the maximum durations in milliseconds for TPM2 commands.
 - */
--#define TIS_TIMEOUT_A_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
--#define TIS_TIMEOUT_B_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
--#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
--#define TIS_TIMEOUT_D_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
--
- #define	TPM_ACCESS(l)			(0x0000 | ((l) << 12))
- #define	TPM_INT_ENABLE(l)		(0x0008 | ((l) << 12))
- #define	TPM_INT_VECTOR(l)		(0x000C | ((l) << 12))
++/* The execution class of each TPM2 command with a known limit. */
+ static const struct {
+-	unsigned long ordinal;
+-	unsigned long duration;
+-} tpm2_ordinal_duration_map[] = {
+-	{TPM2_CC_STARTUP, 750},
+-	{TPM2_CC_SELF_TEST, 3000},
+-	{TPM2_CC_GET_RANDOM, 2000},
+-	{TPM2_CC_SEQUENCE_UPDATE, 750},
+-	{TPM2_CC_SEQUENCE_COMPLETE, 750},
+-	{TPM2_CC_EVENT_SEQUENCE_COMPLETE, 750},
+-	{TPM2_CC_HASH_SEQUENCE_START, 750},
+-	{TPM2_CC_VERIFY_SIGNATURE, 30000},
+-	{TPM2_CC_PCR_EXTEND, 750},
+-	{TPM2_CC_HIERARCHY_CONTROL, 2000},
+-	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
+-	{TPM2_CC_GET_CAPABILITY, 750},
+-	{TPM2_CC_NV_READ, 2000},
+-	{TPM2_CC_CREATE_PRIMARY, 300000},
+-	{TPM2_CC_CREATE, 300000},
+-	{TPM2_CC_CREATE_LOADED, 300000},
++	u32 ordinal;
++	u8 limit;
++} tpm2_duration_limits[] = {
++	{TPM2_CC_STARTUP, TPM_LIMIT_SHORT},
++	{TPM2_CC_SELF_TEST, TPM_LIMIT_LONG},
++	{TPM2_CC_GET_RANDOM, TPM_LIMIT_MEDIUM},
++	{TPM2_CC_SEQUENCE_UPDATE, TPM_LIMIT_SHORT},
++	{TPM2_CC_SEQUENCE_COMPLETE, TPM_LIMIT_SHORT},
++	{TPM2_CC_EVENT_SEQUENCE_COMPLETE, TPM_LIMIT_SHORT},
++	{TPM2_CC_HASH_SEQUENCE_START, TPM_LIMIT_SHORT},
++	/* LONG, 3 s, is too short for signature verification. */
++	{TPM2_CC_VERIFY_SIGNATURE, TPM_LIMIT_DEFAULT},
++	{TPM2_CC_PCR_EXTEND, TPM_LIMIT_SHORT},
++	{TPM2_CC_HIERARCHY_CONTROL, TPM_LIMIT_MEDIUM},
++	{TPM2_CC_HIERARCHY_CHANGE_AUTH, TPM_LIMIT_MEDIUM},
++	{TPM2_CC_GET_CAPABILITY, TPM_LIMIT_SHORT},
++	{TPM2_CC_NV_READ, TPM_LIMIT_MEDIUM},
++	{TPM2_CC_CREATE_PRIMARY, TPM_LIMIT_LONG_LONG},
++	{TPM2_CC_CREATE, TPM_LIMIT_LONG_LONG},
++	{TPM2_CC_CREATE_LOADED, TPM_LIMIT_LONG_LONG},
+ };
+ 
+ /**
+- * tpm2_calc_ordinal_duration() - Calculate the maximum command duration
++ * tpm2_duration_limit() - the execution class of a TPM2 command
+  * @ordinal: TPM command ordinal.
+  *
+- * Returns the maximum amount of time the chip is expected by kernel to
+- * take in jiffies.
++ * Return: The limit that bounds the execution of @ordinal.
+  */
+-unsigned long tpm2_calc_ordinal_duration(u32 ordinal)
++enum tpm_limit tpm2_duration_limit(u32 ordinal)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(tpm2_ordinal_duration_map); i++)
+-		if (ordinal == tpm2_ordinal_duration_map[i].ordinal)
+-			return msecs_to_jiffies(tpm2_ordinal_duration_map[i].duration);
++	for (i = 0; i < ARRAY_SIZE(tpm2_duration_limits); i++)
++		if (ordinal == tpm2_duration_limits[i].ordinal)
++			return tpm2_duration_limits[i].limit;
+ 
+-	return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
++	return TPM_LIMIT_DEFAULT;
+ }
+ 
+ /**
 -- 
 2.47.3
 
