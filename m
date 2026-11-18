@@ -1,85 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=52.34.181.151
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794988190;
-	b=Fe5jtm3FpamOwm7tyycaPKzndpBdtyKwTbKAtbdKSc2NervQDg6WalPjL0bRNCpqaSOL
-	 VRKrV0aViMJfPKEkya/tJwCOTYx4EN5Ce9u28iCYiK1VyNH8m44/FXu1+PcBCvbpYJk3k
-	 enSAz3jDsw8R8/ZXg2cfVufUQfvsH1Oh8eaNSp8kQhARE80AwebLvU6h4BATJyQeiUdMA
-	 Ds6eVUoQ0K4DiJCDNcZiHw8Dza2E1Cr61br0itk8u6eG5vGNSbb0fy5XLHZSVPBQgKdIk
-	 QJvWux//YyxtgTV+GfHq9b+DHUZFHTnUBbSsKGNzJ/hK3t83Bc6vQUtNSaRyxqx6lSA==
+	t=1794991916;
+	b=BAcA6bBNnhpuhaB8nQp5C2ZfxL04/0F//2yzKnmaRV0A8EcuexIp1ajQykEN24/SJ64m
+	 qbyBVZOKjCs/CkM/LgXAcbdfqguggfSOl/5NpmQtdmoFOdgLnZLxqHUpXnZxBPKpmzgNt
+	 sc0eh+hPVjrzTlmCT6/JXLrfkjOx9+oiQ4EGGKbg+7rj3BTRgQ9zhk89yWU82kYLFWNF0
+	 WkPRtJ11H1QGt8Lq5Xj6+wIkNc5aHn1mI/HbVRdEkLfYqwDABTfSTmZCqNZg03syEOoyg
+	 7YZaS8uHBaJGQYrRyLV2Uk+7ulSFJUrjulaWMnjm21U+ZMtLHr4+2MmOvoB0MqcP7KA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794988190;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:Received:Received:X-Farcaster-Flow-ID:Received:Received:
-	 From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
-	 X-ClientProxiedBy;
-	bh=bkoESdRYxl9U+aKFr3D57OW3pCZJhVLHVeNl5Ly2gb8=;
-	b=wOxicTqetN+Nfeo99X2Lolf0ZBXXBLN/0YfwM09QM2a/qiUfsQYe5Kl0/zhmxRUj4Bvb
-	 kMeOaoDUa9Zlis3Fk1K3tsjDgqhJW0DolLKSTf22KMFoM7o6KkpxnbhzQgm00TUQrqpMV
-	 E6tZOnngDvdJty5XjkjTylgzLpsZEiFh8WIMCduvAXjgHlSj6uSSp1BXvpxUY3+sWfrTi
-	 ld74CLv1yud/vWvkjBmvJHgQeU5cHQH6w3hIjNWcFdCGkHwwNW0ytN0Hl73+OvY3itorz
-	 +omgtZ97pY9lM0vAet3K5UMpl3L7cJz7k2Gp9XecBX2FpsJJbwMwuh5ml1UzYwUY4Rg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794991916;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=JNjLV1RqoW47n1WZbcGqB7KkS7CtRm0tXFkupGF+cOc=;
+	b=cDSBW6hKU1kX1GaO7FT2PFRUv7PJmndjZ9lPRltkno5sd+pzbTmyN0YF6drGrpKNOCy1
+	 SoG+xJrT8hxd9ZqHFja6wsmRt7ZKTqOt/7tGOxZOYEWzstJMGMkpvO+dtgRRcYpQNSVfO
+	 /gCp3WgYrbfM18o8hIsF8OVx0zJb/DWx+i8kAI8amhDa64J787soL0VlSzzDzZCwUhVsa
+	 6oAcn/wWCFIStoy0KetCStk8RLq4sDDkTnaEnNDJeNeulU/tmd86/sMbERkfxdVek/Tb0
+	 mJ5xbsRXj1TQcxz1yK1AQiZpl8Ic2i7R62XfBfEnFsD2RSssPwO/3doRsO9CcWT0tdQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amazon.com;
-	spf=pass smtp.mailfrom=amazon.com;
-	dkim=pass header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=lRNfWbq3;
-	arc=none smtp.remote-ip=52.34.181.151
-Received: from pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.34.181.151])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RsvXsDlx;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25735606A31C;
-	Wed, 18 Nov 2026 07:49:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 25735606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9911606A31C;
+	Wed, 18 Nov 2026 08:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=lRNfWbq3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1794988190; x=1826524190;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bkoESdRYxl9U+aKFr3D57OW3pCZJhVLHVeNl5Ly2gb8=;
-  b=lRNfWbq3moSDygnO3bZWqBDCEVp1KHKVWPvRF4mTZYWWy0/4nA9oEdkD
-   xi/icK05zN5sJd7XsZZXKRXO0Yr4lqvuG7d1i3Jpda07b8K/9vjayNAWH
-   SVDfd2Gw52KWAJsQfQHW4tywpx8RgY+8qnDpZgKloi7fRhFioxRQWLyyk
-   /gmgC5Azq+Gwe4Luih20VoRY86W6K2nPs2MauaWffANLyRhimGcRXvbkG
-   vMOP2XFoX61f6qsJWqv1wgws2HfsS9OLBYnZEqjFaPidInM1btBTq32dH
-   D9LdtSuEeEMAQ4u48q2RrMvCSQBAvFquvKtUhYvLfqgdDA0TgcEDuhaMd
-   w==;
-X-CSE-ConnectionGUID: cKI70s/ZQSqAIYmy5NAEQQ==
-X-CSE-MsgGUID: 7jL979ZdTGq4XphSGNKZBw==
-X-IronPort-AV: E=Sophos;i="6.27,219,1787011200"; 
-   d="scan'208";a="34415360"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 07:49:38 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [205.251.233.104:15939]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.50.212:2525] with esmtp (Farcaster)
- id 56a30b5d-85c7-415b-ac6e-094fc94bf93c; Wed, 18 Nov 2026 07:49:37 +0000 (UTC)
-X-Farcaster-Flow-ID: 56a30b5d-85c7-415b-ac6e-094fc94bf93c
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56;
- Wed, 18 Nov 2026 07:49:37 +0000
-Received: from dev-dsk-surenkj-2b-416930d2.us-west-2.amazon.com (10.169.26.94)
- by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56;
- Wed, 18 Nov 2026 07:49:37 +0000
-From: Surendran Kanagaraj <surenkj@amazon.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
-	<skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
-	<linux-doc@vger.kernel.org>, Jonathan McDowell <noodles@earth.li>, "Breno
- Leitao" <leitao@debian.org>, <nh-open-source@amazon.com>, Alexander Graf
-	<graf@amazon.de>, Gunnar Kudrjavets <gunnarku@amazon.com>, Josh Levinson
-	<joshlev@amazon.com>
-Subject: [RFC PATCH v4 8/8] tpm_crb: Raise the limits for Amazon NitroTPM
-Date: Wed, 18 Nov 2026 07:49:04 +0000
-Message-ID: <20261118074904.60624-4-surenkj@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261118073852.81107-1-surenkj@amazon.com>
-References: <20261118073852.81107-1-surenkj@amazon.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RsvXsDlx
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B8F1F000C4;
+	Wed, 18 Nov 2026 08:51:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794991916;
+	bh=JNjLV1RqoW47n1WZbcGqB7KkS7CtRm0tXFkupGF+cOc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=RsvXsDlxdennVdRZIxtMAO9aTlSCgDU/aRN5nXveVTZaO8kYi5t/Rvtr1wiGCEzHY
+	 wP+UMH5gw4T4/2fTW2DI4qwJLAdO/5trCEHdMii87scJ3uqddgNDM1Mu5RIia93hGF
+	 Ln1RRmOUcu0iL91VGTmqYQUocfRz6a0kQj1ekzCQiO1Kij5+KjAGbHWQ5Di/UV62Ha
+	 AFc19FgOWt5HM+MKdo0fX+KnLQwogg86N+lTKzPrFvOseBVp7lm3DwPnqk6Mb4sLS/
+	 q/l1Oj/bKGcluhytkTpuajG1Lv845vosUAR4klQLitOlxelkTCEePyXqhQGZ6u5wiZ
+	 4vkK4MG8ZsTLA==
+Date: Wed, 18 Nov 2026 09:51:27 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>, 
+	Cai Xinchen <caixinchen1@huawei.com>
+Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com, jack@suse.cz, 
+	amir73il@gmail.com, andrii@kernel.org, apparmor@lists.ubuntu.com, ast@kernel.org, 
+	axboe@kernel.dk, bpf@vger.kernel.org, casey@schaufler-ca.com, cel@kernel.org, 
+	cem@kernel.org, chenxiaosong@chenxiaosong.com, code@tyhicks.com, corbet@lwn.net, 
+	Dai.Ngo@oracle.com, dakr@kernel.org, daniel@iogearbox.net, dhowells@redhat.com, 
+	dlemoal@kernel.org, dmitry.kasatkin@gmail.com, driver-core@lists.linux.dev, 
+	dsterba@suse.com, ecryptfs@vger.kernel.org, eddyz87@gmail.com, 
+	emil@etsalapatis.com, eric.snowberg@oracle.com, exfat@lists.linux.dev, 
+	georgia.garcia@canonical.com, gregkh@linuxfoundation.org, hch@lst.de, 
+	hirofumi@mail.parknet.co.jp, hyc.lee@gmail.com, ihor.solodrai@linux.dev, jlayton@kernel.org, 
+	jmorris@namei.org, johan@kernel.org, john.fastabend@gmail.com, 
+	john.johansen@canonical.com, jolsa@kernel.org, kpsingh@kernel.org, linkinjeon@kernel.org, 
+	linux-api@vger.kernel.org, linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	liubaolin12138@163.com, martin.lau@linux.dev, mason@kernel.org, 
+	mathieu.desnoyers@efficios.com, matt@bobrowski.net, memxor@gmail.com, mhiramat@kernel.org, 
+	miklos@szeredi.hu, neil@brown.name, netfs@lists.linux.dev, ntfs@lists.linux.dev, 
+	okorniev@redhat.com, omosnacek@gmail.com, penguin-kernel@i-love.sakura.ne.jp, 
+	rafael@kernel.org, rdunlap@infradead.org, roberto.sassu@huawei.com, 
+	rostedt@goodmis.org, selinux@vger.kernel.org, senozhatsky@chromium.org, 
+	serge@hallyn.com, sj1557.seo@samsung.com, skhan@linuxfoundation.org, 
+	song@kernel.org, stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp, 
+	tom@talpey.com, yonghong.song@linux.dev, yuezhang.mo@sony.com, 
+	zohar@linux.ibm.com, utilityemal77@gmail.com, lujialin4@huawei.com
+Subject: Re: [PATCH -next -v4 02/17] LSM: pass struct path to the
+ inode_setsecctx hook
+Message-ID: <20261118-woher-duften-bejubeln-7a8a2099f89f@brauner>
+References: <20261117150542.1169451-1-caixinchen1@huawei.com>
+ <20261117150542.1169451-3-caixinchen1@huawei.com>
+ <20261117184342.GR989762@ZenIV>
+ <20261118001641.GA1669148@ZenIV>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -89,123 +86,176 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWC002.ant.amazon.com (10.13.139.212) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261118001641.GA1669148@ZenIV>
 
-In rare scenarios NitroTPM can enter a mode where it either sends
-TPM2_RC_RETRY for longer than LONG duration or delays
-command completion for longer than the TPM 2.0 durations allow.
-When this happens during auth session start, the driver disables
-the chip and every subsequent request fails:
+On Wed, Nov 18, 2026 at 12:16:41AM +0000, Al Viro wrote:
+> On Tue, Nov 17, 2026 at 06:43:42PM +0000, Al Viro wrote:
+> > > + * Hooks that take a struct path argument: the VFS only sanctions passing
+> > > + * the path to VFS helpers that take a struct path (e.g. notify_change());
+> > > + * it makes no guarantees with regard to path->mnt, whose layout and
+> > > + * implementation details are subject to change.  Implementations must
+> > > + * not rely on its properties.
 
-    tpm tpm0: in retry loop
-    tpm tpm0: tpm2_load_context: failed with a TPM error 0x0922
+That comment is a garbled version of an earlier review. It meant that
+LSMs get no guarantees about struct vfsmount internals and don't get to
+poke at them. I'm not sure how this can be read as path->mnt being a
+random mount.
 
-Add an ->adjust_limits() hook to the CRB driver that reads the vendor
-ID from the interface ID register. For NitroTPM, raise the SHORT and
-MEDIUM durations to 30 s, which covers the longest unavailability with
-some headroom, and LONG to 45 s. With the back-off doubling from 20 ms,
-a 45 s LONG duration lets the driver resubmit a command for about
-40.9 s, so the retry loop covers the entire unavailability window.
+> > If that kind of stuff actually does get passed to any existing hooks, we need
+> > to fix that ASAP.
 
-These are upper bounds, not expected waits. A command that completes
-sooner ends the wait as soon as the poll sees it. Add TPM_VID_AMZN
-next to the vendor ID list in tpm.h.
+Of course there is one...
 
-Tested on an EC2 instance with NitroTPM by inducing multiple
-unavailability windows with no TPM errors, and in QEMU with swtpm by
-holding the TPM in TPM2_RC_RETRY and stalling command completion for
-longer than 2s.
+  dent = lookup_one_unlocked(idmap, &QSTR_LEN(...),
+                             priv->dir_fp->filp->f_path.dentry);
+  [...].
+  rc = ksmbd_vfs_fill_dentry_attrs(priv->work, idmap, dent, &ksmbd_kstat);
 
-Signed-off-by: Surendran Kanagaraj <surenkj@amazon.com>
----
- drivers/char/tpm/tpm_crb.c | 37 +++++++++++++++++++++++++++++++++++++
- include/linux/tpm.h        |  1 +
- 2 files changed, 38 insertions(+)
+It passes only the bare dentry, and ksmbd_vfs_fill_dentry_attrs() then
+makes up a path from the share's root mount:
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 5f29eabf2413..81e6593911dc 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -13,6 +13,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/highmem.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/rculist.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -26,6 +27,14 @@
- #define ACPI_SIG_TPM2 "TPM2"
- #define TPM_CRB_MAX_RESOURCES 3
- 
-+/* TPM_CRB_INTF_ID_x vendor ID field, bits 47:32 of the 64-bit register */
-+#define TPM_CRB_INTF_ID_VID(intf_id)	(((intf_id) >> 32) & 0xffff)
-+
-+/* Longest NitroTPM unavailability, with some headroom */
-+#define TPM_CRB_AMZN_LIMIT_US		(30 * USEC_PER_SEC)
-+/* LONG also bounds the retry loop: 45 s lets it resubmit for 40.9 s */
-+#define TPM_CRB_AMZN_LONG_US		(45 * USEC_PER_SEC)
-+
- static const guid_t crb_acpi_start_guid =
- 	GUID_INIT(0x6BBF6CAB, 0x5463, 0x4714,
- 		  0xB7, 0xCD, 0xF0, 0x20, 0x3C, 0x03, 0x68, 0xD4);
-@@ -662,6 +671,33 @@ static bool crb_req_canceled(struct tpm_chip *chip, u8 status)
- 	return (cancel & CRB_CANCEL_INVOKE) == CRB_CANCEL_INVOKE;
- }
- 
-+/*
-+ * Read the vendor ID from the interface ID register. Returns -ENODEV when
-+ * the head registers are not mapped for this start method.
-+ */
-+static int crb_vendor_id(struct crb_priv *priv)
-+{
-+	u64 intf_id;
-+
-+	if (!priv->regs_h)
-+		return -ENODEV;
-+
-+	intf_id = lo_hi_readq(&priv->regs_h->intf_id);
-+
-+	return TPM_CRB_INTF_ID_VID(intf_id);
-+}
-+
-+static void crb_adjust_limits(struct tpm_chip *chip, struct tpm_limits *p)
-+{
-+	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
-+
-+	if (crb_vendor_id(priv) == TPM_VID_AMZN) {
-+		tpm_limits_driver_set(p, TPM_LIMIT_SHORT, TPM_CRB_AMZN_LIMIT_US);
-+		tpm_limits_driver_set(p, TPM_LIMIT_MEDIUM, TPM_CRB_AMZN_LIMIT_US);
-+		tpm_limits_driver_set(p, TPM_LIMIT_LONG, TPM_CRB_AMZN_LONG_US);
-+	}
-+}
-+
- static const struct tpm_class_ops tpm_crb = {
- 	.flags = TPM_OPS_AUTO_STARTUP,
- 	.status = crb_status,
-@@ -673,6 +709,7 @@ static const struct tpm_class_ops tpm_crb = {
- 	.cmd_ready = crb_cmd_ready,
- 	.request_locality = crb_request_locality,
- 	.relinquish_locality = crb_relinquish_locality,
-+	.adjust_limits = crb_adjust_limits,
- 	.req_complete_mask = CRB_DRV_STS_COMPLETE,
- 	.req_complete_val = CRB_DRV_STS_COMPLETE,
- };
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index b88c7b133bdd..6d90861a1047 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -214,6 +214,7 @@ static inline enum tpm2_mso_type tpm2_handle_mso(u32 handle)
- #define TPM_VID_STM      0x104A
- #define TPM_VID_ATML     0x1114
- #define TPM_VID_IFX      0x15D1
-+#define TPM_VID_AMZN     0x0EC2
- 
- enum tpm_chip_flags {
- 	TPM_CHIP_FLAG_BOOTSTRAPPED		= BIT(0),
--- 
-2.47.3
+  struct path path = {
+          .mnt = share_conf->vfs_path.mnt,   /* mount the share is exported from */
+          .dentry = dentry,                  /* entry inside the listed dir */
+  };
+  rc = vfs_getattr(&path, ...);
+
+since 5614c8c487f6 ("ksmbd: replace generic_fillattr with vfs_getattr").
+
+So a client that lists a directory on a submount below the share then
+that dentry belongs to another superblock. So security_inode_getattr()
+and ->getattr() get a mixed path.
+
+The third patch in this series fixes this. But we should make this a
+Fixes: patch really... Something like [1].
+
+> To elaborate a bit: correctness of quite a few places does depend upon the
+> following invaraint:
+> 	path->mnt->mnt_sb == path->dentry->d_sb		(1)
+> for all struct path pointers they might possibly run into.
+>
+> _IF_ you can guarantee that (1) is not violated, we have something to
+> talk about; otherwise, don't call your object struct path and don't
+> pass it to anything that expects to deal with struct path.
+
+Every struct path the series constructs:
+
+  - devtmpfs
+  - nfsd
+  - cachefiles
+  - ecryptfs
+  - overlayfs
+  - ksmbd
+
+doesn't have this bug.
+
+[1]:
+
+  --- a/fs/smb/server/smb2pdu.c
+  +++ b/fs/smb/server/smb2pdu.c
+  @@ -6375,13 +6375,14 @@ static int process_query_dir_entries(struct smb2_query_dir_private *priv)
+                          continue;
+                  }
+
+  +               path.mnt = priv->dir_fp->filp->f_path.mnt;
+  +               path.dentry = dent;
+  +
+                  if (test_share_config_flag(priv->work->tcon->share_conf,
+                                             KSMBD_SHARE_FLAG_HIDE_UNREADABLE)) {
+                          __le32 daccess = FILE_READ_DATA_LE | FILE_READ_EA_LE |
+                                  FILE_READ_ATTRIBUTES_LE;
+
+  -                       path.mnt = priv->dir_fp->filp->f_path.mnt;
+  -                       path.dentry = dent;
+                          rc = smb_check_perm_dacl(priv->work->conn, &path,
+                                                   &daccess, daccess,
+                                                   priv->work->sess->user->uid,
+  @@ -6397,7 +6398,7 @@ static int process_query_dir_entries(struct smb2_query_dir_private *priv)
+  @@ -6397,7 +6398,7 @@ static int process_query_dir_entries(struct smb2_query_dir_private *priv)
+                  if (priv->info_level != FILE_NAMES_INFORMATION) {
+                          rc = ksmbd_vfs_fill_dentry_attrs(priv->work,
+                                                           idmap,
+  -                                                        dent,
+  +                                                        &path,
+                                                           &ksmbd_kstat);
+                          if (rc) {
+                                  dput(dent);
+  --- a/fs/smb/server/smb_common.c
+  +++ b/fs/smb/server/smb_common.c
+  @@ -472,32 +472,36 @@ int ksmbd_populate_dot_dotdot_entries(struct ksmbd_work *work, int info_level,
+          for (i = 0; i < 2; i++) {
+                  struct kstat kstat;
+                  struct ksmbd_kstat ksmbd_kstat;
+  -               struct dentry *dentry;
+  +               struct path path = { .mnt = dir->filp->f_path.mnt };
+
+                  if (!dir->dot_dotdot[i]) { /* fill dot entry info */
+                          if (i == 0) {
+                                  d_info->name = ".";
+                                  d_info->name_len = 1;
+  -                               dentry = dget(dir->filp->f_path.dentry);
+  +                               path.dentry = dget(dir->filp->f_path.dentry);
+                          } else {
+                                  d_info->name = "..";
+                                  d_info->name_len = 2;
+  -                               dentry = dget_parent(dir->filp->f_path.dentry);
+  +                               /*
+  +                                * The parent never leaves the superblock, so
+  +                                * the directory's mount stays consistent with it.
+  +                                */
+  +                               path.dentry = dget_parent(dir->filp->f_path.dentry);
+                          }
+
+                          if (!match_pattern(d_info->name, d_info->name_len,
+                                             search_pattern)) {
+                                  dir->dot_dotdot[i] = 1;
+  -                               dput(dentry);
+  +                               dput(path.dentry);
+                                  continue;
+                          }
+
+                          ksmbd_kstat.kstat = &kstat;
+                          rc = ksmbd_vfs_fill_dentry_attrs(work,
+                                                           idmap,
+  -                                                        dentry,
+  +                                                        &path,
+                                                           &ksmbd_kstat);
+  -                       dput(dentry);
+  +                       dput(path.dentry);
+                          if (rc)
+                                  break;
+
+  --- a/fs/smb/server/vfs.c
+  +++ b/fs/smb/server/vfs.c
+  @@ -1897,18 +1897,14 @@
+
+   int ksmbd_vfs_fill_dentry_attrs(struct ksmbd_work *work,
+                                  const struct mnt_idmap *idmap,
+  -                               struct dentry *dentry,
+  +                               const struct path *path,
+                                  struct ksmbd_kstat *ksmbd_kstat)
+   {
+  -       struct ksmbd_share_config *share_conf = work->tcon->share_conf;
+  +       struct dentry *dentry = path->dentry;
+          u64 time;
+          int rc;
+  -       struct path path = {
+  -               .mnt = share_conf->vfs_path.mnt,
+  -               .dentry = dentry,
+  -       };
+
+  -       rc = vfs_getattr(&path, ksmbd_kstat->kstat,
+  +       rc = vfs_getattr(path, ksmbd_kstat->kstat,
+                           STATX_BASIC_STATS | STATX_BTIME,
+                           AT_STATX_SYNC_AS_STAT);
+          if (rc)
+  --- a/fs/smb/server/vfs.h
+  +++ b/fs/smb/server/vfs.h
+  @@ -154,7 +154,7 @@ void *ksmbd_vfs_init_kstat(char **p, struct ksmbd_kstat *ksmbd_kstat);
+   int ksmbd_vfs_fill_dentry_attrs(struct ksmbd_work *work,
+                                  const struct mnt_idmap *idmap,
+                                  const struct path *path,
+                                  struct ksmbd_kstat *ksmbd_kstat);
 
