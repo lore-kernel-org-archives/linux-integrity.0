@@ -1,58 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795020092;
-	b=0mzdvtV8NxT9y4m7PS4y5eGAkJLNiboYhdtbU8Nznb+Rlzn+6Wxw0o1F+KUHxW3s5ioh
-	 rFbYV7i276vzh6Vjltkom+BtqVNQc1/NMdz/G1sviAqQ1ppSKLCbXJkixXyuFjPMIIk1W
-	 vZLTKDt02nxO4l6BtknX3U68N7Bj544aSCvjghE+8S7zZKljxt4pO2muW6gXORx27KAnl
-	 kUuJGQ/5793rwa2BfKbde8rP1QvN7t3aeBVQQAcNSJIS/0eiSP2s/Qjg1euL159e3q/s6
-	 7JWzIAR9A077aXND//L7YQ36vdUxqIEyKn21uKwk0yH5ZIP+eOyNXkv7mMMi2tQQpIQ==
+	t=1795020275;
+	b=XhIYQA2r04zO9y4UKpR4X/oBdzwQyTa16enbiU2DII9QgDjd0mJciQHDu6TnhjjdTPAv
+	 0alsxiCrkJmhIKuxB0hlH0lESejPfgNhhUnre1tu+A7WGgCB3vMrDEuanzo9ZLdQ4YeWT
+	 7pcMUGvzpmyMwlBrJ6gfmwM2xYGtULjaYYEniQUe8gl7P8CYGoWb+hwju9eVRqAwFaL/o
+	 wW+/exoQwq5pVWbxjYvNZypKWmzSLydHt3iUz2Y68vHWcrtK12JuWh8KboX1V3NFN7UI0
+	 U3W/Hvr4wK2SOPB3GWONdL7u7mzMwN/lFEJA6yY3nCJpSZ8tuMWwzZknQovrbi29JvA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795020092;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795020275;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=KpCOWgYItNRFdCHLthVjrjZj9hh3G9ExdOPVMRYpXJw=;
-	b=eExjBAljpbvf3g/N8hhVAkzy1DLHXIT8uGVz+B8nOeAGwHJEEOEOURJNRRIaS9x5CJQK
-	 NgXKkaQl9UVZFibuIqIW44AgKmO8M2qfYTpCEDZx2Z/ssWvwWHPKkvS1XcQQ3M/SfVVtC
-	 JQU9T7NSMde589/RCLKCMS7bE6X3BWYaI4hD0KPINxTpLYBJ9//mrx+qGtkBFVHpEzp+2
-	 rhiDcqt2c/CyvKYm/oNtWiT7JoKMh3u5Orx7XCIZmNQ3YXl/ALCn9dPkGzpV48nqJlPqd
-	 cU/6dskUBSgjUTORUSURE+XOWyNn7uCwTYpMuCpU+TA8d9VzIEULS/h2Je2cSOoiUZg==
+	bh=O+0ny3jqnqa+BeZBemKleOcgWcJyFiXPeguzG6RKuVs=;
+	b=JSDIGEfMfzctED4h8kk+yHPzHD0WzbJQVBRkxoEgFRar4tvnoA8mLhd2t/zEZMQuUSwl
+	 WiWZKjrcv9DnAZhRNd1AGkJHLyK5uOJaTBu6ytp+QEE11tfEVG0tm3EM8f8V4p2q/Da57
+	 rPvlyxqR4nxSrhURCWQh6DwlbFBzQNPGo4I2NLBqp2CE5zEpQjdPe5vVfvn4VL4TIdWrE
+	 gnEo0FyiLBdcso5/H76/ea8Xe+QUi2OKoxUsmyTV8z04hWGbbncmNSthH1QB+aWnhUTc3
+	 glip29zzrupMRvtYaX8AXHFgahnzE2Aqp52BvtcqqWyHyXJLPmF4SbIfOU8OdXuLnVg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=etms+rmi;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZGSMWI3z;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEF8606A320;
-	Wed, 18 Nov 2026 16:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 7503E606A332;
+	Wed, 18 Nov 2026 16:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=etms+rmi
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34E0B1F000C4;
-	Wed, 18 Nov 2026 16:41:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZGSMWI3z
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B35A51F000C5;
+	Wed, 18 Nov 2026 16:44:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795020092;
-	bh=KpCOWgYItNRFdCHLthVjrjZj9hh3G9ExdOPVMRYpXJw=;
+	s=k20260515; t=1795020275;
+	bh=O+0ny3jqnqa+BeZBemKleOcgWcJyFiXPeguzG6RKuVs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=etms+rmi+8L/OLERxU+EOMiH1yzh7QvrCedbLLFvfyOXftr1190X213cLfSMIdQhc
-	 xktDkWAsGluc5sjs6Q+0xPnu0cRRv8WL1LtgbH7hhvypFoq0KCjcNGSmDaySPjxe57
-	 KSVCR2Ief3MVz6qMcEC3A89jIrfeeEJz4Oisdraf0VRAKp9ACtii9Nc+6p0hWsiOHC
-	 cOA3QRG4XS4ZJ0/KN+/71smKz//P77MiR2wPC2xQXa/VFXn7cC4W+hKsihDTtUOf3q
-	 FbeaJe4k0/kwhoD/wk2H7C/C6O6Lmm8fqXI0k6UkmMQ6tQVBRU1FPwwdFAJCOA/i5u
-	 /z3SJ8YKVa3QA==
-Date: Wed, 18 Nov 2026 17:41:26 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Chris Down <chris@chrisdown.name>, Miklos Szeredi <mszeredi@redhat.com>, 
-	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 03/13] tracing/uprobes: handle errors from resolving
- the real inode
-Message-ID: <20261118-beenden-wirken-halsschlagader-00aa2083c904@brauner>
-References: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
- <20261116-work-ovl-d_real-v2-3-90564c4ae347@kernel.org>
- <undine-1794965448776121119-595ee1289c37e7d3@undined.local>
+	b=ZGSMWI3zSQIfnpevzydVCpG4zzHuDI7pL5ljldmeHsNQ4YSJ6ohcFJ/+6eQzdQwQF
+	 bvF0k1Mbux6ZtB9nxybbpATxbLkTalPMcJxA4cpNbqSdGG8RISe0tsclmE9gxe/EFf
+	 CrOPJ7kVvKtaRqkWc9bY+1fdphmKqjm5/nd/2kDYw0vok+Da/stG+1VeIsF73QUWJw
+	 ZGT2jvKfH1b1w4w112W/Pm9i7SnFqSs1NNJdCX8xTPW2GjjwzABHkJBsU0EX+AP/gd
+	 PmUftk5x2ywGWDPjxIm+t/pWSpD8DR7rFWqiFd0BfrNRUcs96IZMRXM0lQsxWbYzq3
+	 hZZ7y9hWyo7kg==
+Date: Wed, 18 Nov 2026 18:44:31 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>,
+	Matthew Garrett <matthewg@nvidia.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, rafael@kernel.org,
+	linux-pm@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [PATCH 01/17] tpm: Define a kernel-owned TPM NV index that can't
+ be modified by userland
+Message-ID: <av3V7zfq5WhR9d44@kernel.org>
+References: <20261008132532.1155166-2-matthewg@nvidia.com>
+ <435907614242e82ecde1767a967a3110fca6fb37.camel@HansenPartnership.com>
+ <asqthz69ohnMVCye@srcf.ucam.org>
+ <059384e86fd256618498b9a7214b6421d38fdf1f.camel@HansenPartnership.com>
+ <astjpI65VOyU8xvI@srcf.ucam.org>
+ <f002fc613bf0bdcf895e5be02dfd2524b7608787.camel@HansenPartnership.com>
+ <asty4acE2B94t5q6@srcf.ucam.org>
+ <avnMl7fD156F1fx4@kernel.org>
+ <ba43d150febc8a85247d6c54f57db0835cb8f5de.camel@HansenPartnership.com>
+ <av3SvHN3UCzzvyY9@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -62,56 +68,36 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <undine-1794965448776121119-595ee1289c37e7d3@undined.local>
+In-Reply-To: <av3SvHN3UCzzvyY9@kernel.org>
 
-On Wed, Nov 18, 2026 at 10:30:48AM +0900, Masami Hiramatsu (Google) wrote:
-> On Mon, 16 Nov 2026 10:44:00 +0100, Christian Brauner <brauner@kernel.org> wrote:
-> > d_real() is about to be able to fail for D_REAL_DATA. So switch
-> > trace_uprobe from d_real_inode() to d_real_data_inode() and deal with
-> > the error.
-> >
-> > Currently, nothing checks whether the data can be resolved when a uprobe
-> > is created. The first resolution happens in validate_ref_ctr_offset()
-> > under event_mutex and the last one when the event is enabled. If the
-> > data of a metacopy file in an overlayfs data-only layer can't be found
-> > the event is created just fine and enabling it fails later with an -EIO
-> > from uprobe_register() because the overlayfs inode has no
-> > ->read_folio().
-> >
-> > Instead, resolve the inode hosting the data once in
-> > __trace_uprobe_create() right after kern_path(). That happens outside
-> > of event_mutex and if it fails the write to uprobe_events or
-> > dynamic_events fails with the actual error and a new NO_FILE_DATA entry
-> > in the error log. The resolved inode is passed down to
-> > validate_ref_ctr_offset() and trace_uprobe_has_same_uprobe() so we don't
-> > resolve it again under event_mutex.
-> >
-> > Both functions still resolve the existing probes they compare against.
-> > If that fails the existing probe can't be on the same inode so we just
-> > skip it. For validate_ref_ctr_offset() that's fine because
-> > uprobe_register() refuses a mismatching reference counter offset for the
-> > same uprobe anyway.
-> >
-> > trace_uprobe_enable() returns the error and probe_event_enable()
-> > already unwinds the probes that were enabled before.
-> >
-> > While at it, resolve the data in create_local_trace_uprobe() as well.
-> > perf_event_open() of a uprobe PMU event registers the probe right away
-> > so it would fail in trace_uprobe_enable() anyway. But this way the first
-> > resolution happens before perf_uprobe_init() takes event_mutex just like
-> > for uprobes created through tracefs.
-> >
-> > This is a no-op until d_real() can actually fail.
-> >
+On Wed, Nov 18, 2026 at 06:30:56PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Nov 18, 2026 at 11:06:55AM -0500, James Bottomley wrote:
+> > The better mechanisms to address this are probably:
+> > 
+> >    1. Detect that PCR5 has been disrupted (get the kernel to store the
+> >       on-boot value and check they match) and if so refuse signed
+> >       suspend to disk with a message (this is easy).
+> >    2. Capture the additional writes to PCR5 and store them as part of
+> >       the attestation so the resuming system can prove the current boot
+> >       value of PCR5 matches the attested one when the additional
+> >       extends are replayed (this is a bit more complex).
 > 
-> Looks good to me.
+> (2) is a great suggestion IMHO; did not cross my mind.
 > 
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> That approach would also help to debug any possible issues.
 > 
-> However, since this conflict with commit 72d3a5cb0cd7 ("tracing/probes:
-> Enable newly appended probe when target event is enabled"), please
-> rebase it on v7.4-rc3.
+> I think it also might make sense to drift away from kernel config flag
+> to kernel-command line parameter when it comes to pre-existing integrity
+> code. It's time consuming to test and improve right now.
 
-Yeah, I had already done that.
+The problem with it is probably the indefinite growth. I.e. despite the
+log won't likely be that large it has no theoretically maximum  number
+of entries.
+
+Could the feature require the RW-use of ESP for state storage? A bit
+unorthodox but it would resolve that issue. Perhaps, there are other
+solutions too (and I did not think about this too long).
+
+Br, Jarkko
