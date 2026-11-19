@@ -1,86 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.173
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795045362;
-	b=pYQVClR3euQW9zFY2I5ccKRwSAyLTsRSTOf6IISxfDtzQ04WvKcY0qkMsX+XTo6ywV93
-	 BUqLfJCV0iVwK+gaELdjt58DVKyeDn0M4mCHWLCJkMENhWVcYUPW3uV5IJYN9kIgVTCjc
-	 2T/DBy/Mh4U4VeOD0RSTTxKkU6EyreEyuGPAQ3wozXtL37L0gTKqriFaeQFGZz8RXFVL7
-	 gYkDrwnQPHOm3OZfhUfGSWUyb/pcyOvedfbSZS3bjub0L542sY5Gxz0YNck1h56+sfXpW
-	 dZGG62iDycE7TK0srq6Vu9xu30ogRGeRLDMzbptMYtNuUFJ05ao1Tn27Yuqcj2mYTlw==
+	t=1795047920;
+	b=LEpu4VELPB++nnvqMBAMDYkdCOxNg/0M73hQv9EjThqnrr0cBgn1HRiJU5bQQDpMCaEJ
+	 BfqKuzXHIsqFPyA7Y/3RwQh8OeT0L4xdrsOqeKcPwV5GeclhnfrAzBEFght3xERyZOaax
+	 zgBjQttv2L79Ba9e41Lkyzf6AYknLW5j7jH3IooyMcup3x2OLmEX2epnKdvp3uxsl7gua
+	 D9S0nXAsT5XCFeuygacLQDvpGatatjVCcVDmwkYzHzpPd5UfBBrGwefeB0+BGZCfCeFg4
+	 vdt0KLVaSq6cnkmSveKNeu1j8dOINRCzixMQPJUIZoTZUT6H/ihzrWs5uk+k6GU1zcw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795045362;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795047920;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type;
-	bh=5gmN6H+RSfew5cKRkkzfR78AcJ/HC4QuJ1A3RJGQZBo=;
-	b=fuX/bW+tG174YOWv1Ges8ZM0nAZZT+OZqdWrQU678SmWRPjRKMuUn1qo09Nc9HwrYs+f
-	 JlqhFVdmidnP5dv41dJ9iRTDcFO9zuqduq7VxKddNC3cOmgolPVhcEfoHM26y7Jx6bo2H
-	 oHCyhmZlXR0h/BQJmSbuc+sohWiTGK+3Cy/ELvWhx4Zs77ASC8edrCiDpDI1K/eucbdxW
-	 ZFonE0pL3ReBpzOe3oK8YOaAUT12z1d0P8aGNN1RuqTwHy7nec8O2UIiH3I4jrZW+bRiI
-	 89WD9/bTWM1OHxMMvHYjoFil86jxRUOWKIRzsF1XmCF40DR8veKVB+5Aq+CEE1LDORw==
+	bh=rSVsA9fNi7kC5K1IDfWWLOQdUEB3auXl+KZsJESSywY=;
+	b=bApDZXQvf9CM0LdWSel9J+GnHDpFF6Ve8dJzjscvwhILQkUKp7c+mZ67LvpDV9Xx0EDT
+	 HzcIBL0nXUuXJYt+ee4sVdefPqAJxFoX2+obg+Yf6az7hjJmhyuZGO8o1uMNZrN2nSfTS
+	 T1opgNfflNEQqcWs5cPok5soyJ/4hny6RgElSBeuz1BAd+/02XT8csx3vAf3wp+LqLF3v
+	 LdIbjP8PGuLYBEjVkE6oGMB6n+EV5Sz758JwNw2llLzthXWC2iOrD+fM3vFwTjEz91oLh
+	 HUMhKd3VYi/7WgPLucIwNansKnoYlAGJvPCOyN+hRRomells+uJbf/0fS2Hwo9r+iug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=BVaX+M0p;
-	arc=none smtp.remote-ip=209.85.128.182
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kTRSxFrz;
+	arc=none smtp.remote-ip=209.85.128.173
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8460D606A31C
-	for <linux-integrity@vger.kernel.org>; Wed, 18 Nov 2026 23:42:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8460D606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83273606A330
+	for <linux-integrity@vger.kernel.org>; Thu, 19 Nov 2026 00:25:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 83273606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=BVaX+M0p
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-8b30ff12f84so10890497b3.2
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Nov 2026 15:42:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kTRSxFrz
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-8b502b9b702so17173947b3.3
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Nov 2026 16:25:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795045360; x=1795650160; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795047918; x=1795652718; darn=vger.kernel.org;
         h=content-type:in-reply-to:autocrypt:from:content-language:references
          :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=5gmN6H+RSfew5cKRkkzfR78AcJ/HC4QuJ1A3RJGQZBo=;
-        b=BVaX+M0pOWvZ+HLMo3zTqBf5Q7nthDWVI1w7TmUrDgj2tC06qdVS135x5YyQ1EMHfC
-         CQPKgDKVgI2wwTV13B8m+2WVSSXYR73RYzKkG6crU54g1Yy0fg/BID602IZ/kpCvo5zG
-         vnEsK6/PyevuH4OBntCkIEu4jPdzTqp2q9ZPOgy+ar2JvVaFjWnbsfxlF2H6kGfi/Snr
-         F4iVohsmvFqbEuzd5lOZERBt+Q8oPrGjGSs7LYyQoXguq+BrkFsHv+a1l+4CDyUjCDyA
-         TLyldtRNXKSqMkmX4BMaEf0fiZiV1GrYzumClcoOu91XfeYKRePzPdEFganSegopWx4m
-         0Law==
+        bh=rSVsA9fNi7kC5K1IDfWWLOQdUEB3auXl+KZsJESSywY=;
+        b=kTRSxFrzbN0FDlgSnZkJwWcbWwHZ0vb2npoGAm1/BDzidEWasZv/iK2G2pd+2myyji
+         0cjtG+XeQK5e80U2/+uE/4LC2P2jb9EcDWVNmYrLBmibNzqwQ0U13+qHBZED4gQHLAQv
+         XcGDCWjz9eAgZn62G4LZszeFScSc2QlNwetVv7S2Ew3niOuzfQK0SCf7ppajtAhX9OAN
+         todKqEko+BO3PtYHKNZBklmjypBQsWIk1bN3qcgHHdzoEG/rFN4CW5WFTC0S+CayjmJg
+         KlaGLeOgXD67IKwiw4jkXWz3otsZzFaDerPDxqvyvTozr3LT53fLiNxpfFtjcMWKUgZD
+         kilg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795045360; x=1795650160;
+        d=1e100.net; s=20260707; t=1795047918; x=1795652718;
         h=content-type:in-reply-to:autocrypt:from:content-language:references
          :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=5gmN6H+RSfew5cKRkkzfR78AcJ/HC4QuJ1A3RJGQZBo=;
-        b=ziJcDJtdzNXpeBAJrN9S/ZPIMr51SysiMy1CFt0J03g9GgeOwijh/QmI/EruKiP0WP
-         jrOUYIypLF84WDxi5KYn0swN3NsPO21i0ktQ5oYnA/a8YcaRKpkpVgGh11nqVmPrs9R2
-         jTzjB6YIIe0nqtaFPtW3XFk9s99pjVDta1rXPNw9bVz/Gd87Up5zfiRee/Twi3BAeFnd
-         8aV+uk+lQkKFoCnknJZn3vNlafWBFMDZBqKjIO7VJu74kx9REc9oUaPST3GqnTo1j0Kk
-         Lykma9rGc/LNF5rWp8W6gF8fc0S6tCZQeyYe/JA9y5vWTSfN3hjyPNWv9O1UwX/8B1mJ
-         s6wA==
-X-Forwarded-Encrypted: i=1; AL+hErFPGJDYubSTvlvLUphVZg5aOif4oBtyoNzq6pR2H1e0q/rBkZ9H7Kq8pMAqqvvQJIIdAwdfbAj4p8rCMhxVMhY=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+k1zEsPEH2UQlAM2h7CdBDAp/FLmJ940NqsvtquuxUuYt7+0KW
-	n1M0JQa0919AkI5VW9gLT4cGLfbMeG3fcesAErgTOXrBJtSbMREhqvOs
-X-Gm-Gg: AZFdTZdCGwyIy4hX20GuaiUcVLeHWv81vUppoXopwS+gTe9xGKw4MSeLWE3JTiDnO5u
-	eLNbONo4SAhuGlb+WJr8qz1eCO1ObULK2xF8HgwbvLk/qXJgbpGJvnZ0xpNw8r7ULms6X2kqwQ6
-	OEFG77b9LOff9Xn8j06u8oF5oDM2+wCN4XO2b5HlCspY39XbQ2fZ/LHLBxma3JB9aU0BNkirHSm
-	DjieZkst8azk9LFOSipzRI+oovBEHNWFFl2yJHWW7f/AFJfGsMCDorbjabvN1qIZBXWYmZJ0915
-	m3d1gMRmjhkifU0WSKq690CHm9q/rAPK6axxjpI2LEEwqLhH4m02/UBLZZCy7/WgN2VYUi6xkRE
-	u0UxsLrSLRID5HdfQg4aayWRTiGzO/ydl3QF7F5wjFmIvgayKDKsG0B5B+44/VVc7ryKkRddbkd
-	eC3H+MUlvnF0nofmar8hHFn8+63nKml1rehfilmYZ7hBhD+QiuN2EUb99j5SOGqVuaxNuAJ/s0D
-	m2Ar/i+BGt7z/IvzXJX50E0lSB8sMBsMWaSj1Ctp0qFzsdRZNCYER5pGMw2NftshgQDBK1jzNV6
-	J5VsfhRbUw6h8Hsii+tzmyIHyG0aVidsJg==
-X-Received: by 2002:a05:690c:306:b0:8b0:e479:6872 with SMTP id 00721157ae682-8b4fed09583mr22589027b3.17.1795045360439;
-        Wed, 18 Nov 2026 15:42:40 -0800 (PST)
+        bh=rSVsA9fNi7kC5K1IDfWWLOQdUEB3auXl+KZsJESSywY=;
+        b=fGBSr6onsJUemieyFWjdoxbWf9Uxf3kdqa9JkefmbaZlKzs3UWrv944XwC6nPk+JVR
+         GjPVQyjaIQg17TzpJMjeRtg+ol0CoFtopUABHk7fj9lEe9NrdULiDKZ6xQ4J/j189Dap
+         poHSA3hBaMnF9cBeFaqqmnAAJTI277u0JkS00ZS8UQnZBqsww+2WKMB5chEZqTYuqbvm
+         kdmwLdt6tUs5Jou1k7lqtV2aNsUgmW29bPODIykNentbAvssQKnBGcC8KyWlI+JQS0oS
+         UoBlE9ui0KkXe5lhVlz5YP1pso2Q0GTYl6hrOJzsAsLKmLJusXhJnaaFhKbZ9jqa0ZGm
+         aMzA==
+X-Forwarded-Encrypted: i=1; AL+hErG67Po1JKZBY8F6iER72JkX9RortmvTO4JQ2hWKovfukALGhpERKBwOiK/1fVHQCqTYSInVbM2ormRfWf0l1ys=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/6W8SrkkxHx06HLf8BEQOx30yXtjquUuD/AZPF++tKd/+dMY8B
+	cpdPkbkkM5q2WTXZ3RCiVZBeXjLlyUheQccsy8I4RMWH65pvfgrwobiY
+X-Gm-Gg: AZFdTZde73Yo70uZCubh/BpSGMCIfNxuLWmO0IfBi+tS55AErXU3BCUXCD7e3kI2p+/
+	3bzKfq+UrD1vs3Zs0butOmYCkhgMA5iYp7anNfIJtP8QpmUYf9OUSQSt3DdUO25T2//mLTBzgV7
+	tZvurL5NRNvzCQEInLh2YzD9HG62LLm04lZZ6XbbgRx1EZMwyRL0H0nEdGSoubXqSDiheJ7rr3/
+	Jqk3Q64sZWf/gmrQuQHwBYJ4r7+pXP2V+uBDe8ay7rNugDoRcfxWiIEsdLxRuiUi6Nn4FfOLZFy
+	fIhZyRwIOgPWgNfVHw2Au5N/ojRKER4IdyYSuAsiUSLGxR1c5HRsNVKzbj8hjK+hAnKXUfqXOav
+	OfKABOyTSeKG/vqnDYpAJ6hd3TgWBOaTEjimWeidaT3I97liqOpcROZ3/SXBFWoD8scoNf8BpgI
+	ueeEvb4L1VcjAmxqeVuKdahHH8KGx2pVAn6J+TR8ZUYpMIE/5SUpMmfEV3SxcXdUWMAZUYiNbk3
+	CSNNcmIs1nrlX7o84xMz/IJzrE1j7aT3rR6JzOk8sXvEJeaRZDNMg8+/Ev5VHdnskJP2h1IOM/K
+	d1YwDaYnwp/FZeazlXoaLZnEXO/NUSSUzuQ=
+X-Received: by 2002:a05:690c:79a:b0:8b4:f2bc:7c39 with SMTP id 00721157ae682-8b4fecfc697mr13290147b3.15.1795047918306;
+        Wed, 18 Nov 2026 16:25:18 -0800 (PST)
 Received: from [10.138.10.6] ([149.102.242.31])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-8b4fdf1d0desm25041597b3.1.2026.11.18.15.42.35
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-8b4fdf1d0desm25414957b3.1.2026.11.18.16.25.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2026 15:42:39 -0800 (PST)
-Message-ID: <650f89ef-9745-4f75-b254-80fa5ac4773d@gmail.com>
-Date: Wed, 18 Nov 2026 18:42:15 -0500
+        Wed, 18 Nov 2026 16:25:17 -0800 (PST)
+Message-ID: <75946579-8335-4491-86da-fcda25ae9fd8@gmail.com>
+Date: Wed, 18 Nov 2026 19:25:09 -0500
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -91,8 +91,8 @@ List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/9] KEYS: keycrypt: keys that user space can use but
- never read
+Subject: Re: [RFC PATCH 9/9] KEYS: keycrypt: Add the aes256-gcm-stream
+ algorithm
 To: Rodolfo Giometti <giometti@enneenne.com>,
  David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
  keyrings@vger.kernel.org
@@ -114,6 +114,7 @@ Cc: Herbert Xu <herbert@gondor.apana.org.au>,
  linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 References: <20261118140421.584086-1-giometti@enneenne.com>
+ <20261118141257.627441-1-giometti@enneenne.com>
 Content-Language: en-US
 From: Demi Marie Obenour <demiobenour@gmail.com>
 Autocrypt: addr=demiobenour@gmail.com; keydata=
@@ -159,21 +160,21 @@ Autocrypt: addr=demiobenour@gmail.com; keydata=
  vUSQHSrmfOzX3cV4yfmjM5lewgSstoxGyTx2M8enslgdXhPthZlDnTnOT+C+OTsh8+m5tos8
  HQjaPM01MKBiAqdPgksm1wu2DrrwUi6ChRVTUBcj6+/9IJ81H2P2gJk3Ls3AVIxIffLoY34E
  +MYSfkEjBz0E8CLOcAw7JIwAaeBT
-In-Reply-To: <20261118140421.584086-1-giometti@enneenne.com>
+In-Reply-To: <20261118141257.627441-1-giometti@enneenne.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="------------jzPPC6cqPSJxGVQJoosVKqnL"
+ boundary="------------FHGxV8cRNdUiD6U0H5BD0N5M"
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------jzPPC6cqPSJxGVQJoosVKqnL
-Content-Type: multipart/mixed; boundary="------------TfokhGkQ0eBXMCucH70BiVLN";
+--------------FHGxV8cRNdUiD6U0H5BD0N5M
+Content-Type: multipart/mixed; boundary="------------5YUoLTrRSVm1eElT0Sq1GVMR";
  protected-headers="v1"; hp="clear"
-Message-ID: <650f89ef-9745-4f75-b254-80fa5ac4773d@gmail.com>
-Date: Wed, 18 Nov 2026 18:42:15 -0500
+Message-ID: <75946579-8335-4491-86da-fcda25ae9fd8@gmail.com>
+Date: Wed, 18 Nov 2026 19:25:09 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/9] KEYS: keycrypt: keys that user space can use but
- never read
+Subject: Re: [RFC PATCH 9/9] KEYS: keycrypt: Add the aes256-gcm-stream
+ algorithm
 To: Rodolfo Giometti <giometti@enneenne.com>,
  David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
  keyrings@vger.kernel.org
@@ -195,6 +196,7 @@ Cc: Herbert Xu <herbert@gondor.apana.org.au>,
  linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 References: <20261118140421.584086-1-giometti@enneenne.com>
+ <20261118141257.627441-1-giometti@enneenne.com>
 Content-Language: en-US
 From: Demi Marie Obenour <demiobenour@gmail.com>
 Autocrypt: addr=demiobenour@gmail.com; keydata=
@@ -240,73 +242,68 @@ Autocrypt: addr=demiobenour@gmail.com; keydata=
  vUSQHSrmfOzX3cV4yfmjM5lewgSstoxGyTx2M8enslgdXhPthZlDnTnOT+C+OTsh8+m5tos8
  HQjaPM01MKBiAqdPgksm1wu2DrrwUi6ChRVTUBcj6+/9IJ81H2P2gJk3Ls3AVIxIffLoY34E
  +MYSfkEjBz0E8CLOcAw7JIwAaeBT
-In-Reply-To: <20261118140421.584086-1-giometti@enneenne.com>
+In-Reply-To: <20261118141257.627441-1-giometti@enneenne.com>
 
---------------TfokhGkQ0eBXMCucH70BiVLN
+--------------5YUoLTrRSVm1eElT0Sq1GVMR
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On 11/18/26 9:04 AM, Rodolfo Giometti wrote:
-> This RFC proposes a key type, "keycrypt", whose material user space can=
+On 11/18/26 9:12 AM, Rodolfo Giometti wrote:
+> This patch is a proposal on its own: nothing before it needs it, so it
+> can be discussed, or left out, apart from the rest.
+>=20
+> aes256-cbc does not authenticate what it decrypts, and a file or a
+> transfer longer than one call cannot be sealed with a single AES-GCM
+> invocation without buffering all of it, nor decrypted without
+> releasing plaintext before its tag is checked.
+>=20
+> Add aes256-gcm-stream: the STREAM construction (Hoang, Reyhanitabar,
+> Rogaway, Vizar) over AES-256-GCM. A message is split into segments
+> of up to 64 KiB, each sealed with its own tag under a subkey derived
+> with HKDF-SHA256 from the key and a 16-byte salt drawn at
+> KEYCTL_CRYPT_OPEN; the nonce carries the segment's position and a
+> last-segment flag, and the counter lives in the kernel, so segments
+> can be neither reordered nor dropped from the end unnoticed. The
+> segments go through a new ioctl, KEYCRYPT_IOC_SEGMENT, and
+> KEYCRYPT_IOC_FINAL reports a stream whose last segment never came.
+> A tee or hsm backend draws the salt and keeps the counter in its
+> secure side; the sw and optee backends implement it.
 
-> use for symmetric operations but never read: AES-256-CBC, HMAC-SHA256
-> and an authenticated AES-256-GCM stream, through a file descriptor that=
+Please use Cobblestone-128 or Cobblestone-256 instead.
+https://c2sp.org/chunked-encryption has the spec, and you can check
+against the implementation in pyca/cryptography or (for Cobblestone-128)
+the Go package filippo.io/cobblestone.  This assumes your CPU has AES
+and GCM instructions; if not, you should see about using one that does
+or work with a cryptographer to standardize an alternative that doesn't
+need them.
 
-> KEYCTL_CRYPT_OPEN returns for one key and one operation.
-
-I haven't looked at the API, but from a cryptographic perspective,
-this encourages very poor practices.  AES-GCM even allows userspace
-to extract the secret authentication key.
-
-AES-256-CBC isn't a suitable mode on its own, unless it's combined
-with a MAC in encrypt-then-MAC.  Even then, it has a 2^64 birthday
-bound, so it should only be used 2^48 times with a single key unless
-the key is ephemeral.
-
-AES-GCM is not a suitable algorithm either.  If you allow encrypting
-with a key loaded from persistent storage, there is no way for the API
-to ensure it is only used with a unique nonce.  Nonce reuse leaks the
-authentication key and allows forgeries.  Using random nonces isn't
-good enough either: NIST only allows 2^32 encryptions in this case,
-and the API can't enforce that limit.
-
-For long-term keys, all of the following are much safer choices.
-They have 192-bit nonces, which means that one can generate them
-at random for each encryption without any problems.
-
-- XAES-256-GCM
-- XChaCha20-Poly1305
-- AEGIS-256
-
-AES-GCM-SIV is also okay, provided that you are fine with occasionally
-leaking if two plaintexts are equal.  This happens whenever there is
-a nonce collision, so with probability 2^-32 after 2^32 encryptions.
+Nonstandard constructions like this one are to be avoided.
 --=20
 Sincerely,
 Demi Marie Obenour (she/her/hers)
 
---------------TfokhGkQ0eBXMCucH70BiVLN--
+--------------5YUoLTrRSVm1eElT0Sq1GVMR--
 
---------------jzPPC6cqPSJxGVQJoosVKqnL
+--------------FHGxV8cRNdUiD6U0H5BD0N5M
 Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmr+N+MACgkQszaHOrMp
-8lNdbA/+LXcNkxhaSmkBIlfaAw6S95byA9OavCx3gDwybKkdpBRsqEMuUDmi6Krv
-sUsDLaeMdH3ar/BHBgzdRhYzWSYylQxAXK5kyk9Dl+eyd7ytersCCZOWNqQEXZm8
-J2LKr4uL8732Pdf9nju8nULZYGbZMMOruowXjBaVMXexkB1+6mlo5Nlg2GWQi+tq
-Hq9ZznN68KGW4g+4Tf1yUAVTrCV1il7GWH5B2NmiYoE+X7gXBAm/SN6AZFOBdC8R
-9RqyWBD49MqMMo2bJUtpO4GYBp5Nq/mj51QZMQft/SuzJIukGVOgBZjs4tYc6Rzw
-aYoqSJs44bHE4zdSItWMBMDMrFE4QwSZT9B79wJDYMc1XYC8GTEcV+A63nqID8Pm
-cGeJ75QYBrQPSOGE8Y6JeniPKwFOHc+ZapobcMEZIo/e84/XsTLt3/WLlm92W+AK
-b1B+kFVPbKu7aAp59KPE/6woXt1nWraeSJ2yT6kJv7nVlDTgmVjROCYIWx1z7Zxb
-w3CLI05Dru/vR3Kfrb1qIwcExSnqHikSICBFrlCtcJ2QIXAe7q97XMUOtrG/r/tV
-PhAcmfxf24npXFn3RhkkaT+XxqY891rJUHLUDfu1p8Rs8+QA+wf9ti+I/Ow0zC1c
-TQibXKQlhu/Pb1CwVlGfg5OG29hOQEplCyaVjnQK5oPaw9O5NEs=
-=AtsF
+iQIzBAEBCgAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmr+QeYACgkQszaHOrMp
+8lMKphAApmT7NKojxfNUv+4YED5wbkVa7lnarDk0nyp9M3Bt5hNIRlezPRWwnuNQ
+c3Fse2TSfDpwTAaL/pZ9bVoUW3FkLcIwnAAIe35/78qpOemxEF5XRd4CQ9OGoQkm
+MW429KUVHFxKjlSPCVrMIzW5PwLLvQVO/84lxA3BYJ503yK13kkEC2ja/5bOr2pq
+cNzlB0rvirBXLKv2LH9gyIWC3rvLI29QGgGdFocZwnV/EbsWXC+1cNqLGePQ4JW/
+X2W4CMomO+RvLWY+tfh/W+5hnUzxfaxn1oyCQbdEa+5KzWc+6oaPK9MU6x94SEhC
+qkvoS60vMTP46Q4AQT+zB918F09KoN5Gwb6kWkjYVdfoJhsq1JIToOMT4uWhxwJa
+zK5vgEPBWgvLDy5nRHf3l36sS0D8KibzPXtsQfxLrmH88Q8i8VHbMbHeuqQ3hfmi
+/7v8eSCrt2NDafwt1mKKM1s3ZhegKN+R8bDXcK9Ys9fQnVMptIcR/tlkBBf6NWes
+mdSBLNJSBR6q4Hm+kSz3+j8ah7qhuPVI9FIyKt9Lb60hrI8sHdotye0p5+Ne0iH6
+rUKkFHWYEv10C/ku2PdPBgLIc5qfhf/MPSbqH5vAcyc19JIg9xneQVTxoaFK8QD8
+aN6GKY3u02GADQHUdEuu26cEaKIBdN1yhWrjlPTIclUizw7Wppg=
+=ionq
 -----END PGP SIGNATURE-----
 
---------------jzPPC6cqPSJxGVQJoosVKqnL--
+--------------FHGxV8cRNdUiD6U0H5BD0N5M--
