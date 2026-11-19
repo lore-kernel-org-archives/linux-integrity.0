@@ -1,78 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795098787;
-	b=2LreflKMo9u/a9lTYG9UY9DO9b1HsOQYfF07CU+u+6flOrjHgfIqVpt2N6PNGWFlsZVi
-	 kqZx6siMMcuVFmDtlCsMAEy3ymWcx57CFSf2sl0QbNQBi0RPNfgms/ibbGAjWC2m/+sA7
-	 5PHdwjYAn3ephDrFaXhyE5zEffXXu8oZNPoqvD3y7TMlMcrhMf2hHkbnDUb/loWxd3HIR
-	 hXBc7HCZqoh9FwBmSGtI8l/iIe78Fg6B0/s9YVO4+JAyZs+SIs9CsQLSn9oFVlqJ3SCNO
-	 i5jSc57LUDbyeRFwC2VPKo2yGdGhbTKVAc0Ns2a9lW0vEmNRMD9UkgZ2xJawiTAoehA==
+	t=1795101619;
+	b=RTEdCHjEUk1nFzd+oNLPtx2g94/ILnO9xzvh6EBqVaUxo5uDrw/iVaN8ILh3XAnbMVAD
+	 SUWrHg7Netj/+POxDXKUbLkM8LzRrChoTjt1k6LwzIsAmJkqSOJenl2Pa7vbYAxzcmH90
+	 MM+VLoCw2iuazBWCf6o5X61fK7gKt/jQby/pSu/AoXeY+OiUVzM3NE9HeCjaEOrY0iYsr
+	 AmOzRqT7y58Un85Xkvctq+qF07j4B+XHV+ZwCopt+DCngpaEZYTAbLX5HdwiXuDPbtZvB
+	 b9YarLDgjEqoxTT+ZAfv0OpQ3eDAMw1NXYHs1/qFz1ANcVxku/Jy/Js4fD1Dur5MGPw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795098787;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795101619;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=lv3NYu11pHprgRUUKX5nzbXJ9PYh0wkr94sy1z7rgm4=;
-	b=HhUz9P0F7LL2iWHLCqEtIIjRSjYOooDMWnHt/FHS0RGOuuepJWvL4pBjWc3XWKU0SUK+
-	 w/PA6i3tfp5AoaHIlqiMnM2VWjp21PlNjCfEa52mfCdMhQCtkxBmguQNbN/3djHSM45no
-	 Ak/AAIpGE8nDC1DSJlPRGy5eedfHT1NBUuAnDBJkZQ+dCNsEm7E/dOmLadC/idPE4GxZP
-	 2GWKzOj+IvNOCIYaF0n+PKDRLikW8wszbLrIF5F5tK4sB/pnFG75X59h040SfcLtU66kV
-	 p0nRE3anKMwJ4xQQns1OS57BTB3/eJGWCI/zz8m1TbNjw/1jZSMO6wjaY/fbzbvzgAQ==
+	bh=abJ833XNl5Tm7eTC3UbhmlX0wfMyPK48RvyobAGfFA0=;
+	b=QUuX5dFpG4EC35B1pfE7/55Eqon1c65D687Trb29dRdr5BeXjjqj+HwtupLD6HMQIrci
+	 H0kIlwYdGZfQ0f1zrJveRlmZElEsvMKqvf6lVH5xpzsP8dqLP+IsuAmRw6/3rJqa7/+Cw
+	 wSmB6SWa1EsexMozBhWFOzvx5DuVelWfxaxcShmDmWNmAZxgRnmtoCYQW8MKybJ+PkbG2
+	 nkUuvi7tr2ppp2LCKybPkoWaXTe3T1c76yVJvye+/AYpGN4q05sxVUK3NcZmPNQzALNnq
+	 qcMPIGXl4crh5LmatLwrWx0RN1OJxK5dMHR+wYaMXD0Iwv0BlGjaKgGly5IYIkQCZbw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DkO9ZyBD;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="GLFkaO/q";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id F34B1606A320;
-	Thu, 19 Nov 2026 14:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 764F1606A324;
+	Thu, 19 Nov 2026 15:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DkO9ZyBD
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 3738E1F000CA;
-	Thu, 19 Nov 2026 14:33:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GLFkaO/q
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 820291F000C4;
+	Thu, 19 Nov 2026 15:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795098786;
-	bh=lv3NYu11pHprgRUUKX5nzbXJ9PYh0wkr94sy1z7rgm4=;
+	s=k20260515; t=1795101619;
+	bh=abJ833XNl5Tm7eTC3UbhmlX0wfMyPK48RvyobAGfFA0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DkO9ZyBD2TgaZMRcs8EgWiOCyNyqCS5GVpH0PIaxsiAxioBTNKOP1wNtv66D5cYUo
-	 SVbW8UDU1ecj5E3RCQAhHUNANk3OefmNfhyVcaUvR0Gz4clykNB0Ug9GoG1Ptr8ZuJ
-	 ONnfC20iTyqzzJ2bUJn6Pg6qw6zmZqZ3ZatVKnDFWAqwRPzMWGYReKxU4oRi50tS1Q
-	 1qTF54aQpt4AAtXTH2qm2wUUGVJhq8ji6yCXpiUz4OvXBnHZfzrVs9GnUElmUD670e
-	 vrz7s2wx6vlq7TxR3Li0W0SBs0mp7rRKPrBjNuC5IHgS3SdNuJjawMEJSGy/3xT0BT
-	 6PR8vQwsFHWZw==
-Date: Thu, 19 Nov 2026 16:33:03 +0200
+	b=GLFkaO/qNHENindxN6Px7vrTI8+fFJuptpAumsnSZgz5Q1gtuZqbozN28Hhu15NOp
+	 wpO5Q3mYrgFBmtzMhFUJUSjx0YdBwmQVyT2yKKiPni2M2kBfeqhL3Uz93qAkrskM7K
+	 v+3JjyvQ//2hT9An9+AFuxJuKUsb4/+tAGL4/liv1zsZ2jAQfrRoUo958ghaNv/4VB
+	 OouzqD0e16KqxcmadySNQz/WEwW3uKCvhp7N7ym8R8OuMeMjHzwJwBq/4O+w+N/kVJ
+	 WUTlXuNmuscOggAZLWCZJ5KwzO6P2tUKli4kE93mdFhRxlVJl6k5uc3Xby/Xfrsc61
+	 z90wz32u0fspA==
+Date: Thu, 19 Nov 2026 17:20:15 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Rodolfo Giometti <giometti@enneenne.com>
-Cc: Rodolfo Giometti <giometti@enneenne.com>,
-	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jens Wiklander <jenswi@kernel.org>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	op-tee@lists.trustedfirmware.org,
-	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Sahil Malhotra <sahil.malhotra@nxp.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Richard Weinberger <richard@nod.at>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>, linux-crypto@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: [RFC PATCH 0/9] KEYS: keycrypt: keys that user space can use but
- never read
-Message-ID: <av8In0Xyd5iI9N7K@kernel.org>
-References: <20261118140421.584086-1-giometti@enneenne.com>
- <650f89ef-9745-4f75-b254-80fa5ac4773d@gmail.com>
- <av5EyVHnNzT27dyK@kernel.org>
+To: shyckless@gmail.com
+Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org, jgross@suse.com,
+	sstabellini@kernel.org, linux-integrity@vger.kernel.org,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH] tpm: xen-tpmfront: fix use-after-free in
+ backend_changed()
+Message-ID: <av8Tr2jTQaOBOEid@kernel.org>
+References: <20261119-xen-tpmfront-v1-1-bfabbbed462a@gmail.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -84,54 +60,67 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <av5EyVHnNzT27dyK@kernel.org>
+In-Reply-To: <20261119-xen-tpmfront-v1-1-bfabbbed462a@gmail.com>
 
-On Thu, Nov 19, 2026 at 02:37:33AM +0200, Jarkko Sakkinen wrote:
-> The exitential problem here is that KEYCTL_CRYPT_OPEN creates a circular
-> relationship between the keyrings API and a specific key type.
+On Thu, Nov 19, 2026 at 11:20:33AM +0000, Suyuan Wang via B4 Relay wrote:
+> From: Suyuan Wang <stevewong@hust.edu.cn>
 > 
-> At hardware level I did not see any support for TPM, which narrows down
-> the potential user base.
+> When the backend moves to Closing or Closed, backend_changed()
+> unregisters the device and then keeps using it:
 > 
-> The remaining potential user base is further reduced by those that use
-> trusted keys; leaving out those who need to solve the assumed problem
-> that only this patch set can presumebly sort out.
+> 	device_unregister(&dev->dev);
+> 	xenbus_frontend_closed(dev);
 > 
-> And we don't really know at this point that cut. This is pretty much
-> the break down of what is wrong here.
+> The xenbus watch callback that calls backend_changed() does not hold a
+> reference to the device. The tpm_chip registered by xen-tpmfront has dev
+> as its parent and holds a reference to it, but tpmfront_remove() drops
+> that reference when it unregisters the chip. So device_unregister() can
+> release the last reference and free the xenbus_device, and
+> xenbus_frontend_closed(dev) then accesses freed memory.
 > 
-> If there is/was a problem to sort out, it should be so constrained that
-> it should be as quick to describe as stepping over a nail really.
+> Take a temporary reference before unregistering and drop it after
+> xenbus_frontend_closed(). This keeps dev alive for the last access and
+> keeps the existing order, in which TPM operations are stopped before
+> the frontend is marked Closed.
 > 
-> These are the main topics what I would focus on.
+> Found with a static analysis tool and checked by hand.
+> 
+> Fixes: e2683957fb26 ("drivers/tpm: add xen tpmfront interface")
+> Cc: stable@vger.kernel.org
+> Co-developed-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
+> Signed-off-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
+> Signed-off-by: Suyuan Wang <stevewong@hust.edu.cn>
+> ---
+> Compile tested on x86_64 (W=1, no new warnings). Not run with a Xen vTPM
+> backend.
+> ---
+>  drivers/char/tpm/xen-tpmfront.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+> index 3c0cce57c4ae..1be925cca535 100644
+> --- a/drivers/char/tpm/xen-tpmfront.c
+> +++ b/drivers/char/tpm/xen-tpmfront.c
+> @@ -397,8 +397,11 @@ static void backend_changed(struct xenbus_device *dev,
+>  
+>  	case XenbusStateClosing:
+>  	case XenbusStateClosed:
+> +		/* device_unregister() can drop the last reference to dev */
+> +		get_device(&dev->dev);
+>  		device_unregister(&dev->dev);
+>  		xenbus_frontend_closed(dev);
+> +		put_device(&dev->dev);
 
-I'm not disregarding that there might be something; and neither
-disregarding e.g., the use of Claude. Throwing a dice can apply as well
-human made code as for me code is just code. Perhaps using Claude,
-people just tend to have just a itchier trigger finger :-)
+Not a NAK but makes me wonder why this has not hit the wall ever.
 
-The place where *in my personal opinion*  anyone who uses agents would
-be better to do manual work is the commit message. It enforces to use
-cognitive abilities even more so than writing code, if you with
-absolutely no self-deception, read it all through and write with your
-own words what the heck it does.
+I.e. "feeling confused".
 
-Usually when hitting the wall doing that leads into better code
-because of the healthy reality check. I'm not a medical doctor but
-I believe at least that thinking more stuff like this is also great
-for long-term health and cognitive abilities.
-
-AI is for mental health as a car is for physical health; for better or
-worse.
-
-Code quality is also over-rated although best effort should be done
-but that's all. If you get it, then it is done. It's harder than it
-sounds without self-deception part.
-
-And yeah, we don't have projected problems. I.e. "no users" is always
-NAK. You have to step on the nail at first.
-
-Just need to clear my thoughts on overall the topic :-) This is I guess
-where I stand now. Hope you find these helpful.
+>  		break;
+>  	default:
+>  		break;
+> 
+> 
+> 
+> 
 
 Br, Jarkko
