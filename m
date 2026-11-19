@@ -1,99 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=14.137.139.154
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795067497;
-	b=PizJrPiRdacQOivJN1glKJiYPuAYyuMqqTZl3wR6SZDQCrGB0x8rOMA9QkgdTaT0uV/1
-	 bgLOd87vA/SwIr+H+68jWMEIOv5B4NGuBQ+p7yO9tZmKcyqE8vVdCqqAKSihHDS0K7yDP
-	 7O8b5P+to3XynZpyLjO5JJjiL8lXNU7SReH3SYW6tM7daU8vm4G6OJm+/TaXmJmMg1gyL
-	 Yfxr+8of5GKNaxXhphnWFrQHUHf8SnYjbFzm5o9OfJIDiolqN8uORqfvKszlLXISCHMvK
-	 2be/9YMNQdXf5MwcfuM4NkEwLIA2LOfWAAHBXC1JS/fmxCNDNh8KH2VXQLN9kHFF89Q==
+	t=1795082642;
+	b=cN8ZqqmfaDkJIh54nhrtyOWg14mS5JEEOuZVapbps8Q4dyGBxJ7Ewq5H3e4EF+m6nlFD
+	 S0dJCzgZKTbxx9rEOxOIAD1SZLwdEqtqPQ9lLkAwi7DDhI8o2I3nwRuh6tKoI5VUvyoxQ
+	 rJW/D6Du+WvZRoGwdcseYjD/zZIWbzFYj0P83DK837IOp1Q1+YCC20Kyoi3SfiuZEj1v0
+	 TZpXPQI3S6FTWim3vKLxpGfvI3qcPPwu49A6qtorUsnog5M+mP2uAXz00hyPP4l6oV1Up
+	 AzlUiBFOqd3W0KT2607IeV04nw9H3ZErTwHgzuvf5xy5MzwSMPVI+woWuBbhM16ccOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795067497;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To:Sender;
-	bh=z8G4571aUTPFuGlDRih4WtoT+MR1zWs5KxPfHLJ0IoQ=;
-	b=K438CdbgINAZblCj2Vo8NMPTupp/jd8A3pokleOc9gKBuaVvr8hgSpT7r+t88U3xpw4R
-	 8lCEgPXLikVJak4pUOOjA4WHRs43tG8gXxCkodM9lU1qGFg3zzn8+XP2CxxHooy1Gayd0
-	 juO8N3HMQBBckyCNTsdUDRwj9NuzbHC90rRyc7Aa3H108FuG2cE5256WaeqxJlJN+wkEj
-	 takEtrZqw7IUaVDHq3aUOrY1e0ps3JpvqlCFmg12LpqYohT5bh1QbKRiHNRdaq2adobsE
-	 vYFosqm6szMv6srf4rGaa0Vd5nVeEHcEzwuULrG4gu1btRDDdAOfuAPwdULTADdmyPg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795082642;
+	h=DMARC-Filter:Received:Received:Received:Message-ID:Subject:From:To:
+	 Cc:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version:X-CM-TRANSID:X-Coremail-Antispam:
+	 X-CM-SenderInfo;
+	bh=zzyvBYRycK/PolxVws+3x07W7fjNSU/PymweqV0BGzg=;
+	b=fR+Y2pqS5ZZlg8i+jRKe6h5FOTh+9nbbk2Iz9GJf+OJy3WEjEi6Du2WAesstPaKe1wyV
+	 N2dLxuQ4/1YoY47wmEfVrimHqsze7BDwYV9PZ+je55CIFqgW8QJSvIObnTGUxYS7KBroi
+	 +rXo15qwZ1DL46zggPGXs6+7GEwWsOGDeKmx2ksp/qErNmSfEr3Yol/ShZMLUenz/Dlfm
+	 1u/nwEMiN4vO1tpwe0scKJa3wQEK9rdedroyGMz24crxK4WeuGxXy9oKwnzWuTpYIPhFf
+	 NmlPDnDUJhNOCYNm1Q0d1RHuode2uWqdiCGFcrAmLbz8BjJBna4jz1i/WvshlVr9W+w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zeniv.linux.org.uk;
-	spf=none smtp.mailfrom=ftp.linux.org.uk;
-	dkim=pass header.d=linux.org.uk header.i=@linux.org.uk header.a=rsa-sha256 header.s=zeniv-20220401 header.b=HUmq9V2f;
-	arc=none smtp.remote-ip=62.89.141.173
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dmarc=none header.from=huaweicloud.com;
+	spf=pass smtp.mailfrom=huaweicloud.com;
+	arc=none smtp.remote-ip=14.137.139.154
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD1F606A325;
-	Thu, 19 Nov 2026 05:51:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EFD1F606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.a=rsa-sha256 header.s=zeniv-20220401 header.b=HUmq9V2f
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=z8G4571aUTPFuGlDRih4WtoT+MR1zWs5KxPfHLJ0IoQ=; b=HUmq9V2fqWZniya7o9nBaVPeDZ
-	hdLnNqA0+VaoySgEJuKHB41/nmyLaGptpyplTvFZpj9ZsUfvW/Uacb0EujAyxoatj/wEjrTHUy1Y8
-	Jf/0+dvEia8oYQhTDJ2QTEjT6TZu9xP6N/is4httLR57O2jb4I7x7sybjo+/cFqRcKEnzzz9PN71w
-	Fs3s4nF5yw1DIdzaYMKdWCNazNDVu5/+7GdnX+s8wkC+dHul4l8kAJetHVgTfI7IM42m1/kFkA0V+
-	e5cVGVGh3fNAY2bVKP02Pyi9IdxpjMoQwmhSMxh71ivIpbruqUDwYbd4JXLlMVMx0hkbK2WWTq4Oa
-	k2qmfFmA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xTv3O-000000063G7-3IJX;
-	Thu, 19 Nov 2026 05:51:26 +0000
-Date: Thu, 19 Nov 2026 05:51:26 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Cai Xinchen <caixinchen1@huawei.com>, mic@digikod.net,
-	gnoack@google.com, paul@paul-moore.com, jack@suse.cz,
-	amir73il@gmail.com, andrii@kernel.org, apparmor@lists.ubuntu.com,
-	ast@kernel.org, axboe@kernel.dk, bpf@vger.kernel.org,
-	casey@schaufler-ca.com, cel@kernel.org, cem@kernel.org,
-	chenxiaosong@chenxiaosong.com, code@tyhicks.com, corbet@lwn.net,
-	Dai.Ngo@oracle.com, dakr@kernel.org, daniel@iogearbox.net,
-	dhowells@redhat.com, dlemoal@kernel.org, dmitry.kasatkin@gmail.com,
-	driver-core@lists.linux.dev, dsterba@suse.com,
-	ecryptfs@vger.kernel.org, eddyz87@gmail.com, emil@etsalapatis.com,
-	eric.snowberg@oracle.com, exfat@lists.linux.dev,
-	georgia.garcia@canonical.com, gregkh@linuxfoundation.org,
-	hch@lst.de, hirofumi@mail.parknet.co.jp, hyc.lee@gmail.com,
-	ihor.solodrai@linux.dev, jlayton@kernel.org, jmorris@namei.org,
-	johan@kernel.org, john.fastabend@gmail.com,
-	john.johansen@canonical.com, jolsa@kernel.org, kpsingh@kernel.org,
-	linkinjeon@kernel.org, linux-api@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, liubaolin12138@163.com,
-	martin.lau@linux.dev, mason@kernel.org,
-	mathieu.desnoyers@efficios.com, matt@bobrowski.net,
-	memxor@gmail.com, mhiramat@kernel.org, miklos@szeredi.hu,
-	neil@brown.name, netfs@lists.linux.dev, ntfs@lists.linux.dev,
-	okorniev@redhat.com, omosnacek@gmail.com,
-	penguin-kernel@i-love.sakura.ne.jp, rafael@kernel.org,
-	rdunlap@infradead.org, roberto.sassu@huawei.com,
-	rostedt@goodmis.org, selinux@vger.kernel.org,
-	senozhatsky@chromium.org, serge@hallyn.com, sj1557.seo@samsung.com,
-	skhan@linuxfoundation.org, song@kernel.org,
-	stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
-	tom@talpey.com, yonghong.song@linux.dev, yuezhang.mo@sony.com,
-	zohar@linux.ibm.com, utilityemal77@gmail.com, lujialin4@huawei.com
-Subject: Re: [PATCH -next -v4 02/17] LSM: pass struct path to the
- inode_setsecctx hook
-Message-ID: <20261119055126.GU989762@ZenIV>
-References: <20261117150542.1169451-1-caixinchen1@huawei.com>
- <20261117150542.1169451-3-caixinchen1@huawei.com>
- <20261117184342.GR989762@ZenIV>
- <20261118001641.GA1669148@ZenIV>
- <20261118-woher-duften-bejubeln-7a8a2099f89f@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D8D606A320;
+	Thu, 19 Nov 2026 10:03:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23D8D606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4jVYvB6jSfzt3HP;
+	Thu, 19 Nov 2026 18:03:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.157])
+	by mail.maildlp.com (Postfix) with ESMTP id 5BF0640558;
+	Thu, 19 Nov 2026 18:03:52 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by dep2_app1 (Coremail) with UTF8SMTPA id nRC2B0BGKV9+yf5qSSEeAA--.14516S2;
+	Thu, 19 Nov 2026 11:03:51 +0100 (CET)
+Message-ID: <70ebc38f7102d5f75ba1dcbf6df4b4b864c78ce7.camel@huaweicloud.com>
+Subject: Re: [PATCH] ima: reject duplicate fsname= in a policy rule
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: weidongw@illinois.edu, Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+	 <roberto.sassu@huawei.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
+	 <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
+	 <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Zijie Zhao <zijie4@illinois.edu>
+Date: Thu, 19 Nov 2026 11:03:39 +0100
+In-Reply-To: <20261112-c3-n204-v1-1-dd9400b9ece8@illinois.edu>
+References: <20261112-c3-n204-v1-1-dd9400b9ece8@illinois.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -103,123 +65,115 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261118-woher-duften-bejubeln-7a8a2099f89f@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-CM-TRANSID:nRC2B0BGKV9+yf5qSSEeAA--.14516S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr15ur1fXF4UAr45KF1rWFg_yoW5uFW5pa
+	95KFnF9FsrAryIkay293WS9Fyxuw4UJr45GF95J342vasxWrn2vw43KFWY9w12yryrtr1F
+	vF4qg3Wqk34qqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIDWr+ac09DQAAsE
 
-On Wed, Nov 18, 2026 at 09:51:27AM +0100, Christian Brauner wrote:
-> On Wed, Nov 18, 2026 at 12:16:41AM +0000, Al Viro wrote:
-> > On Tue, Nov 17, 2026 at 06:43:42PM +0000, Al Viro wrote:
-> > > > + * Hooks that take a struct path argument: the VFS only sanctions passing
-> > > > + * the path to VFS helpers that take a struct path (e.g. notify_change());
-> > > > + * it makes no guarantees with regard to path->mnt, whose layout and
-> > > > + * implementation details are subject to change.  Implementations must
-> > > > + * not rely on its properties.
-> 
-> That comment is a garbled version of an earlier review. It meant that
-> LSMs get no guarantees about struct vfsmount internals and don't get to
-> poke at them. I'm not sure how this can be read as path->mnt being a
-> random mount.
+On Thu, 2026-11-12 at 00:56 -0600, Weidong Wang via B4 Relay wrote:
+> From: Weidong Wang <weidongw@illinois.edu>
+>=20
+> ima_parse_rule() stores the fsname=3D value with kstrdup() but, unlike
+> fsmagic=3D, fs_subtype=3D and the other options, does not check whether t=
+he
+> rule already has one. A rule that names fsname=3D twice overwrites
+> entry->fsname and leaks the first string.
+>=20
+> Reject the duplicate with -EINVAL, as fs_subtype=3D does. Such a rule use=
+d
+> to be accepted with the last fsname=3D taking effect; giving the option
+> twice was never meaningful, and the other options already reject it.
+>=20
+> Writing the policy requires CAP_SYS_ADMIN, so the leak is limited to a
+> few bytes per malformed rule loaded by a privileged user.
+>=20
+> The leak was found by an AI code review agent (an LLM-based bug-finding
+> tool developed by Zijie Zhao and the submitter) and confirmed on an
+> unmodified kernel, without error injection, on x86_64 under QEMU with
+> kmemleak: loading 64 rules with a duplicated fsname=3D left 64
+> unreferenced objects allocated by kstrdup() in ima_parse_rule() (inlined
+> into ima_parse_add_rule()); the same rules with a single fsname=3D left
+> none. With this patch the duplicate rules are rejected and kmemleak
+> reports nothing; rules with a single fsname=3D are still accepted.
+>=20
+> The reproducer, fix and changelog were drafted with AI assistance
+> (Claude), then reviewed and tested by the submitter.
+>=20
+> Fixes: f1b08bbcbdaf ("ima: define a new policy condition based on the fil=
+esystem name")
+> Cc: Zijie Zhao <zijie4@illinois.edu>
+> Signed-off-by: Weidong Wang <weidongw@illinois.edu>
 
-"no guarantees with regard to path->mnt" is easy to parse that way when one
-is stuck with a caller that needs to be converted to new API with no relevant
-mount reference in sight.
+Thanks.
 
-> > > If that kind of stuff actually does get passed to any existing hooks, we need
-> > > to fix that ASAP.
-> 
-> Of course there is one...
-> 
->   dent = lookup_one_unlocked(idmap, &QSTR_LEN(...),
->                              priv->dir_fp->filp->f_path.dentry);
->   [...].
->   rc = ksmbd_vfs_fill_dentry_attrs(priv->work, idmap, dent, &ksmbd_kstat);
-> 
-> It passes only the bare dentry, and ksmbd_vfs_fill_dentry_attrs() then
-> makes up a path from the share's root mount:
-> 
->   struct path path = {
->           .mnt = share_conf->vfs_path.mnt,   /* mount the share is exported from */
->           .dentry = dentry,                  /* entry inside the listed dir */
->   };
->   rc = vfs_getattr(&path, ...);
-> 
-> since 5614c8c487f6 ("ksmbd: replace generic_fillattr with vfs_getattr").
-> 
-> So a client that lists a directory on a submount below the share then
-> that dentry belongs to another superblock. So security_inode_getattr()
-> and ->getattr() get a mixed path.
+Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-So e.g. apparmor hits
-        vfsuid_t vfsuid = i_uid_into_vfsuid(mnt_idmap(path->mnt),
-					    d_backing_inode(path->dentry));
-with path->mnt having nothing to do with path->dentry there?  Fun...
+Roberto
 
-> The third patch in this series fixes this. But we should make this a
-> Fixes: patch really... Something like [1].
-> 
-> > To elaborate a bit: correctness of quite a few places does depend upon the
-> > following invaraint:
-> > 	path->mnt->mnt_sb == path->dentry->d_sb		(1)
-> > for all struct path pointers they might possibly run into.
-> >
-> > _IF_ you can guarantee that (1) is not violated, we have something to
-> > talk about; otherwise, don't call your object struct path and don't
-> > pass it to anything that expects to deal with struct path.
-> 
-> Every struct path the series constructs:
-> 
->   - devtmpfs
->   - nfsd
->   - cachefiles
->   - ecryptfs
->   - overlayfs
->   - ksmbd
-> 
-> doesn't have this bug.
-> 
-> [1]:
-> 
->   --- a/fs/smb/server/smb2pdu.c
->   +++ b/fs/smb/server/smb2pdu.c
->   @@ -6375,13 +6375,14 @@ static int process_query_dir_entries(struct smb2_query_dir_private *priv)
->                           continue;
->                   }
-> 
->   +               path.mnt = priv->dir_fp->filp->f_path.mnt;
->   +               path.dentry = dent;
->   +
->                   if (test_share_config_flag(priv->work->tcon->share_conf,
->                                              KSMBD_SHARE_FLAG_HIDE_UNREADABLE)) {
->                           __le32 daccess = FILE_READ_DATA_LE | FILE_READ_EA_LE |
->                                   FILE_READ_ATTRIBUTES_LE;
-> 
->   -                       path.mnt = priv->dir_fp->filp->f_path.mnt;
->   -                       path.dentry = dent;
->                           rc = smb_check_perm_dacl(priv->work->conn, &path,
->                                                    &daccess, daccess,
->                                                    priv->work->sess->user->uid,
->   @@ -6397,7 +6398,7 @@ static int process_query_dir_entries(struct smb2_query_dir_private *priv)
->   @@ -6397,7 +6398,7 @@ static int process_query_dir_entries(struct smb2_query_dir_private *priv)
->                   if (priv->info_level != FILE_NAMES_INFORMATION) {
->                           rc = ksmbd_vfs_fill_dentry_attrs(priv->work,
->                                                            idmap,
->   -                                                        dent,
->   +                                                        &path,
->                                                            &ksmbd_kstat);
->                           if (rc) {
->                                   dput(dent);
->   --- a/fs/smb/server/smb_common.c
->   +++ b/fs/smb/server/smb_common.c
->   @@ -472,32 +472,36 @@ int ksmbd_populate_dot_dotdot_entries(struct ksmbd_work *work, int info_level,
->           for (i = 0; i < 2; i++) {
->                   struct kstat kstat;
->                   struct ksmbd_kstat ksmbd_kstat;
->   -               struct dentry *dentry;
->   +               struct path path = { .mnt = dir->filp->f_path.mnt };
+> ---
+> Tested on v7.4-rc1 (05441d697f7f), x86_64, QEMU/KVM, kmemleak, booted
+> with slab_debug=3DU. 64 rules written to the IMA policy file at once:
+>=20
+>   trigger  "dont_measure fsname=3DpocfsA<i> fsname=3DpocfsB<i>"
+>   control  "dont_measure fsname=3DpocfsA<i>"
+>=20
+>                trigger                         control
+>   unpatched    accepted; 64 unreferenced       accepted; none
+>                objects, all "pocfsA<i>"
+>   patched      write rejected; none            accepted; none
+>=20
+> Without slab_debug=3DU kmemleak reports none of these leaks on this
+> kernel: stale pointers in the per-CPU slab sheaves keep the leaked
+> strings "referenced". Writing the policy more than once needs
+> CONFIG_IMA_WRITE_POLICY=3Dy, which the test kernel has. The code is
+> unchanged in mainline, linux-next (next-20261111) and next-integrity.
+>=20
+> The reproducer is available on request.
+> ---
+>  security/integrity/ima/ima_policy.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
+/ima_policy.c
+> index 2dc1d93aa..f08ca00bd 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -1619,6 +1619,11 @@ static int ima_parse_rule(char *rule, struct ima_r=
+ule_entry *entry)
+>  		case Opt_fsname:
+>  			ima_log_string(ab, "fsname", args[0].from);
+> =20
+> +			if (entry->fsname) {
+> +				result =3D -EINVAL;
+> +				break;
+> +			}
+> +
+>  			entry->fsname =3D kstrdup(args[0].from, GFP_KERNEL);
+>  			if (!entry->fsname) {
+>  				result =3D -ENOMEM;
+>=20
+> ---
+> base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
+> change-id: 20261112-c3-n204-a82e17864b76
+>=20
+> Best regards,
+> -- =20
+> Weidong Wang <weidongw@illinois.edu>
+>=20
+>=20
+>=20
 
-That's just asking for breakage down the road.  Just pass it
-the address of ->f_path for "." and
-	&(struct path){.mnt = dir->filp->f_path.mnt, .dentry = dentry}
-for ".." (and sod the dentry = dget(...) for "." - just have it NULL there)
