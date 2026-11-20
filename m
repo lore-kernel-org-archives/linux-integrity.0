@@ -1,58 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=82.195.75.108
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795207889;
-	b=iupTxlsKRBBko1NzLjOje1GaqbRQreG6ynUiatDTM6DSoxJZaBiSptnnscSqgH0yR6nz
-	 YdjAIuePoMmTB8ETE523MOeXLDMNvbESWMUADfXVkScAcgIzDQFIUX0GpqJyqiy/D8UTC
-	 onjYVxS4nndiolzStktgIm2olxpGWz7eg6hTHxMl7YXT+cC4t8D/Go6P0Wk5AgFggV2JN
-	 e33kaqzgBEIu4rxgiHYalCkLWEETTSr0Od5qQ5Rr7dWqPhRYj+22L3gfcBjVLjkf3m9GF
-	 co9zwDxRjJTNxh9GSRAK/dtDSO92V84psF97PJUFkLe98S69g0ZTNdQOkAiuIqfBE0w==
+	t=1795207895;
+	b=0+G2zZppTYvcLgCc4HOWoNqKZgNa7d7LvJ+DsL2rCF+ziRSYJIKmx2rg60rQB5VOUSdF
+	 h8LtXoXU48CB0qdt2qmWlhbsVTOxF7d502uKDK1tkj3Mj+8txxntFLurcJMn245W+VdZT
+	 zFoysY3IIjhz0THMCaIoCl01SQsDnJemhwcajvxvdIN357DJ4u5XBXsm/DfJ4htxxrqLV
+	 4YTW8tn5254csxWPr06VwHnZkB1m0ZhUEVm2PW0VR+waOgJa3FlG9bn24UZLl1JMnk5GL
+	 h1VzP94fJjdrEmgA1OiyVT6KvlPsVOmcM6fwLncmW+Xbc+x88jSMWPwMWnBnlwMG6pg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795207889;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795207895;
 	h=DMARC-Filter:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
 	 X-Debian-User;
-	bh=TJxydRvQkAQBYBtecCvgYzRn3WRFXzy09zHe7Li2czc=;
-	b=5UkSK6CzowJ8T7iqdsnOgvACUPry87Zw9dYkXQVGCYSfKeGB9LoafBsRUDquvpy4J18i
-	 Onw4s0PBJYlfh9hLaNsEPY0u6ZFQeszhxXg4UcGWEzLJa0Zl6vqVVD3ydNVWM1Q9Kzt84
-	 5/msZ1ZjowO3K+/qBC/HPcZVdi8kPP7dCtIX1FoJ/vbN4+pN3E+oIDaFxl6+j09lG3ojy
-	 4qppXUb4SQxYaIV5kAbg3NlYGuqNhbknOKrn2jh68NK7LXKrvK/QiTvcrtkamnq9RCTuC
-	 qnJT+6FLlyZmLU0fjX3adjcagNBos3SYJG0RNFCfG5t+AbL/vjRXAH5c6bc8T7GHPPA==
+	bh=yA4q9BECD3fF1s8uqr2VolmeomijaxkoI3eekCtTSsQ=;
+	b=ytWetG6ShVvxWRgSH9X1bAZYqekhbJSmlgJabA+28VGbSDcn2XayLG939bWDzapPAe/n
+	 NcqPebbxoop3e+cw2X6EYo4X+d4fL+J8Z5qWnV21kKVJHRsLzZ0yg0ImjV/o54gNEfhfU
+	 SAco+psKY5J+6dXWFAW4eiAFYDwhYn2+ce2UAQQQ+z4AU6sAwf1o7Tqb2d+Ce0euM9aZF
+	 OxDywt23aaiTwUGCLr4NlS28bOKX2s9xHfUanFcKMInRfUQ4NjtL5BSUx+GcUhX+6HfIq
+	 vnBEuy9F7vK0Zw/LMBvUPFAqP6PPfafbkm16JSnTOQPdnmH1r9XBakrXdZ+H2skGUqQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=debian.org;
 	spf=pass smtp.mailfrom=debian.org;
-	dkim=pass header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=glicsDEq;
+	dkim=pass header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b="C7/z8nH+";
 	arc=none smtp.remote-ip=82.195.75.108
 Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF3860A2605;
-	Fri, 20 Nov 2026 20:51:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BEF3860A2605
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FBC606A69E;
+	Fri, 20 Nov 2026 20:51:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A8FBC606A69E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=glicsDEq
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=C7/z8nH+
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
 	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:In-Reply-To:References:
 	Message-Id:Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:
 	From:Reply-To:Content-ID:Content-Description;
-	bh=TJxydRvQkAQBYBtecCvgYzRn3WRFXzy09zHe7Li2czc=; b=glicsDEqSSkWQaIyPKaj+hAVqL
-	NaUdKQrbUtey8KrKTdIFCHOp81/z2l9qeM1sSPVNplTW8w6UreZagd4uFvwdpKzmRGBBjdEd2aYA9
-	Hq4Xp/OArRzCgZ3Niim53pXiJksBHE0IBXQFDzrpBsSDCqLqimBGbg67JrTkiOYIkzdn+EFdULqlj
-	oS1qu9agBu/xH3RC+/8Q1IhdKqAA+ZPYf+0J6+NwAx6nARgwwoBewVv9ZsYaNhG0hAlGNlmxJMWww
-	B2ka/B8dLiRtsPbbNovT2BWXADBU0Dm54bcenRlWTo+MRGYvbuk2m6h6V0IaVKrvNCAG/7ELuqTcT
-	7Qjx6bsQ==;
+	bh=yA4q9BECD3fF1s8uqr2VolmeomijaxkoI3eekCtTSsQ=; b=C7/z8nH+0HfmQwcFK7unEvAKmN
+	SeTiNaGaFqMIoySYzo2ZVh5UE9mqxstJuKFnwMyiTsBsNlX7UAt+WH1OeAkWzcYAIpTnkHVKyMQXU
+	fmU04h7JlnVP7vHWTWvMBkFADiLmHF0/kds9h+9sq9/5OM4GjB57H+tuqHGxfTUk8W57iuZ4yxlu+
+	ceSsDqtXeNCaPR540rW3ll36VmMAVj6dXJ9Wnyn9cYkiaPuGHrrk0TXxwJBm+F2N4OCY0/6HZQs4K
+	DR/Ox2TbtYujjQqqW+AuGfOryJh/uhlaFaSscmGyGoSlDmSHPGUhxhbe3kmvkhMVOQAB6uUKiX91n
+	tgV/lPTA==;
 Received: from authenticated-user
 	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.96)
 	(envelope-from <leitao@debian.org>)
-	id 1xUVZs-0038u0-2n;
-	Fri, 20 Nov 2026 20:51:25 +0000
+	id 1xUVZw-0038uN-2W;
+	Fri, 20 Nov 2026 20:51:29 +0000
 From: Breno Leitao <leitao@debian.org>
-Date: Fri, 20 Nov 2026 12:47:07 -0800
-Subject: [PATCH v4 1/2] tpm: Disable a TPM that stops responding
+Date: Fri, 20 Nov 2026 12:47:08 -0800
+Subject: [PATCH v4 2/2] tpm: Disable TPM on TPM_RC_INITIALIZE
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -64,7 +64,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261120-tpm_unresponsive-v4-1-b9043735ec1b@debian.org>
+Message-Id: <20261120-tpm_unresponsive-v4-2-b9043735ec1b@debian.org>
 References: <20261120-tpm_unresponsive-v4-0-b9043735ec1b@debian.org>
 In-Reply-To: <20261120-tpm_unresponsive-v4-0-b9043735ec1b@debian.org>
 To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
@@ -75,125 +75,70 @@ Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
  Stefan Mahnke-Hartmann <stefan.mahnke-hartmann@infineon.com>, 
  Breno Leitao <leitao@debian.org>, kernel-team@meta.com
 X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4014; i=leitao@debian.org;
- h=from:subject:message-id; bh=hNz7ScOOaF1XG+gXUd7JxuHsmD4p+69M6a24y0FGzII=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBrALLEZ7ciN9xXOvG/m6mBYmhrZfpJyhnhdklsQ
- ndkMjAcExyJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCawCyxAAKCRA1o5Of/Hh3
- bVmeEACcC+fMbNAEifzc4vB0fnhHFMuwuj/M2wPUXbVDwOc9qRFADIruYgboKEmH0eUrdKc7jUx
- 2JDm2oi0UMMCsRuUb6YhGqJzH0YIhUVSOWrWBf5EunN6o5xGE90z3aYzHU8s+4D77QzyyywvaQK
- VV6IsqdYBIU+Q5caGbCoZJu7eE0S8t/xnme2WXiynZ7VO21ECkx0pdZ50lGlC89xSPMOxdrwzD9
- VFmTOvrTxh4niJWkcx18b7j9YteuPoeguSCQzovC8CKCQXXqzwdHx0wGyGh2qTJAQ7sF/m4gg8Y
- DIkN9bM4MTq6OTIjNBut1RCa4qaJA6zaS2eAmx9+rb49keINrXEn9Gp0zQrzo3Q1GtNPPJN0ypM
- /xjNrEHpWzBpSCynFk02yzQJwG5hD+94+1MSYzJngUXttFhrhhEtp1rpiFJxCtiGCX3PMd9QM5L
- RjsRpJaeR5y8OSJcqzmsRVSQTWhEgYp9TTaBqivmrgv50TVNPS6tMeXY6HrBGP5f+0om7VNQ0O9
- axKc9JLzOn1i9K2L50arWdCdj+zprA1lEHepgRzP2Vz0v2vQ1r3HhAJWDML6kUM6jh2i4eKsj4C
- zZJcCGA5QDKt4c6I5CiGtsyZbsSV8PqGxyyuJwpt0grUPeeRZViOSqTMy2n1B+lDMUfZGSHkm/g
- ajElED+7s3XHgBA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1690; i=leitao@debian.org;
+ h=from:subject:message-id; bh=t38GlIRgFKOMU2hpAZQ/gqstw2UdocyRhcO268hn7RQ=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBrALLEWpxzMeEbITcb8NaWAYWaaMXI1gm0xHwyr
+ dSDdM9cRLWJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCawCyxAAKCRA1o5Of/Hh3
+ bYL/D/wM0ZNd2aFDTOPWNujDC9oTP8VlmxkllGUjriHpdHoCoTchxLyQF9UA34vq1SViiEOXf6O
+ q4T3vEfi5T7R06vjdDhOC4JOHN9LNO9j9OFl/ysCMpUCSRgnEv9qox0f3awSM9gfzG9CCtQZiPp
+ Y0LSk3ntGl92rHCcn//ofluDcjXMasquKfWeVD+bI240r4KC1ZpS65m0OxNWAK9llswClBC90rH
+ mHL98HKe9C09DO0ztjuln+3KbX8HLsLRNPjRaWJsLtIyUtYJOCGVMYrD8fYziqRPt/9hJaUzoh2
+ ZQJoCnuvvsv5tZ+b9PHBrkWXMwwMIF6mL9lgPUtsDq6uHQMDwuClIpVC1D20LFYlzhfshBFTE5T
+ 90fCzBnaG5UbYSlIAltOz/DSpgsw+rZRymj/MOowfKwfAQFqrF0RhDxaiZgXu4PQSmTRTHwAlMo
+ kbEgLE7Y/DYJyf1Eka31NskeaPotgX1aI4juIacUdMOYO24PL6N18sHFkTfKtj0+tuTD+ApiF0T
+ PiozgViqnYPBPxhrLknP0UlAwOl5zGdjDMxrUd9t4YUShfFvfiesGlOZqjeGrlPqNy79+z0TFmh
+ VapnzktVHqnE8Pi5tZcv+t5cZxGppNSswB3kHzL8V2qmSB0oiDwQIskNXgjjZ4YU+17Ff+XTvsf
+ qVfcyLuluvJSvkQ==
 X-Developer-Key: i=leitao@debian.org; a=openpgp;
  fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 X-Debian-User: leitao
 
-Some TPMs stop responding at runtime, hours to months after they passed
-probe. The first sign is usually "invalid TPM_STS.x 0xff", and from then
-on every command fails only after the transport timeout. A TPM that is
-already dead at boot fails to probe and never registers, which this
-patch does not change.
+From: Jarkko Sakkinen <jarkko@kernel.org>
 
-The callers keep sending more commands: the hwrng thread every 10
-seconds forever, and userspace through /dev/tpmrm0. Each attempt holds
-tpm_mutex for the whole timeout and logs an error:
+If the TPM has been spuriously disabled, the game is over. Let's reflect
+this truth with TPM_CHIP_FLAG_DISABLE.
 
-  tpm tpm0: invalid TPM_STS.x 0xff, dumping stack for forensics
-  tpm tpm0: tpm_try_transmit: send(): error -62
-  tpm tpm0: tpm_try_transmit: send(): error -62
-  ...
-
-The core already stops using a TPM it cannot trust: tpm_try_get_ops()
-fails with -EIO once TPM_CHIP_FLAG_DISABLE is set, which
-tpm2_load_null() does when it cannot restore the null key. Set the same
-flag when two commands in a row time out.
-
-The first timeout sets TPM_CHIP_FLAG_MISSED_RESPONSE, and a command that
-gets an answer, whatever its TPM return code, clears it.
-
-With interrupts, the wait helpers in tpm_tis_core, st33zp24 and
-xen-tpmfront return -ETIME as soon as a signal is pending, so an -ETIME
-with a signal pending is not counted. Otherwise any user could disable
-the TPM by interrupting two reads of a PCR file in sysfs.
-
-Some TPM 1.2 chips do not get ready while their self test runs, and
-tpm1_do_selftest() keeps polling through those timeouts, see
-commit 4643826a3da1 ("TPM: Work around buggy TPMs that block during
-continue self test"). It now clears the flag after each of them.
-
-A disabled TPM stays disabled until the driver is rebound or the machine
-reboots.
-
-Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+[leitao@debian.org: check rc before the loop breaks out on anything but
+ RETRY/TESTING, skip TPM2_Startup, which a TPM that is already started
+ fails with TPM2_RC_INITIALIZE, and fix the TPM2_RC_INITIALIZE and
+ chip->flags typos]
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- drivers/char/tpm/tpm-interface.c | 15 +++++++++++++++
- drivers/char/tpm/tpm1-cmd.c      |  1 +
- include/linux/tpm.h              |  1 +
- 3 files changed, 17 insertions(+)
+ drivers/char/tpm/tpm-interface.c | 5 +++++
+ drivers/char/tpm/tpm2-cmd.c      | 2 ++
+ 2 files changed, 7 insertions(+)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index e0385b16616b46..cb794cfc5f63e8 100644
+index cb794cfc5f63e8..2ea10fd89a70f1 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -26,6 +26,7 @@
- #include <linux/spinlock.h>
- #include <linux/suspend.h>
- #include <linux/freezer.h>
-+#include <linux/sched/signal.h>
- #include <linux/tpm_eventlog.h>
- 
- #include "tpm.h"
-@@ -268,6 +269,20 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
- 		delay_msec *= 2;
- 		memcpy(buf, save, save_size);
- 	}
-+
-+	if (ret >= 0)
-+		chip->flags &= ~TPM_CHIP_FLAG_MISSED_RESPONSE;
-+
-+	/* Some drivers also return -ETIME when a signal interrupts the wait. */
-+	if (ret == -ETIME && !signal_pending(current)) {
-+		if (!(chip->flags & TPM_CHIP_FLAG_MISSED_RESPONSE)) {
-+			chip->flags |= TPM_CHIP_FLAG_MISSED_RESPONSE;
-+		} else if (!(chip->flags & TPM_CHIP_FLAG_DISABLE)) {
-+			dev_err(&chip->dev,
-+				"two commands in a row timed out, disabling the TPM\n");
+@@ -248,6 +248,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
+ 		if (ret < 0)
+ 			break;
+ 		rc = be32_to_cpu(header->return_code);
++		/* A TPM that is already started fails TPM2_Startup this way. */
++		if (rc == TPM2_RC_INITIALIZE && cc != TPM2_CC_STARTUP) {
 +			chip->flags |= TPM_CHIP_FLAG_DISABLE;
++			break;
 +		}
-+	}
- 	return ret;
- }
+ 		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
+ 			break;
+ 		/*
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 4b2bb2ddc321a9..65928ae85b496c 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -724,6 +724,8 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 		goto out;
  
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 7a8606e8c7117b..e4e1f0799da196 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -647,6 +647,7 @@ int tpm1_do_selftest(struct tpm_chip *chip)
- 		 * until the self test duration expires.
- 		 */
- 		if (rc == -ETIME) {
-+			chip->flags &= ~TPM_CHIP_FLAG_MISSED_RESPONSE;
- 			dev_info(&chip->dev, HW_ERR "TPM command timed out during continue self test");
- 			tpm_msleep(delay_msec);
- 			continue;
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 0db277af45c393..0f97abc82846ae 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -197,6 +197,7 @@ enum tpm_chip_flags {
- 	TPM_CHIP_FLAG_HWRNG_DISABLED		= BIT(9),
- 	TPM_CHIP_FLAG_DISABLE			= BIT(10),
- 	TPM_CHIP_FLAG_SYNC			= BIT(11),
-+	TPM_CHIP_FLAG_MISSED_RESPONSE		= BIT(12),
- };
- 
- #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
+ 	if (rc == TPM2_RC_INITIALIZE) {
++		chip->flags &= ~TPM_CHIP_FLAG_DISABLE;
++
+ 		rc = tpm2_startup(chip);
+ 		if (rc)
+ 			goto out;
 
 -- 
 2.53.1-Meta
