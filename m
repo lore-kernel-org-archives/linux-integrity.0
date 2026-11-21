@@ -1,73 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795217668;
-	b=Uao5eTVTr7LY/r6f2IPcd6dyaimNVF5zsx5VIYnbW3YpJdmDIGyKniYkxIbzs6fKnbM6
-	 vzpnZZ9keEbWyZ3NKSD7DvzcJxHwSPniRJg27BusI/R+PTBRK8ALX1eibRlchsjro0dNb
-	 Pa4NbVTBsaxAcokiJJXaPwL0CCTAilb4d+b6KnPzMijHjEXBXs3sMl9oqHGqGhG1dfS/T
-	 MHL3rDwMK2gw5aOyBYFnoOrJ0unB1Tbl/njOa4XoruhlC627kZ2XjzqqVLL+KSX/rkCIz
-	 cCXz4p6YYN73EHNtYbm00jOKMwdKizBiVZ8EsMSMMEXer72G1QGB3uVm2ABHlzkfayA==
+	t=1795271425;
+	b=pDX6ENSbUdvJJ8YtnpiRI8vb3yFLR35kWr9EV8i9oU20h0OtXPUyHzhOiPZISaAO76o/
+	 BC9xWRe3Cu6oQC7ki7iAV0okj+MP66jdgmkpaWYoX4dTKKDLFlfRhYDi7vuASZgZkbEag
+	 MPRGHlaFexplLe48SWSJjOsFfn1UBkwav2QOwUAQ93t3KMu5dMhslU7TsuvKEiMpp3suM
+	 Yoh0BU2mjQvd6uqeEOTpXal2CDMRexJWob3E2bwrpc59x8V3mqdrBO/3WTx1TcFcZxT2z
+	 iwZT+6g+AtTFoalcn4mQkWfFsA9kAE0TIdi60OlWt/uVV54ZrOM0o10DdIy69GrTXVg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795217668;
-	h=Received:DKIM-Signature:Received:Received:X-ME-Sender:
-	 X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type:Content-Transfer-Encoding;
-	bh=d5UxhRENKrjN2WqdptUK5eL7RckbgwjJ8al7suyNLmw=;
-	b=GnpTW0LIrRbo731Mt6+8VL/0tWyKdD4zB8bsznjfZsPk4lD4sKz1Aak9A4LZFsnotY9m
-	 1YaUS9T3yW2/8+vOqkfQlYpsIzXWpibvPPbyZNnedDTM0Xs1jom8IrcNzvs7dijjplHrB
-	 sj+S3orKhm/L85UWZPHEyh+NFb5oPwZ3cBGUkhze9XlDhNfd2YFT52aWKDyB4swBe5Xer
-	 8XrhCKZ7LfHAfvoCfg+lmJULoIuso9075ieaghO/BOaW/efMTbB6Cq5ohPEL+XN6Vj4eO
-	 Pan+OzSw9c20tQn0/r0zgvlnZjVhx22Dw+xy+KPHVNivpsOXYoEBKgPvfzk8LxKU9wQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795271425;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=0YU/fDp3KZz8gM/hKbMCiYTSyjSjQFZGI4fk+N2y0LQ=;
+	b=Mk7gDbU8ARwZ9gDLG+KVixMAVFEZ9QcE0Ta4XQT1ssUOqikopyF5B21oV+uLPcDPFj0t
+	 9KitqhMb0yrTkgXqRJ1lXOWy7RmFjRD1dH5Pv3tevlhyJdb7UPsiFtIfRmeFSM6MqtFzc
+	 0+Vh0MWe5LR2zJbtdalT93H6pbgk4XQwBS6omGg1Wvd4wkF6qib8tmMdwjE03L7OYwJKx
+	 B+P/nREV0MBvIkG0bFbG4P6TVrR4R1rpOhmou51Palm20PHr1OuaTFKi+5o9HDbPWwJki
+	 YD7jKy70qVgDpfbhTsn4VZZB5kkjzFJrLca3kVh56r8OHibuFXFDxVvDj/H2fgrOHvw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y2PEt20h;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LesrAxbu;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FE8606A338;
-	Fri, 20 Nov 2026 23:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 1A6E8606A32A;
+	Sat, 21 Nov 2026 14:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y2PEt20h
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5987C1F000C4;
-	Fri, 20 Nov 2026 23:34:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LesrAxbu
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 55CE71F000C0;
+	Sat, 21 Nov 2026 14:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795217667;
-	bh=d5UxhRENKrjN2WqdptUK5eL7RckbgwjJ8al7suyNLmw=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject;
-	b=Y2PEt20hYB0QZOMD0OeEAk5QiWb5GsEhbQISV/J8JRgTMESexeBZSyyBn/GJ7Dkts
-	 BPSScWrUW4D1lPyP/Yl5Opvhc+rCtmL17H2wYb4MSvy3n/VQsb+il/Ypn53lFhXRrn
-	 KDtZ1sUs+OLaBOmSxUq3gDsNkEkfQFsoAO5hWTJ2hDC9Nh5MHGLnR8BklKbwmJvStD
-	 xiNhjBu6WXTQkoeY2Y8gUHJsskeLwfs+5J5BF1A1CYMGHGTRiJMleuVQqJkAaUv4fv
-	 zpJ6OdWgJkcGGcWkt3vEJziGVWFSEv/ryhiZ2il04mqK2P13/HHJyGwI9ustKvp893
-	 mSJXDE0GySgqg==
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfauth.ams.internal (Postfix) with ESMTP id 93458198003A;
-	Fri, 20 Nov 2026 18:34:23 -0500 (EST)
-Received: from ams-imap-11 ([10.64.2.31])
-  by ams-compute-02.internal (MEProxy); Fri, 20 Nov 2026 18:34:23 -0500
-X-ME-Sender: <xms:-tgAa40WMd_EPWFNg07JZwyPJcDR9Hl4neZG2sZ60S43JjZakvJQFw>
-    <xme:-tgAa94btA2FcjGmKSDp7fs53-xd9zJUgeojcI1BpmZaQ8Kz0eLzPAdMkS9qQ_7FU
-    OZr59jIhg8MHlYyQnwbZeEYlF7PpV4Vxlr8KoLe3U5t0r5NWyCYNKk>
-X-ME-Proxy-Cause: dmFkZTFL9seTInIL2hUW1OvhO1WNW9/yDQMQ3sNpaBykWH23VqJykrvUISWN+rBSHQ+5bq
-    /JQwHxFYPIkL2Xu86dfOWtqtRPVNB/qIKe2+3mjFHHflxOdiuobuj78Hw/FMM8RVcs5xMb
-    dS/DET/rxsPx6SEKm1JZ2K/buPZvqwh9FNjgcHALkKy/XLVkevo5sDDIARq2Z//kZnp9CA
-    rSEoHmeWmhoezQror9Ty81ka79pfF/gOgXmZ1GkKqAi2/yxezmh6ijdV1UEGYFqsznmeWL
-    g6Y1Onmgdfw7a6cltPUu6V6KYEQymMJvNVprAPmF42FlCo/F4k4Y9IbQe/ue2Z+ZHcN6bR
-    AVBfQNgkF9KQh6PxBWA+qfee9aUYQOqptwYa8VjqHfwnjVYok5TV5bLTBLvGn0rIl/+57i
-    WO2CFNlMLurWUHycX9pn9FDh03suHQbu/a60gn8A1Unl1x/x+0E2LPeaCXK7ov30TPL9HY
-    o2ezFIxHQHCXTJI7edwpEegWtCs0Eg73XGWZUHhg6NY3KaNTAF6vI4OBcklGStE1NtEpHe
-    N3vHrVedPTfuvnZlHDtl4lFSJEfm8EUJI7Pvrs07l9xMCrxgGBfUi29jmIbjOM3Gg8ZgCg
-    sI/r+DEJkCrbUJ/3Cs8u1BxQF8UUwcuBBDKvKM9/eCBqk19JS3CGIDZU1VMg
-X-ME-Proxy: <xmx:_9gAa8qH40BxQBQvJaXjFARB-PhdRsMar2JTklrPA3z4SJQHVTmxBQ>
-    <xmx:_9gAa3xjvPAkaVp2Sku5NRZNcCLQid1uQn0F3mHKuHRTI4Ze8YW5dw>
-    <xmx:_9gAa4fNmE8P0lI-MJYK8bBx9g6OJsEHDExPpHD4o_STbil2bs93ag>
-    <xmx:_9gAa7et2LQJdchwIic0GV_SClr-FVPrJ93hKkhrIDg8-j26-Wdt_A>
-    <xmx:_9gAaya0K8B0H7iHsoh_BofrwBklH8I5ogjHkW64OyKf3gN1PHCDP1na>
-Feedback-ID: ice86485a:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id CDCA4F80093; Fri, 20 Nov 2026 18:34:18 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=k20260515; t=1795271424;
+	bh=0YU/fDp3KZz8gM/hKbMCiYTSyjSjQFZGI4fk+N2y0LQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=LesrAxbuFo+VSINyG5lsBjRU3Qm3DF1wRovF7M2GZjIVnxWLtSHjIfFhHxd8A/TkD
+	 RqmMokr5JvJeR0SNot1nuAQltwzSQSbG8JFAUBI0Ab2YIEIewCjGoKyIJpPONwxKM+
+	 9ymDQ/d1ZmzT8f6NK+vFbiJ/IRUKGVM3rIL52+yvWmU510DzyYl0PSMv2Sa3WOq9V9
+	 If7tUiTftN/jitxRU/10ifVruz4XBtarHF/FOmQKWkGKOLqxBFds1BPo7KI6/oB5K0
+	 V0EifwGVItWCj03K6JC7YkWzQRbBdqdNwnmWK/donEPcj5Sbh5xHDNgZ0mDxNwo3m5
+	 88zFHDkYRD7KA==
+Date: Sat, 21 Nov 2026 16:30:20 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Rustam Mustafin <rmustafin@cloudlinux.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Shuah Khan <shuah@kernel.org>, Jaewon Yang <yong010301@gmail.com>,
+	linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] selftests: tpm2: test that io_uring reads ignore
+ the file offset
+Message-ID: <awGq_L-ZjRhM0rMK@kernel.org>
+References: <20261120121614.978396-1-rmustafin@cloudlinux.com>
+ <20261120121614.978396-3-rmustafin@cloudlinux.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -77,41 +60,193 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Date: Sat, 21 Nov 2026 00:33:58 +0100
-From: "Ard Biesheuvel" <ardb@kernel.org>
-To: "Jason Gunthorpe" <jgg@nvidia.com>, "Alexandre Ghiti" <alex@ghiti.fr>,
- "Albert Ou" <aou@eecs.berkeley.edu>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Jonathan Corbet" <corbet@lwn.net>,
- "Ilias Apalodimas" <ilias.apalodimas@linaro.org>,
- "Justin Stitt" <justinstitt@google.com>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-riscv@lists.infradead.org,
- llvm@lists.linux.dev, "Mark Rutland" <mark.rutland@arm.com>,
- "Bill Wendling" <morbo@google.com>, "Nathan Chancellor" <nathan@kernel.org>,
- "Nick Desaulniers" <ndesaulniers@google.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Paul Walmsley" <pjw@kernel.org>,
- "Randy Dunlap" <rdunlap@infradead.org>,
- "Shuah Khan" <skhan@linuxfoundation.org>, "Will Deacon" <will@kernel.org>
-Cc: "Jonathan Cameron" <jonathan.cameron@oss.qualcomm.com>,
- linux-integrity@vger.kernel.org, patches@lists.linux.dev,
- =?UTF-8?Q?Piotr_Kr=C3=B3l?= <piotr.krol@3mdeb.com>,
- "Ross Philipson" <ross.philipson@gmail.com>
-Message-Id: <243c6d70-7c81-4ad3-9a67-eb8cfbf454d9@app.fastmail.com>
-In-Reply-To: <3-v3-22d1a1eb7d2e+17de-arm64_drtm_jgg@nvidia.com>
-References: <3-v3-22d1a1eb7d2e+17de-arm64_drtm_jgg@nvidia.com>
-Subject: Re: [PATCH v3 03/11] efi/libstub: Have efi_kaslr_relocate_kernel() handle
- extra_size
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261120121614.978396-3-rmustafin@cloudlinux.com>
 
-Hi Jason,
+On Fri, Nov 20, 2026 at 07:16:14PM +0700, Rustam Mustafin wrote:
+> Test that an IORING_OP_READ request on /dev/tpm0 and /dev/tpmrm0
+> returns the whole pending response from its start, although sqe->off
+> points past the response header. The offset stays inside
+> priv->data_buffer, so an unpatched kernel fails the test on the
+> returned header without an out-of-bounds access.
+> 
+> Signed-off-by: Rustam Mustafin <rmustafin@cloudlinux.com>
+> ---
+>  tools/testing/selftests/tpm2/.gitignore  |   1 +
+>  tools/testing/selftests/tpm2/Makefile    |   4 +
+>  tools/testing/selftests/tpm2/tpm_uring.c | 131 +++++++++++++++++++++++
+>  3 files changed, 136 insertions(+)
+>  create mode 100644 tools/testing/selftests/tpm2/tpm_uring.c
+> 
+> diff --git a/tools/testing/selftests/tpm2/.gitignore b/tools/testing/selftests/tpm2/.gitignore
+> index 6d6165c5e35d..d2324bd0eca2 100644
+> --- a/tools/testing/selftests/tpm2/.gitignore
+> +++ b/tools/testing/selftests/tpm2/.gitignore
+> @@ -1,3 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  AsyncTest.log
+>  SpaceTest.log
+> +tpm_uring
+> diff --git a/tools/testing/selftests/tpm2/Makefile b/tools/testing/selftests/tpm2/Makefile
+> index a9bf9459fb25..67f346f4cdef 100644
+> --- a/tools/testing/selftests/tpm2/Makefile
+> +++ b/tools/testing/selftests/tpm2/Makefile
+> @@ -1,4 +1,8 @@
+>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +CFLAGS += $(KHDR_INCLUDES) -idirafter ../../../include -Wall
+> +
+> +TEST_GEN_PROGS := tpm_uring
+> +
+>  include ../lib.mk
+>  
+>  TEST_PROGS := test_smoke.sh test_space.sh test_async.sh
+> diff --git a/tools/testing/selftests/tpm2/tpm_uring.c b/tools/testing/selftests/tpm2/tpm_uring.c
+> new file mode 100644
+> index 000000000000..9caa3cba5bf0
+> --- /dev/null
+> +++ b/tools/testing/selftests/tpm2/tpm_uring.c
+> @@ -0,0 +1,131 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +/*
+> + * An io_uring read chooses its own file offset. The TPM character devices
+> + * must ignore it and return the response from its start.
+> + */
+> +
+> +#include <endian.h>
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <poll.h>
+> +#include <signal.h>
+> +#include <io_uring/mini_liburing.h>
+> +#include "../kselftest.h"
+> +
+> +#define RING_ENTRIES	4
+> +#define BUF_LEN		4096
+> +#define POLL_TIMEOUT_MS	10000
+> +#define TPM_VERSION_FILE	"/sys/class/tpm/tpm0/tpm_version_major"
+> +struct tpm_header {
+> +	uint16_t tag;
+> +	uint32_t size;
+> +	uint32_t return_code;
+> +} __attribute__((packed));
+> +
+> +/* TPM2_GetCapability(TPM_CAP_TPM_PROPERTIES, TPM_PT_FIXED, 1) */
+> +static const unsigned char cmd[] = {
+> +	0x80, 0x01,		/* TPM_ST_NO_SESSIONS */
+> +	0x00, 0x00, 0x00, 0x16,	/* command size */
+> +	0x00, 0x00, 0x01, 0x7a,	/* TPM_CC_GetCapability */
+> +	0x00, 0x00, 0x00, 0x06,	/* TPM_CAP_TPM_PROPERTIES */
+> +	0x00, 0x00, 0x01, 0x00,	/* TPM_PT_FIXED */
+> +	0x00, 0x00, 0x00, 0x01,	/* property count */
+> +};
+> +
+> +static void test_read(struct io_uring *ring, const char *path)
+> +{
+> +	static char buf[BUF_LEN];
+> +	const struct tpm_header *hdr = (const void *)buf;
+> +	struct pollfd pfd = { .events = POLLIN };
+> +	struct io_uring_sqe *sqe;
+> +	struct io_uring_cqe *cqe;
+> +	int fd, ret, res;
+> +
+> +	fd = open(path, O_RDWR);
+> +	if (fd < 0) {
+> +		if (errno == ENOENT)
+> +			ksft_test_result_skip("%s: not present\n", path);
+> +		else
+> +			ksft_test_result_fail("%s: open: %s\n", path,
+> +					      strerror(errno));
+> +		return;
+> +	}
+> +
+> +	if (write(fd, cmd, sizeof(cmd)) != sizeof(cmd)) {
+> +		ksft_test_result_fail("%s: write: %s\n", path, strerror(errno));
+> +		goto out;
+> +	}
+> +
+> +	pfd.fd = fd;
+> +	if (poll(&pfd, 1, POLL_TIMEOUT_MS) != 1) {
+> +		ksft_test_result_fail("%s: no response to the command\n", path);
+> +		goto out;
+> +	}
+> +
+> +	sqe = io_uring_get_sqe(ring);
+> +	memset(sqe, 0, sizeof(*sqe));
+> +	sqe->opcode = IORING_OP_READ;
+> +	sqe->fd = fd;
+> +	/*
+> +	 * Inside the response buffer: an unpatched kernel returns the response
+> +	 * without its header instead of reading out of bounds
+> +	 */
+> +	sqe->off = sizeof(*hdr);
+> +	sqe->addr = (unsigned long)buf;
+> +	sqe->len = BUF_LEN;
+> +	ret = io_uring_submit(ring);
+> +	if (ret != 1) {
+> +		ksft_test_result_fail("%s: io_uring_submit: %d\n", path, ret);
+> +		goto out;
+> +	}
+> +	ret = io_uring_wait_cqe(ring, &cqe);
+> +	if (ret) {
+> +		ksft_test_result_fail("%s: io_uring_wait_cqe: %d\n", path, ret);
+> +		goto out;
+> +	}
+> +	res = cqe->res;
+> +	io_uring_cqe_seen(ring);
+> +
+> +	/* the offset is ignored: the whole response, from its start */
+> +	ksft_test_result(res >= (int)sizeof(*hdr) &&
+> +			 be32toh(hdr->size) == res && !hdr->return_code,
+> +			 "%s: io_uring read %d\n", path, res);
+> +out:
+> +	close(fd);
+> +}
+> +
+> +/* the command is TPM2 only; test_smoke.sh skips the same way */
+> +static int tpm_version_major(void)
+> +{
+> +	FILE *f = fopen(TPM_VERSION_FILE, "r");
+> +	int major = 0;
+> +
+> +	if (f) {
+> +		if (fscanf(f, "%d", &major) != 1)
+> +			major = 0;
+> +		fclose(f);
+> +	}
+> +	return major;
+> +}
+> +
+> +int main(void)
+> +{
+> +	struct io_uring ring;
+> +
+> +	ksft_print_header();
+> +	if (tpm_version_major() != 2)
+> +		ksft_exit_skip("no TPM 2.0 device\n");
+> +	if (io_uring_queue_init(RING_ENTRIES, &ring, 0)) {
+> +		/* not built in, or disabled by kernel.io_uring_disabled */
+> +		if (errno == ENOSYS || errno == EPERM)
+> +			ksft_exit_skip("io_uring_setup: %s\n", strerror(errno));
+> +		ksft_exit_fail_msg("io_uring_queue_init: %s\n", strerror(errno));
+> +	}
+> +	ksft_set_plan(2);
+> +
+> +	test_read(&ring, "/dev/tpm0");
+> +	test_read(&ring, "/dev/tpmrm0");
+> +
+> +	io_uring_queue_exit(&ring);
+> +	ksft_finished();
+> +}
+> -- 
+> 2.52.0
+> 
 
-On Fri, 20 Nov 2026, at 18:51, Jason Gunthorpe wrote:
-> extra_size is additional memory required that must be immediately after
-> the image.
->
+Thanks. I applied them.
 
-Given how extra BSS memory is essentially free at boot, is there no way
-we can establish a worst case upper bound for this memory, and just add
-it to the image unconditionally for DRTM capable kernels?
+Sorry for few igorant responses I was doing too many things.
+
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+Br, Jarkko
