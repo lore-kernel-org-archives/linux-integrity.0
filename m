@@ -1,58 +1,110 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795272031;
-	b=Nlhwr9tqRzExayjWceJSG2HWD/rbE46SBPIjEHo0c5aOPwRfAN93KBHBbXMQRJmdTBUk
-	 LIGt/4ZmAA8fZj4mZRT6nfFr3nThS+oVUIrQuD2xBdg4TDHLCWq2vWRAeAYXsIAkz6jt4
-	 ehVR8VRDwqrG08EmaKOd/C3qyjuoi093bGwpLVGgGACtIwLGbGH6NNDc5yl6FQGl+rcyc
-	 5JAjsA0jXGxk6z02bopPzDUcGBr5ksyb8ttzJ7V6bvnZAwa/evv2EjRw7Ad4NCBD2cYAO
-	 RL+N7ufTEHEidvZmvjQdEfzBFL+ggGFUtXMlzCq3nRIAH7MTUzeqT3qQri0I9kAGc+w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795272031;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=OfXONmfi/aejn/jMgJGFjjBnsy3GB+H+Ptsp2wpB+14=;
-	b=fhbgaFjoTBX++560s4ttd64+Np8Aol4yjLjPmOQFOd+xW3pN3gE0YS6tb5pVzawXebyf
-	 7FBjHqM2VhT2rxGkq/ju7oCF3Quk/7DfoKLgv1CVt3N2dUuYbiEVYRrW4/nOSwbbtxWHd
-	 eJq/3cV7G4buGPCM/05hO2WO2CxU5uS/9+AmL5e5QOXKMdKU5+KxjW5Bv+INEZ1zyUDak
-	 AR9eGuhCN3XYz5ZtWzUkhkL3qvV0fmTpGgeN/7eAjbTYgJc01Li7q43+8iqoPIvU1UGtn
-	 eOd0LNvyqYNoeFCFGSEJHX2lK5IfUVvoCImIMJQe+OWd0FXONfE0YdKtv+EJcJsEzvw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kOVsTRYy;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.15
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795358618;
+	b=m1ph4wc5pASWgMSWZLLyNkX2qfP5fiyU0Bi7aAsZ37L/8ueKBFYGoByXLir0mEOu29pF
+	 /ZWtxYmi9B0/BIfJTXu0cU0mB9HwBurGRIPL/I3G0l52RSljpmim7ZPQsKpBlzGU3/y+Q
+	 1y8WaHDftoK5KKxliXmmoQGi8xYv0j+J6GEjiwjnoHXYh8QjycGo0sp2sGkvKWZqXKNnx
+	 6W+vACwBaHTCqHzjtTE25w68/Oz+AQt5HHWJzHPIWFbYK+ptKjXnExdRV/roknY6HRXqL
+	 rY6fHOCXYkX4Y9mCFO0u7Y9Wul66o28H1/A9dXTbAXOnhDJFBNHXnBMfcCUMCuwO1qQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795358618;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:Content-Type:Content-Disposition:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=PnAKYgqrvM16DX2DZX48gINNW86siVsv/X5KlED2o1Y=;
+	b=D+gkO8r9ttqKw59BluvTk5xAmcArbrbJoUbeocG7XO1t6PeY2F3aHiZeYn/T3DeeQXVY
+	 PjK9hOhJCo9s5nhXq7GVpTphJNkprNkj0HJImnaxYj8Tqo2RJX/IvCscj0n9zpiAYnY/k
+	 04gb4lYbXPgGsYh5uDhMToSxUKIltNHVaz97W7cjtdVk8O0s8yb8oZNrW9DhUw99+5NS9
+	 yvzRCxdmtE4RDOOmynlvpd50UJzh8pU2uJt+zcdF4hys9IpYspZGZg1opB6MUWBL8+lEO
+	 R1oakZrjBgREFls7quLOAzGejSt+4skRB0zlNr9wdZOIrJch3YOXgq1oeVur8bJpPlw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Ydh0MMpk;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.15
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011015.outbound.protection.outlook.com [52.101.62.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 93737606A32A;
-	Sat, 21 Nov 2026 14:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B13606A32A;
+	Sun, 22 Nov 2026 14:43:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 32B13606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kOVsTRYy
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id C5FBB1F000C4;
-	Sat, 21 Nov 2026 14:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795272031;
-	bh=OfXONmfi/aejn/jMgJGFjjBnsy3GB+H+Ptsp2wpB+14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kOVsTRYyJcaLVuHAj3S+DMknyS29kR2BfArttbrPjg8KGFjVZftDhTf+FLBiucm8y
-	 eqaE5mL5gj4aP5pfuio78BsdS26v8eAUQ3QW/OrFrm/3S/XIC+04PxRQVvVUNwAN6p
-	 bZsDVWYJ3E4tblTANio5shqHEZ2ABJRXSvs7KJ01Sf3GbuiyCk2Zhhn+lePcI3qWdu
-	 zgxzXgkiTVD9Vy1ThGAgG+6LsEHXZkyjTPcV+VbRSTr348a5w29aC6qC7VTpaf5WuQ
-	 ux7pwxaStV+ja3oHCHo1B5UEfwJjilXXRup8WcBCA3n58cgkfxzYmFTE3sKfrBgZD/
-	 Jqa2VsZrwqmdw==
-Date: Sat, 21 Nov 2026 16:40:27 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
-Cc: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-	Jens Wiklander <jenswi@kernel.org>,
-	Sumit Garg <sumit.garg@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-arm-msm@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] tpm: Introduce Qualcomm TPM driver
-Message-ID: <awGtW0fhoyaDJ0sb@kernel.org>
-References: <20261120-tpm_qcom_driver-v5-0-3d9321ace107@oss.qualcomm.com>
- <20261120-tpm_qcom_driver-v5-2-3d9321ace107@oss.qualcomm.com>
- <awGtGoxtker8a9kG@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Ydh0MMpk
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xAcSCnoumi3anK2y9C4hWr9jeIrDjNFoHGW8XJQavk3Y0F6Sp0HUHu336hf4O9AzyIw9n4NMaxcmX/cuhocR+FNvdlb1rjk0EabztXWVYyeTLYTcPjTWa9anxasVfSyvHg35bfaZMAVgCS4nlFA7UdQlAqFO3Ha3NH6PpabdDin7/tYabiRMH5J77voKVXPEIpuORwuMIGfQGq+yldE/DjrqhVlPq3o8I23R/qnqzwvf69/Cwcphl7pETvfB6QD3e3WB0A8foxauaJMuUiMQYL5fpt8DM2WOw0tU81XEuzp/eVTqbMb4XBGduB1DVzUSbDTxhfUJg8oR8kR2ScLaow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PnAKYgqrvM16DX2DZX48gINNW86siVsv/X5KlED2o1Y=;
+ b=M1zQB1rzmFH+HskAvlQbz+CGd6aTKcQNhkC7MkrRIdDtIDsLCuU4srJJDd2U+sY/6n9qVgxvy71/4ftGscknwmOnFYR8v5e1qXfoIb9fy9Go6IsDFzZOyS3xCPTI6rqMupPIOY5VNtO+rD2FddCLCXT82Z9FWbQaB7FN4cLUMZiz+8GYpe2IsXYRw4JTfb8BXDeXkc1yu4Id/75Uf3MLg7aZAao/xzOvPRzEPfL82m2UhSUN0+EkKYhcqvd1pMYCXMvV8kwKVJvPGyGRkJ4/OagABvAdATUoIEaweQG++BzX8uqwYv7Kj7rWyTTHHsdSLfTQGWt3pwPS9JsiBC+WiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PnAKYgqrvM16DX2DZX48gINNW86siVsv/X5KlED2o1Y=;
+ b=Ydh0MMpkTIKE4KwXhOZN7ZrfUIxYAsK0ERvdO+m9pOuz6nOYo9fRBqktP7xnCNEJwI+TNcYByb5w+GKGLNyYyEmJzLj+iFbqNQWpJV70REP/32ZwTOmw9c0B2vX96kp/5LwHYlcOSQPGckmemDeUHTGcgX1IA8ORHVwaSCHVwGMTJlMGsY1fO8AnEv69yEGfphbmPhcaHidERVgqY/SBJ1IT0sdLYYeTyIga6Vmrrw/L+8uCBQFS9qrwLlg4sf5esTpx3G/g6aQ9oq+1IQfcB/VXV7cwqpT0yNLzR/6OQTQvyRMTEUfcpJ350NRKYcg+cyQwaHLHJJgoEuW/FcJWXw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CHBPR12MB731189.namprd12.prod.outlook.com
+ (2603:10b6:610:33d::12) by BL3PR12MB6428.namprd12.prod.outlook.com
+ (2603:10b6:208:3b7::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.14; Sun, 22 Nov
+ 2026 14:41:04 +0000
+Received: from CHBPR12MB731189.namprd12.prod.outlook.com
+ ([fe80::b0e5:123d:fe06:e10d]) by CHBPR12MB731189.namprd12.prod.outlook.com
+ ([fe80::b0e5:123d:fe06:e10d%6]) with mapi id 15.21.0639.012; Sun, 22 Nov 2026
+ 14:41:04 +0000
+Date: Sun, 22 Nov 2026 10:41:02 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-riscv@lists.infradead.org,
+	llvm@lists.linux.dev, Mark Rutland <mark.rutland@arm.com>,
+	Bill Wendling <morbo@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
+	linux-integrity@vger.kernel.org, patches@lists.linux.dev,
+	Piotr =?utf-8?B?S3LDs2w=?= <piotr.krol@3mdeb.com>,
+	Ross Philipson <ross.philipson@gmail.com>
+Subject: Re: [PATCH v3 03/11] efi/libstub: Have efi_kaslr_relocate_kernel()
+ handle extra_size
+Message-ID: <20261122144102.GA1095675@nvidia.com>
+References: <3-v3-22d1a1eb7d2e+17de-arm64_drtm_jgg@nvidia.com>
+ <243c6d70-7c81-4ad3-9a67-eb8cfbf454d9@app.fastmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <243c6d70-7c81-4ad3-9a67-eb8cfbf454d9@app.fastmail.com>
+X-ClientProxiedBy: IA1P220CA0033.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:208:460::13) To CHBPR12MB731189.namprd12.prod.outlook.com
+ (2603:10b6:610:33d::12)
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -62,493 +114,74 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <awGtGoxtker8a9kG@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CHBPR12MB731189:EE_|BL3PR12MB6428:EE_
+X-MS-Office365-Filtering-Correlation-Id: f017e04e-aa46-4a7d-18f2-08df48a6a273
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|1800799024|366016|376014|7416014|261026121527099003|261022115727099003|261022075727099003|261021121427099003|261102123227099003|11063799006|5023799004|4143699003|56012099006|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	UST02b/nPdOVXlmbDFMIukgKWb3CVlIsvaMBsBlgod4AQ1S2jd7Dqd68S7hQF7baxyJ3JlgetS8q6qIlr6+/nROmlxLsa66rV3rxcFK0V08L2LgMWMm0eqr7nJdSCRo9xPC/cq+hYdhs5kS5SwlR7FYh1DKRrJ3uWJEWvUvJ8rPzvhnCg9fqDgkClRIHjKEkpCWyM4QiZNy1wNHHuO/nYz9EHvXpodDMn0vKeMdxgIYiNBKyHs0XDvNJA9mush9Cz+Qx+Jej6H8ODGrZfwk2QXucM7Kg+2M4rNRvJEs60dumbTMAmVwV/fKDblPA77Mq5A2UG2XoysRtmGhfnqdOX1wK5zSDw3PQRHq7l5locefxEgfC54Snf1KxUY/YOEJFdqSvAsDfEwTfQqEim7mvObFP+bjn5zfR7Dsa8hzkbc0XEDOs2GlBqUWNJ6Vyy3Ic4VtBBcJBBmJjAsXtPPooEQ8E7UmRAfYfFras4yNUzDh4Zb3YOeVc5xD2ERfeD1IpRhZp+YLJjh+lxB0MUDY01yhhL+jMMFrLFrAyOrJjwbsyhJws5A4q6Db9F85sFnno2q7O/8ptNey+DFEryQUVaCBNE0LMaSPDM7Sixqt2ArvYDEp3Dzmrdi6WGELAbM9TBsnco0BJ43mEbqNN9GBUQLPLnlh5lGmSp5Eui+9a57w=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CHBPR12MB731189.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(7416014)(261026121527099003)(261022115727099003)(261022075727099003)(261021121427099003)(261102123227099003)(11063799006)(5023799004)(4143699003)(56012099006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FBQlZTKR7uunA9w/OS7dxtFoCDNEr7CEsH+YwR6RX7+nJOlBhkDwO422Ypqq?=
+ =?us-ascii?Q?6fXEggBLTvbprP9NSC5zL1lp0sViWaS6y+YkFwxnM2vFp8ksiF0hctmHIHdC?=
+ =?us-ascii?Q?SKasRbFPS6beNNdlrMgNZKHvjKagHTwrBRtkGxg+e7uK0iZzYJ9sMbVRVX05?=
+ =?us-ascii?Q?3QBPjjEbREwkYXItEymj5yVzWbTNUT7Q729U+nZ3Wjx71AsXIFxllTS7fzA2?=
+ =?us-ascii?Q?DIUxlGk4Q/iQbm5sjNAC4/vzWznufH2CTjk6M+a8Nh1WY4dvFFrHfobRZAZP?=
+ =?us-ascii?Q?TWjw87XQFlMWEJyNTZSlEVU808/qgAOblBCezjTzd0Dz/iNDt1l7VL6DGIVh?=
+ =?us-ascii?Q?7+/ci8ac+S8mJpUKWVzpxIGjFOfRHi5mJQkp4l4bb0THNYw8p4uLDIijcnfG?=
+ =?us-ascii?Q?4ODivF7IF4eRD7yXws998eM0ss21rKPqoQNaM0NhTY8PdnQ+tF/QCKNYOIkI?=
+ =?us-ascii?Q?QVmI9zs4eOjgGQ3ICb6en+ebZuWIHFP2kUa4tjNtVKZ0JmmOtWnnwXJNXdtn?=
+ =?us-ascii?Q?Ul+K1iXmzxAvGfiuSNqzKGtKxNTOkFUm04smyyx4IeNYxy0GDmAIK7VGgAzq?=
+ =?us-ascii?Q?8tvCkg6Qnw2CbAVXl7fv6H2ktH2wnJWZTjDNETNcFUduqU+gpXhgGKpjzZ4u?=
+ =?us-ascii?Q?gf9rg7Xm1vppyFIjKizOPST3QVrNIisTlFNFFBvIR3ZfNNiyXy1sABnfitvN?=
+ =?us-ascii?Q?U7e3zsXCJ1bukZp18xq+ruzQTgJyuamWaBHZz6jRW9Xu36GYYVSbDL/2YDqD?=
+ =?us-ascii?Q?P0n09KZ2vA5YDMOWfzZ9ibqqitf+e+Hvv+RL0nVtLtclNrGDeAp6UkXiruQm?=
+ =?us-ascii?Q?0j2/1CmJ9Uy//oGZu8KkJp0nsJa9lAX/lw8YYk6gX0NCyz/AgX3ac6X7expN?=
+ =?us-ascii?Q?hqgnyjMmEX5REH+kKbrjjaTJQgG9GCADGh1bBbnerWPY+wrRK8wXC9AsxYPX?=
+ =?us-ascii?Q?B+1qaHIzE3IbBN7RvXPJdDoucxbltSbegG3/6VxxXgWeaFzgc//YmO83hyhu?=
+ =?us-ascii?Q?i5stqVAnbTccD8kdbG3lCxNV9fc8XUs/xf43F/uW3arTT8KghTMQ/0jJ9u3x?=
+ =?us-ascii?Q?MKpBQQ7IuGenLNSpdAI1qpetb+ftEaRq4+Peg2MELrvqRfFOznDXAGBRwh38?=
+ =?us-ascii?Q?omlvOzouJ89ZQ0CMwzKQEhF3A2jxhYq117gJMfSMUeHvZ1XEsnIRHYxTHPV3?=
+ =?us-ascii?Q?lesO9Scir0fia7//seIpgm0ESLF5eyCCcwlAYLdGZNpklvEmwbNXYme2IxpQ?=
+ =?us-ascii?Q?8TemWOD+XGiON1t8uGaJigoYdvtKwzrO6CIR3SxeSal/Y+KLyYQOC2+fJ50w?=
+ =?us-ascii?Q?OwR+YfIdviEQCxm5UrnQoAsb3+7mXA2we2tCz3T5P+fc/lRocbx3bb9rPlNw?=
+ =?us-ascii?Q?gbE3MV25fVLeLOwll/shj/qhLuLhmtt2NBEMy5KMe43ElXV4fiZXPrIlD2tZ?=
+ =?us-ascii?Q?MIdwXuaGjO1DM5gr4GpkwAXVqDk/zFaBBsh1dUJIPiju+X/cJe5Tv0bv0CeD?=
+ =?us-ascii?Q?2CWZLVx/Xxto0Heny/sKFHvpDXXWHIiWAXWUby8rHa4BcXYwdqj4n0l0kR9K?=
+ =?us-ascii?Q?gc7D1xRG0I8KzlT3330XfrwRVQxFmLWEM4ZL99vazE5i7TZc11ZWaz0He0Rb?=
+ =?us-ascii?Q?MiV9Z+8RrxUxdy829qGk3EfpZn6IJ5++Zx+BCN3kyGpPRSmAn/UFOQPn9Pzv?=
+ =?us-ascii?Q?uZTgkrgPT4IBwP0NiIUbiJiCViIgb8ylPRLRsVxqHQa072UI?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f017e04e-aa46-4a7d-18f2-08df48a6a273
+X-MS-Exchange-CrossTenant-AuthSource: CHBPR12MB731189.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2026 14:41:04.2658
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: G/SZf6WK8apuREzbN/rb9hWwxgYjYcY7Yc5kOXgSNKqoRUYtsZakt8K1sXGpKdGw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6428
 
-On Sat, Nov 21, 2026 at 04:39:26PM +0200, Jarkko Sakkinen wrote:
-> On Fri, Nov 20, 2026 at 04:23:33PM +0530, Kuldeep Singh wrote:
-> > Add a TPM chip driver for platforms where a TPM 2.0 instance is
-> > implemented by a Trusted Application (TA) running in Qualcomm's Trusted
-> > Execution Environment (QTEE), reachable over the QCOMTEE object-IPC
-> > transport.
-> > 
-> > The driver discovers the qcom.tz.tpm TEE-bus device, opens a session
-> > with the TPM TA, and register with tpm interface. This exposes the TA
-> > through the standard /dev/tpm interface and the existing tpm2 command
-> > layer. OS need not be aware underlying TPM instance is dTPM or fTPM.
-> > 
-> > Signed-off-by: Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
-> > ---
-> >  drivers/char/tpm/Kconfig    |   9 +
-> >  drivers/char/tpm/Makefile   |   1 +
-> >  drivers/char/tpm/tpm_qcom.c | 410 ++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 420 insertions(+)
-> > 
-> > diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> > index 5f672f2c01b0..05d704ed3632 100644
-> > --- a/drivers/char/tpm/Kconfig
-> > +++ b/drivers/char/tpm/Kconfig
-> > @@ -243,6 +243,15 @@ config TCG_FTPM_TEE
-> >  	help
-> >  	  This driver proxies for firmware TPM running in TEE.
-> >  
-> > +config TCG_QCOM
-> > +	tristate "Qualcomm TEE based TPM Interface"
-> > +	depends on QCOMTEE
-> > +	help
-> > +	  This driver provides interface to run TPM instances with Trustzone
-> > +	  having Qualcomm TPM TA running in Qualcomm TEE.
-> > +	  The mechanism uses the object-IPC based transport provided by
-> > +	  QCOMTEE.
-> > +
-> >  config TCG_SVSM
-> >  	tristate "SNP SVSM vTPM interface"
-> >  	depends on AMD_MEM_ENCRYPT
-> > diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-> > index 5b5cdc0d32e4..471cbf49afd2 100644
-> > --- a/drivers/char/tpm/Makefile
-> > +++ b/drivers/char/tpm/Makefile
-> > @@ -45,5 +45,6 @@ obj-$(CONFIG_TCG_CRB) += tpm_crb.o
-> >  obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
-> >  obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
-> >  obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
-> > +obj-$(CONFIG_TCG_QCOM) += tpm_qcom.o
-> >  obj-$(CONFIG_TCG_SVSM) += tpm_svsm.o
-> >  obj-$(CONFIG_TCG_LOONGSON) += tpm_loongson.o
-> > diff --git a/drivers/char/tpm/tpm_qcom.c b/drivers/char/tpm/tpm_qcom.c
-> > new file mode 100644
-> > index 000000000000..4be939134ea1
-> > --- /dev/null
-> > +++ b/drivers/char/tpm/tpm_qcom.c
-> > @@ -0,0 +1,410 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> > + *
-> > + */
-> > +
-> > +#include <linux/bitfield.h>
-> > +#include <linux/sizes.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/tee.h>
-> > +#include <linux/tee_drv.h>
-> > +#include <linux/tpm.h>
-> > +#include <linux/uuid.h>
-> > +
-> > +#include "tpm.h"
-> > +
-> > +#define QCOMTEE_ROOT_OP_REG_WITH_CREDENTIALS	5
-> > +#define QCOMTEE_OP_CLIENT_ENV_OPEN		0
-> > +#define QCOMTEE_MSG_OBJECT_OP_RELEASE		GENMASK(15, 0)
-> > +
-> > +#define QCOMTEE_TPM_OP_SEND_COMMAND	0
-> > +
-> > +/* UID of the "qcom.tz.tpm" service */
-> > +#define QCOMTEE_TPM_UID			81
-> > +
-> > +/* Max buffer size supported by TPM TA */
-> > +#define TPM_QCOM_REQ_RSP_SIZE		SZ_4K
-> > +
-> > +#define QCOMTEE_TPM_GET_TA_VERSION_ID	0x1000U
-> > +#define QCOMTEE_TPM_TA_VERSION_MAJOR	GENMASK(31, 16)
-> > +#define QCOMTEE_TPM_TA_VERSION_MINOR	GENMASK(15, 0)
-> > +
-> > +struct tpm_qcom_ta_version_req {
-> > +	u32 command_id;
-> > +} __packed;
-> > +
-> > +struct tpm_qcom_ta_version_resp {
-> > +	u32 status;
-> > +	u32 command_id;
-> > +	u32 version_num;
-> > +} __packed;
-> > +
-> > +#define QCOMTEE_TPM_TYPE_ID		0x80000U
-> > +#define QCOMTEE_TPM_TYPE_DTPM		0x6454504dU
-> > +#define QCOMTEE_TPM_TYPE_FTPM		0x6654504dU
-> > +
-> > +struct tpm_qcom_type_req {
-> > +	u32 command_id;
-> > +} __packed;
-> > +
-> > +struct tpm_qcom_type_resp {
-> > +	u32 command_id;
-> > +	u32 status;
-> > +	u32 tpm_type;
-> > +} __packed;
-> > +
-> > +/*
-> > + * dTPM SPI transfer optimization:
-> > + * TRANSFER_START before a burst of commands, TRANSFER_END once done.
-> > + */
-> > +#define QCOMTEE_TPM_TRANSFER_ID		0x2U
-> > +#define QCOMTEE_TPM_TRANSFER_END	0
-> > +#define QCOMTEE_TPM_TRANSFER_START	1
-> > +
-> > +struct tpm_qcom_transfer_req {
-> > +	u32 command_id;
-> > +	u32 transfer_state;
-> > +} __packed;
-> > +
-> > +struct tpm_qcom_transfer_resp {
-> > +	u32 command_id;
-> > +	u32 status;
-> > +} __packed;
-> > +
-> > +struct tpm_qcom_private {
-> > +	struct tpm_chip *chip;
-> > +	struct device *dev;
-> > +	struct tee_context *ctx;
-> > +	struct tee_param_objref tpm_svc_obj;
-> > +	bool is_dtpm;
-> > +};
-> > +
-> > +/* UUID of the QTEE-bus device representing the TPM TA. */
-> > +static const uuid_t tpm_qcom_uuid =
-> > +	UUID_INIT(0xaabcb593, 0x7083, 0x5536,
-> > +		  0xac, 0x27, 0x3d, 0x2d, 0x89, 0x41, 0x9d, 0xdb);
-> > +
-> > +static void tpm_qcom_release_object(struct tee_context *ctx,
-> > +				    struct tee_param_objref object)
-> > +{
-> > +	struct tee_ioctl_object_invoke_arg inv_arg = {};
-> > +
-> > +	inv_arg.id = object.id;
-> > +	inv_arg.op = QCOMTEE_MSG_OBJECT_OP_RELEASE;
-> > +	inv_arg.num_params = 0;
-> > +
-> > +	tee_client_object_invoke_func(ctx, &inv_arg, NULL);
-> > +}
-> > +
-> > +static int tpm_qcom_get_client_env_obj(struct device *dev,
-> > +				       struct tee_context *ctx,
-> > +				       struct tee_param_objref *client_env_obj)
-> > +{
-> > +	struct tee_ioctl_object_invoke_arg inv_arg = {};
-> > +	struct tee_param param[2] = {};
-> > +	int ret;
-> > +
-> > +	inv_arg.id = TEE_OBJREF_NULL;
-> > +	inv_arg.op = QCOMTEE_ROOT_OP_REG_WITH_CREDENTIALS;
-> > +	inv_arg.num_params = 2;
-> > +
-> > +	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_INPUT;
-> > +	param[0].u.objref.id = TEE_OBJREF_NULL;
-> > +	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_OUTPUT;
-> > +
-> > +	ret = tee_client_object_invoke_func(ctx, &inv_arg, param);
-> > +	if (ret < 0 || inv_arg.ret != 0) {
-> > +		dev_err(dev, "get client env obj failed: ret=%d, invoke_ret=0x%x\n",
-> > +			ret, inv_arg.ret);
-> > +		return ret ?: -EIO;
-> > +	}
-> > +
-> > +	*client_env_obj = param[1].u.objref;
-> > +	return 0;
-> > +}
-> > +
-> > +static int tpm_qcom_get_svc_obj(struct device *dev,
-> > +				struct tee_context *ctx,
-> > +				struct tee_param_objref client_env_obj,
-> > +				struct tee_param_objref *tpm_svc_obj)
-> > +{
-> > +	struct tee_ioctl_object_invoke_arg inv_arg = {};
-> > +	struct tee_param param[2] = {};
-> > +	u32 tpm_uid = QCOMTEE_TPM_UID;
-> > +	int ret;
-> > +
-> > +	inv_arg.id = client_env_obj.id;
-> > +	inv_arg.op = QCOMTEE_OP_CLIENT_ENV_OPEN;
-> > +	inv_arg.num_params = 2;
-> > +
-> > +	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INPUT;
-> > +	param[0].u.ubuf = (struct tee_param_ubuf){ .addr = &tpm_uid,
-> > +						    .size = sizeof(tpm_uid) };
-> > +	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_OUTPUT;
-> > +
-> > +	ret = tee_client_object_invoke_func(ctx, &inv_arg, param);
-> > +	if (ret < 0 || inv_arg.ret != 0) {
-> > +		dev_err(dev, "get TPM service obj failed: ret=%d, invoke_ret=0x%x\n",
-> > +			ret, inv_arg.ret);
-> > +		return ret ?: -EIO;
-> > +	}
-> > +
-> > +	*tpm_svc_obj = param[1].u.objref;
-> > +	return 0;
-> > +}
-> > +
-> > +static int tpm_qcom_send_command(struct tpm_qcom_private *pvt_data,
-> > +				 void *req, size_t req_len, void *resp,
-> > +				 size_t *resp_len)
-> > +{
-> > +	struct tee_ioctl_object_invoke_arg inv_arg = {};
-> > +	struct tee_param param[3] = {};
-> > +	u8 locality_arg = 0;
-> > +	int ret;
-> > +
-> > +	inv_arg.id = pvt_data->tpm_svc_obj.id;
-> > +	inv_arg.op = QCOMTEE_TPM_OP_SEND_COMMAND;
-> > +	inv_arg.num_params = 3;
-> > +
-> > +	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INPUT;
-> > +	param[0].u.ubuf = (struct tee_param_ubuf){ .addr = &locality_arg,
-> > +						   .size = sizeof(locality_arg) };
-> > +	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INPUT;
-> > +	param[1].u.ubuf = (struct tee_param_ubuf){ .addr = req, .size = req_len };
-> > +	param[2].attr = TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_OUTPUT;
-> > +	param[2].u.ubuf = (struct tee_param_ubuf){ .addr = resp, .size = *resp_len };
-> > +
-> > +	ret = tee_client_object_invoke_func(pvt_data->ctx, &inv_arg, param);
-> > +	if (ret < 0 || inv_arg.ret != 0) {
-> > +		dev_err(pvt_data->dev,
-> > +			"send_command invoke ret: %d, err: 0x%x\n",
-> > +			ret, inv_arg.ret);
-> > +		return ret ?: -EINVAL;
-> > +	}
-> > +
-> > +	*resp_len = param[2].u.ubuf.size;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tpm_qcom_get_ta_details(struct tpm_qcom_private *pvt_data)
-> > +{
-> > +	struct tpm_qcom_ta_version_req ver_req = {
-> > +		.command_id = QCOMTEE_TPM_GET_TA_VERSION_ID,
-> > +	};
-> > +	struct tpm_qcom_ta_version_resp ver_resp;
-> > +	size_t resp_len = sizeof(ver_resp);
-> > +	struct tpm_qcom_type_req type_req = {
-> > +		.command_id = QCOMTEE_TPM_TYPE_ID,
-> > +	};
-> > +	struct tpm_qcom_type_resp type_resp;
-> > +	int ret;
-> > +
-> > +	ret = tpm_qcom_send_command(pvt_data, &ver_req, sizeof(ver_req),
-> > +				    &ver_resp, &resp_len);
-> > +	if (ret < 0 || resp_len < sizeof(ver_resp) || ver_resp.status != 0)
-> > +		return ret ?: -EIO;
-> > +
-> > +	dev_info(pvt_data->dev, "TPM TA version %lu.%lu\n",
-> > +		 FIELD_GET(QCOMTEE_TPM_TA_VERSION_MAJOR, ver_resp.version_num),
-> > +		 FIELD_GET(QCOMTEE_TPM_TA_VERSION_MINOR, ver_resp.version_num));
-> > +
-> > +	resp_len = sizeof(type_resp);
-> > +	ret = tpm_qcom_send_command(pvt_data, &type_req, sizeof(type_req),
-> > +				    &type_resp, &resp_len);
-> > +	if (ret < 0 || resp_len < sizeof(type_resp) || type_resp.status != 0)
-> > +		return ret ?: -EIO;
-> > +
-> > +	switch (type_resp.tpm_type) {
-> > +	case QCOMTEE_TPM_TYPE_FTPM:
-> > +		dev_info(pvt_data->dev, "TPM type: fTPM\n");
-> > +		pvt_data->is_dtpm = false;
-> > +		break;
-> > +	case QCOMTEE_TPM_TYPE_DTPM:
-> > +		dev_info(pvt_data->dev, "TPM type: dTPM\n");
-> > +		pvt_data->is_dtpm = true;
-> > +		break;
-> > +	default:
-> > +		dev_err(pvt_data->dev, "unsupported TPM type: 0x%08x\n",
-> > +			type_resp.tpm_type);
-> > +		return -EIO;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/* fTPM does not implement this command and to be invoked via dtpm only. */
-> > +static int tpm_qcom_transfer(struct tpm_qcom_private *pvt_data,
-> > +			     u32 transfer_state)
-> > +{
-> > +	struct tpm_qcom_transfer_req req = {
-> > +		.command_id = QCOMTEE_TPM_TRANSFER_ID,
-> > +		.transfer_state = transfer_state,
-> > +	};
-> > +	struct tpm_qcom_transfer_resp resp;
-> > +	size_t resp_len = sizeof(resp);
-> > +	int ret;
-> > +
-> > +	ret = tpm_qcom_send_command(pvt_data, &req, sizeof(req), &resp,
-> > +				    &resp_len);
-> > +	if (ret < 0 || resp_len < sizeof(resp) || resp.status != 0)
-> > +		return ret ?: -EIO;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tpm_qcom_cmd_ready(struct tpm_chip *chip)
-> > +{
-> > +	struct tpm_qcom_private *pvt_data = dev_get_drvdata(chip->dev.parent);
-> > +
-> > +	if (!pvt_data->is_dtpm)
-> > +		return 0;
-> > +
-> > +	return tpm_qcom_transfer(pvt_data, QCOMTEE_TPM_TRANSFER_START);
-> > +}
-> > +
-> > +static int tpm_qcom_go_idle(struct tpm_chip *chip)
-> > +{
-> > +	struct tpm_qcom_private *pvt_data = dev_get_drvdata(chip->dev.parent);
-> > +
-> > +	if (!pvt_data->is_dtpm)
-> > +		return 0;
-> > +
-> > +	return tpm_qcom_transfer(pvt_data, QCOMTEE_TPM_TRANSFER_END);
-> > +}
-> > +
-> > +/*
-> > + * The raw TPM2 command in @buf is sent directly as send_command's UBUF-in
-> > + * param and the raw TPM2 response is read back from its UBUF-out param.
-> > + */
-> > +static int tpm_qcom_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-> > +			 size_t cmd_len)
-> > +{
-> > +	struct tpm_qcom_private *pvt_data = dev_get_drvdata(chip->dev.parent);
-> > +	struct tpm_header *header = (struct tpm_header *)buf;
-> > +	size_t resp_len = min_t(size_t, bufsiz, TPM_QCOM_REQ_RSP_SIZE);
-> > +	int ret;
-> > +
-> > +	if (cmd_len > TPM_QCOM_REQ_RSP_SIZE)
-> > +		return -EIO;
-> > +
-> > +	u8 *response __free(kfree) = kzalloc(resp_len, GFP_KERNEL);
-> > +	if (!response)
-> > +		return -ENOMEM;
-> > +
-> > +	ret = tpm_qcom_send_command(pvt_data, buf, cmd_len, response, &resp_len);
-> > +	if (ret < 0 || resp_len > bufsiz) {
-> > +		dev_err(&chip->dev,
-> > +			"TPM command failed: cmd_len=%zu, tpm_cc=0x%08x, ret=%d, resp_len=%zu, bufsiz=%zu\n",
-> > +			cmd_len, be32_to_cpu(header->ordinal), ret, resp_len, bufsiz);
-> > +		return ret ?: -EIO;
-> > +	}
-> > +
-> > +	memcpy(buf, response, resp_len);
-> > +	return resp_len;
-> > +}
-> > +
-> > +static const struct tpm_class_ops tpm_qcom_ops = {
-> > +	.flags = TPM_OPS_AUTO_STARTUP,
-> > +	.send = tpm_qcom_send,
-> > +	.cmd_ready = tpm_qcom_cmd_ready,
-> > +	.go_idle = tpm_qcom_go_idle,
-> > +};
-> > +
-> > +static int tpm_qcom_ctx_match(struct tee_ioctl_version_data *ver,
-> > +			      const void *data)
-> > +{
-> > +	return (ver->impl_id == TEE_IMPL_ID_QTEE);
-> > +}
-> > +
-> > +static int tpm_qcom_probe(struct tee_client_device *tee_dev)
-> > +{
-> > +	struct device *dev = &tee_dev->dev;
-> > +	struct tpm_qcom_private *pvt_data;
-> > +	struct tee_param_objref client_env_obj;
-> > +	struct tee_param_objref tpm_svc_obj;
-> > +	struct tpm_chip *chip;
-> > +	int err;
-> > +
-> > +	pvt_data = devm_kzalloc(dev, sizeof(*pvt_data), GFP_KERNEL);
-> > +	if (!pvt_data)
-> > +		return -ENOMEM;
-> > +
-> > +	pvt_data->dev = dev;
-> > +
-> > +	pvt_data->ctx = tee_client_open_context(NULL, tpm_qcom_ctx_match, NULL, NULL);
-> > +	if (IS_ERR(pvt_data->ctx))
-> > +		return dev_err_probe(dev, PTR_ERR(pvt_data->ctx),
-> > +				     "tee_client_open_context failed\n");
-> > +
-> > +	err = tpm_qcom_get_client_env_obj(dev, pvt_data->ctx, &client_env_obj);
-> > +	if (err)
-> > +		goto out_ctx;
-> > +
-> > +	err = tpm_qcom_get_svc_obj(dev, pvt_data->ctx, client_env_obj, &tpm_svc_obj);
-> > +	/* Release client_env object irrespective of service obj return status */
-> > +	tpm_qcom_release_object(pvt_data->ctx, client_env_obj);
-> > +	if (err)
-> > +		goto out_ctx;
-> > +
-> > +	pvt_data->tpm_svc_obj = tpm_svc_obj;
-> > +	err = tpm_qcom_get_ta_details(pvt_data);
-> > +	if (err)
-> > +		goto out_svc_obj;
-> > +
-> > +	chip = tpmm_chip_alloc(dev, &tpm_qcom_ops);
-> > +	if (IS_ERR(chip)) {
-> > +		err = dev_err_probe(dev, PTR_ERR(chip), "tpmm_chip_alloc failed\n");
-> > +		goto out_svc_obj;
-> > +	}
-> > +
-> > +	pvt_data->chip = chip;
-> > +	pvt_data->chip->flags |= TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_SYNC;
-> > +	dev_set_drvdata(dev, pvt_data);
-> > +
-> > +	err = tpm_chip_register(pvt_data->chip);
-> > +	if (err) {
-> > +		dev_err_probe(dev, err, "tpm_chip_register failed\n");
-> > +		goto out_svc_obj;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +out_svc_obj:
-> > +	tpm_qcom_release_object(pvt_data->ctx, tpm_svc_obj);
-> > +
-> > +out_ctx:
-> > +	tee_client_close_context(pvt_data->ctx);
-> > +	return err;
-> > +}
-> > +
-> > +static void tpm_qcom_remove(struct tee_client_device *tee_dev)
-> > +{
-> > +	struct tpm_qcom_private *pvt_data = dev_get_drvdata(&tee_dev->dev);
-> > +
-> > +	tpm_chip_unregister(pvt_data->chip);
-> > +	tpm_qcom_release_object(pvt_data->ctx, pvt_data->tpm_svc_obj);
-> > +	tee_client_close_context(pvt_data->ctx);
-> > +}
-> > +
-> > +static const struct tee_client_device_id tpm_qcom_id_table[] = {
-> > +	{ tpm_qcom_uuid },
-> > +	{}
-> > +};
-> > +MODULE_DEVICE_TABLE(tee, tpm_qcom_id_table);
-> > +
-> > +static struct tee_client_driver tpm_qcom_driver = {
-> > +	.id_table	= tpm_qcom_id_table,
-> > +	.probe		= tpm_qcom_probe,
-> > +	.remove		= tpm_qcom_remove,
-> > +	.driver		= {
-> > +		.name	= "tpm_qcom",
-> > +	},
-> > +};
-> > +
-> > +module_tee_client_driver(tpm_qcom_driver);
-> > +
-> > +MODULE_DESCRIPTION("TPM driver for Qualcomm TPM TA");
-> > +MODULE_AUTHOR("Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>");
+On Sat, Nov 21, 2026 at 12:33:58AM +0100, Ard Biesheuvel wrote:
+> Hi Jason,
 > 
-> MODULE_AUTHOR() field is not that useful and nobody keeps it up to
-> date, so you never can rely on it. Not NAK, but just underlining
-> how litte it is worth :-)
+> On Fri, 20 Nov 2026, at 18:51, Jason Gunthorpe wrote:
+> > extra_size is additional memory required that must be immediately after
+> > the image.
+> >
 > 
-> Copyright and authorship is anyhow recorded by Git and
-> MAINTAINERS document.
-> 
-> > +MODULE_LICENSE("GPL");
-> > 
-> > -- 
-> > 2.34.1
-> 
-> 
-> > 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Given how extra BSS memory is essentially free at boot, is there no way
+> we can establish a worst case upper bound for this memory, and just add
+> it to the image unconditionally for DRTM capable kernels?
 
-I'm next on holiday but can be pick to "other tree". No need to hold
-that for me at least.
+It doesn't look like it, at least not without reducing support. The FW
+can request some arbitrary amount for its own private usage during the
+launch.
 
-Br, Jarkko
+Jason
