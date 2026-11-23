@@ -1,103 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795432499;
-	b=oulOGZP49HvS8fNnHa4yf2E5hdBwW+Xj97v00gAAizYha2UygAzNnsXGFDq2+SDCNkmN
-	 lKYLZ4Yhv+aiNrRZ8e/UU201mMfTkxvpzV7CwQnpWeeg0w9GPjiNniNXCxGiU7uo6AUkj
-	 uC39d0NutMCF1A7f5eF/96qz5SLUtLJp2tk6SX9ildnu/klyyUOLuWLqvy+ksSBvZgCtK
-	 DA5UD7sj5nF+M5C9njRgNyYNy6/Z7FOjSuclRC8FTrC5m0M2A+l86mKI0it9s4JUsx65E
-	 RfF7x4egdoN7cBr+QoxIqDOhybNmHAqdljIsC3KYLL0tlQcqisJ9RCOLRIldxuuHuFg==
+	t=1795435877;
+	b=dBmY9niqhfDRPyx1L3Y4lZgqzJvAFrbds8Z6mE6zPx0pZcDapuqwNYb33lR8ZZaktQtD
+	 1Q2lInaG5us+B90Pd3CKTpzBh4ZY4cU7vHDhz6KOeMmLF1ybq9zPUWm05Cl9U0ryYQKxr
+	 2klC39T/EyN33AbzgLUN/dFAst54o/xus+NsP0axTstpCwEgFpNCb0ct77/+rN/eXSt7W
+	 0mq+C5T8tKJ+mh0Nszo1RJDVUQ6geyak9qSkKZOvHEozb5SP8B0zCJ3VN1mmdL3ijeNec
+	 U4ZVCmYGe4mPzz4ePh4RyPYd3qHFrffWFfJl+Zbv8IeaKlptUbq5g99QQooM97YcRnA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795432499;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=kvxCAFGhBWC5zf+uvhs+QtIakQF9t3AdFIsHU9D4+O4=;
-	b=luooV+1doQdMw1RIYHE2/0HnmRiAbHCXGIOLDgayTDzSSKptB1u1/+USglTQ91eSM/pl
-	 yImVs9JjEOZrD+bpZ54SB4J3rMNM61hVb/zcmwhdXaKDNpkMISo+Cjg97bMFSWKFLsJRQ
-	 77uKyKbu9yuG0dzLDZndy8+rs1gyO3lWH98AUADOQfNBaHukTu4cUsYaIfdIgLxCWL79X
-	 UASRsLky/yfNaqSjHk8UzwHv8Vi4xMCv5MYDaZvv9qe0I+KqxaEOH+9rdkCAdf7A99/5Y
-	 Ng8FPZ+0UAXQdT2WJ3a97zxE4tfz9UkN4Gz24bxqAMZOy5IN05cZwFZ3Hvx/gxhUiew==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795435877;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=3Eh7AtJFr/uR9z6jF6Gx5kvJFnPR9rDrn/UUs08sdns=;
+	b=L5nDFKkr8VCvUnLDom5iFLcJ4Q8hhin//+D1ZdOiq5El1gbLthqAuLZcQ8Fio8/1ski4
+	 dWXwVU1L/j7ik6TlypTSpIDz2G1BB9tS1iKlrGLOwMvsYEDYR5N5p4Sda3/jkZHIZ85uD
+	 Ej99uX54V87QyDNA67DULT4LUu/kRr5JymcsFHjxItDPlmiSBjPjDQZcAAFHyUusG5KBr
+	 SRC8/NkdDACfikJ5/dg0LGldhaNE7piJMdzuAZr0i5pi03mEM2cgI/kLh/oMtUPeHl8tz
+	 vLrjA/4cvph7lwbo0SiHqKnaZemT2ss6jGFK3TwdKlNTXOMZWI/VUB8HlUep81PDFZg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wEuQYgd9;
-	arc=none smtp.remote-ip=209.85.215.170
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hQamuCjA;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0C9606A327
-	for <linux-integrity@vger.kernel.org>; Mon, 23 Nov 2026 11:14:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2B0C9606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 68795606A31A;
+	Mon, 23 Nov 2026 12:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wEuQYgd9
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-cdba1bbde0bso1201083a12.2
-        for <linux-integrity@vger.kernel.org>; Mon, 23 Nov 2026 03:14:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795432498; x=1796037298; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=kvxCAFGhBWC5zf+uvhs+QtIakQF9t3AdFIsHU9D4+O4=;
-        b=wEuQYgd9aTMaRZMu8Fc8uQ9+z8eQzvLYLuJRlLT7wIS7NWQ/wbFslmzkdbAmHbleFV
-         w8KhFw2ZOd1rLauzizxyN/Q1sVkP9Hlku2rgQs63qAipnTqBr+GiOUkS4IF8Jlcz6A4U
-         O2b/U7NmMQfVWpCjvZGK0QBmjLTg2yMbsd1Ar0m6fTyLnVbXWpldKB/8rKnh9ifygbP/
-         x1DWX8gGyFeMxmsX9AmtaFoZWjjAUlwEDv9j33EYV9x8Tdcv5ktG3OriZNmXyNeK2vTl
-         cPOzYd9xyQqae2bVqgqKzZstPwew4pN5OP8zL/JnzLKLW/gnJlidhE5g//FY4dAeySXI
-         M3qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795432498; x=1796037298;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=kvxCAFGhBWC5zf+uvhs+QtIakQF9t3AdFIsHU9D4+O4=;
-        b=f0oc2LqZv/UnuNKyvXC+TyIR7C7BdlFBnLl9/pRF6IN/aMdAGWxySVlJhUkH48rC+O
-         jz4gJjqcYsL253cqoK8GzasY3RPUGD99IJtdbt01rNzrOcrxBWZCkF9TvJwWe3Z7TNin
-         /XOSebfEDGOimpEtQfgUfkIgeOM7CTDXKlZdrmHLGzU4tcNtQjkSLxcxQRwMS/LrQNDg
-         +VQ8zNpefj9YtCUYrDVuWy5p1uvSKGXgULU3OdncIbm1tdT8egJyuVzKPIVOrkI1e6MD
-         YvO+ZdmkX3dQN5G7uJUXnz4a7pcTdHyK32IthXMjrk7dE6H98Pr7GKzHeg0XYl09VkbJ
-         P+rw==
-X-Forwarded-Encrypted: i=1; AL+hErHReppGk5LJLaHZ7kOl0TLl6GLpiju9qUD/ayl8DkY9fS+BOUhRasLFN7crKVcbx+BHpQW2z9Vu0hKigydYXdE=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/qjSHYvfqlAePWszIdDPetiJ4WPEx89oiT65LfFm/ncucj7mwx
-	+xMhnrEDVHLtaXIgI5clX+/uE2DRqmqXQMAo+WJ8cKvXjDuOxPkQQ2++
-X-Gm-Gg: AZFdTZd83o42Br9xAXK8m6yVXlCpowuqNFxWudf65QD7zZIe7ftT/KdBSWbPkOAw0kq
-	nAfWgjTU/LoSqP2xML8TmtVunMAxVSW989lTPrLzgvszDwkB1rpudjxY+dwXKCVgsAnFH10rzlP
-	ZWyLKnNrTOlUUXLQ5TzVvnek4OW1DZoNBtUxViNfP5ZHWvWKctLMLhiBzmepWpxa2b2XHLzTTJ3
-	1cKz/rz0Xqp1X7CB2A9wu5hqYsB0muJIfGDJbIceCKHl9A0ztOJL6QSBT8aR+3qxcDyE2jk4wkS
-	baT6FvQP7sZciT6w0stYgXBBDqQuTwIXcrOnq5fsXy/6Enj738caVSKXFa3x7kHgVl8eUgtrqRZ
-	kPOT/zjCB4fQw87xD5FSvWm74vTWhTLvfp5Pr88I0Ua36nDPAz9yjg01Hkc0MBBVzb/UDDreSLG
-	dRQpBv12uAIiRvxvbSXPCfFsA1pDr1RE3M39Nsbn+pOii9B821Nz4IowCzMpb7JrKAD0l9bqsAl
-	VTXwxInxMPrwzdS3CKDKmQHsJEi36ryEDzhx+21Xg2utGV6EGcCkzZttkqF3kPyQKa651qB+4MU
-	HBBCFBmR/nL0a0hgQPJMhqA2NyLrIQ==
-X-Received: by 2002:a17:90b:3d4d:b0:3a4:fe48:d410 with SMTP id 98e67ed59e1d1-3b41c92cfe2mr10003902a91.30.1795432498380;
-        Mon, 23 Nov 2026 03:14:58 -0800 (PST)
-Received: from thangnn-ASUS.. ([2a09:bac5:d452:16c8::245:e])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b41ad8ef99sm18070874a91.12.2026.11.23.03.14.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 03:14:58 -0800 (PST)
-From: Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	syzbot+deb8af81d91415fabac1@syzkaller.appspotmail.com
-Subject: [PATCH] ima: key iint mutex lockdep class per filesystem type
-Date: Mon, 23 Nov 2026 18:14:52 +0700
-Message-ID: <20261123111452.237422-1-ngocthang2710.1999@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hQamuCjA
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2ACD51F000C4;
+	Mon, 23 Nov 2026 12:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795435876;
+	bh=3Eh7AtJFr/uR9z6jF6Gx5kvJFnPR9rDrn/UUs08sdns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=hQamuCjAL00ho8wuAS/xxVYieoyQgKpz3vy0va43FUKk/hFwrbG6HzxETV4CPonrt
+	 k6jRu1ZOOtEWQhRCEvXtWxedbA8rH8OmH5G9Y+BVpuIHAGJk91cXf0mLNnnojRcdUj
+	 qSaXcxSIYXF49xIPCkBP8y3ijLUXYm9PmxXpVMjadfNtsJhik07hKDBj6ZsYokPsHx
+	 Rcc4cnD2AigMAxeskn6n0WGYBuUUq0kFKMe8Dt6a6ijFzvVBvp9CvR9Yd4LBFa/l1R
+	 qi5fkN6MIlAIbUe+StU8kBx84vegQRFf4wZ6C5FKplP1e/LEdlfU5TiCBE1BhkDXC4
+	 kA0JmqcFgg8tQ==
+Date: Mon, 23 Nov 2026 14:11:12 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>
+Cc: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
+	Jens Wiklander <jenswi@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-arm-msm@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] tpm: Introduce Qualcomm TPM driver
+Message-ID: <awQtYP7tFjTN1Mm0@kernel.org>
+References: <20261120-tpm_qcom_driver-v5-0-3d9321ace107@oss.qualcomm.com>
+ <20261120-tpm_qcom_driver-v5-2-3d9321ace107@oss.qualcomm.com>
+ <awGtGoxtker8a9kG@kernel.org>
+ <8aed0815-685d-41b3-af2e-0055bc6ad920@oss.qualcomm.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -107,93 +63,32 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8aed0815-685d-41b3-af2e-0055bc6ad920@oss.qualcomm.com>
 
-syzbot reports a circular locking dependency between the iint mutex,
-a 9p inode's i_rwsem and the sb_writers of the cachefiles backing fs:
+On Mon, Nov 23, 2026 at 02:48:17PM +0530, Kuldeep Singh wrote:
+> >> +module_tee_client_driver(tpm_qcom_driver);
+> >> +
+> >> +MODULE_DESCRIPTION("TPM driver for Qualcomm TPM TA");
+> >> +MODULE_AUTHOR("Kuldeep Singh <kuldeep.singh@oss.qualcomm.com>");
+> > 
+> > MODULE_AUTHOR() field is not that useful and nobody keeps it up to
+> > date, so you never can rely on it. Not NAK, but just underlining
+> > how litte it is worth :-)
+> > 
+> > Copyright and authorship is anyhow recorded by Git and
+> > MAINTAINERS document.
+> 
+> Ahh, I noticed couple of other drivers doing it so took it as reference
+> and adapted here. Seems MAINTAINERS is updated correctly so folks can
+> rightly reach out to me for any dsicussion/issues later on.
+> 
+> Btw thanks for mentioning. Will keep a note for the next time!!
 
-  sb_writers#12 --> &ima_iint_mutex_key[depth] --> &sb->s_type->i_mutex_key#25
+Yeah, there could not be more copyright- and authorship-focus project
+than Linux. I mean even this discussion is recorded to lore, and can be
+used against me in court ;-) Probably most corporate-safe project in the
+world when you think of it.
 
-The three edges are:
-
-  backing fs O_TRUNC open:  sb_writers(backing) -> iint(backing inode)
-  9p open + IMA hash:       iint(9p inode)      -> i_rwsem(9p inode)
-  9p truncate/writeback:    i_rwsem(9p inode)   -> sb_writers(backing)
-
-The last one is inherent to netfs: it writes to its cachefiles backing
-file under its own inode lock. The cycle only closes because the iint
-mutex is keyed by s_stack_depth alone, so the 9p and backing fs iints,
-both at depth 0, share one lockdep class. They are different inodes
-and nothing waits on a netfs iint while holding the backing fs's
-sb_writers, so this is a false positive.
-
-Key the iint mutex per filesystem type as well as depth, as is done for
-i_rwsem with s_type->i_mutex_key. The overlayfs case covered by the
-depth annotation is unchanged.
-
-Fixes: e044374a8a0a ("ima: annotate iint mutex to avoid lockdep false positive warnings")
-Reported-by: syzbot+deb8af81d91415fabac1@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=deb8af81d91415fabac1
-Signed-off-by: Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>
----
-Tested in QEMU on v7.4-rc4 (syzbot config, ima_policy=tcb): cachefiles
-bound on an ext4 disk, 9p over virtio with cache=fscache, then 50 rounds
-of write + O_RDONLY|O_TRUNC open on 9p and on the backing fs, followed by
-20 IMA-measured O_TRUNC opens through an overlayfs on the backing fs.
-
-  unpatched: "possible circular locking dependency detected", same chain
-  patched:   no lockdep report, debug_locks still 1; the syzbot C repro
-             also ran 90s with no report
-
- include/linux/fs.h                |  3 +++
- security/integrity/ima/ima_iint.c | 11 +++++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 5b3a100aba77b..dab32eea21fc7 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2325,6 +2325,9 @@ struct file_system_type {
- 	struct lock_class_key i_mutex_dir_key;
- 
- 	struct lock_class_key d_lookup_key;
-+#ifdef CONFIG_IMA
-+	struct lock_class_key ima_iint_key[FILESYSTEM_MAX_STACK_DEPTH + 1];
-+#endif
- };
- 
- #define MODULE_ALIAS_FS(NAME) MODULE_ALIAS("fs-" NAME)
-diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima/ima_iint.c
-index 00b249101f98d..bb964847af149 100644
---- a/security/integrity/ima/ima_iint.c
-+++ b/security/integrity/ima/ima_iint.c
-@@ -39,19 +39,22 @@ struct ima_iint_cache *ima_iint_find(struct inode *inode)
-  * files both on overlayfs and on underlying fs, we need to annotate the iint
-  * mutex to avoid lockdep false positives related to IMA + overlayfs.
-  * See ovl_lockdep_annotate_inode_mutex_key() for more details.
-+ *
-+ * Depth alone is not enough: a netfs inode writes to its cachefiles backing
-+ * fs under its own i_rwsem, and both are at depth 0. So, like i_rwsem, key
-+ * the mutex per filesystem type too.
-  */
- static inline void ima_iint_lockdep_annotate(struct ima_iint_cache *iint,
- 					     struct inode *inode)
- {
- #ifdef CONFIG_LOCKDEP
--	static struct lock_class_key ima_iint_mutex_key[IMA_MAX_NESTING];
--
--	int depth = inode->i_sb->s_stack_depth;
-+	struct super_block *sb = inode->i_sb;
-+	int depth = sb->s_stack_depth;
- 
- 	if (WARN_ON_ONCE(depth < 0 || depth >= IMA_MAX_NESTING))
- 		depth = 0;
- 
--	lockdep_set_class(&iint->mutex, &ima_iint_mutex_key[depth]);
-+	lockdep_set_class(&iint->mutex, &sb->s_type->ima_iint_key[depth]);
- #endif
- }
- 
--- 
-2.43.0
-
+Br, Jarkko
