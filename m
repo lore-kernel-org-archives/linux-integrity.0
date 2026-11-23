@@ -1,56 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795461359;
-	b=y4wY0Oeutm8tKv6aq1JjNGSo14kHJfoE+Kun/K8P2/qkD99Z3J378oTFdaY4lq+KUmmG
-	 PFYmaoTbvTuTmMHSoXKm56sksDIivGOwuPhfqyg672PeUzb3WMXAjH6ZUuqOwOyVEc39e
-	 hyMpeL/dj7YCC0oifJfr+TOaz9T8wUj+noDMDkV4dYFuQYXruOwUHNMjVEJMGoKLu3TZ7
-	 fBiJR3FXfRF/j0YkVfkJFTm7jqC6j/0UNyaUMgpIEpkF3cxyKAIWvfjT5FFIEr4vIV/Jv
-	 WPGyv/OD7yppzHWPbtrfCXFZYFou99p9G1RDTcptq/6Ot/LkzV7Jm0Da5VDDIWgPEzA==
+	t=1795468232;
+	b=e3AiZnk+KlpyHPC6XRevVndwOq0zvAJbWyfwq2u+lSJXO9LD3yAX5mVcSN6ajMF266uv
+	 453nFVfcyG2RZMWoJNUzH7AKSa+2mquQJyodU+lawJ5E7LMfnOliq4slsRd5IET1sfQOp
+	 bPvRhczuFTjm53bN69jZoA2rSHwONCO0+9MZy/J/PYJ2GVKBdOwMUGRvpjG++Au6aQOt0
+	 xQ/1RYbWXrI1gxZ+p+VLsz5PdE8w1X6IGmvm28+j8gSh6s8fDTKt65JNpUzGOUzoRZeme
+	 YkxNFcBWp8PRx7v9seEJXQ3Kz5oyBVe5x85DHpVQaTXDUJ6LcU4EF8ix7dasi17MrMA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795461359;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=PvW4g6854DmgXR4PJGdaXsGlS+qMtRehARbQ3GAMNvs=;
-	b=kdIIXJdSL3k7gxmJDpuK3INihzn5BWltIGMPHtjHuDkzZ6Tc7EZKZDynZNlycWZBS0fl
-	 bEmSiX09tArfM81ugp8LWFb9OY0c6WzqQS7233cuOnksucw7DzM7XCyQ7pmzmeLzEIOeH
-	 s2GX8EhYkah9CULd3UxssGgtnyikjQBcFW5pAXaLR8FpCbcwTt+CoeyonfwxdB6YuqzaQ
-	 O/EMcJ/k1+Slv67hL1F4BKwvyrX2M64SUjN9g0Sxsllg2LWBZYeb7BEGkSGhb6Ly+Ovy7
-	 EFkGVowKYPbFYAgoeZV7z27zl659g0UeCGFupaVIOIyvHe1cM49l/mqpqUO8a6fRqOg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795468232;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
+	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
+	 MIME-Version:User-Agent:X-TM-AS-GCONF:X-Proofpoint-Reinject:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=RYqHloZOoqYHrt+p089L6+UfWTI0BWuSW7P7NblgWDA=;
+	b=nBNVPKgtS2jqeFy1bVKNXimzIiMejFNeAP9TGmcbIUSwBjQS7ezdQkwfHVuwnaqK8URU
+	 vx/wRHrkIdCJRvzkezG2JMelGjv2ZpMnDnRCl2fWnMnfQ5+wS3FqLJSG8sE2MbX7KJkLT
+	 BmRZFeNrodxx2XLXynjIoMXXIN9tqlPCTd2SoxpmZhyiv+OXtFBZ/fO/HBjaDF57m6xtM
+	 +QzjjYs+tah3kEkelXxLUb4MW/bUPsNtC2QGuAhcYGwdVk7Xim5NQw5L9EY/S7JRM41hA
+	 t4Byeu4Net+raXufCWaxMu6U26xKtIE8/hN5s9gsE3lyr4cv+BGLnLIgZwXGABFlIHg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZUeJKkoO;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=linux.ibm.com;
+	spf=pass smtp.mailfrom=linux.ibm.com;
+	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=K9oR1neg;
+	arc=none smtp.remote-ip=148.163.158.5
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 6DE0A606A32D;
-	Mon, 23 Nov 2026 19:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91A5606A31E;
+	Mon, 23 Nov 2026 21:10:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E91A5606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZUeJKkoO
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 963B01F00A01;
-	Mon, 23 Nov 2026 19:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795461359;
-	bh=PvW4g6854DmgXR4PJGdaXsGlS+qMtRehARbQ3GAMNvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZUeJKkoO+n5PbaowjiMJA2PUR8NZVJDGadCFC5uRagLWmV4RSWr/Hr2Kqw9jtpq1F
-	 pEgAYgYfudCkygpgwktdVfM7458ZPWwk6v8t3ctxO9ZOCk8ShiueDy+dCwbzGsjLhC
-	 ekUQ9O9N/QmlNKsNolEgw5qE1IaQRCrgp+wbBu9IuVEFUo4F5XXfv0YApBu3V+2N/V
-	 IIQtLgjCJS8BF0PqZuwwNGy/8GuwAmGmGi3hQ1ViS0FekpAX/IyPvfnAjliEPzc+r9
-	 nYAzT+BbyXnd1hn00K8tzO52fIwL1KbobUoGGCVy5z69J+p6ZSgofAWVW15gErqCDC
-	 T0M9mM8BrQ63Q==
-Date: Mon, 23 Nov 2026 21:15:55 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Rustam Mustafin <rmustafin@cloudlinux.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Shuah Khan <shuah@kernel.org>, Jaewon Yang <yong010301@gmail.com>,
-	linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tpm: Do not allow io_uring for /dev/tpm0 and
- /dev/tpmrm0
-Message-ID: <awSQ61-xFIsMY6N4@kernel.org>
-References: <awBff_fSk9HDh896@kernel.org>
- <20261123173321.2363162-1-rmustafin@cloudlinux.com>
+	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=K9oR1neg
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ANK4sBv344853;
+	Mon, 23 Nov 2026 21:10:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=RYqHlo
+	ZOoqYHrt+p089L6+UfWTI0BWuSW7P7NblgWDA=; b=K9oR1negl3KVb7HP4HctCV
+	LITCIsXecuraOiHj6aAZR+TMnqA0W2YGdBWFe8Rfde+GbS9kxaGWX6vnsmprzY4/
+	XyUg6YoG285apTRGH//Gbgu1gABGx8jbMxzjlZnlCJf9cF86QdWQ9GbhjS+3zxpY
+	x+nopHcOUe7/udEKRcDyduHaJjGuEboMIshIh3ihSYiMyJMmw3ec6kfXPMVljFnB
+	ZRb8/ImSA61oiC3HA7OEVvybg9f+mcjNSkYEwaD2Dw9PJv6eXAomqtgtZLoH/aFk
+	mYMo9ENbclYn/7s0jLDzs7ydoVPaUcUXGB63tzECKpqsyBQ/TZxkKkyZPQPlC/Yg
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4j34gv4qx7-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 23 Nov 2026 21:10:04 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6ANK4Ejc2413837;
+	Mon, 23 Nov 2026 21:10:03 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4j3rayfy6m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Nov 2026 21:10:03 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6ANLA2c514287370
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Nov 2026 21:10:03 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C8C9E5805D;
+	Mon, 23 Nov 2026 21:10:02 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2303658055;
+	Mon, 23 Nov 2026 21:10:02 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.1.98])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 23 Nov 2026 21:10:02 +0000 (GMT)
+Message-ID: <d97e7b9c48b38c59023b8a8b18779b5c3318af2f.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Fix out-of-bounds read in ima_read_policy()
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, fabrice.derepas@canonical.com
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+In-Reply-To: <20261112143029.4159022-1-roberto.sassu@huaweicloud.com>
+References: <2e59cc97ad2e6fe5b9b5a5b5988668da29155703.camel@huaweicloud.com>
+	 <20261112143029.4159022-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 23 Nov 2026 15:33:11 -0500
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -60,231 +98,136 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261123173321.2363162-1-rmustafin@cloudlinux.com>
+User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=CYCdd7rl c=1 sm=1 tr=0 ts=6b04abac cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
+ a=DfNHnWVPAAAA:8 a=i0EeH86SAAAA:8 a=LuCgsL7vg7nrgWYQqVIA:9 a=QEXdDO2ut3YA:10
+ a=rjTVMONInIDnV1a_A2c_:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDA4NCBTYWx0ZWRfX8W22NsrcSgqU
+ 7bAo9a8DAIfIuWEn7H+6LXbVApaxVgZ2alC7QQNEAumyug/5OTicCfr0rQ3iIlvqfxqtlqN13Xz
+ s0VnYNCVAz1OdgdKDUQkGUV/iUesjhQ=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDA4NCBTYWx0ZWRfX782F53epakLb
+ jL5EK5qg3kXYquCM6evrpKkuNyAsuNzGQ8rLIVyyrPJChn/NJTmxqimN3akWms8fbnlok/fcjG/
+ EavGp4aR04Ynky//vnhD6otJyXn+zhKif7izxfK5OhkcmzPG3juk4VUNQGx4knYdfKzcOUczBxp
+ FDG7rYB/HrTlLhhjxovzJknvXFdL7SYrOlVkpNmMr2NdGnJ4wV260X8OU/Jnvgp3+Z/YwIZFKNk
+ pddlFF6b+ABNT3DBiqz+xdfOImtSESZm/cFoot34xfXw/tN7yGIp27A+XOzOQdSDs/78jiasXFJ
+ mapi5ikDvI2nIj1fJJ+OQ4eGoEeuKZkBPgAH4W7hdkVrYr6Cupu9S191ZXKBdXFsDn6vEsoinL6
+ XfYcB6D0KnlxIHft6A8tFhyofkiQe/PeBlQuu1FZHDk6SEHll56URNo76MELD1TR9VYv5voVyli
+ O43BbiKavj9ZKoSLihQ==
+X-Proofpoint-ORIG-GUID: dSvMPstp7ygo1fQFFX0sbQIUO_m-5eVc
+X-Proofpoint-GUID: mbe4kp3MqS-e1RO02-6p3H6D-_l-D318
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-23_05,2026-11-23_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0
+ clxscore=1011 spamscore=0 bulkscore=0 impostorscore=0 adultscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
+ definitions=main-2611230084
 
-On Tue, Nov 24, 2026 at 12:33:21AM +0700, Rustam Mustafin wrote:
-> io_uring passes its own file offset to the TPM character devices, although
-> they are opened with nonseekable_open(): IORING_OP_READ copies sqe->off
-> into ki_pos without checking FMODE_PREAD, and loop_rw_iter() hands it to
-> ->read(). This offset used to index data_buffer and allowed out-of-bounds
-> reads. The devices keep a single command and response per open file, which
-> does not fit asynchronous requests.
-> 
-> Add tpm_common_read_iter() and tpm_common_write_iter(), which fail io_uring
-> requests with -EIO, and AIO requests, which the new callbacks would
-> otherwise enable. A multishot read uses a synchronous kiocb, so also reject
-> IOCB_NOWAIT attempts and requests from io-wq workers. read() and write()
-> are not affected, as the VFS still calls ->read() and ->write() for them.
-> 
-> readv() and writev() now reach the new callbacks instead of the VFS loop
-> over ->read() and ->write(). A readv() can split a response, for example
-> the 10-byte header into one buffer and the body into another, so the
-> callbacks keep that loop and call tpm_common_read() and tpm_common_write()
-> once per iovec.
-> 
-> Update the tpm2 io_uring selftest to expect -EIO, and check that the
-> rejected request leaves the whole response for the following read().
-> 
-> Assisted-by: Claude:claude-opus-5-5
+On Thu, 2026-11-12 at 15:30 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> ima_read_policy() reads the policy file with kernel_read_file_from_path()
+> and splits it into rules with strsep(). However, the buffer allocated by
+> kernel_read_file_from_path() is exactly the size of the file and is not
+> NUL-terminated. If the policy file does not end with a newline, strsep()
+> scans past the end of the buffer while looking for the next separator. If
+> the file size is a multiple of PAGE_SIZE, the scan reaches the vmalloc
+> guard page and the kernel oopses.
+>=20
+> If the last byte of the policy is not a newline, parse a NUL-terminated
+> copy of the buffer obtained with kmemdup_nul() instead, and account for
+> the NUL terminator in the remaining size, since ima_parse_add_rule()
+> counts it in the length of the last rule.
+>=20
+> As a side effect, a policy whose last rule is not followed by a newline
+> is now loaded, instead of being rejected with -EINVAL due to the
+> terminator being counted in the length of the last rule but not in the
+> file size.
+>=20
+> Fixes: 7429b092811f ("ima: load policy using path")
+> Reported-by: Fabrice Derepas <fabrice.derepas@canonical.com>
+> Closes: https://lore.kernel.org/linux-integrity/20260814085443.1211989-1-=
+fabrice.derepas@canonical.com/
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
-> This applies on top of [PATCH v3] selftests: tpm2: test that io_uring
-> reads ignore the file offset:
-> https://lore.kernel.org/all/20261123165638.2161305-1-rmustafin@cloudlinux.com/
-> 
-> Changes in v2:
-> - message starts with the use case, rewrapped (Jarkko)
-> - drop the CONFIG_IO_URING guards (Jarkko)
-> - drop Suggested-by and the Link to the review
-> - selftest part on the Python UringTest of the v3 selftest
-> 
-> preadv2() and pwritev2() at offset -1 now reach the new callbacks, so
-> RWF_SYNC, RWF_DSYNC, RWF_APPEND and RWF_NOAPPEND are accepted and ignored
-> instead of failing with -EOPNOTSUPP in the VFS loop.
-> 
-> v1 (RFC): https://lore.kernel.org/all/20261120142116.1630010-1-rmustafin@cloudlinux.com/
-> 
->  drivers/char/tpm/tpm-dev-common.c          | 70 ++++++++++++++++++++++
->  drivers/char/tpm/tpm-dev.c                 |  2 +
->  drivers/char/tpm/tpm-dev.h                 |  2 +
->  drivers/char/tpm/tpmrm-dev.c               |  2 +
->  tools/testing/selftests/tpm2/tpm2_tests.py | 11 ++--
->  5 files changed, 82 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> index 553fc6aca94d..5189c1d72058 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -13,8 +13,10 @@
->   * Device file system interface to the TPM
->   */
->  #include <linux/poll.h>
-> +#include <linux/sched.h>
->  #include <linux/slab.h>
->  #include <linux/uaccess.h>
-> +#include <linux/uio.h>
->  #include <linux/workqueue.h>
->  #include "tpm.h"
->  #include "tpm-dev.h"
-> @@ -253,6 +255,74 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
->  	return ret;
->  }
->  
-> +/*
-> + * Reject io_uring and AIO. IORING_OP_READ_MULTISHOT requests use a
-> + * synchronous kiocb, so also check for NOWAIT attempts and io-wq workers.
-> + */
-> +static bool tpm_iter_is_async(struct kiocb *iocb)
-> +{
-> +	return !is_sync_kiocb(iocb) ||
-> +	       (iocb->ki_flags & IOCB_NOWAIT) ||
-> +	       (current->flags & PF_IO_WORKER);
-> +}
-> +
-> +/* Preserve the VFS fallback's per-iovec read/write semantics. */
-> +ssize_t tpm_common_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> +{
-> +	struct file *file = iocb->ki_filp;
-> +	ssize_t ret = 0;
-> +
-> +	if (tpm_iter_is_async(iocb) || !user_backed_iter(to))
-> +		return -EIO;
-> +
-> +	while (iov_iter_count(to)) {
-> +		size_t len = iter_iov_len(to);
-> +		ssize_t nr;
-> +
-> +		nr = tpm_common_read(file, iter_iov_addr(to),
-> +				     len, &iocb->ki_pos);
-> +		if (nr < 0) {
-> +			if (!ret)
-> +				ret = nr;
-> +			break;
-> +		}
-> +		ret += nr;
-> +		iov_iter_advance(to, nr);
-> +		if (nr != len)
-> +			break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +ssize_t tpm_common_write_iter(struct kiocb *iocb, struct iov_iter *from)
-
-These should be static.
-
-> +{
-> +	struct file *file = iocb->ki_filp;
-> +	ssize_t ret = 0;
-> +
-> +	if (tpm_iter_is_async(iocb) || !user_backed_iter(from))
-> +		return -EIO;
-> +
-> +	while (iov_iter_count(from)) {
-> +		size_t len = iter_iov_len(from);
-> +		ssize_t nr;
-> +
-> +		nr = tpm_common_write(file, iter_iov_addr(from),
-> +				      len, &iocb->ki_pos);
-> +		if (nr < 0) {
-> +			if (!ret)
-> +				ret = nr;
-> +			break;
-> +		}
-> +		ret += nr;
-> +		iov_iter_advance(from, nr);
-> +		if (nr != len)
-> +			break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  __poll_t tpm_common_poll(struct file *file, poll_table *wait)
+>  security/integrity/ima/ima_fs.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima=
+_fs.c
+> index 2a0bca554316..6d5e061f88c2 100644
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@ -528,7 +528,7 @@ static const struct file_operations ima_ascii_measure=
+ments_staged_ops =3D {
+>  static ssize_t ima_read_policy(char *path)
 >  {
->  	struct file_priv *priv = file->private_data;
-> diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-> index 74488f0a7b78..9c2f0ad826be 100644
-> --- a/drivers/char/tpm/tpm-dev.c
-> +++ b/drivers/char/tpm/tpm-dev.c
-> @@ -62,6 +62,8 @@ const struct file_operations tpm_fops = {
->  	.open = tpm_open,
->  	.read = tpm_common_read,
->  	.write = tpm_common_write,
-> +	.read_iter = tpm_common_read_iter,
-> +	.write_iter = tpm_common_write_iter,
->  	.poll = tpm_common_poll,
->  	.release = tpm_release,
->  };
-> diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-> index 34efb1ffa491..2f2186e6f094 100644
-> --- a/drivers/char/tpm/tpm-dev.h
-> +++ b/drivers/char/tpm/tpm-dev.h
-> @@ -28,6 +28,8 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
->  			size_t size, loff_t *off);
->  ssize_t tpm_common_write(struct file *file, const char __user *buf,
->  			 size_t size, loff_t *off);
-> +ssize_t tpm_common_read_iter(struct kiocb *iocb, struct iov_iter *to);
-> +ssize_t tpm_common_write_iter(struct kiocb *iocb, struct iov_iter *from);
->  __poll_t tpm_common_poll(struct file *file, poll_table *wait);
->  
->  void tpm_common_release(struct file *file, struct file_priv *priv);
-> diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
-> index 19e8f2779265..0c8c1a1b0b3b 100644
-> --- a/drivers/char/tpm/tpmrm-dev.c
-> +++ b/drivers/char/tpm/tpmrm-dev.c
-> @@ -49,6 +49,8 @@ const struct file_operations tpmrm_fops = {
->  	.open = tpmrm_open,
->  	.read = tpm_common_read,
->  	.write = tpm_common_write,
-> +	.read_iter = tpm_common_read_iter,
-> +	.write_iter = tpm_common_write_iter,
->  	.poll = tpm_common_poll,
->  	.release = tpmrm_release,
->  };
-> diff --git a/tools/testing/selftests/tpm2/tpm2_tests.py b/tools/testing/selftests/tpm2/tpm2_tests.py
-> index dc4e642450d6..dc1814e0c701 100644
-> --- a/tools/testing/selftests/tpm2/tpm2_tests.py
-> +++ b/tools/testing/selftests/tpm2/tpm2_tests.py
-> @@ -9,6 +9,7 @@ from tpm2 import ProtocolError
->  import unittest
->  import logging
->  import struct
-> +import errno
->  
->  class SmokeTest(unittest.TestCase):
->      def setUp(self):
-> @@ -386,15 +387,15 @@ class UringTest(unittest.TestCase):
->                            tpm2.TPM2_PT_FIXED, 1)
->          try:
->              client.tpm.write(cmd)
-> -            # Offset 10 stays inside the response, so an unpatched kernel
-> -            # skips the header instead of reading out of bounds
-> -            res, rsp = uring_read(client.tpm.fileno(), 4096, 10)
-> +            res, _ = uring_read(client.tpm.fileno(), 4096, 10)
-> +            # The rejected read must leave the whole response in place
-> +            rsp = client.tpm.read(4096)
->          finally:
->              client.close()
->  
-> -        self.assertGreaterEqual(res, 10)
-> +        self.assertEqual(res, -errno.EIO)
->          sz, rc = struct.unpack('>II', rsp[2:10])
-> -        self.assertEqual(sz, res)
-> +        self.assertEqual(sz, len(rsp))
->          self.assertEqual(rc, 0)
->  
->      def test_read_tpm(self):
-> -- 
-> 2.52.0
-> 
+>  	void *data =3D NULL;
+> -	char *datap;
+> +	char *datap, *buf =3D NULL;
+>  	size_t size;
+>  	int rc, pathlen =3D strlen(path);
+> =20
+> @@ -548,6 +548,23 @@ static ssize_t ima_read_policy(char *path)
+>  	rc =3D 0;
+> =20
+>  	datap =3D data;
+> +
+> +	/*
+> +	 * kernel_read_file_from_path() does not NUL-terminate the buffer.
+> +	 * If the policy does not end with a newline, parse a NUL-terminated
+> +	 * copy, so that strsep() does not scan past the end of the buffer.
+> +	 */
+> +	if (size && datap[size - 1] !=3D '\n') {
 
-I think it would be best if you would squash the test part to your
-other patch that adds python test. You can then change the license
-too while at it.
+Hi Roberto,=20
 
-I.e. add the whole test as part of this patch set.
+Why allocate a copy rather than reject the file when the last byte is neith=
+er
+'\n' nor '\0'?
 
-Br, Jarkko
+if (size && datap[size - 1] !=3D '\n' && datap[size - 1] !=3D '\0') {
+	vfree(data);
+	return -EINVAL;
+}
+
+That avoids the out-of-bounds read with no allocation, and it keeps the cur=
+rent
+behavior, since a policy with an unterminated last rule is already rejected=
+ with
+-EINVAL. Is accepting a policy with no trailing newline an intended change,=
+ or
+just a side effect of the fix?
+
+Thanks,
+
+Mimi
+
+> +		buf =3D kmemdup_nul(data, size, GFP_KERNEL);
+> +		if (!buf) {
+> +			vfree(data);
+> +			return -ENOMEM;
+> +		}
+> +		datap =3D buf;
+> +		/* Count the NUL terminator, included in ima_parse_add_rule(). */
+> +		size++;
+> +	}
+> +
+>  	while (size > 0 && (p =3D strsep(&datap, "\n"))) {
+>  		pr_debug("rule: %s\n", p);
+>  		rc =3D ima_parse_add_rule(p);
+> @@ -557,6 +574,7 @@ static ssize_t ima_read_policy(char *path)
+>  	}
+> =20
+>  	vfree(data);
+> +	kfree(buf);
+>  	if (rc < 0)
+>  		return rc;
+>  	else if (size)
