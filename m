@@ -1,92 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.176
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795528622;
-	b=beW6zEwhidoEgKqZqyljjmm2Km2GhxU4LejKk9rnlFDRDxAGF/bS6WkryriJKBievFHq
-	 0EBrT++Ey7KXYQn5TvD79jNVW5693+2It+XMqxLSsV0F7didaCfFeW1FuNxOPJ4ShsczX
-	 Z2TKaMmA23Nen4leJBy/tBYs3B8Qm/iMM/GvQErle1yjgj/MmEJxmzR2cKItf5R7ZPOrh
-	 oWOjieG75kem9IFNGtHHcBTZObHqlqlu9yGz9anVoGyuL9c5z1kUpXhM+FPqeLKpMhObW
-	 0DzrzxvHJfzn4KGnPy6GjSJRdnZ1NEzr8AR6sNWs2ZCzqGYLFh8Eo11mNNDdnHWp4qg==
+	t=1795530280;
+	b=1amYf9Eb9yinYJhKBKPZBzKgKqpZ7Uy/Sa81iZ1b2SE3nB70OMWR89jibDu2Rg9uXgYc
+	 uVX9CHz/YJ1tbFsBmKx9UdWnIYJeQ/24z5dRZcXnYyauM99EUWsy6Xty7eCDqhQ3IbcFY
+	 DwSVvPtejGScDMJq8a7nCKHHDcBLUdqf+HOp+W5vMccxx9zUzLenqfAhlVe3iWtdixe4x
+	 I5r7cxgZMijaz/TG0EIPErWTGuEtgiAXT93r7MQF2pL7f/5ykCc9YoESW+37OKe0FqGhf
+	 nFtU1Ui1KShs/HOOboEgAy4GCnVaAsKMwIR92q27iJvGSBq7TtVgzE4Cyb1J28U8z7A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795528622;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Autocrypt:Content-Type:
-	 Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=itbrjM4Vsygy1H0F0wv0PDqACzzXdZib2AUrYhCNxGE=;
-	b=Nxr+KcARAi+Wur1kXrXjNdNpOiBwdrGZ2//M+YkVEGjMdK/Rx9rupdVZneRm2P7zs5t6
-	 ZuO743XKo26sOe95hU9SZrHUyneWmMG8SMH81edvGaNf3xKkkQKZCOXRAvxFMDsCuacPF
-	 B8gdgDxaLEvZquqbxRpEi/1gWKKSnZb3e8q2/XJlyUKCv72pKm0EbNJjeEtdIWIvrK+LH
-	 fsg39K2v99axCUpoYPCs9ID/kSWU1QZE56ixi0jlwCLNP1y7pTO9kVHUS0UKv2jYK3By9
-	 lb0/kiy1jAu/4phxw+rfYRap4/bVBEKNrIaiRHZcbhvgWwH0lI2HKecyi49amBkfW1w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795530280;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=zeYR8ZpHeq1pZR+dWFeLvQVug9RPwZ0JSTo3dxUe7oU=;
+	b=p2QdwOQxX+YufJMqyy6r60dKRUjh/7u/47vE0Ga3ELp3CXP42+N0SG9mr7K5/k1REQ9O
+	 jz5Y/SqU3h6bn5KmQq8zPD1iqJ3av4KI0R5MsKxb+/twkUqvVx05l6q6Fh54kXw76ZCfz
+	 0G14NmWwgf1XvCAjLJ8REtHFd8646NhZxCCdSYj3YUTt3wTnG80UotVUr1VV9iuLLN2jy
+	 Q3wNndBL5RoVd3eS/3eSGc1GSp+OJ0QzIWChJ9hRH7PsBPXLNbH1guS20IThLLVCkvukz
+	 EUjklQkZyPRYGry14pDMGfKsHEqYAUJDWCh3C+FT2Gm8JkHFAWuZtEv5+HqgpUsObVA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=HansenPartnership.com;
-	spf=pass smtp.mailfrom=HansenPartnership.com;
-	dkim=pass header.d=hansenpartnership.com header.i=@hansenpartnership.com header.a=rsa-sha256 header.s=20151216 header.b=UoaQYs4q;
-	arc=none smtp.remote-ip=198.37.111.173
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=cloudlinux.com;
+	spf=pass smtp.mailfrom=cloudlinux.com;
+	dkim=pass header.d=cloudlinux.com header.i=@cloudlinux.com header.a=rsa-sha256 header.s=google header.b=LmHp0DqC;
+	arc=none smtp.remote-ip=209.85.128.176
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474C6606A31E;
-	Tue, 24 Nov 2026 13:57:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 474C6606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4842C606A32A
+	for <linux-integrity@vger.kernel.org>; Tue, 24 Nov 2026 14:24:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4842C606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cloudlinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudlinux.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.a=rsa-sha256 header.s=20151216 header.b=UoaQYs4q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1795528620;
-	bh=XlCM40uFy1qcEBiaeIgSy61xYvoYIP2WJvzH+1MvZ6w=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=UoaQYs4qL23we/csnAnk+lSTr86UZN7B2r4f1keQpo0tMXkCxm/VJkKVzNkdTX6oc
-	 UmlFBQIrDP2CAhLMEUSHh7l5HdldjwrJA48mDyjjsTOmDVKZyJnpvas+KltDYPT1UP
-	 ofLnkYXeanG+nKEp/W04fqAkmeUpw55K/QSZlWh4=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:d341::8309])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 051FB1C01C9;
-	Tue, 24 Nov 2026 08:56:59 -0500 (EST)
-Message-ID: <b4c2860a41daafb789a2386f2779e5f9f8741d8e.camel@HansenPartnership.com>
-Subject: Re: [PATCH] lib/asn1_encoder: fix encoding of zero OID components
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Andrew Morton <akpm@linux-foundation.org>, zzz <abc0eichs@qq.com>
-Cc: linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>, David
- Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
- linux-integrity@vger.kernel.org
-Date: Tue, 24 Nov 2026 08:56:59 -0500
-In-Reply-To: <20261123220311.9ee34b6c33545185d41d09ce@linux-foundation.org>
-References: <tencent_AFE15D698FFD4F18E16A6EF7CDA002D69806@qq.com>
-	 <20261123220311.9ee34b6c33545185d41d09ce@linux-foundation.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNE
- lecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn
- 1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHU
- RfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8
- X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvd
- HRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGw
- MGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAml2ZBI
- FCS3GUMIACgkQgUrkfCFIVNZKjQf/deRzlXZClKxTC/Ee2yEPqqS7mm/INUA49KdQQ5oIhSxkUBy0
- 9J4qjMIo5F8ZFkFTqikBqeL35LKu7O7rn8WETfX8Bxvos3HUsl3jHo34DES4MUFIpoQPgtiLRGwLb
- K0cVCAArR2u2qj4ABmTRrs1I1kvdjEw6gatOuXtEe/j5O2fvfzTq9GBr0Q3n2IAsFXi4hLlx6VPE8
- tyWUZ8BWJKtih3JAeUiXFvASL3McV0rV9RnU0VbjEQEhSE7PMYhWpnDC9AyBb0lXJllQRvC3NSkUB
- 8KVQgNNxRPss0WE/nBoZ4dFA42jTyzTz8lNylxZoAWV7WJb3QxVg4oCodRVrxxrQhSmFtZXMgQm90
- dG9tbGV5IDxqZWpiQGtlcm5lbC5vcmc+iQFVBBMBCAA/AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeA
- QIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mYBQkbNYS9AAoJEIFK5HwhSFTWBpwIAL5Bk3
- 5FB34U6iHmDzzgdCbxLTs43T/YQyJpcGIvopBvnI/fDY8oSG6Df64/O6B+1R+A8TDp6ZG5ysUWnCC
- 6GuIaEHemBYkitMPglR6+sGCMQY7O0mlsPvdssvKK1KI9Bno4VU6ogaF2qVzefSqg1Djmf/DcsxWP
- rI/jdJ8FB5AYR2rjIdDFc+zRdAJuavo1/anyY2wgpFh/3R8IOYAEfWV9nGgYkf9+tA4EIn1sxE0I3
- L5oW2N3mbyRrkzuBwO8ztMCwqEPk7moWzhokcZqMXiAIahaZdkashJC+s2X2RZSGCy+g+pvY5NN4B
- BVG5XwLgVBqbHMTcxE0fbmPqz+q6O0LEphbWVzIEJvdHRvbWxleSA8amVqYkBoYW5zZW5wYXJ0bmV
- yc2hpcC5jb20+iQFXBBMBCABBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmODZ5ACGwMFCRs1hL0F
- CwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQgUrkfCFIVNZu0Af/TzvL2/NdgAcw9uN3x60H8
- jc4QUq14VpxcFEFEMpcj1morkX/G93V+56HBBaXZj+yK8PhxIA/SIz+sU7C/0YvKuvzakP8ZX/7WJ
- e32SOUtjfr/VTaqjIBzNj6OxLvZpmNbBw7s6DwhhNpHOWqJ/1ml+PtDRDV71IB58yVqQjp1xlNKVl
- ZppcJ5908EJzsFnRIVjiQiDSKoppqB2BCibBbrWcln7CiWMyOC/cco6SIn6twH+f7+aivJ3xGcOE2
- a9gBKF5rNi9TBoX9oyPmshv/TDmnohsVrH7AYXlGYfZTk15SWEiROh1QX8/uD9wl/gcIv5EDUpT/F
- L2jzOsA5663bw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	dkim=pass (2048-bit key) header.d=cloudlinux.com header.i=@cloudlinux.com header.a=rsa-sha256 header.s=google header.b=LmHp0DqC
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-8b4c685c751so39308937b3.1
+        for <linux-integrity@vger.kernel.org>; Tue, 24 Nov 2026 06:24:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudlinux.com; s=google; t=1795530279; x=1796135079; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=zeYR8ZpHeq1pZR+dWFeLvQVug9RPwZ0JSTo3dxUe7oU=;
+        b=LmHp0DqC0LRcWzknI/MLiNMBE5IdV/Pjma5UHmY8zzorIPCtV77jLK8KiLMmtFYLBa
+         89+/Z7XRSKgZNZi/nP/r/BuULrWI8qfvyRnxdRp5fo5qaRng8tk6qVQPcotdmlglWm3+
+         SgfB610d4aAbAILLqBTOthGY7bd8E116LiOqP0ypMvHkcA4PSjyQwVzkfxgVwwQOlkmS
+         IMJ31/cqmFDQd21IDMxpIVV0OQeZwvyvEBPu2gBWJE+1QJz/3t6HvR4n9x0+SF5ymL8j
+         Q6pKroRBs45PhDK1IuSE17NFWuehw3+EfRM6C28jlCVOSQ43D5Ntiimv0yoYBSJYQGbw
+         XyJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795530279; x=1796135079;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=zeYR8ZpHeq1pZR+dWFeLvQVug9RPwZ0JSTo3dxUe7oU=;
+        b=iVCQjYqOweLAoWTfWO42FTomcLkZ3knuon4cOdNXx/p8/bSrA+fJUuUeDvbKtQyibp
+         td2Y7EuC0zIH15GDvsllaL/RTYgPt5VNFCPKvleh3aV0pFvWJ8YSB/nm+KsM8quqOBDf
+         wzzqOP1GhVtFgG/7eySI2GUFLp89dXgH+kvGowQKgoa9fwHA18rb2xP7crnPIDPjR+OT
+         N64rvVFDYW1rnm4sMaFV/wQ3CR6UEu+tpuxnYKpePksZxS5xkqYvAWMm76OYEk0Ji97L
+         2SIwj/rmD2XnxIO6fRLlZ2Sjyl7sw6D817J1jUajGVXr8vD6iG1XwWOJsugD040k7Nz2
+         GDwQ==
+X-Forwarded-Encrypted: i=1; AL+hErEmVylESDgnVhGCf3WLEobS4Am8LUIPeGD6zL/C2jnOwvmlgnqHkfy0oo623MpYu6oAy+KhnrKBF4Gt1wDnwOY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+z2ytk2UuPcm4Sq7BAKWJd9RqEj3fanDqOC6JXzX3m6QGcxNbJ
+	UvRRXxuTOnNIfBXu7CvdJbjxiw7x/jmsdi6huWn768j5/eYaCYDWW0ezHcszqhKPAyE=
+X-Gm-Gg: AZFdTZdkOjxY8NrFFV9WMxTDhWDY2Ou/NI6yyVMG7gRxfpqNRW8aemov4l7z5gQpgnW
+	0QTNm11SuUKRHbJ2h9tHEVb3jFcv56K4DBUTW+1rCSEhozzxjC6AMOUnNDc5QgDBhGIWM+DsjKC
+	/ZRlINvqpM5ne4lVLom5Cy2dIW6fiNNMOEvPrQAQGLpb2JrWKX+kh+X4mn4a9qmUg7FcqQ4WNIl
+	QHbfi277xrjuPscnvcrUBiWcdFjvpvNVyiqw48XfpLrTvbup71ZZYGNL39c2qw/4sboZrUemPZQ
+	uQbyban4t9A2QtbWxc1ZG3uvME9RkiHiuzxbFLECm2Kkn94U7LXrOqTBjOPB6ubxHzjdG2BfR69
+	zZAek47pNlVt4abOEolrRpNhUtUmCET9rHS0RDeeKIhXK9LqVAOvHP8agW1VEdy7nY2jAVdsLj7
+	qSe5Lt7C4i8cguZ0Nw7zDuv38ReJ9690Dzm7WNa/PM/kRHZ57ZXiT0H7IasF5wmzKuebUUPHaZp
+	6zwror8TJgHso7xj1gboe+n8384s9o7yEAuuNJo3OKf3kI5ZOTGpbeODr6leBHpBbAhJk/nUv50
+	FnDkgy05HmCHs06FkKnGdQdrAAbMaGjgTeg8zl4=
+X-Received: by 2002:a05:690c:e004:20b0:8b5:6583:a09f with SMTP id 00721157ae682-8b56583a41dmr3892037b3.100.1795530278752;
+        Tue, 24 Nov 2026 06:24:38 -0800 (PST)
+Received: from rmustafin-laptop ([27.79.41.63])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-8b52033c2d4sm58062957b3.36.2026.11.24.06.24.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2026 06:24:38 -0800 (PST)
+From: Rustam Mustafin <rmustafin@cloudlinux.com>
+To: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+	Shuah Khan <shuah@kernel.org>,
+	Jaewon Yang <yong010301@gmail.com>,
+	linux-integrity@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rustam Mustafin <rmustafin@cloudlinux.com>
+Subject: [PATCH v3 0/2] tpm: Do not allow io_uring for /dev/tpm0 and /dev/tpmrm0
+Date: Tue, 24 Nov 2026 21:24:30 +0700
+Message-ID: <20261124142432.368943-1-rmustafin@cloudlinux.com>
+X-Mailer: git-send-email 2.52.0
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -96,68 +100,54 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2026-11-23 at 22:03 -0800, Andrew Morton wrote:
-> On Fri, 20 Nov 2026 21:00:55 +0800 zzz <abc0eichs@qq.com> wrote:
-> > --- a/lib/asn1_encoder.c
-> > +++ b/lib/asn1_encoder.c
-> > @@ -97,7 +97,7 @@ static int asn1_encode_oid_digit(unsigned char
-> > **_data, int *data_len, u32 oid)
-> > =C2=A0
-> > =C2=A0	/* quick case */
-> > =C2=A0	if (oid =3D=3D 0) {
-> > -		*data++ =3D 0x80;
-> > +		*data++ =3D 0;
-> > =C2=A0		(*data_len)--;
-> > =C2=A0		goto out;
-> > =C2=A0	}
+io_uring passes its own file offset to the TPM character devices despite
+nonseekable_open(), and its asynchronous requests do not fit the single
+command and response per open file. Patch 1 rejects io_uring and AIO with
+-EIO. Patch 2 adds the selftest and replaces the separate selftest
+patch [1].
 
-Yes, well, I was just thinking about the single case when I wrote it.
-Actually, wouldn't getting rid of all the special casing make this code
-more maintainable.  Something like
+The series applies on top of "tpm: Track the response read position
+internally" [2].
 
-diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
-index 92f35aae13b1..fc97cb4d27fa 100644
---- a/lib/asn1_encoder.c
-+++ b/lib/asn1_encoder.c
-@@ -92,15 +92,9 @@ static int asn1_encode_oid_digit(unsigned char
-**_data, int *data_len, u32 oid)
- 	int start =3D 7 + 7 + 7 + 7;
- 	int ret =3D 0;
-=20
--	if (*data_len < 1)
--		return -EINVAL;
--
- 	/* quick case */
--	if (oid =3D=3D 0) {
--		*data++ =3D 0x80;
--		(*data_len)--;
--		goto out;
--	}
-+	if (oid >> 7 =3D=3D 0)
-+		goto encode_last;
-=20
- 	while (oid >> start =3D=3D 0)
- 		start -=3D 7;
-@@ -116,6 +110,7 @@ static int asn1_encode_oid_digit(unsigned char
-**_data, int *data_len, u32 oid)
- 		(*data_len)--;
- 	}
-=20
-+ encode_last:
- 	if (*data_len > 0) {
- 		*data++ =3D oid;
- 		(*data_len)--;
-@@ -123,7 +118,6 @@ static int asn1_encode_oid_digit(unsigned char
-**_data, int *data_len, u32 oid)
- 		ret =3D -EINVAL;
- 	}
-=20
-- out:
- 	*_data =3D data;
- 	return ret;
- }
+preadv2() and pwritev2() with RWF_SYNC, RWF_DSYNC, RWF_APPEND or
+RWF_NOAPPEND now succeed and ignore the flag, instead of failing with
+-EOPNOTSUPP.
 
-?
+Tested with swtpm in QEMU: the tpm2 selftests pass, and the new one fails
+without patch 1.
 
-James
+Changes in v3:
+- squash the selftest into this series, SPDX GPL-2.0-only (Jarkko)
+- keep tpm_common_read_iter() and tpm_common_write_iter() non-static:
+  like tpm_common_read() and tpm_common_write(), they are used in
+  tpm-dev.c and tpmrm-dev.c (Jarkko)
+
+Changes in v2:
+- open the message with the use case, rewrap (Jarkko)
+- drop the CONFIG_IO_URING guards (Jarkko)
+- drop Suggested-by
+
+[1] https://lore.kernel.org/all/20261123165638.2161305-1-rmustafin@cloudlinux.com/
+[2] https://lore.kernel.org/all/20261120121614.978396-2-rmustafin@cloudlinux.com/
+v2: https://lore.kernel.org/all/20261123173321.2363162-1-rmustafin@cloudlinux.com/
+v1: https://lore.kernel.org/all/20261120142116.1630010-1-rmustafin@cloudlinux.com/
+
+Rustam Mustafin (2):
+  tpm: Do not allow io_uring for /dev/tpm0 and /dev/tpmrm0
+  selftests: tpm2: test that io_uring reads are rejected
+
+ drivers/char/tpm/tpm-dev-common.c          | 70 +++++++++++++++++++++
+ drivers/char/tpm/tpm-dev.c                 |  2 +
+ drivers/char/tpm/tpm-dev.h                 |  2 +
+ drivers/char/tpm/tpmrm-dev.c               |  2 +
+ tools/testing/selftests/tpm2/Makefile      |  2 +-
+ tools/testing/selftests/tpm2/test_uring.sh | 15 +++++
+ tools/testing/selftests/tpm2/tpm2_tests.py | 72 ++++++++++++++++++++++
+ 7 files changed, 164 insertions(+), 1 deletion(-)
+ create mode 100755 tools/testing/selftests/tpm2/test_uring.sh
+
+-- 
+2.52.0
+
