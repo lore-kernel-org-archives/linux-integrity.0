@@ -1,83 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=52.13.214.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795553388;
-	b=V5STpDqnEfJNZ4Z7/io+omZdK6q3Fzy40mogspFNyrwrOyckQ2Y7pD8MovA/q5TCt0e2
-	 LVVOUneBs1IYGueB+Yz2Y6newUjYaeagPIvVpU+YRCgWjU+GXwMjz56D1CrdhIdLAexh9
-	 hRX6X4yaVNW+jnxJp/a4g1YCkK5VOg8JNyKM+tEDavKDOUedgUOGrJ/+iT+qhdXLuyL4J
-	 VZLwGiS4YWsg7XnhwGDphGqjWW/cVDFk20BxUXb1yoydJ5aJKuq5AaCOlV1IP/mtoZOJX
-	 LXedx8NY4AbAWrJah6W2F7HGX5eN4jczNiJW9lzpGtv60fPcj9Ui3Ux7aqGDMViaMqw==
+	t=1795557039;
+	b=o+phFy68fex1rZ2WHSljPP6RlcoaP/JnuU3xpwWapdgm+/7iCLQ8ES/WsLFWD5rwt//1
+	 wBfDyurCxGr1cMjYRwLT1TCaB3Nv9yvXJWtxnaihdsq9ugpX+pFZPo+D2UjMU5jQ/51lv
+	 iO2rOEGbhr6luJZ4Qqgd94S0IlAVnJ/Zug4HvkWunysTOsBwNKl3VforSZ5z/y2Lnogso
+	 25SOAbWvu/ghJlblFw+wDWpj3CvnORicGhINkX3d5GIkn++KAfgR3Z1IcCiLC1iw7r6ae
+	 5KVKVgNG+rMSHDdzGiwhdDZf+Si27P4XGR19Lz2wjLpjEDBPT5zXf8Bix0kyr6EbpSg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795553388;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:Received:Received:X-Farcaster-Flow-ID:Received:Received:
-	 From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
-	 X-ClientProxiedBy;
-	bh=aZOxy3IDrLOi1f5Dp27umugLMwQwEKzdDvwJBP8P0fg=;
-	b=d6jTICzEeHpjl0JIgLMjhqPv6bs/LH6RA8NpZ2i16fRxhCF0ZywpWoLJjWW7rSosabqs
-	 a1p2iykIwBvpwrjUd1xzWTj2QIi49jg4o33SenwTHRh79ECTxdmj2eFMgWdEvnsNa/ACF
-	 1iT6DKKnR882JcpIOmnkhBkg5RmYr/JvHiNTmbOVzyH81poUvizgAT7clu0ZtSs3zYYmG
-	 cyd/OkT8rs8o4PdrwpeBaw3yzsPKJdPQuRUPCxPwYDjQyOD9efv4FRUsFCL2KCn0kLdfQ
-	 ZtKwv4wuqr1OTS+NCAw5fiQXieXWiheFf32xnfaeI38kuHZJBWmbyqmWhK6aS0keDtg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795557039;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=HPQGhKZOJYbcgM9bz9ZQjAOFYxjCQ/qr2l3E19IpCeA=;
+	b=DdaKc3PX/J62e0DH4qmmpW/m/GjQFxJFZ5YJnBhHZjGpithtvfP8imyvUd9sVDRW5Fp9
+	 T8hHekexLXw6s8brWBQdPK7c/Ynhsw5I2jFj+zZr1TSd1Br6XufwN5e7Hsp4E92YinTHu
+	 jCaRVVVj6GLRIQE5cehTBKvdGaQITfBu9b3326BIjGxR6rvvzqP6sHxAVBn8uPlj1imM2
+	 qhlczytU+muvzaSnLVXL6/A77QiZCgNNPkXSSrEqegOZ/NBssY61HschuyhVGbGFjl2YX
+	 p/5/k5eVanb8RygZSrzmkS1v7FC1WJV9oMqDC5fqMFsPUi48zM5rl4YomZsErXWUVNw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amazon.com;
-	spf=pass smtp.mailfrom=amazon.com;
-	dkim=pass header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b="SMUuO/7h";
-	arc=none smtp.remote-ip=52.13.214.179
-Received: from pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.13.214.179])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jc7OOvaP;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E6B606A31E;
-	Tue, 24 Nov 2026 20:49:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A8E6B606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236A0606A326;
+	Tue, 24 Nov 2026 21:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=SMUuO/7h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1795553387; x=1827089387;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=aZOxy3IDrLOi1f5Dp27umugLMwQwEKzdDvwJBP8P0fg=;
-  b=SMUuO/7hyDGMjebWkVlFB9qja2A0+AoniVYOH0S+R8pvJzgzBWP18OtK
-   zVjs587XAWwGKwQANswYzJcxROzbkaV4Y4EERBKXdbTuGqY0mPu33m7Zx
-   irPpOF0MW53R9vfV7W1C8Fm0S+mAS6MVJz4OlvmwnvjD6TJ0Lx31d1XUE
-   HTQqtDbHm43m4eF2PJvKTGYilcTleZbcqzLwwdfxrkC1WfNQWuR6WCPoV
-   iiZ+i6bA/ga3uT8ugeZlgL2Piwj6N8QBy2OAzFyc+jTqSKkPr4pPcXNKO
-   jHVHettnNJJupEjJ8Oqh828POT256+EjsGYpQQunw7fil23YdS3OIf9LP
-   Q==;
-X-CSE-ConnectionGUID: jm7m2KLtTyyolTeZiPjZXA==
-X-CSE-MsgGUID: i0WwmFTtS5iYMjGreeTecw==
-X-IronPort-AV: E=Sophos;i="6.27,231,1787011200"; 
-   d="scan'208";a="34997886"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2026 20:49:45 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [205.251.233.111:25607]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.12:2525] with esmtp (Farcaster)
- id fd423222-3303-469a-bd87-676a79badd10; Tue, 24 Nov 2026 20:49:44 +0000 (UTC)
-X-Farcaster-Flow-ID: fd423222-3303-469a-bd87-676a79badd10
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.57;
- Tue, 24 Nov 2026 20:49:44 +0000
-Received: from dev-dsk-surenkj-2b-416930d2.us-west-2.amazon.com (10.169.26.94)
- by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.57;
- Tue, 24 Nov 2026 20:49:44 +0000
-From: Surendran Kanagaraj <surenkj@amazon.com>
-To: <jarkko@kernel.org>
-CC: <corbet@lwn.net>, <graf@amazon.de>, <gunnarku@amazon.com>, <jgg@ziepe.ca>,
-	<joshlev@amazon.com>, <leitao@debian.org>, <linux-doc@vger.kernel.org>,
-	<linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nh-open-source@amazon.com>, <noodles@earth.li>, <peterhuewe@gmx.de>,
-	<rdunlap@infradead.org>, <skhan@linuxfoundation.org>, <surenkj@amazon.com>
-Subject: Re: [RFC PATCH v4 4/8] tpm: Bound core and CRB waits by the limits table
-Date: Tue, 24 Nov 2026 20:49:41 +0000
-Message-ID: <20261124204941.18416-1-surenkj@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <awA7ns3kfuOBanxW@kernel.org>
-References: <awA7ns3kfuOBanxW@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jc7OOvaP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C7301F000E0;
+	Tue, 24 Nov 2026 21:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795557038;
+	bh=HPQGhKZOJYbcgM9bz9ZQjAOFYxjCQ/qr2l3E19IpCeA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Jc7OOvaPR9KhpUEr3/6FLFv27Uabh1Q3B0tiRuK7P69iUJkNdpDNEg3nraglUcLLz
+	 yVQxsYtLr4SXFdGZiPFhIxzZrG2M2XNG5ZTTl0p3ofLyn35D+dKTfrwD1DEc607VHq
+	 tQuAO7VIqpSyFi0o7KxHcZYW13RG1fQqcsFE/iIfyenNTrpKj2UEX9Ic5VzlrKZJcT
+	 t1zKl91o4GUJSSrWgmalI/j5Yb0aPRI6m+JxJJu0rXOY86hcVFceirH2Wh1sKwqGHk
+	 vwJk+sn/Q1va0JBDfNz1g+z45NOaoJM2bnPdjHLpTBdFjbAQS4f9d7wBOXGPcUgG9h
+	 YY8EEDtHeIoiQ==
+Date: Tue, 24 Nov 2026 21:50:35 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: keyrings@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Alasdair Kergon <agk@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	David Gstir <david@sigma-star.at>,
+	David Howells <dhowells@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ignat Korchagin <ignat@linux.win>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	James Morris <jmorris@namei.org>,
+	James Prestwood <prestwoj@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>,
+	Lukas Wunner <lukas@wunner.de>, Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Sumit Garg <sumit.garg@kernel.org>
+Subject: Re: [PATCH v2 6/9] KEYS: Factor out KEYCTL_PKEY
+Message-ID: <20261124215035.GE2227373@google.com>
+References: <20261124194043.1651679-1-jarkko@kernel.org>
+ <20261124194043.1651679-7-jarkko@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -87,37 +81,30 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWC004.ant.amazon.com (10.13.139.246) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261124194043.1651679-7-jarkko@kernel.org>
 
-Hi Jarkko,
-Thanks for the review.
+On Tue, Nov 24, 2026 at 09:40:40PM +0200, Jarkko Sakkinen wrote:
+> diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+> index c73979b2e98e..1c78a9a663c5 100644
+> --- a/crypto/asymmetric_keys/Kconfig
+> +++ b/crypto/asymmetric_keys/Kconfig
+> @@ -2,6 +2,7 @@
+>  menuconfig ASYMMETRIC_KEY_TYPE
+>  	bool "Asymmetric (public-key cryptographic) key type"
+>  	depends on KEYS
+> +	select KEYCTL_PKEY
+>  	help
+>  	  This option provides support for a key type that holds the data for
+>  	  the asymmetric keys used for public key cryptographic operations such
 
-On Fri, Nov 20, 2026 at 02:22:54PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Nov 18, 2026 at 07:38:48AM +0000, Surendran Kanagaraj wrote:
-> > Polls in tpm_try_transmit() still use fixed 1 ms sleeps and
-> > tpm_transmit() stops retrying once the next backoff would pass
-> > TPM2_DURATION_LONG and tpm_crb always waits TPM2_TIMEOUT_C.
-> > A value set through ->adjust_limits() reaches neither the retry
-> > loop nor the crb waits.
-> >
-> > [...]
-> > ---
-> >  drivers/char/tpm/tpm-interface.c | 57 +++++++++++++-------------
-> >  drivers/char/tpm/tpm-limits.c    | 19 +++++++++
-> >  drivers/char/tpm/tpm.h           |  2 +-
-> >  drivers/char/tpm/tpm_crb.c       | 70 +++++++++++++++++---------------
-> >  4 files changed, 87 insertions(+), 61 deletions(-)
-> >
-> > [...]
->
-> Is it possible to slice this to more intermediate steps, or not?
+Could we use this opportunity to give CONFIG_KEYCTL_PKEY an
+off-by-default prompt like CONFIG_KEY_DH_OPERATIONS, please?  There are
+a lot of systems that need ASYMMETRIC_KEY_TYPE for verifying signatures
+but don't the KEYCTL_PKEY keyctls.  The fact that the KEYCTL_PKEY
+keyctls get pulled in too has always been a huge problem, given the
+additional attack surface they expose as well as other issues like the
+kernel's RSA code not being resistant to timing attacks.
 
-Yes. I will split the changes in the next rev:
-- tpm_try_transmit() and tpm_transmit() changes to use the limits table
-- tpm_crb driver waits to use the limits table
-
-Thanks,
-Surendran
+- Eric
