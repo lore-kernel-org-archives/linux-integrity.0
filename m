@@ -1,80 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=52.12.53.23
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795644633;
-	b=zbINbZDTIm358XMssYkPhKrB9LMwGQf+m8rOgPoCBf1krT7sBOGRTFoF1cD+hXS8/V07
-	 gBNXXkW47FLNJ4SZ0rVaLB1+4fEbszbIdJM38OxXmHAshdUI+z1lb4tIzVRHsG3bSEhUt
-	 nMKYGTqaZhQ214+slxRvbRout7Gn3dDLbQCa5e5uub/FyrHZ4CSDGngACR2gJOEXO88RV
-	 Xf6cxcL/KsNAdGCS3cFDdop3otvBwizXZXlSxMvg+dzuH5VD71gHgar9jvY3eaciooT3+
-	 qSqm88WyLeD9lFPYQcKmc9b5QEY62yXBPXacD1vowVcm5i2n5stKkf+DWNXXph+MtXw==
+	t=1795647641;
+	b=TaoehORYnmUW39IhiGLnNOZRWttU9MCfoOkLZ6YXQW7KFlcDku2uYgg+CQp/5si7oZCp
+	 gxZoF15F9z7b2IKS6vNs6+16DvD3NPTS++elu9c1mkyJUaCJhHQ4R5nLc4CkBTz9iYlok
+	 9TV2wnuJQQlHFQLdkhwo+mR7wPsJhYw7N/nWRcbHyyNrVgMJXRAUXp915UrUqVdB365QV
+	 p5QaLuuIyivlyK8xGrelUQlUaBDKkqGkK5ZXBuHhvgLGPvBfVPHM8+nWW3cs2idChKICw
+	 kA5xMzTBTEhX4jJKF/u8BduhGs+X7R39Zresx3Ta+5h27SRaEqFtlE3Hkj20akN1+9A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795644633;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=HSHUYSAKe2yMTBtSGFVKjWD8rNTq+HH3Hx/MlNX0q80=;
-	b=bDCoraCuNjbV2N0rvC6aczeQByE3CSJu8sV1LByYU3ji28ygCF2o08NgyonH2oTl/tjV
-	 pjPH8FctFl/5iz3Gn6sL7wEy0Sc4Xmvp9GH7lXyevDm8Ur0LJT/Re7BoQjFMwfV6g4XFP
-	 mAmIKyhIirmB8g8Eoxx+sKLWC+7uu4CeOUpXzmoq8RA/fUfiuSlRM+93UEi1FL7INjtyY
-	 0FbiLnkmI0WAOWhoydE+Q59AZjvzROXoR4wIlEhu4CsA/3z0/VEnCXC+xVYqMNKmV/f9F
-	 u+WC2na/3PIWCDXJf5SIQpFYMkVEco2ttVGb+reARXRkkTZ/NsCum7OXZrY/9OHAuag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795647641;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:Received:Received:X-Farcaster-Flow-ID:Received:Received:
+	 From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy;
+	bh=TsY4BV/+ObWxXathrekPiFRx0vLYjHLDJuIBQPvLmmY=;
+	b=RBHfvo1XMubw5X0hdMBL10gZz1hsLD3iNNBnsoZRL4uZnUEwcsvOjxiYB7nSAc5g4wPt
+	 Cmili/Wz9/iLOFyl5lrE1X3X13GfKgHlZvVCjfq9pYMvxtbC6bd7omD9D9LG5TuTvMsPZ
+	 JFdbqFE3KzJ4Nx6pTe08zB0YdCeOa5LHvcNzVU+oikaZRB6AT0PugpWykh3Rd43nDVLEy
+	 fGWtCivU7dohW3i0w5lSPsPp705ORpE9dnV0tIrxjZmxHUUl3iNb1Uhztc6Y0QFWkQGpn
+	 Qq6R6jgY+ysUQ/sKCEUDW0TdXzcBz34ygQWFVXWYOPVPL0rseYCnHK2OEpTLyKn0kPQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hf+8p3yj;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=amazon.com;
+	spf=pass smtp.mailfrom=amazon.com;
+	dkim=pass header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=lsegGIeU;
+	arc=none smtp.remote-ip=52.12.53.23
+Received: from pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.12.53.23])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id D2ED1606A32A;
-	Wed, 25 Nov 2026 22:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288F1606A336;
+	Wed, 25 Nov 2026 23:00:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 288F1606A336
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hf+8p3yj
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9AC521F000C4;
-	Wed, 25 Nov 2026 22:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795644633;
-	bh=HSHUYSAKe2yMTBtSGFVKjWD8rNTq+HH3Hx/MlNX0q80=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=hf+8p3yjBQmkFdqzDqRGCdc/Kw7VJnWjauP4BWPSdrBnME5F+/8HwAiVOwwK5FLYR
-	 nxN9Rau8JRv4oGJrBX6RBc/HO9ObnB9LezNhFVoULBNWVC0czVcf0VTdeS23VxLG5n
-	 xOveEKOcE8jFKJdHBIJokiTLhRU/e1DaTMYVfX0wOhOAFsX33ADJ7wSeF6tnIcYcKM
-	 kkArb/irEn1RhrVBegtpBUPtjT1OsDtJQzFQAl9fJ5kZUrUMUaeHmQpUEChD03IDOU
-	 BaspgZhpp689cUVYVu6ruJOowfU02VCiSLEnwUg65EGHFe7LDxpDgQBOlKEqD65eWY
-	 jUh/a2jbUDX9w==
-Date: Thu, 26 Nov 2026 00:10:29 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: keyrings@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Alasdair Kergon <agk@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Benjamin Marzinski <bmarzins@redhat.com>,
-	David Gstir <david@sigma-star.at>,
-	David Howells <dhowells@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ignat Korchagin <ignat@linux.win>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	James Morris <jmorris@namei.org>,
-	James Prestwood <prestwoj@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>,
-	Lukas Wunner <lukas@wunner.de>, Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Sumit Garg <sumit.garg@kernel.org>
-Subject: Re: [PATCH v2 2/9] lib/asn1_encoder: Add asn1_encode_integer_bytes()
-Message-ID: <awdc1TmFwwICFmR7@kernel.org>
-References: <20261124194043.1651679-1-jarkko@kernel.org>
- <20261124194043.1651679-3-jarkko@kernel.org>
- <20261125091921.4bf40279@pumpkin>
- <awcBD-bp27JCVpc-@kernel.org>
- <20261125213333.23eedef1@pumpkin>
+	dkim=pass (2048-bit key, unprotected) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=lsegGIeU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1795647641; x=1827183641;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TsY4BV/+ObWxXathrekPiFRx0vLYjHLDJuIBQPvLmmY=;
+  b=lsegGIeUDvUvnoyh1KLIY3AIF/Y0+OL3KonpEG2TuvlGrdd/swuravx+
+   tffr5qnioEwpUZaxdzT5ZOlAIv/NzJLdf9NlAOC1Lmj9MXFBJZ3En4Nue
+   LiU4hlhvMW3AHIAU5t1QTFsPY67BsQSk9K0iCNs04r2Mw1Pw8/Qg68XwG
+   LYSvAbghZdQC9P2xfbss+/ZQTb6PuLPCT4hPH+WYPb/H52AZZKxIxh126
+   nwS1E29svSv0GLCbKnV88qTmjGsAwLIOliTOzw0+1TfTXDlCGHX9BTOBU
+   woDKq40O4HG9vPJ1UYbO0eew2us/zksMIV8PgHpWXSy5ulJc0mWXhI/BV
+   Q==;
+X-CSE-ConnectionGUID: GfgC2pvdTDC0N2f0C9zPuw==
+X-CSE-MsgGUID: H1Q4FsJDRceDLibr+jRLtQ==
+X-IronPort-AV: E=Sophos;i="6.27,233,1787011200"; 
+   d="scan'208";a="34980411"
+Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
+  by internal-pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2026 23:00:38 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.53:30233]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.48:2525] with esmtp (Farcaster)
+ id 1f3f3ea1-ce68-4516-84dc-fc3b677d619c; Wed, 25 Nov 2026 23:00:38 +0000 (UTC)
+X-Farcaster-Flow-ID: 1f3f3ea1-ce68-4516-84dc-fc3b677d619c
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.57;
+ Wed, 25 Nov 2026 23:00:38 +0000
+Received: from dev-dsk-surenkj-2b-416930d2.us-west-2.amazon.com (10.169.26.94)
+ by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.57;
+ Wed, 25 Nov 2026 23:00:37 +0000
+From: Surendran Kanagaraj <surenkj@amazon.com>
+To: <jarkko@kernel.org>
+CC: <corbet@lwn.net>, <graf@amazon.de>, <gunnarku@amazon.com>, <jgg@ziepe.ca>,
+	<joshlev@amazon.com>, <leitao@debian.org>, <linux-doc@vger.kernel.org>,
+	<linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nh-open-source@amazon.com>, <noodles@earth.li>, <peterhuewe@gmx.de>,
+	<rdunlap@infradead.org>, <skhan@linuxfoundation.org>
+Subject: Re: [RFC PATCH v4 1/8] tpm: Add a single table for all TPM wait limits
+Date: Wed, 25 Nov 2026 23:00:34 +0000
+Message-ID: <20261125230034.24726-1-surenkj@amazon.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261118073852.81107-2-surenkj@amazon.com>
+References: <20261118073852.81107-2-surenkj@amazon.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -84,46 +87,58 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261125213333.23eedef1@pumpkin>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D031UWC003.ant.amazon.com (10.13.139.252) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Wed, Nov 25, 2026 at 09:33:33PM +0000, David Laight wrote:
-> On Wed, 25 Nov 2026 17:38:55 +0200
-> Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> 
-> > On Wed, Nov 25, 2026 at 09:19:21AM +0000, David Laight wrote:
-> > > On Tue, 24 Nov 2026 21:40:36 +0200
-> > > Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > >   
-> > > > Add a helper encoding a positive integer from a byte array in big-endian
-> > > > format.  
-> > > 
-> > > Interesting...
-> > > You allow for integer values longer than 127 bytes but don't allow for the
-> > > much more common likelyhood of the encoding being 'implicit'.  
-> > 
-> > This is the first thing I wrote in 2024 and have not touched since
-> > without further feedback :-)
-> 
-> I wrote an ASN.1 encoder/decoder for a tcap library a few years back.
-> Pretty much everything was implicit and some of the tags exceed 5 bits.
-> About the only things that needed multi-byte lengths were constructed.
-> Oh - and you can't fit in a maximal length SMS if you use the indefinite
-> length for constructed items between 128 and 255 bytes, you have to use
-> the two-byte encoding.
-> 
-> There were a few functions for 'add item to buffer', but I didn't need
-> this one.
+Hi Jarkko,
 
-TCAP/SMS has pretty much the opposite profile from crypto DER in the
-kernel, which deals with big numbers.
+On Wed, Nov 18, 2026 at 07:38:45AM +0000, Surendran Kanagaraj wrote:
+> +static const u32 tpm2_defaults[TPM_NR_LIMITS] = {
+> +	[TPM_LIMIT_A]		= TPM2_TIMEOUT_A * USEC_PER_MSEC,
+> +	[TPM_LIMIT_B]		= TPM2_TIMEOUT_B * USEC_PER_MSEC,
+> +	[TPM_LIMIT_C]		= TPM2_TIMEOUT_C * USEC_PER_MSEC,
+> +	[TPM_LIMIT_D]		= TPM2_TIMEOUT_D * USEC_PER_MSEC,
+> +
+> +	[TPM_LIMIT_SHORT]	= 750 * USEC_PER_MSEC,
+> +	[TPM_LIMIT_MEDIUM]	= 2000 * USEC_PER_MSEC,
+> +	[TPM_LIMIT_LONG]	= 3000 * USEC_PER_MSEC,
+> +	[TPM_LIMIT_LONG_LONG]	= TPM2_DURATION_LONG_LONG * USEC_PER_MSEC,
+> +	[TPM_LIMIT_DEFAULT]	= TPM2_DURATION_DEFAULT * USEC_PER_MSEC,
+> +};
 
-None of the other primitives in lib/asn1_encoder.c take an IMPLICIT tag
-override either, so better to leave that out until something in-tree
-actually needs it.
+The TPM2_SelfTest duration bump [1] made me realize that mapping the
+TPM 2.0 durations into these TPM 1.x style classes may not hold up long
+term. A spec update to a single command turns into a change that
+affects all commands under the class. I think it is better to keep the
+existing maps as they are and let the driver modify the map if needed.
+This is also what you suggested in commit 207696b17f38 ("tpm: use a
+map for tpm2_calc_ordinal_duration()"): keep a per-chip copy of the
+map and let the leaf driver patch it.
 
-> 
-> David
+At a high level, the series would become:
 
-Br, Jarkko
+1) Set default interface timeouts and duration at chip allocation.
+2) Keep the chip durations in a union of TPM1.x and TPM2.0 durations.
+
+     union tpm_durations {
+             unsigned long tpm1[TPM1_NUM_DURATIONS];
+             struct tpm2_ordinal_duration tpm2[TPM2_NUM_DURATIONS];
+     };
+
+   struct tpm_chip holds the union tpm_durations in place of
+   chip->duration[]
+3) update_durations() now gets the union which TPM1.x and TPM2
+   drivers can adjust.
+4) Show the durations sysfs file for TPM 2.0 chips.
+
+With this, I would drop the limits table, poll APIs and tpm.limits=
+parameter for now and keep the series focused on duration handling.
+
+Does this sound reasonable to you?
+
+[1] https://lore.kernel.org/linux-integrity/20261125182251.19360-1-surenkj@amazon.com/
+
+Thanks,
+Surendran
