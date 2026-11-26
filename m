@@ -1,72 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.72
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795660541;
-	b=WMYi3ObQS2pvuLfI2qXv7j26VuniLPz/SD1msOVt+2cEAYVDUBPz3m8J9alzcHZJHMFu
-	 Riwfj28/0B6FgXKyezwLcitupkuR8HEeNSgWlVc+pBC4uSbz74nOEQ8v5R5PbVvCaKQai
-	 c+D5UbN1x5GHBqFJYXdC+5mZKDSTguvaPTVpujwGDG/Q3BJ0G/HZylMhZnbsOg5usJw87
-	 4aEDIQfiEj3PNXUY56UrRRjb90ZVh37yIoijL68jOgr4Wum/VYa1PaaPsCMGLj4m1Ei8j
-	 xRzqgdJO7M2xMC3Gz+p+OLhy0BnXBsIBKt+kG0TCLeDSrdoQwqNosp65WE4zIyBPI5g==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795660541;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:Mime-Version:
-	 X-Mailer:Message-ID:Subject:From:To:Cc:Content-Type;
-	bh=g3rQYEqeb9KItcfmF0Y01uIIXY4X06TFOeBbAGovoNY=;
-	b=EdhGN4F/xkeWj1XyDUhwehybt5GkkoT9krWzcV7i2/EMEUeipVZYcFCJ0QrYJl0aHobJ
-	 JkBbB5yaJ5wmormK3vIOcM7EXv9ZRw6uv/efW9uwmVqRtfJQE1CHyXTNra2eWadwKKm+v
-	 aquScPN/hZSlileeoepok1LhZO4HtGr/urFXkUIljII7DGQ7iBxHYjznoHY+tt9tcwqkp
-	 rbvhycpfpC4Xg/VyxE4GNKRZsAUot8w5g9+6nbHM7x5+nH+lTZzqYbC5OKWncCuF3dlu3
-	 8AUX4mDJUUwugP61gmSOuevkpykR1nP/zkrPggqAC4VDs+5GlwKWfecaIjdVdSRd6xQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=flex--zhenwenliang.bounces.google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b="X0uaxh/Y";
-	arc=none smtp.remote-ip=209.85.210.72
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com [209.85.210.72])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795682682;
+	b=EX1TtPH0Aw+YkfUxqB6Ic7uBGfdrruBn0RwQhiX6NX2doBFup+XJP+Nshc0Ki4J+23Bk
+	 NMjx6qyqjrgaxPPQvBXzxM0swxNJoTyNicmv5QUO2udFwMRF+CKH2ocWov9UD9nDBj42Q
+	 fBUyQmJj9UJgKPYoygytH6ASnoY18v01LmBCZX1FPLy37yef0UlzkFrAZiyx2srwRI0Ua
+	 tYWbkR9FJPBRe0IOrREEWXypUYswvFFBKoKKIB1M1Qn4tWZFK/U/v/madJfq5lwjx/Bhw
+	 pvyZRfMPn0JIpw5xX2m5G8CL+V4dFcymC8KVdbH1lYLUCy4mj1a+NrkvvSkIWQVNHnA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795682682;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=YKcLweyW7rqQhUKSTjq85KM55V3zvJpsJlb9dgd9Bjw=;
+	b=L/mRvgOV7AO/oZRCOWXih2XnMs1iF59PwehnRoUrMlfi0LusA8Iz5+dl933vFG0m4+1z
+	 RywxSjSChVxoMB5EadpyuFmTIhKYoyZoiBDjetaFkKzK7B4Fh5CNJ8T3rSocFjxasxvQ8
+	 loOJnWUbqBXvzDxpoxIVUYCFVe4jgSynJyMr9+UndbLFcwKFNAEwFu5gLeDKMW19Whonr
+	 0yVhTXpYiZRF7w7XMtKK9QwqNHsZYq+/8RlufAVxvAaJS989A2gmBmImAGmQFiAAX10L+
+	 z8IgGh4mBBFyQepHW76UO85OhvJekzCqTgJ0D8iPqygXE5sUMUSBsJGyzoJLkCkYHHQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=EHN2EP3P;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C27606A326
-	for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 02:35:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 86C27606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zhenwenliang.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D60606A31C;
+	Thu, 26 Nov 2026 08:44:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23D60606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=X0uaxh/Y
-Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-85c1135c289so4284914a34.3
-        for <linux-integrity@vger.kernel.org>; Wed, 25 Nov 2026 18:35:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20260707; t=1795660540; x=1796265340; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:mime-version:date:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=g3rQYEqeb9KItcfmF0Y01uIIXY4X06TFOeBbAGovoNY=;
-        b=X0uaxh/Y6FfGkSOerIan92Tqs5wCFuIdc1o5XtL4Lp9SJebTXEDKfoYaT0d1mgLGfJ
-         uoAVeT8sSBexKcX+QGe9G42pp0CRDiIJhSP3qZA2f/FOsb082jGJIvvEV3P7BXZs8ZeB
-         Ress+qPpeZPkiXc03IVbd3m5MIzK0IHO7sS+usV1OTXA6oqQ2Ej/nERYkA7FBbeJdmJJ
-         GkzFKj6LmZxnkM7Ihigc758BKD76oTQ3eoHpo54UdpLrp4Bia8DJcl2pH1ff1HLjzcqW
-         0ymVp0eXrXOb07GAQsN5oJws8pLnn8QStbpGHlQTZ18RhJzXyqUORM5q5q8E3lVOrr3u
-         O39A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795660540; x=1796265340;
-        h=content-type:cc:to:from:subject:message-id:mime-version:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=g3rQYEqeb9KItcfmF0Y01uIIXY4X06TFOeBbAGovoNY=;
-        b=x1yoq68+myeMDWlwW+NgyF85euVz+4xqC6qnroZ/vxDdvkxPP8vfH6yXDy8K3BaVAO
-         hegb7nR0JAUU7K+vjtPMCzO1p9TPhJrR9xABjmO+NtuWQ1pwGcScWNFBxg6I1he6mM3g
-         gu61Vrupg1Hz0XmEubj/c/10jmRYr7c+5mlj/zkLTnppZcUk3ecPMM3SjiBF/0Ax72GT
-         ubjCKH/6Fs5za4iGlHKzoCtOkQv+Ogig2r5bWRiFKkkcQb0vSyBufytXjXiEbdOA0kVl
-         80wg5kxe+TsZ2CeGuHDjaKChWl/5rq8QDZQuon15f2y438CEznLchufM0PUfaTzlMRPn
-         cILQ==
-X-Forwarded-Encrypted: i=1; AL+hErEH6MHZea1pyKLZPpAdjDnM2MaXnIjnudsO8cR/9JV2zdGngfmReBEP6JPT6cHIAEyivlV8tsJLlPs1HzSh5og=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9H9cOUSLX9BQ8ckZks2RwAsxVrVG14CAxGHsHXZoi/i0gXwxci
-	kPU9y6wj96m9Oyl+40xdXHPLHOpmSIzHhQqLOu5sJIZZBetU/mg7Q+YFe2LlPKZosluk2l/Mlt4
-	b4xHAJEpx3z71E9yYwtkhEf4J1XU8Lw==
-X-Received: from jaac8-n2.prod.google.com ([2002:a05:6638:c748:20b0:620:5ab5:d384])
- (user=zhenwenliang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6808:4f49:b0:4c3:db9b:3ead with SMTP id 5614622812f47-57a06b1eaddmr21898545b6e.3.1795660540254;
- Wed, 25 Nov 2026 18:35:40 -0800 (PST)
-Date: Thu, 26 Nov 2026 02:35:38 +0000
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=EHN2EP3P
+Received: from [0.0.0.0] (ptz.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::77])
+	(Authenticated sender: afa@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id B431A201DCB;
+	Thu, 26 Nov 2026 09:44:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795682679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YKcLweyW7rqQhUKSTjq85KM55V3zvJpsJlb9dgd9Bjw=;
+	b=EHN2EP3Po6xToGBTFwplBkmMRCxLwpnyF2f3lcdNfbKywjQ6ozA1sQSU7M2QR3RIKp6TwA
+	cHKbLPWR3O3WALWbXQx/qKEnWdhECYC8Kdrdg+6u5+Q2OqNphblBoGDDgkfhda5SkT7Ypv
+	v1RVc67hOT633f9i4a/+DwMpAoej+Ovr5qcmSmP/jaMWQEN7Pfot2V2ynTZdEcfJNJgZMY
+	9M6Y5+pXI4CgxinpEw5cQSGM4MkwHiFjWJIaa9CsrAZdy8uyAMAmmTQ7HFXX7JK3ba3CXK
+	+M5AsV8dfdWG52ACC82RmAwdXtomLv5H4Z9hTc81kkTPJZqTUon6HqF0K5EXSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795682679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YKcLweyW7rqQhUKSTjq85KM55V3zvJpsJlb9dgd9Bjw=;
+	b=TO9kexPkrcxH+ceLFAfk2OnUMNHyGKLHQp+o1gYkdE53u2y77l9Eb1JtrSQ514ZBFjiM5j
+	VckRFIs/gEtNFYwMI1KSDxuAlASuCl2osSTRqHgZDOY8V/yF+vlZ4aoxoMjXleIe8IfRQu
+	d+Xfo79fsUuXuSy+5UNqybX54md9MgpHZdsgYXW9di1rCgNWjfySije3RBGjhNNg+USf8Q
+	3tb20FvlUlPeNzfDdoueX3jX7wH71cMdyrXuQtU7zHSif8tmkMltxZmYgNOsMb/pIIH8+/
+	7iDIWssb0QT/YvsGiRGmn/Zl6CfEdgPXpmw3aph6xPaUOizryXeQ3+r2eHZV3Q==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=afa@pengutronix.de smtp.mailfrom=a.fatoum@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795682679; a=rsa-sha256;
+	cv=none;
+	b=OpuWA3Wq5qd4bZ0m92XxbgfmopMrV25U97lgCuYOphVbc87roszgc+YvortwdWIF2JhyAC
+	XYcrgAT0vJ3GA0jZD/kwUWGZMcNJytvMvsE5Kia9uLalBGbhRJYiVO1JO4mDj6cBa599cI
+	ap0+1Qx4jUxw1WCJf4x/K3V6IsKFreAehOhzKb2ADxBSuc7tGxV8ewBm8rq2ZSP8nPp557
+	tRCzyTvslF1D5r9QEGHm5BioBDr1/jWEH/6ZspF3FB2KuzmK4ctzQed1epC7k44+0brU9t
+	4jiwSH/rF0UbpASl5xjjkNP398fCYs+Uyyczrdzh1RdBfhKaC38TnRrC4yJnRw==
+Message-ID: <078b7a65-e378-4536-b4af-26a29e328c1a@pengutronix.de>
+Date: Thu, 26 Nov 2026 09:44:38 +0100
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -75,69 +81,84 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
-Message-ID: <20261126023538.4160950-1-zhenwenliang@google.com>
-Subject: KEYS: encrypted: encrypted_rcu_free() callbacks can outlive the module
-From: Zhenwen Liang <zhenwenliang@google.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KEYS: trusted: caam: propagate protected key option
+ parsing errors
+To: Keisuke Tsukuda <tkdkei@outlook.jp>
+Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>,
+ "jarkko@kernel.org" <jarkko@kernel.org>,
+ "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+ "dhowells@redhat.com" <dhowells@redhat.com>,
+ "paul@paul-moore.com" <paul@paul-moore.com>,
+ "jmorris@namei.org" <jmorris@namei.org>, "serge@hallyn.com"
+ <serge@hallyn.com>,
+ "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+ "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20261124155310.32044-1-tkdkei@outlook.jp>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20261124155310.32044-1-tkdkei@outlook.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 11/24/26 16:53, Keisuke Tsukuda wrote:
+> From: Keisuke Tsukuda <tkdkei@outlook.jp>
+> 
+> get_pkey_options() returns -EINVAL for invalid protected key options,
+> such as "key_enc_algo=GG". trusted_caam_seal() and trusted_caam_unseal()
+> ignore this error and return 0. The trusted key core then instantiates
+> a key without a blob for "new", or with a zero-length key for "load".
+> 
+> On an i.MX6Q running a 7.4.0-rc2-based kernel, adding a key with
+> "new 32 pk key_enc_algo=GG" succeeds, but KEYCTL_READ returns zero
+> bytes because no blob was created. The key cannot be saved and
+> reloaded.
+> 
+> Return the parsing error from both paths. On the patched kernel,
+> "new" and "load" with "key_enc_algo=GG" both fail with -EINVAL, while
+> valid requests succeed.
+> 
+> Fixes: a703a4c2a328 ("KEYS: trusted: caam based protected key")
+> Signed-off-by: Keisuke Tsukuda <tkdkei@outlook.jp>
 
-encrypted_update() replaces the payload and frees the old one with
+Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-    rcu_assign_keypointer(key, new_epayload);
-    call_rcu(&epayload->rcu, encrypted_rcu_free);
+> ---
+>  security/keys/trusted-keys/trusted_caam.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
+> index 6a33dbf2a..33000d7bb 100644
+> --- a/security/keys/trusted-keys/trusted_caam.c
+> +++ b/security/keys/trusted-keys/trusted_caam.c
+> @@ -110,7 +110,7 @@ static int trusted_caam_seal(struct trusted_key_payload *p, char *datablob)
+>  		info.pkey_info.is_pkey = 1;
+>  		ret = get_pkey_options(datablob, &info.pkey_info);
+>  		if (ret < 0)
+> -			return 0;
+> +			return ret;
+>  		dump_options(&info.pkey_info);
+>  	}
+>  
+> @@ -142,7 +142,7 @@ static int trusted_caam_unseal(struct trusted_key_payload *p, char *datablob)
+>  		info.pkey_info.is_pkey = 1;
+>  		ret = get_pkey_options(datablob, &info.pkey_info);
+>  		if (ret < 0)
+> -			return 0;
+> +			return ret;
+>  		dump_options(&info.pkey_info);
+>  
+>  		p->key_len = p->blob_len + sizeof(struct caam_pkey_info);
 
-(security/keys/encrypted-keys/encrypted.c:898-899 on mainline
-ebb7a8dc1e74), but the module exit path does not wait for those
-callbacks:
 
-    static void __exit cleanup_encrypted(void)
-    {
-            unregister_key_type(&key_type_encrypted);
-    }
-
-When ENCRYPTED_KEYS=m, an encrypted_rcu_free() callback queued by a
-recent KEYCTL_UPDATE can therefore still be pending when
-encrypted-keys.ko is unloaded. The RCU core later calls a function in
-freed module text. unregister_key_type() garbage-collects the keys of
-the type but, as far as I can see, nothing on that path waits for
-already-queued call_rcu() callbacks (synchronize_rcu() is not enough for
-that).
-
-Sequence:
-  1. a user who owns an encrypted key runs KEYCTL_UPDATE
-     ("update <new master>"), which queues encrypted_rcu_free();
-  2. before a grace period ends and the callback runs, root removes the
-     module (no dependent module loaded);
-  3. the callback runs from freed module memory.
-
-The usual fix for this pattern is an rcu_barrier() in
-cleanup_encrypted() after unregister_key_type(). trusted_core.c uses the
-same call_rcu() pattern in trusted_update(); I have not checked its exit
-path in detail.
-
-Affected: the call_rcu() in encrypted_update() has been there since the
-encrypted-keys code was moved to its own directory (61cf45d01990, 2011);
-the code is unchanged in mainline ebb7a8dc1e74 and next-20261125.
-Trigger: needs root to unload the module; queueing the callback needs
-only a key owner. Impact: use-after-free of module text, i.e. a crash or
-execution of reused memory, in a narrow window after the unload.
-
-Found by a formal analysis tool we are developing that uses AI
-assistance; I have reviewed the analysis and this report. The tool runs
-verbatim copies of the kernel functions with stubs for the rest of the
-kernel; it found the interleaving above, and the interleaving was
-replayed natively on that harness under the tool's schedule. Functions
-involved: encrypted_update(), encrypted_rcu_free(), cleanup_encrypted()
-(RCU core and module unloading stubbed). It has not been reproduced on a
-booted kernel.
-
-Thanks,
-Zhenwen Liang
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
