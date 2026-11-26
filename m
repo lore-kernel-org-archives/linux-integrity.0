@@ -1,60 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795714025;
-	b=VObV+D/KAcoQiTaTLwkW2Cn7dDwxh5YxJjo305WnFxh0E0Jq4XG7fRAn9pkOaBpWqBkT
-	 YjIMQB5qf8rR2ZlvDJCw9n6CkwWBRvpfBbBeiKrzlO1oxwi9v94GuH4wzCPd/kDJNolRN
-	 Ecr3+EDX/qlXTLd4QSPEYv1BxyXwfj/KwmHR3MD8X2K7mILB7PLmyj3TtzziVFTsHVd5o
-	 xE98jrBC5jwa3KGCX/EXA5kJln5UcOAGeFtJdHXAHCpnkz3vZ+52iKzYDsi0tByn0rBzA
-	 06PDmdGGoJRySfnclrIbo7evtB5uGxDvROLw+58SXiJ/vuhK1fsnze0WaABXzNEzoRw==
+	t=1795719749;
+	b=S5rDiuAbfkK2zxCKoWQ0p2BnjOIsoKKBEZvvybnkhvVLWJfF0KWepHholJrMAMKcjaH3
+	 o8KDwy/nhoPujbBfju1chqHnAq8vnE3GDhkZ0bDF9Ito7e2pAWH/yeYflgH7UQ2aZQ4VJ
+	 SdTcbvEB0h68yV3e8gWGCf9BQ1lbvt0TpCWVCK/t7c6j+Koc2468kJ53W9ENE/VibfXy4
+	 4DVMBDAizBNRm6at322NDwLTCBjMjvod3Dk9WaxpeERUmHjKQBfNc5wM9y06Oe4OyqFkR
+	 r0c4L/r3RMI9ZFtjv7twtAm+EbaCkO0xg197skE+f+NXghOjij+0lg7C58BjL2h/fuQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795714025;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795719749;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=l9mHeSQge49T1ujr6oUogf7xVgC9wJskbfbDgjvKLE4=;
-	b=GTgRiqqR1BwPDdYJWBdAbPQFvTBUEd2Sl6gtAiWZsFIU8nhIxRMjtcWB91s0Vw7A4bkF
-	 WxaZrZiS/dTZsb7oLGSgMjxK8P+ax6vrQ5D9gRB9K74VIFefaCNMaU46ST+G2nfhoeiL0
-	 yr8oRlOEsJ1ym3UyR2ZLvTWrvE9jPAPaQ2123M8ynNzUdxRbsCdbQVmDLcG08xe19Me8v
-	 8T+3h7SC7oOIfO/cfw5AzAI3mKVwjE2k7UJURdSWbBL3hcTr0jGgVA5LiOqfit+qmw0oA
-	 FmZx/ue+Q8qRalKlOzEr/Zgzl9ParlPsj957TlKQtj5Bw8kCevN8nFCjpzEVjvbsGLg==
+	bh=sgsm41cVrYVXRN/ZczPr+NXSABYCL273lk2seEqIQI0=;
+	b=DFwrZZnoHNrcGeB0476RaJ/D0iDpDgS2HAXY9qXGrX33f5+gS4X4n6tniBawWH5WCV3G
+	 UaehvHkr36QgxamMv/+5Rz+aTYoZQC422a1uN2Wj1LWh19KxDUtHnZoRwpFLw64/+MJCq
+	 x0ZH4DcxxIBJruk+N5tIDvvfvk0EYWkImDlJajq+xczYMlLTHIE6l2HlCcmtMYQlhoa+G
+	 vMk9bmk4D7e9jk/tJo9+2mfAFtpuiRNJAgE8upKsp3N17yEptiJk+2K5+/S5Wu0aeXCgw
+	 FMeX26F6L5ZVxwVdnB5JA7iI6h24S8nrSyb0MkWtOU6juoeD8eQRJ8UnkHb5kIMQRzA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b2cHlddt;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fh+ol2ez;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 4AFA3606A31C;
-	Thu, 26 Nov 2026 17:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 13C7D606A31C;
+	Thu, 26 Nov 2026 19:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b2cHlddt
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 495AA1F000C0;
-	Thu, 26 Nov 2026 17:27:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fh+ol2ez
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D27131F000C6;
+	Thu, 26 Nov 2026 19:02:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795714024;
-	bh=l9mHeSQge49T1ujr6oUogf7xVgC9wJskbfbDgjvKLE4=;
+	s=k20260515; t=1795719748;
+	bh=sgsm41cVrYVXRN/ZczPr+NXSABYCL273lk2seEqIQI0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=b2cHlddtt6KnPzdb9HLfnYirG7A6/TyJ6XGz2n6aMGgYQNRk57hYJ5UpSY2BusEgP
-	 qhjs0+H25LtkezDGyLietcPYb+D8WzmwPWYcqUE/rfZwF5k97ZFH1v5bN9A0p/GvbC
-	 uR0yVBDjb6+UKFLg9FmIBBywW0GOv09UezptNoimRUUrFIxV7evhrp7aUknT/lgqbK
-	 ANksgtFJqHFB21SNOk4kzO1cnR2n7Po2fJNhv9OKh0BqKZ31jDIEr8cZYfOd+8gPm+
-	 xE2B9+iAOYqMX3n87KV6X52CMw5cQz0sDUtJk22/zTv+5DFnj+PEZHSqOEPACiWL8O
-	 0ZUTtQEKsNi0Q==
-Date: Thu, 26 Nov 2026 19:27:00 +0200
+	b=Fh+ol2ezWUjyMhmE1tsESBXMONPu3gXFMuSY5sDYEdFAddpNy5P9x0P+dBQFZGML8
+	 b5VQRb6ASyBFBPVSoTjO5jqaWR7ArsBc/+KdYqv0FCmoMKZH5LMGl0ABaGVVM/fyO1
+	 rC1+BTag7S4+/Vu5SCqt00RtywNl+YAlY2cL1bfwvHNfD/3LvCVa+caMCVgrUfNUh8
+	 Yn0LqIMceBO4G7GyJvbsgTqc8Azw/UnHzQKLSVfp51j2kdJjs5HDy63u5pjq9BjLLW
+	 k4TYGBqvyb8w/9LhZJqerxeQzjmBViT6ImiFNR9fRVF7Or0Qogqtl/6VW3yaiAQ9P3
+	 5ltYe/aTG/g9w==
+Date: Thu, 26 Nov 2026 21:02:24 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Rustam Mustafin <rmustafin@cloudlinux.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Shuah Khan <shuah@kernel.org>, Jaewon Yang <yong010301@gmail.com>,
-	linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] tpm: Do not allow io_uring for /dev/tpm0 and
- /dev/tpmrm0
-Message-ID: <awhr5NnIx3IAqLMb@kernel.org>
-References: <awXHzblUfp05jZSQ@kernel.org>
- <20261125065429.1483868-1-rmustafin@cloudlinux.com>
- <awcT0WnnJ-fyovnn@kernel.org>
- <awcW90qZvOim7dbh@kernel.org>
- <awcYZNG9f2YSIz49@kernel.org>
- <CAG6=z5sThdfZLY3mQ+NdzpFYj7bSN-CsV1bEdKCASw7b_b2g-A@mail.gmail.com>
+To: Surendran Kanagaraj <surenkj@amazon.com>
+Cc: corbet@lwn.net, graf@amazon.de, gunnarku@amazon.com, jgg@ziepe.ca,
+	joshlev@amazon.com, leitao@debian.org, linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nh-open-source@amazon.com, noodles@earth.li, peterhuewe@gmx.de,
+	rdunlap@infradead.org, skhan@linuxfoundation.org
+Subject: Re: [RFC PATCH v4 1/8] tpm: Add a single table for all TPM wait
+ limits
+Message-ID: <awiCQCU-h8MQc6bQ@kernel.org>
+References: <20261118073852.81107-2-surenkj@amazon.com>
+ <20261125230034.24726-1-surenkj@amazon.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -66,24 +63,64 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG6=z5sThdfZLY3mQ+NdzpFYj7bSN-CsV1bEdKCASw7b_b2g-A@mail.gmail.com>
+In-Reply-To: <20261125230034.24726-1-surenkj@amazon.com>
 
-On Thu, Nov 26, 2026 at 09:08:27PM +0700, Rustam Mustafin wrote:
-> On Thu, Nov 26, 2026 at 12:18 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >
-> > I got them applied with git am. It's better to use separate threads per
-> > patch set version.
-> >
-> > They are in  my master branch now.
+On Wed, Nov 25, 2026 at 11:00:34PM +0000, Surendran Kanagaraj wrote:
+> Hi Jarkko,
 > 
-> Great, thank you! Will do separate threads. Thanks for your guidance
-> along the way.
-
-NP :-)
-
-
+> On Wed, Nov 18, 2026 at 07:38:45AM +0000, Surendran Kanagaraj wrote:
+> > +static const u32 tpm2_defaults[TPM_NR_LIMITS] = {
+> > +	[TPM_LIMIT_A]		= TPM2_TIMEOUT_A * USEC_PER_MSEC,
+> > +	[TPM_LIMIT_B]		= TPM2_TIMEOUT_B * USEC_PER_MSEC,
+> > +	[TPM_LIMIT_C]		= TPM2_TIMEOUT_C * USEC_PER_MSEC,
+> > +	[TPM_LIMIT_D]		= TPM2_TIMEOUT_D * USEC_PER_MSEC,
+> > +
+> > +	[TPM_LIMIT_SHORT]	= 750 * USEC_PER_MSEC,
+> > +	[TPM_LIMIT_MEDIUM]	= 2000 * USEC_PER_MSEC,
+> > +	[TPM_LIMIT_LONG]	= 3000 * USEC_PER_MSEC,
+> > +	[TPM_LIMIT_LONG_LONG]	= TPM2_DURATION_LONG_LONG * USEC_PER_MSEC,
+> > +	[TPM_LIMIT_DEFAULT]	= TPM2_DURATION_DEFAULT * USEC_PER_MSEC,
+> > +};
 > 
-> Br,
-> Rustam
+> The TPM2_SelfTest duration bump [1] made me realize that mapping the
+> TPM 2.0 durations into these TPM 1.x style classes may not hold up long
+> term. A spec update to a single command turns into a change that
+> affects all commands under the class. I think it is better to keep the
+> existing maps as they are and let the driver modify the map if needed.
+> This is also what you suggested in commit 207696b17f38 ("tpm: use a
+> map for tpm2_calc_ordinal_duration()"): keep a per-chip copy of the
+> map and let the leaf driver patch it.
+> 
+> At a high level, the series would become:
+> 
+> 1) Set default interface timeouts and duration at chip allocation.
+> 2) Keep the chip durations in a union of TPM1.x and TPM2.0 durations.
+> 
+>      union tpm_durations {
+>              unsigned long tpm1[TPM1_NUM_DURATIONS];
+>              struct tpm2_ordinal_duration tpm2[TPM2_NUM_DURATIONS];
+>      };
+> 
+>    struct tpm_chip holds the union tpm_durations in place of
+>    chip->duration[]
+
+It isn't possible to have single struct tpm duration that is partially
+used by TPM1?
+
+
+
+> 3) update_durations() now gets the union which TPM1.x and TPM2
+>    drivers can adjust.
+> 4) Show the durations sysfs file for TPM 2.0 chips.
+> 
+> With this, I would drop the limits table, poll APIs and tpm.limits=
+> parameter for now and keep the series focused on duration handling.
+> 
+> Does this sound reasonable to you?
+> 
+> [1] https://lore.kernel.org/linux-integrity/20261125182251.19360-1-surenkj@amazon.com/
+> 
+> Thanks,
+> Surendran
 
 Br, Jarkko
