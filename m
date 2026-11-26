@@ -1,57 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.200
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795721434;
-	b=EgyCjdsK8T/lM5oU0WgAYHGVLlYtPcDgwfT/7q9XFqWvRJR5ipiml+u0OfkFIclaXZCq
-	 jQiQhQNQ3csyznnkxOQmTk85y7wR1r5m/bkid8lXGx3bPZZkFPe5YtED9gKV55PcjXgW1
-	 2eWEHc1M4GkfobJ/7C2jZiMczIq6TsLVC447OjYZYTKt12u/GbGg3jb/EgcKArrReXrjn
-	 5ZMIRJp2SwxiKIuKkVCfcc5qxB3i4RL0FpLrLfgbRwXsv4hVQoqeauv89V14XcdifSG8K
-	 U4tUeNf4b2b6sQ1XoDxS/VPBFleuUzeqDdx5BqC2yjHT05EWFpYRvfmV1F0rT18qV4Q==
+	t=1795723262;
+	b=NPeG65VPFq9D3Zoo3sr1O7S5YvyxtRQQQsilTXE5awoZHS+U91qDyWlRBTzQZ/hz25Eq
+	 yZEwAftQtwEqz4n6YOqwXUrofI2a56nLMMljPWalQBhyJaMesGYzBWu8XMLFg899fehaG
+	 0vbt9gPbn0okylWAEYbvmqZsqP/OkQLrXJW+kXLfkpBqcjMxgHnoGNDZW1hkXoSOrtcMv
+	 6V34wFB2M6zQNGzEUBMChdHAmJ8oN56M9VuBvNtUwjWvzMqEcwAnsBLMqW7BKA0who+d1
+	 e66qInDkxVWvAh+mNF2uyWfC1EiygW2OUjMkZIiB8oxV4mDy3XSh1PTC171yQm8SLww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795721434;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition:X-Mailer;
-	bh=wC1lrTNLODTlKecpUIBVir+FRI0SNxKt/usSsDfnlF4=;
-	b=TNqXoTbAG0je4+s4r2Iotlv2/yDYaQlV3h0HFpXl5cohJbp2AyPPCrkUVAOJINzBij5+
-	 uifqg6vEnRsHg2UJt9NHaoiB8njIaMvi03jUaJ7+fmFUzojCB8FdfaEHVSuSx27CuRG9O
-	 wj1/9AWEFOU87cSFOvjsnlOJqVOinWMnt1ECIcvRbapJOIwBWz2pUHOmauKgpNjxwTzeb
-	 AmUn0Wsau11fM6P+BtAAUfhbNTztBD5VEzSpQ72BcvIrlugj01UzVdKfqvcU7FkHAsGTy
-	 4evKDaJrMKwWhhfFyRXoKTKzjokVwlIPrz1XgX9cS3gJowp0fiyXJ9pURi5+3ZJtybw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795723262;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:In-Reply-To:
+	 Mime-Version:References:X-Mailer:Message-ID:Subject:From:To:Cc:
+	 Content-Type;
+	bh=6kyFcKzeGDxm7QHLL2jhZm3kVHS8REfuYCj505/rh+w=;
+	b=PK0uGSc0dbp1GunHVrpc8cVZq94T3kbFxlpblf9l4TlWTgm7oe9ym7IkANN9gB7nr2Kf
+	 +U9OoZcHwr3BhI3pUb2eWGSqcPasqRETWjAel78Oh8N9wFs1U7kPU/KZf8XmygF3cn8RA
+	 R75fuipKr0YQwvJW0JagbX2Kph1au4jU/8YKj+oL++QQtsG8Ecf9c0Ge+7V+ra8hiGrwq
+	 3AjcKR/1amc29Z4gCXsmzlYVDBZX1aUxB9VacUDHl+Cvuwe6f3V/5YmHQiun+Imex56cr
+	 lmEgwOc3/i+ab+SjLku17ICcJ1xnyz6y0L6z9Qdb0z/oFzVmiTszIxf92//u8PKQojA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ohbmK80F;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=flex--zhenwenliang.bounces.google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=DWn5Adbn;
+	arc=none smtp.remote-ip=209.85.167.200
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E5BB8606A31C;
-	Thu, 26 Nov 2026 19:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002A2606A323
+	for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 20:01:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 002A2606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zhenwenliang.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ohbmK80F
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 06C081F000C0;
-	Thu, 26 Nov 2026 19:30:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795721433;
-	bh=wC1lrTNLODTlKecpUIBVir+FRI0SNxKt/usSsDfnlF4=;
-	h=Date:From:To:Cc:Subject;
-	b=ohbmK80F7tDqpguaOkE0sEfJ10hFseiNyMLf7xpCCfxhjSGQBxWQ4Yhiz5ILMaTr0
-	 UYQA9PJsiQcQz4dZWq5C/6hQu76dhXmglKu2EczTC5dfoe/EoVi1RIRfrW3x/XBVkC
-	 N41tOzJfJXMfQ+nFpzmz3lRvy3Q3KB4Z+woFaIl5rJBjFTgiA033f/qlZzN9PeYvPN
-	 h5suftAXhzi8rmUUKz4jgJYzgGaGAYX/Q80snPUgMDPlF1ADyYQ5mJmsG7BWU9tOJO
-	 4zDwaEQ+qhYy1ryjecng11SCBMCN/fNCmjUhoW/ATJ6DXAg+tJd0QcqJmmKm4XWvkE
-	 uIHK5qsuBX8jg==
-Date: Thu, 26 Nov 2026 21:30:30 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Eric Biggers <ebiggers@kernel.org>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] KEYS: changes for v7.4-rc5
-Message-ID: <awiI1qcs1TjtU3Sq@kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=DWn5Adbn
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-4c467e19391so10132087b6e.3
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 12:01:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1795723260; x=1796328060; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6kyFcKzeGDxm7QHLL2jhZm3kVHS8REfuYCj505/rh+w=;
+        b=DWn5Adbn/TnNY1xH6jgc26TeZjfcHBww+a2kKpHR/5eZOfNI4t4Z8aZ+omqwN2qsgm
+         yCCY+enUXphkASUrR2TQTtRUsbfdpo/dOnwNQidEPIzUBdvoLll/U7bOMSQrkFBhmlgC
+         LFdps5bXzAbXF8KyZGclTM8zxvQawERuH7hjUYr8k8TiLMccakam0RxJTH5Ras1LDvAU
+         tqiDFp4hF8T13krvROhq/XaDdR0fXEqWiqmsuLW5RV0vKZWaPH9gnzcEwwXLg0rLFctj
+         ZGkqJQtLYChkZZAgCZjAT1GFaA/XkgDu+1xVJ/ICK7iYXkodppDvgxd5LykFlB9tdHlW
+         VOkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795723260; x=1796328060;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6kyFcKzeGDxm7QHLL2jhZm3kVHS8REfuYCj505/rh+w=;
+        b=yEtyoAmtRYvXjdLdC2P9T82MtCIbaD8002u8syUOB1NS9BSzVYlkSR+ps8sndeDE7l
+         IqWvLosYS68dy7TFcBXSTXHzwR/6AXWae/qgVkff+KPbtMn/nWVpPHVt1q3e/CG+8+UF
+         gHhfT7P6WJHdbjo9vwFPbqIGXpvk6fGDhtEWZP41bt910hnV57GqadjydRB2E4RTMHO+
+         Mmwm8naNpzE9w1nnmgwXw3t+CWMTB1NkjtO4WYR8GWaFkIv+17J2q8F4115RGDkA9mq6
+         KM98mqTOvdPerhjopXRFZTks3rR9FOnkSot8M8hCoDQn/gyBUKzfD6i5qifE7ZVHtohg
+         CmdQ==
+X-Forwarded-Encrypted: i=1; AL+hErFS0uG1A/1ZnsxLWbDCTMRFvG+90KReu6UxBSNTr2E0AmH0yMGt7TCbkvc64FzySaJGNXQCUK3FjMoDgwWvof8=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9LlvW5byi1nGBhsTek9MzejzOiCdKp2LUDK7r1K2MytlciVS8N
+	92wcbqObrpyrG8hp46Yo2FVF4u35Gam96S4TzFP7XZJuAoV3YSygjIjt3GHwW6T5OTcj0SSQoxp
+	HFvfWFqOP8UDsphBe/320rrSp7j4YQQ==
+X-Received: from ilbdv4-n1.prod.google.com ([2002:a05:6e02:4004:10b0:53b:d747:38b5])
+ (user=zhenwenliang job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6808:4fe7:b0:4f6:5279:5c75 with SMTP id 5614622812f47-57a0a50337emr26068171b6e.28.1795723260332;
+ Thu, 26 Nov 2026 12:01:00 -0800 (PST)
+Date: Thu, 26 Nov 2026 20:00:58 +0000
+In-Reply-To: <awiDY0d9pRUzkV4Z@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -60,69 +78,53 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: aerc
+Mime-Version: 1.0
+References: <awiDY0d9pRUzkV4Z@kernel.org>
+X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
+Message-ID: <20261126200058.2806412-1-zhenwenliang@google.com>
+Subject: Re: KEYS: encrypted: encrypted_rcu_free() callbacks can outlive the module
+From: Zhenwen Liang <zhenwenliang@google.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following changes since commit 666539eecdf4db623f5e3c3e55cf9f2dfad24aa4:
+On Thu, Nov 26, 2026 at 09:07:15PM +0200, Jarkko Sakkinen wrote:
+> This will be ultimately addressed by:
+[...]
+> As then operations will be always drained.
+>
+> It's actually somewhat tedious to address this particular issue
+> without this type of architectural change but I'm open for fixes.
 
-  Merge tag 'assoc-array-fixes-v2' (2026-11-16 09:35:38 -0800)
+Thanks. For trees that will not get the series, I think a minimal fix
+is possible here, because unregister_key_type() already guarantees that
+no new ->update() can run once it returns: key_create_or_update() holds
+key_types_sem across __key_update(), key_update() checks
+key->type->update under key->sem, and the dead-type GC pass retypes
+each remaining key to key_type_dead under key->sem before
+unregister_key_type() returns. So every encrypted_rcu_free() has been
+queued by then, and an rcu_barrier() after unregister_key_type() in
+cleanup_encrypted() waits for all of them. trusted.ko has the same
+pattern (trusted_update() uses call_rcu(), and none of the exit paths
+waits for pending callbacks), so cleanup_trusted() needs the same.
 
-are available in the Git repository at:
+I reproduced it in QEMU with KASAN and CONFIG_RCU_LAZY=y: add an
+encrypted key, update it 20 times, and unload the module right away.
+The rcuop kthread hit int3 at encrypted_rcu_free+0x1 in the freed
+module text in 5 of 5 runs. With the barrier, 5 of 5 runs were clean.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-v7.4-rc5
+With your series applied, the barrier is still needed as far as I can
+see: the GC calls synchronize_rcu() before the module_put() in
+key_gc_unused_keys(), and key_gc_flush() is only used by dns_resolver,
+NFS idmap, the SMB client and rxrpc. On top of the series, the barrier
+could become a key_gc_flush() call.
 
-for you to fetch changes up to 1bcff832c48d83c5132662bec83bda37f566d8a2:
+I will send two small patches (encrypted, trusted) with Fixes: tags and
+Cc: stable; feel free to drop the stable tag if you think it is not
+worth it.
 
-  KEYS: Fix crash on big_key read (2026-11-24 19:48:15 +0200)
-
-----------------------------------------------------------------
-[GIT PULL] KEYS: changes for v7.4-rc5
-
-The summary of bug fixes in this PR:
-
-1. Trusted keys: initialize backend static calls before ->init(),
-   synchronize TEE session lifetime against device removal (and disable
-   sysfs bind/unbind), and propagate CAAM option parsing errors.
-2. keyctl_pkey: fix user buffer bounds in keyctl_pkey_e_d_s() and
-   keyctl_pkey_verify(), and zero temporary buffers with
-   kfree_sensitive().
-3. Key instantiation: take key->sem during instantiation and rejection
-   to serialize key->user access against keyctl_chown_key().
-4. big_key: instantiate the new payload before destroying the old one in
-   big_key_update() so -EDQUOT cannot leave a positive key with a
-   cleared payload.
-
-As per SRCU fix that  I forwarded, I'll put that to linux-next after
-this PR has been accepted to see how it flys at first.
-
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-----------------------------------------------------------------
-Guicai Ma (2):
-      KEYS: Fix userspace buffer overflow in keyctl_pkey_e_d_s()
-      KEYS: Use kfree_sensitive() in keyctl_pkey_e_d_s()
-
-Henry Martin (1):
-      KEYS: Fix crash on big_key read
-
-Jarkko Sakkinen (4):
-      KEYS: trusted: Update static calls before init
-      KEYS: trusted: TEE: Synchronize session lifetime
-      KEYS: trusted: TEE: Disable sysfs bind attributes
-      KEYS: Fix asym key overflow in keyctl_pkey_verify()
-
-Keisuke Tsukuda (1):
-      KEYS: trusted: caam: propagate protected key option parsing errors
-
-Sinan Turunc (1):
-      KEYS: serialise key instantiation against keyctl_chown_key()
-
- security/keys/big_key.c                   | 16 ++++--
- security/keys/key.c                       |  4 ++
- security/keys/keyctl_pkey.c               | 21 +++++---
- security/keys/trusted-keys/trusted_caam.c |  4 +-
- security/keys/trusted-keys/trusted_core.c | 15 ++++--
- security/keys/trusted-keys/trusted_tee.c  | 89 +++++++++++++++++++++++--------
- 6 files changed, 110 insertions(+), 39 deletions(-)
+Thanks,
+Zhenwen Liang
