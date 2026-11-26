@@ -1,53 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795726279;
-	b=e0ehVaAgkB28H48G6CO2QR7id8jDlvMd2yLWhBtvaHXrL1dKdUTo7BEO1nM2BTdoppQY
-	 VgEuAymHrG3QTH+0ZMpgWwaDAQqGKz64N/6wDHz6VenOHfoBpHZBLpIs5X3hToA2XnQC9
-	 MrKI4UzmzKv38nNv+GTxTaqZjzb/FB+sBUdHRxSMqoS5o45oiuNIgTW64P7nzbFQAlJXo
-	 +2pwj2KyLm4KALfehlnfB+kfZ9nX0tc0861bcEt+J/nsoEuScrNtR9zpBelR591zoIaIy
-	 zbx+XtrYnIGjdnX5Cq1Z7QCsQgGfmfwfjF5ae5GU5dt5vY62i93PLNUFc62FKOkbiEA==
+	t=1795729732;
+	b=wqiRTa4om9CVVs6F1yTBYjB7Ju9yhU++SpNchrxY2uXeTrZlBG87+dcdB2WLyUVl+gj6
+	 8xyUzplTHs234a9qdxvjPbhVF//bMlYOUoWR6wFq0nHDkBGl56KVIEVXJJKSI6RbKAQSl
+	 kUKP0CtlnUq23f6dBw/2wLBR8Mlk2QgZgBHd00hIbAp//gfJqI+LrFDWA+rBb4/rD/c8W
+	 +2Wk5mDco7xVbzv9kNB/a+MdvqvFVVifjw169OQWdZqFf8sM1Yu5ASAU3w9bUr121zMlJ
+	 Z5ln1IVuRV7+Z2BNXw8NXmh3fhuN0NFxP1wepXSPpJfQpp+DC1wPDLDPIYTJtEuAlKg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795726279;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=xAoZssdEGReXpW+fiyeccugaPyEheAlcfEk5nmlrLac=;
-	b=dX9LoitcBZI4vHWQH1GZ5R8GEm0NZPz1lCH4Fxe7ymHJFFIlL2bAAsrm7ksHzpRjgRw+
-	 QoyPXZZ8NG0orGaTbduvGEeF63xzeie8PsHBCYnTXYE9EbAWkRfXYC5oS5vY/DQkRtOBd
-	 7pwe9vRI1V5XlgpaTDr+W7AIBP9inKCs4DO5CRY8qMC/7RzF2tWSvuvC6K1dTDz/hdOOu
-	 P8Bj/wkYi3LW0DZ7u4w8bu0k/UMRBKad0+bPVmMj0lmPrtls6cVvU6EhntUGY0nckTg2l
-	 0uSOUvkZoNiryKIqB5Cpc3UzjLhDSoebgUCt+C8oVQgYRE4qJCc9J9puNMpg2zsr11A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795729732;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=tL0KPYsNWllSt9PJYMsgt65v9WSv0udE9SrH0WwMrhs=;
+	b=oV5i8FARgxuqbg5iTGEi287l1pNns8y8n/F6lNRrJjzQ3SKpZi3Z+lBxpLjOygETDbGj
+	 Pi12/2x5cwc7u+nok2gnlo8XLZi5jwBWLZaa29OUIbYY94TfiKLeIwtdR+Vgn+djksoj9
+	 wTdG3Mnx/jR0b/3Wa98t5pUncOIdlXnmllUc4EMHbeZO4o+jj6OxSLxI6qB5OeF8EhHbr
+	 fbTY2Y44aGsaIlRTTHmrfHR0offFLtqEl06A8S2Ax+frpP2cVbMar+v2TVuMK8je1nIRp
+	 yFvAXvZuxNRTHeK9d/GS3ciqhDfsRJYaYan8iKiC8C/44a5cck3kgzwudoaywyhppjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="WkK/V8+d";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RAkCes5D;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 5F9D7606A33C;
-	Thu, 26 Nov 2026 20:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 387ED606A31C;
+	Thu, 26 Nov 2026 21:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WkK/V8+d
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 4D4441F00893;
-	Thu, 26 Nov 2026 20:51:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RAkCes5D
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 062E61F000C1;
+	Thu, 26 Nov 2026 21:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795726279;
-	bh=xAoZssdEGReXpW+fiyeccugaPyEheAlcfEk5nmlrLac=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=WkK/V8+dueXLBEkkoWesDAREjnXstJ/FCDwYLMVJpSlOx3BlQ0I7EhE8TU/nd4LJ9
-	 UX1HFC0zjNLfdobcNdbhKRKtzAVgRDOGrzVfTQnmv4aZarwA0MLOk1gCFNyC1je/IS
-	 U9H+TAU1mKblYtyIxJqy31TBpepeOiMqH93DSkhpjVkejodZH4Ifxf4zSDQWYcBKy8
-	 HJvcP3J2143jirbGKjF6qYsTHVrK67sG6+fcUwsK6OYHEX1I1BaX4UtubpooOzDwC8
-	 6JB/91ZVFRdKH3+0nO9MI4Fasu1PDyAc2yT+upZo+4F+VzSVX9mQWiWdAmBnJ8spnU
-	 v/ooefqNa7kRw==
+	s=k20260515; t=1795729731;
+	bh=tL0KPYsNWllSt9PJYMsgt65v9WSv0udE9SrH0WwMrhs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=RAkCes5DFSaAtw4DkHNa8po00T3CUA9LuNiAo7vxqx9pEWdnOVaFVjE5FDiDAWzuq
+	 /7OfC8Aa3YgB58YCdjYP6l5FLtnE0HcV7R2GiMYpHkVxcjPaQZqJXcCz/NISRo+zuN
+	 8MnDhrjj4oen6sua/XKyG6mCS2smispXGRHDzO1uNG04VR42CZcH4eDajgpKAFetiW
+	 zqKyrFHx9BRGKmX0hP/zl5OsYVYqaN+nUdTT/VrzersyJzfeOjLT57fxKtg2E9GveK
+	 fnsecNa01LfwD/pPPHMEEa+MyvCmKC+gubI3XAMwjd9Xcgd/hr8T52oqmJ0W6lWcoi
+	 LxuDTKFE+mdqg==
+Date: Thu, 26 Nov 2026 23:48:48 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: keyrings@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	dm-devel@lists.linux.dev,
-	linux-crypto@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
+Cc: dm-devel@lists.linux.dev, linux-crypto@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
 	Ahmad Fatoum <a.fatoum@pengutronix.de>,
 	Alasdair Kergon <agk@redhat.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -60,28 +57,25 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
 	Eric Biggers <ebiggers@kernel.org>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	Ignat Korchagin <ignat@linux.win>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
 	James Morris <jmorris@namei.org>,
 	James Prestwood <prestwoj@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Corbet <corbet@lwn.net>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>,
 	Lukas Wunner <lukas@wunner.de>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
 	Mike Snitzer <snitzer@kernel.org>,
 	Mikulas Patocka <mpatocka@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Paul Moore <paul@paul-moore.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
 	Peter Huewe <peterhuewe@gmx.de>,
 	Randy Dunlap <rdunlap@infradead.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
 	Shuah Khan <skhan@linuxfoundation.org>,
 	Sumit Garg <sumit.garg@kernel.org>
-Subject: [PATCH v4 09/11] KEYS: trusted: Add private backend data to trusted_key_payload
-Date: Thu, 26 Nov 2026 22:50:19 +0200
-Message-ID: <20261126205021.2200819-10-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261126205021.2200819-1-jarkko@kernel.org>
+Subject: Re: [PATCH v4 11/11] KEYS: trusted: Add asymmetric key support for
+ TPM2
+Message-ID: <awipQFkjoBSEXnLh@kernel.org>
 References: <20261126205021.2200819-1-jarkko@kernel.org>
+ <20261126205021.2200819-12-jarkko@kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -91,96 +85,30 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261126205021.2200819-12-jarkko@kernel.org>
 
-Add a backend-private pointer to struct trusted_key_payload and free it
-sensitively via trusted_payload_free() on teardown and error paths. This
-prepares for asymmetric TPM2 keys, which retain backend key metadata
-across runtime pkey operations instead of unsealing a raw key at load
-time.
+On Thu, Nov 26, 2026 at 10:50:21PM +0200, Jarkko Sakkinen wrote:
+> Extend the TPM 2.0 trusted key backend to load OID_TPMLoadableKey
+> (2.23.133.10.1.3) RSA (2048/3072/4096) and ECC (NIST P-256/P-384/P-521)
+> keys and expose query, sign, verify, and RSA encrypt/decrypt operations
+> through key_type_trusted.
+> 
+> The feature is controlled by CONFIG_TRUSTED_KEYS_ASYMMETRIC, which
+> defaults to y when CONFIG_TRUSTED_KEYS_TPM is enabled.
+> 
+> Co-developed-by: James Prestwood <prestwoj@gmail.com>
+> Signed-off-by: James Prestwood <prestwoj@gmail.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- include/keys/trusted-type.h               |  1 +
- security/keys/trusted-keys/trusted_core.c | 18 +++++++++++++-----
- 2 files changed, 14 insertions(+), 5 deletions(-)
+By rebasing this on top of these patches, I could drop tpm2_read*()
+from this and use tpm_buf_read_*():
 
-diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-index 3db61b57cf73..790ffabb0d18 100644
---- a/include/keys/trusted-type.h
-+++ b/include/keys/trusted-type.h
-@@ -33,6 +33,7 @@ struct trusted_key_payload {
- 	unsigned int blob_len;
- 	unsigned char migratable;
- 	unsigned char old_format;
-+	void *private;
- 	unsigned char key[MAX_KEY_SIZE + 1];
- 	unsigned char blob[MAX_BLOB_SIZE];
- };
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index 665b2c37734b..1db6497ba297 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -149,6 +149,14 @@ static struct trusted_key_payload *trusted_payload_alloc(struct key *key)
- 	return p;
- }
- 
-+static void trusted_payload_free(struct trusted_key_payload *p)
-+{
-+	if (!p)
-+		return;
-+	kfree_sensitive(p->private);
-+	kfree_sensitive(p);
-+}
-+
- /*
-  * trusted_instantiate - create a new trusted key
-  *
-@@ -223,7 +231,7 @@ static int trusted_instantiate(struct key *key,
- 	if (!ret)
- 		rcu_assign_keypointer(key, payload);
- 	else
--		kfree_sensitive(payload);
-+		trusted_payload_free(payload);
- 	return ret;
- }
- 
-@@ -232,7 +240,7 @@ static void trusted_rcu_free(struct rcu_head *rcu)
- 	struct trusted_key_payload *p;
- 
- 	p = container_of(rcu, struct trusted_key_payload, rcu);
--	kfree_sensitive(p);
-+	trusted_payload_free(p);
- }
- 
- /*
-@@ -269,7 +277,7 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
- 	ret = datablob_parse(&datablob, new_p);
- 	if (ret != Opt_update) {
- 		ret = -EINVAL;
--		kfree_sensitive(new_p);
-+		trusted_payload_free(new_p);
- 		goto out;
- 	}
- 
-@@ -283,7 +291,7 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
- 	ret = static_call(trusted_key_seal)(new_p, datablob);
- 	if (ret < 0) {
- 		pr_info("key_seal failed (%d)\n", ret);
--		kfree_sensitive(new_p);
-+		trusted_payload_free(new_p);
- 		goto out;
- 	}
- 
-@@ -322,7 +330,7 @@ static long trusted_read(const struct key *key, char *buffer,
-  */
- static void trusted_destroy(struct key *key)
- {
--	kfree_sensitive(key->payload.data[0]);
-+	trusted_payload_free(key->payload.data[0]);
- }
- 
- struct key_type key_type_trusted = {
--- 
-2.47.3
+https://lore.kernel.org/keyrings/20261115233156.1485238-1-jarkko@kernel.org/
 
+See, also:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=tpm2-asymmetric
+
+Br, Jarkko
