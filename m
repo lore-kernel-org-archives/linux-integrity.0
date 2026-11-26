@@ -1,75 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.200
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.72
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795723262;
-	b=NPeG65VPFq9D3Zoo3sr1O7S5YvyxtRQQQsilTXE5awoZHS+U91qDyWlRBTzQZ/hz25Eq
-	 yZEwAftQtwEqz4n6YOqwXUrofI2a56nLMMljPWalQBhyJaMesGYzBWu8XMLFg899fehaG
-	 0vbt9gPbn0okylWAEYbvmqZsqP/OkQLrXJW+kXLfkpBqcjMxgHnoGNDZW1hkXoSOrtcMv
-	 6V34wFB2M6zQNGzEUBMChdHAmJ8oN56M9VuBvNtUwjWvzMqEcwAnsBLMqW7BKA0who+d1
-	 e66qInDkxVWvAh+mNF2uyWfC1EiygW2OUjMkZIiB8oxV4mDy3XSh1PTC171yQm8SLww==
+	t=1795723266;
+	b=SP9ZK/ACfUZtD++tKPyJHID8sCah2WayEkznooOkt9X97K1rn5IRCTbZzx0urajojbb7
+	 VvjNLQxOHsnAbFb6cjW5sIWsdTHc3PFADKyT6Yu9ScaqgG06HC3Jy6bekl1UhLgFXYwj7
+	 HGBbyT7hdAKxLO+kgwt4y9s694VurvDqxYKg3roLmk/zxHkmPFZXXrPc6PEWX1vdB/zvF
+	 IET8mSa6K1PM64BE30xoExftIus3rKUGIZ8oOQfluKno/BL7fS2IeKJtTS8aSmCtQlkxB
+	 YpIDj4eNm2OeueF7DAdYwNev37JC5R4Za4qAKWsiIWDRb9XsQYb3DlmT1gUdu+isU5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795723262;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795723266;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:In-Reply-To:
-	 Mime-Version:References:X-Mailer:Message-ID:Subject:From:To:Cc:
-	 Content-Type;
-	bh=6kyFcKzeGDxm7QHLL2jhZm3kVHS8REfuYCj505/rh+w=;
-	b=PK0uGSc0dbp1GunHVrpc8cVZq94T3kbFxlpblf9l4TlWTgm7oe9ym7IkANN9gB7nr2Kf
-	 +U9OoZcHwr3BhI3pUb2eWGSqcPasqRETWjAel78Oh8N9wFs1U7kPU/KZf8XmygF3cn8RA
-	 R75fuipKr0YQwvJW0JagbX2Kph1au4jU/8YKj+oL++QQtsG8Ecf9c0Ge+7V+ra8hiGrwq
-	 3AjcKR/1amc29Z4gCXsmzlYVDBZX1aUxB9VacUDHl+Cvuwe6f3V/5YmHQiun+Imex56cr
-	 lmEgwOc3/i+ab+SjLku17ICcJ1xnyz6y0L6z9Qdb0z/oFzVmiTszIxf92//u8PKQojA==
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:Mime-Version:
+	 X-Mailer:Message-ID:Subject:From:To:Cc:Content-Type;
+	bh=Lsmu86na7LP1yXQ9d2E+j8k+hfLm8TriJbzArNXJkMM=;
+	b=XSIROFSvCfq6dcXKZTS/9D3moNJA0WZ/+ZDCpQl8cgSMjw55z5tS6Cn3LHeadvC9ae6T
+	 cYAUwGMslDXqJeC/v9AVf3bmxe0B3PAbDBYOUZOYDXHyoYVO9kTXgi32p3QuI5s9xDhx6
+	 YbJzexr4tEcksP7n/namTMfmbIzJIWdGsJ3iS9qmgdQrNPMkHt7YN5sepPStNDNCi+2fe
+	 pi8SYUsXBh1Zcf7+FFNos/tFbRG+GPW4bNMVa8LjRn/2Fynb9wHpeb4vJfzGK0a5BXvkT
+	 HoEdsyDac3NxPl/5Xl3jU76o2E5kVkZqShomuLggfcKCxL9uuiFbvczICSMMOo9Knig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=google.com;
 	spf=pass smtp.mailfrom=flex--zhenwenliang.bounces.google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=DWn5Adbn;
-	arc=none smtp.remote-ip=209.85.167.200
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b="QxbdqK/L";
+	arc=none smtp.remote-ip=209.85.210.72
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com [209.85.210.72])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002A2606A323
-	for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 20:01:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 002A2606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584AD606A32A
+	for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 20:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 584AD606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zhenwenliang.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=DWn5Adbn
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-4c467e19391so10132087b6e.3
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 12:01:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=QxbdqK/L
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-86313f7f4faso7351448a34.1
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 12:01:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20260707; t=1795723260; x=1796328060; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=6kyFcKzeGDxm7QHLL2jhZm3kVHS8REfuYCj505/rh+w=;
-        b=DWn5Adbn/TnNY1xH6jgc26TeZjfcHBww+a2kKpHR/5eZOfNI4t4Z8aZ+omqwN2qsgm
-         yCCY+enUXphkASUrR2TQTtRUsbfdpo/dOnwNQidEPIzUBdvoLll/U7bOMSQrkFBhmlgC
-         LFdps5bXzAbXF8KyZGclTM8zxvQawERuH7hjUYr8k8TiLMccakam0RxJTH5Ras1LDvAU
-         tqiDFp4hF8T13krvROhq/XaDdR0fXEqWiqmsuLW5RV0vKZWaPH9gnzcEwwXLg0rLFctj
-         ZGkqJQtLYChkZZAgCZjAT1GFaA/XkgDu+1xVJ/ICK7iYXkodppDvgxd5LykFlB9tdHlW
-         VOkg==
+        d=google.com; s=20260707; t=1795723265; x=1796328065; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:mime-version:date:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Lsmu86na7LP1yXQ9d2E+j8k+hfLm8TriJbzArNXJkMM=;
+        b=QxbdqK/LnysLZNk3giLpFCC6miNSsgKre4H+NTcH1r+SzCQAHgLQjJPSGK2ObW/qzN
+         GWtcny/72I4JywhjriFo845hSsRIgBL8Qn61amypgK7xmosCZbyAMNGh9+wNqkeQAS/3
+         e3yB9Em15DwqFj7E6sJ+kanQZEH6Zj+3w87sJUaABY/62hZYCS7LPZOZN8GzYybXkyiK
+         ITCRd3uCHyNC3U9n3jrN5z41tP5KIGzy11YUBY3dzvJBqqLf+aeVTvHV5wYx6p4LEatc
+         Mu/1V27sS6i1N/fPPvoWuyTpe+jPZ1ldCSUHCe8jYC8zZuoJvuDctYZAsRcZNrw8xa+R
+         f7dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795723260; x=1796328060;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=6kyFcKzeGDxm7QHLL2jhZm3kVHS8REfuYCj505/rh+w=;
-        b=yEtyoAmtRYvXjdLdC2P9T82MtCIbaD8002u8syUOB1NS9BSzVYlkSR+ps8sndeDE7l
-         IqWvLosYS68dy7TFcBXSTXHzwR/6AXWae/qgVkff+KPbtMn/nWVpPHVt1q3e/CG+8+UF
-         gHhfT7P6WJHdbjo9vwFPbqIGXpvk6fGDhtEWZP41bt910hnV57GqadjydRB2E4RTMHO+
-         Mmwm8naNpzE9w1nnmgwXw3t+CWMTB1NkjtO4WYR8GWaFkIv+17J2q8F4115RGDkA9mq6
-         KM98mqTOvdPerhjopXRFZTks3rR9FOnkSot8M8hCoDQn/gyBUKzfD6i5qifE7ZVHtohg
-         CmdQ==
-X-Forwarded-Encrypted: i=1; AL+hErFS0uG1A/1ZnsxLWbDCTMRFvG+90KReu6UxBSNTr2E0AmH0yMGt7TCbkvc64FzySaJGNXQCUK3FjMoDgwWvof8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9LlvW5byi1nGBhsTek9MzejzOiCdKp2LUDK7r1K2MytlciVS8N
-	92wcbqObrpyrG8hp46Yo2FVF4u35Gam96S4TzFP7XZJuAoV3YSygjIjt3GHwW6T5OTcj0SSQoxp
-	HFvfWFqOP8UDsphBe/320rrSp7j4YQQ==
-X-Received: from ilbdv4-n1.prod.google.com ([2002:a05:6e02:4004:10b0:53b:d747:38b5])
+        d=1e100.net; s=20260707; t=1795723265; x=1796328065;
+        h=content-type:cc:to:from:subject:message-id:mime-version:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Lsmu86na7LP1yXQ9d2E+j8k+hfLm8TriJbzArNXJkMM=;
+        b=yK23g0ygw7vCVN6xUhyWCd2/NGNcZPQhAHkuje+mQq8/T07WV2J/zpHdIKhUnkTtKe
+         m55sq5PHCMbsoKY7a3RW+hAGfSiI3KgysitiqK7nNSAKAOae6DGTfFACFJkjIn29tC4N
+         U5n8zeEYw0LxbbHlwKr3dhCg4+PqzQtF7EAO3jE/ay8J4PEfBVYvXwr8nedO2xDbFfmL
+         miLtE3ZMkpInj+stBiJF41K0P6pdvqgb72sQbz7Yi8qgex+fA+60El/l94mk7s2ljYIe
+         fyvX0j8O+3mm+Ztf34/MdFaP6lknvAdntlvvzJX6dKDZjHUDbWXHguxoYf/mKzOKmR3T
+         s0Yg==
+X-Forwarded-Encrypted: i=1; AL+hErHEOOWzgIHehjy5eAbV/xb3ligwrGFmUic7dJKoY0GwDyWAsBdzj6J3V7DMnQcl1OF/SyCSiVDpvmTFmFqW9Ms=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8UclMn32O823MqViA98inTK5LD8oF3Czj0Y3HCXyO0kcHmLe/0
+	Ve263DJ/X1t8Gu9LpheRZ/xSd0bdYAZqpdrFf4Mh2F1KSe01OhLVsIJAI5gshIwyZMIvj4RUf2D
+	zIXG2XHzaoUBvhXzZvkK4jzxYk23bhw==
+X-Received: from ilei11-n2.prod.google.com ([2002:a05:6e02:61cb:20b0:54e:86af:fe5d])
  (user=zhenwenliang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6808:4fe7:b0:4f6:5279:5c75 with SMTP id 5614622812f47-57a0a50337emr26068171b6e.28.1795723260332;
- Thu, 26 Nov 2026 12:01:00 -0800 (PST)
-Date: Thu, 26 Nov 2026 20:00:58 +0000
-In-Reply-To: <awiDY0d9pRUzkV4Z@kernel.org>
+ 2002:a05:6808:4f2c:b0:4d6:90f4:48b4 with SMTP id 5614622812f47-57a0cae5223mr24227154b6e.54.1795723264869;
+ Thu, 26 Nov 2026 12:01:04 -0800 (PST)
+Date: Thu, 26 Nov 2026 20:01:02 +0000
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -79,52 +76,63 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 Mime-Version: 1.0
-References: <awiDY0d9pRUzkV4Z@kernel.org>
 X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
-Message-ID: <20261126200058.2806412-1-zhenwenliang@google.com>
-Subject: Re: KEYS: encrypted: encrypted_rcu_free() callbacks can outlive the module
+Message-ID: <20261126200103.2806716-1-zhenwenliang@google.com>
+Subject: [PATCH 1/2] KEYS: encrypted: Wait for RCU callbacks before module unload
 From: Zhenwen Liang <zhenwenliang@google.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+To: Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+	David Howells <dhowells@redhat.com>, 
+	James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
 	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 26, 2026 at 09:07:15PM +0200, Jarkko Sakkinen wrote:
-> This will be ultimately addressed by:
-[...]
-> As then operations will be always drained.
->
-> It's actually somewhat tedious to address this particular issue
-> without this type of architectural change but I'm open for fixes.
+encrypted_update() frees the old payload with call_rcu(), and the
+callback, encrypted_rcu_free(), is part of encrypted-keys.ko.
+cleanup_encrypted() only calls unregister_key_type(), which does not
+wait for callbacks that are already queued. If the module is removed
+shortly after a KEYCTL_UPDATE, the RCU core later calls
+encrypted_rcu_free() in freed module memory.
 
-Thanks. For trees that will not get the series, I think a minimal fix
-is possible here, because unregister_key_type() already guarantees that
-no new ->update() can run once it returns: key_create_or_update() holds
-key_types_sem across __key_update(), key_update() checks
-key->type->update under key->sem, and the dead-type GC pass retypes
-each remaining key to key_type_dead under key->sem before
-unregister_key_type() returns. So every encrypted_rcu_free() has been
-queued by then, and an rcu_barrier() after unregister_key_type() in
-cleanup_encrypted() waits for all of them. trusted.ko has the same
-pattern (trusted_update() uses call_rcu(), and none of the exit paths
-waits for pending callbacks), so cleanup_trusted() needs the same.
+No new callback can be queued once unregister_key_type() has returned:
+key_create_or_update() holds key_types_sem across __key_update(),
+key_update() checks key->type->update with key->sem held, and the
+garbage collector switches every remaining key of the type to
+key_type_dead under key->sem before unregister_key_type() returns. An
+rcu_barrier() at that point therefore waits for all pending
+encrypted_rcu_free() callbacks, as Documentation/RCU/rcubarrier.rst
+describes for modules that use call_rcu().
 
-I reproduced it in QEMU with KASAN and CONFIG_RCU_LAZY=y: add an
-encrypted key, update it 20 times, and unload the module right away.
-The rcuop kthread hit int3 at encrypted_rcu_free+0x1 in the freed
-module text in 5 of 5 runs. With the barrier, 5 of 5 runs were clean.
+Tested in QEMU (x86_64, TCG) on mainline (7.4-rc4+) with KASAN,
+ENCRYPTED_KEYS=m and CONFIG_RCU_LAZY=y, so that callbacks are deferred:
+add an encrypted key, update it 20 times, then call delete_module()
+right away. Without this patch, the rcuop kthread hit int3 at
+encrypted_rcu_free+0x1 in the freed module text in 5 of 5 runs. With
+it, 5 of 5 runs were clean, and the unload took about 30 ms longer.
 
-With your series applied, the barrier is still needed as far as I can
-see: the GC calls synchronize_rcu() before the module_put() in
-key_gc_unused_keys(), and key_gc_flush() is only used by dns_resolver,
-NFS idmap, the SMB client and rxrpc. On top of the series, the barrier
-could become a key_gc_flush() call.
+The problem was found, and this patch prepared, with the help of a
+formal analysis tool we are developing that uses AI assistance; I have
+reviewed the analysis and the patch.
 
-I will send two small patches (encrypted, trusted) with Fixes: tags and
-Cc: stable; feel free to drop the stable tag if you think it is not
-worth it.
+Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
+Link: https://lore.kernel.org/all/20261126023538.4160950-1-zhenwenliang@google.com/
+Cc: stable@vger.kernel.org
+Signed-off-by: Zhenwen Liang <zhenwenliang@google.com>
+---
+ security/keys/encrypted-keys/encrypted.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Zhenwen Liang
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 63f0245e6f74..fca809819f8e 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -1000,6 +1000,7 @@ static int __init init_encrypted(void)
+ static void __exit cleanup_encrypted(void)
+ {
+ 	unregister_key_type(&key_type_encrypted);
++	rcu_barrier();
+ }
+ 
+ late_initcall(init_encrypted);
