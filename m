@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795719749;
-	b=S5rDiuAbfkK2zxCKoWQ0p2BnjOIsoKKBEZvvybnkhvVLWJfF0KWepHholJrMAMKcjaH3
-	 o8KDwy/nhoPujbBfju1chqHnAq8vnE3GDhkZ0bDF9Ito7e2pAWH/yeYflgH7UQ2aZQ4VJ
-	 SdTcbvEB0h68yV3e8gWGCf9BQ1lbvt0TpCWVCK/t7c6j+Koc2468kJ53W9ENE/VibfXy4
-	 4DVMBDAizBNRm6at322NDwLTCBjMjvod3Dk9WaxpeERUmHjKQBfNc5wM9y06Oe4OyqFkR
-	 r0c4L/r3RMI9ZFtjv7twtAm+EbaCkO0xg197skE+f+NXghOjij+0lg7C58BjL2h/fuQ==
+	t=1795720039;
+	b=dtSx3CXDiwui/6+ntlR63e+WLXX6h1xjzvLJtF1rtLUWgZfnOaDjuJ6DGGgk1Jo69Wu6
+	 DkzlPGiKqx4M4I46WjHiIdTuZUx3pHyOIRtrfAHKSmgnvRCIDs83rQ+qHKhGqrls98aBA
+	 a1LzuOYUadHTYOsWIWDQF09ZAe4THGPFEt4UXd0DwviG8VBv7Om3QOf0nhtMWSpKWgAZs
+	 KAXkCyg64lK4bxCOH37ivKObAnicR8H4Y21KbGLSuWYCZUvINiHbfT75dJcb5fStiPePF
+	 G62lNEe8LGAwfmSOwmaZZ3At6svwgrxHTjgKiXrPOPbgUZvrLSBQfRhEvM7OsuWNGOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795719749;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795720039;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=sgsm41cVrYVXRN/ZczPr+NXSABYCL273lk2seEqIQI0=;
-	b=DFwrZZnoHNrcGeB0476RaJ/D0iDpDgS2HAXY9qXGrX33f5+gS4X4n6tniBawWH5WCV3G
-	 UaehvHkr36QgxamMv/+5Rz+aTYoZQC422a1uN2Wj1LWh19KxDUtHnZoRwpFLw64/+MJCq
-	 x0ZH4DcxxIBJruk+N5tIDvvfvk0EYWkImDlJajq+xczYMlLTHIE6l2HlCcmtMYQlhoa+G
-	 vMk9bmk4D7e9jk/tJo9+2mfAFtpuiRNJAgE8upKsp3N17yEptiJk+2K5+/S5Wu0aeXCgw
-	 FMeX26F6L5ZVxwVdnB5JA7iI6h24S8nrSyb0MkWtOU6juoeD8eQRJ8UnkHb5kIMQRzA==
+	bh=gXeHFtoydO5kiKH4Q56bSoQUO9PGk5t1t8y/vw5PBLY=;
+	b=rnu7uHI2f+tOFD4wNd6X8Ghhr0YuBgKaaaOfT0ocR7RmpP5OZhcVRHLWOOz29YJohuTY
+	 PSv+nQs1fw53iiNCqNQ6PfVAsCGfBD6prhMLASY5dbRnSEBhkP0wIuiqHoZt1Dbpcb32Y
+	 tYYIRF7jkbSTbr6Mz55ntNFyXIhXbi2jg9KnWfw01XrZAhF1JndfF1Ax5Sr/jtUm8YWK+
+	 c7WeIntK0TutK0B3c01Ux3E5GdkiAv/1aPQM/Ikt15rgljK5Dze7uQPY2Hh4grNINz6Ty
+	 6cRCLBJxbC9/Y401hMD/k0u9bMWN5SkyQ55qVjdW5G+JWuc2JbrzJ8jfhBnqC/I04UA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fh+ol2ez;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="a5PW/+S8";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 13C7D606A31C;
-	Thu, 26 Nov 2026 19:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id CCE97606A31C;
+	Thu, 26 Nov 2026 19:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fh+ol2ez
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D27131F000C6;
-	Thu, 26 Nov 2026 19:02:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a5PW/+S8
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7003D1F000CA;
+	Thu, 26 Nov 2026 19:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795719748;
-	bh=sgsm41cVrYVXRN/ZczPr+NXSABYCL273lk2seEqIQI0=;
+	s=k20260515; t=1795720039;
+	bh=gXeHFtoydO5kiKH4Q56bSoQUO9PGk5t1t8y/vw5PBLY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Fh+ol2ezWUjyMhmE1tsESBXMONPu3gXFMuSY5sDYEdFAddpNy5P9x0P+dBQFZGML8
-	 b5VQRb6ASyBFBPVSoTjO5jqaWR7ArsBc/+KdYqv0FCmoMKZH5LMGl0ABaGVVM/fyO1
-	 rC1+BTag7S4+/Vu5SCqt00RtywNl+YAlY2cL1bfwvHNfD/3LvCVa+caMCVgrUfNUh8
-	 Yn0LqIMceBO4G7GyJvbsgTqc8Azw/UnHzQKLSVfp51j2kdJjs5HDy63u5pjq9BjLLW
-	 k4TYGBqvyb8w/9LhZJqerxeQzjmBViT6ImiFNR9fRVF7Or0Qogqtl/6VW3yaiAQ9P3
-	 5ltYe/aTG/g9w==
-Date: Thu, 26 Nov 2026 21:02:24 +0200
+	b=a5PW/+S8Kb2RKqpTLSsTp+8iuZwaDBsBJ9sN66XZHE5TIsJC+F8gsf/cd2kVwWKNs
+	 qGTz5UlDaFAd8rfqOBjyIta19gvetvUYFYtjXv8APWIiZ5OduN6P7hbXDA/7kA2dzi
+	 jT46mioMYv3hCq7D5sJtGTGrSZLoxY3c91sT5QZb7P/ewY1UxPs5m+o5gDOgAPdc9L
+	 IUP0Y+BP7XZI3I9iKjQoiUX6o7i6cKsNJG6fE8Y6H2gtJgH542Z5mHFHyyRZnZcJ5y
+	 6Ft+BEawL0VyByMNkRadVChzMyqEbOePzlSOnPHIKXBEepK7oKsqtRVg9mmqZ5mzjA
+	 wVhAQxV812H6A==
+Date: Thu, 26 Nov 2026 21:07:15 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Surendran Kanagaraj <surenkj@amazon.com>
-Cc: corbet@lwn.net, graf@amazon.de, gunnarku@amazon.com, jgg@ziepe.ca,
-	joshlev@amazon.com, leitao@debian.org, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nh-open-source@amazon.com, noodles@earth.li, peterhuewe@gmx.de,
-	rdunlap@infradead.org, skhan@linuxfoundation.org
-Subject: Re: [RFC PATCH v4 1/8] tpm: Add a single table for all TPM wait
- limits
-Message-ID: <awiCQCU-h8MQc6bQ@kernel.org>
-References: <20261118073852.81107-2-surenkj@amazon.com>
- <20261125230034.24726-1-surenkj@amazon.com>
+To: Zhenwen Liang <zhenwenliang@google.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: KEYS: encrypted: encrypted_rcu_free() callbacks can outlive the
+ module
+Message-ID: <awiDY0d9pRUzkV4Z@kernel.org>
+References: <20261126023538.4160950-1-zhenwenliang@google.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -63,64 +62,76 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261125230034.24726-1-surenkj@amazon.com>
+In-Reply-To: <20261126023538.4160950-1-zhenwenliang@google.com>
 
-On Wed, Nov 25, 2026 at 11:00:34PM +0000, Surendran Kanagaraj wrote:
-> Hi Jarkko,
+On Thu, Nov 26, 2026 at 02:35:38AM +0000, Zhenwen Liang wrote:
+> Hi,
 > 
-> On Wed, Nov 18, 2026 at 07:38:45AM +0000, Surendran Kanagaraj wrote:
-> > +static const u32 tpm2_defaults[TPM_NR_LIMITS] = {
-> > +	[TPM_LIMIT_A]		= TPM2_TIMEOUT_A * USEC_PER_MSEC,
-> > +	[TPM_LIMIT_B]		= TPM2_TIMEOUT_B * USEC_PER_MSEC,
-> > +	[TPM_LIMIT_C]		= TPM2_TIMEOUT_C * USEC_PER_MSEC,
-> > +	[TPM_LIMIT_D]		= TPM2_TIMEOUT_D * USEC_PER_MSEC,
-> > +
-> > +	[TPM_LIMIT_SHORT]	= 750 * USEC_PER_MSEC,
-> > +	[TPM_LIMIT_MEDIUM]	= 2000 * USEC_PER_MSEC,
-> > +	[TPM_LIMIT_LONG]	= 3000 * USEC_PER_MSEC,
-> > +	[TPM_LIMIT_LONG_LONG]	= TPM2_DURATION_LONG_LONG * USEC_PER_MSEC,
-> > +	[TPM_LIMIT_DEFAULT]	= TPM2_DURATION_DEFAULT * USEC_PER_MSEC,
-> > +};
+> encrypted_update() replaces the payload and frees the old one with
 > 
-> The TPM2_SelfTest duration bump [1] made me realize that mapping the
-> TPM 2.0 durations into these TPM 1.x style classes may not hold up long
-> term. A spec update to a single command turns into a change that
-> affects all commands under the class. I think it is better to keep the
-> existing maps as they are and let the driver modify the map if needed.
-> This is also what you suggested in commit 207696b17f38 ("tpm: use a
-> map for tpm2_calc_ordinal_duration()"): keep a per-chip copy of the
-> map and let the leaf driver patch it.
+>     rcu_assign_keypointer(key, new_epayload);
+>     call_rcu(&epayload->rcu, encrypted_rcu_free);
 > 
-> At a high level, the series would become:
+> (security/keys/encrypted-keys/encrypted.c:898-899 on mainline
+> ebb7a8dc1e74), but the module exit path does not wait for those
+> callbacks:
 > 
-> 1) Set default interface timeouts and duration at chip allocation.
-> 2) Keep the chip durations in a union of TPM1.x and TPM2.0 durations.
+>     static void __exit cleanup_encrypted(void)
+>     {
+>             unregister_key_type(&key_type_encrypted);
+>     }
 > 
->      union tpm_durations {
->              unsigned long tpm1[TPM1_NUM_DURATIONS];
->              struct tpm2_ordinal_duration tpm2[TPM2_NUM_DURATIONS];
->      };
-> 
->    struct tpm_chip holds the union tpm_durations in place of
->    chip->duration[]
+> When ENCRYPTED_KEYS=m, an encrypted_rcu_free() callback queued by a
+> recent KEYCTL_UPDATE can therefore still be pending when
+> encrypted-keys.ko is unloaded. The RCU core later calls a function in
+> freed module text. unregister_key_type() garbage-collects the keys of
+> the type but, as far as I can see, nothing on that path waits for
+> already-queued call_rcu() callbacks (synchronize_rcu() is not enough for
+> that).
 
-It isn't possible to have single struct tpm duration that is partially
-used by TPM1?
+This will be ultimately addressed by:
 
+https://lore.kernel.org/keyrings/20261112040242.247168-1-jarkko@kernel.org/
 
+As then operations will be always drained.
 
-> 3) update_durations() now gets the union which TPM1.x and TPM2
->    drivers can adjust.
-> 4) Show the durations sysfs file for TPM 2.0 chips.
+It's actually somewhat tedious to address this particular issue without
+this type of architectural change but I'm open for fixes.
+
+Just giving that as a point of reflection.
+
 > 
-> With this, I would drop the limits table, poll APIs and tpm.limits=
-> parameter for now and keep the series focused on duration handling.
+> Sequence:
+>   1. a user who owns an encrypted key runs KEYCTL_UPDATE
+>      ("update <new master>"), which queues encrypted_rcu_free();
+>   2. before a grace period ends and the callback runs, root removes the
+>      module (no dependent module loaded);
+>   3. the callback runs from freed module memory.
 > 
-> Does this sound reasonable to you?
+> The usual fix for this pattern is an rcu_barrier() in
+> cleanup_encrypted() after unregister_key_type(). trusted_core.c uses the
+> same call_rcu() pattern in trusted_update(); I have not checked its exit
+> path in detail.
 > 
-> [1] https://lore.kernel.org/linux-integrity/20261125182251.19360-1-surenkj@amazon.com/
+> Affected: the call_rcu() in encrypted_update() has been there since the
+> encrypted-keys code was moved to its own directory (61cf45d01990, 2011);
+> the code is unchanged in mainline ebb7a8dc1e74 and next-20261125.
+> Trigger: needs root to unload the module; queueing the callback needs
+> only a key owner. Impact: use-after-free of module text, i.e. a crash or
+> execution of reused memory, in a narrow window after the unload.
+> 
+> Found by a formal analysis tool we are developing that uses AI
+> assistance; I have reviewed the analysis and this report. The tool runs
+> verbatim copies of the kernel functions with stubs for the rest of the
+> kernel; it found the interleaving above, and the interleaving was
+> replayed natively on that harness under the tool's schedule. Functions
+> involved: encrypted_update(), encrypted_rcu_free(), cleanup_encrypted()
+> (RCU core and module unloading stubbed). It has not been reproduced on a
+> booted kernel.
 > 
 > Thanks,
-> Surendran
+> Zhenwen Liang
+
+I think the issue is legit.
 
 Br, Jarkko
