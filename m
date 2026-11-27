@@ -1,76 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.190
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795795760;
-	b=dB8NvT+9Sn8F83ox8QTflFFoospiH0xs9pNRmcpsMn/D4qyOzOY7y5w8My2xkMp5TnNI
-	 wGnAORBotIXEGDHf3/NyLu0RpiBMQ4uPo6wMNwWOZQlM0ILen3NB8geXBWAQpu5oe8pxe
-	 xwCqyQKisJWDzR6teqDYl49FjURejcyhQ9DP+3W0sbw107krr2LfyJ6EgwWhP5Ku2KB+0
-	 dw2A5Qiy/ixTjScDLoVN3mmj17yK2IGERC200xKgeS30Yocr41A7zmq95uC2BwxMRIOr+
-	 P/vxMZLKdsU2kVWBC9FuHzFA8BIyoxAY3s12FZtA26RHfH6fQAeIFJIjaZuy5rdVz2A==
+	t=1795801765;
+	b=KEafaAP1XNUQi2S/BysV6rzHpz8p4cqaqHVtj0SqTIvC1ecp7HuTze+j68k7mYCT69mp
+	 tIpJl8Jy3Tk9GWFvsle32V3kL8wVNuB0yJ8SWj3XLn0HwLlgyC1ZLWiTEVdVzwF9Tt3Wn
+	 9qGAYaQHzS/NOr4KTWJ+n9W3coZzeijJ14dgnfPaXcoXatMhJ3y1LNM9qArkqqg1xhajF
+	 sfoZL2ScyA75iEBVczSEwEJ50n/VYYcFh41bjBWJSCNwYOajAPoOgAcPhlP0RTLg0JWB5
+	 rPcUr0uVdZ+VXyChPsgICV/0yqGJLpxnN2CBQ/uvVqMGr6yqrTCXjaPQp76/Bvtw5oA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795795760;
-	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
-	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Subject:Date:X-OQ-MSGID:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 MIME-Version;
-	bh=NXv6ov7j2JUiAHmIY3+LWvm5ECdzsKbptyp8TPWwrdU=;
-	b=4btVC/8oi2YeROBtBtfF1wZqU/nVNNxV8zb3FFtkPx1s6X2U5DUSamieHPFUufbNwYod
-	 byDDQDzS/Wp5tHj74u3TNxLAQYBVYAuF4ZW/f8Bl7Ns8UKDMWFBhE1LTubBfxanmB5dgK
-	 xeKbvwxle/y/XLDtygAawr4irALftJW3mxCs89WNVW0VD5QjEHPgdq48zNYZWvI6ltIB6
-	 Joa/yNFT5A5xvr/dCh7oXxIrUVOkPttO1XwDGKzuqjYInDx12tEQnEXQKo53clGbJpbP9
-	 VRAA+dKnC4q9B9G80ox1gIT9PD8f7INI8qSyrTUKktY6l5kZlP5CBYJzdDA6/+QX5tQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795801765;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:Received:Mime-Version:Content-Type:
+	 Date:Message-Id:Subject:Cc:From:To:References:In-Reply-To:
+	 X-Scanned-By;
+	bh=Y/Gw+uO8dNWe1Q6KWKNGi2gbav0cIn6VvyubnYQMPkg=;
+	b=u3ynetH9cUBa8yFYd7VSqHtXZjkqIdeKX5rI60UoN1WhPank8ty0xyVWXdXVSs1Twlz5
+	 k6GDtcjcpScZfyo+pTrHR2yoa+O8A1TF19cVFXlyZGgsfJZkPGDOxw5oA0HF75F8l4xCq
+	 JGnLXMgKxbKyzRJUXPrPl3f25/3DaJxGeSXLmcutrc8ywogy9l5e7eiyl0T8aHL/Gbvea
+	 tZsQhTqKWj1mPTvEKqjM/HVthayblrHi9ohX21bJgBawtz9tVkQMXv+ujEHxQaxWTW2lW
+	 YmosauydYEVZt5QtDkrCtpvpTwtzA2Za76BQPQu2G1edpAR4Lh3Zy3IGrk1Rj0Gw03Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=qq.com;
-	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=yOs1OJlX;
-	arc=none smtp.remote-ip=203.205.221.190
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=FlidYhnQ;
+	arc=none smtp.remote-ip=170.10.133.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E9C606A332;
-	Fri, 27 Nov 2026 16:09:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B4E9C606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312C4606A31C
+	for <linux-integrity@vger.kernel.org>; Fri, 27 Nov 2026 17:49:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 312C4606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=yOs1OJlX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1795795750; bh=NXv6ov7j2JUiAHmIY3+LWvm5ECdzsKbptyp8TPWwrdU=;
-	h=From:To:Subject:Date:In-Reply-To:References;
-	b=yOs1OJlXen1ssNgoXdNsu/+VN3Iqx9iBSJ9PIJmcYmmZxPdmfsYX0u63pBPWbx67Y
-	 lciprx5gpKQCaKiBD9QhEr3yzq8LiarSWQraRRjSzjSFu9jFHR3ha3Rj++1tSR9y/f
-	 IeQ86qpsT5uOv6I7oMwnAb0rafdyVL6PnY/JUDYY=
-Received: from [172.16.4.32] ([2408:8221:620:8610:f181:7ac4:be13:908a])
-	by newxmesmtplogicsvrszc56-0.qq.com (NewEsmtp) with SMTP
-	id 24693453; Sat, 28 Nov 2026 00:09:06 +0800
-X-QQ-mid: xmsmtpt1795795746tsbxqqkzk
-Message-ID: <tencent_2C2BD6A76160698ABD6C98DFEA45B7D72006@qq.com>
-X-QQ-XMAILINFO: OIJV+wUmQOUAYZJ1yPXDADI7prF8jlUSyveBgXjrUTk2icDAbvztgHmHnMZ6av
-	 mrY/6hjo5Bh55ZlWg1yNth7OFxT/79yezicuQX6KIDJDfYoiRc1zrjBkVGc2W4k8626SjpRrQnpU
-	 nxTyQA0Bo+SrNM7JjpMzBRhORhFXM7KLmi4EVgzyey65z9FSu8GQkag3XxYXoIaa5DL+cQdJrgOh
-	 0fnvol1RD52Cacgy8/AR9mJwo+Ye+31dpoeSkOgwTHpx8+d5uD/tzaU365REJtDV0XRMEIrFFJzR
-	 diHflhahm6cyGtCZYNbz4Wn3b+nXNI6ucMK97RLgt0KvqMtr55tQZPakvVTOYzBxgpYFMpc12/F9
-	 yd0K7yj4gypE2kVlIwtrbEa3v9wY4FstE8ny480hmhSevsGF0RIk2gkXiM5IeNt97c/hi1BsM+53
-	 PmlwTLr19szKKT7IVknKlvpjh7PCUEsawdTvbD9l+uEcZ+syQUViOpgAcU9eFyHVs1uxDOXOLCrz
-	 wLqIrx5d2jpZlR+TRCHPTsbpTv4d8ZZBaHCu7VWGfbJUc06A2IpCB198Wu388cXBEQmzPPX2Cwjl
-	 n7CvNo5fJRKosugMti+sWFexUFDcqM7eeCc6Q5dRIvGSDlylEo6wDivDG9XhYgtzOyd151xzG1y3
-	 w6TZzrAaICIT+aeiUwAfgNYyFuMFeE90gcSnPJVpOgRGYkkq1kheexPTWdAwBwWEQjgvZBPIvlVl
-	 sxBAbYaxjH79g6FPYd1Ad1xrINQKrC0TpuKufR0blUduRdtJ2ab7fGmITE5beNbOkN0I2Lm/83hL
-	 M4m2Ex/h1zbDw4mFPTmUnzk2GCU/BXIlmcO0MJXVn+dY2wYaHPwfr6ZmN08FRC42zpwiq0rZeSFV
-	 6E9VBYu1zDng5d/amPNaZnCVBKcMnAqr/Ka4YackX/94455MdFCoAI6XkC8vYrRAFULp0DyEZEW2
-	 z+EvETM9foJJ9i+Y4YCb5RwXTde0PDIHecJYi5wJ6rFWUHiALqzLz6Tg8sGPCBTTwpo/JItGW7+W
-	 NnscuyaQYjvbRrFpfOQFuhKkeRD5jrUHbbMucEUM9Y/9hKu3XRbT/XVzCFdD80ptwFnB+Cg8iZ8k
-	 WjQT+YJtEoLL7vrx7JNGV4LQ1l8w==
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
-From: Chenshuo Zhang <abc0eichs@qq.com>
-To: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] lib/asn1_encoder: fix encoding of zero OID components
-Date: Fri, 27 Nov 2026 23:59:47 +0800
-X-OQ-MSGID: <179579518734.36512.17026717360352959442@qq.com>
-In-Reply-To: <20261123220311.9ee34b6c33545185d41d09ce@linux-foundation.org>
-References: <tencent_AFE15D698FFD4F18E16A6EF7CDA002D69806@qq.com>
- <20261123220311.9ee34b6c33545185d41d09ce@linux-foundation.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=FlidYhnQ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1795801764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y/Gw+uO8dNWe1Q6KWKNGi2gbav0cIn6VvyubnYQMPkg=;
+	b=FlidYhnQC84sx2bcMIua3XRrO13Bm1FFGxRuvsXQvVfj4TY+yh/nA1jyd3WQk3hSBavQSV
+	n88xjJC3obkRwi1TNQ3SgqMRMHEspaehNfZ8umIB5hQnylYDzjMueyQKk5sDUJK3xp3Pi+
+	yQdnCrXYvOvG00qHd5NU10FTOvpA3Fg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-RW6IK39hMkGI2nB0A7B1LA-1; Fri,
+ 27 Nov 2026 17:49:20 +0000
+X-MC-Unique: RW6IK39hMkGI2nB0A7B1LA-1
+X-Mimecast-MFC-AGG-ID: RW6IK39hMkGI2nB0A7B1LA_1795801759
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2196E195604A;
+	Fri, 27 Nov 2026 17:49:19 +0000 (UTC)
+Received: from localhost (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EAE5630002C2;
+	Fri, 27 Nov 2026 17:49:17 +0000 (UTC)
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -79,16 +67,292 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=e2767366775068f5a60759cf64536a5c74e96766aee942698b581447a777;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Fri, 27 Nov 2026 14:49:13 -0300
+Message-Id: <DN66LCLCYBP5.O2KSAOOS8SYO@redhat.com>
+Subject: Re: [PATCH 1/3] certs: blacklist: define skid: entries and add
+ is_key_blacklisted()
+Cc: "Jarkko Sakkinen" <jarkko@kernel.org>, "David Howells"
+ <dhowells@redhat.com>, "Roberto Sassu" <roberto.sassu@huawei.com>,
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: "Bruno Meneguele" <bmeneg@redhat.com>
+To: "Mimi Zohar" <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
+References: <20261106173149.707244-1-zohar@linux.ibm.com>
+ <20261106173149.707244-2-zohar@linux.ibm.com>
+In-Reply-To: <20261106173149.707244-2-zohar@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-> So for now I'll rewrite this as From:me and Reported-by:zzz.
+--e2767366775068f5a60759cf64536a5c74e96766aee942698b581447a777
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8; format=Flowed
 
-Thanks, Andrew. Please use Chenshuo Zhang for the patch attribution.
+On Fri Nov 6, 2026 at 2:31 PM -03, Mimi Zohar wrote:
+> A "tbs:" blacklist entry is only compared against certificates being
+> added to a keyring or presented in a signature chain, so it does not
+> stop a key that is already loaded from being used as a trust anchor.
+>
+> Define a new "skid:<hex>" blacklist entry, holding a Subject Key
+> Identifier, and add is_key_blacklisted(), which looks up the SKID of an
+> asymmetric key in the system blacklist.  Entries are added like "tbs:"
+> and "bin:" entries and are subject to CONFIG_SYSTEM_BLACKLIST_AUTH_UPDATE=
+.
+>
+> blacklist_vet_description() now uses a prefix table, since the prefixes
+> no longer all have the same length.  "tbs:" and "bin:" entries behave
+> as before.
+>
+> For example, to add an entry for a certificate (the signed string must
+> not include a trailing newline):
+>
+>   skid=3D$(openssl x509 -in cert.pem -noout -ext subjectKeyIdentifier |
+>          sed -n '2s/[ :]//gp' | tr A-F a-f)
+>   printf 'skid:%s' "$skid" > skid.txt
+>   openssl smime -sign -binary -noattr -in skid.txt -signer signer.crt \
+>           -inkey signer.key -outform DER -out skid.p7s
+>   keyctl padd blacklist "skid:$skid" %:.blacklist < skid.p7s
+>
+> The SKID is also the hex string in the description of the key on a
+> keyring, and its last four bytes are the key ID in the security.ima
+> xattr, so an entry is easy to correlate with the key it revokes:
+>
+>   # keyctl show %:.ima | grep 073d
+>   927946571 --als--v  0  0   \_ asymmetric: test signing key: b7809c3372a=
+07fe87248dcec7ff047a40fb3073d
+>   # keyctl show %:.blacklist | grep skid
+>   1014808518 ----s--v 0  0   \_ blacklist: skid:b7809c3372a07fe87248dcec7=
+ff047a40fb3073d
+>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+> Changelog v1:
+> - Addressed Sashiko issues: drop Kconfig change, linking issues when
+> blacklist support configured, but without CONFIG_ASYMMETRIC_KEY_TYPE
+> configured.
+>
+>  certs/blacklist.c             | 83 ++++++++++++++++++++++++-----------
+>  include/keys/system_keyring.h | 12 +++++
+>  2 files changed, 70 insertions(+), 25 deletions(-)
+>
+> diff --git a/certs/blacklist.c b/certs/blacklist.c
+> index fa561c12eabf..9158bd9f9fc9 100644
+> --- a/certs/blacklist.c
+> +++ b/certs/blacklist.c
+> @@ -32,6 +32,7 @@
+>
+>  static const char tbs_prefix[] =3D "tbs";
+>  static const char bin_prefix[] =3D "bin";
+> +static const char skid_prefix[] =3D "skid";
+>
+>  static struct key *blacklist_keyring;
+>
 
-I tested James's suggestion to share the final-octet path for
-single-octet subidentifiers. The UML KUnit tests and the x86_64 W=1
-build passed. Would you prefer a v2 to replace the queued patch,
-or a follow-up patch?
+Hi Mimi,
 
-Signed-off-by: Chenshuo Zhang <abc0eichs@qq.com>
+the script certs/check-blacklist-hashes.awk needs to be updated to allow "s=
+kid:"
+hash type too, otherwise build fails with "unknown prefix":
+
+$ echo '"skid:3afbecd5ee1d3d787c61270797e5c85065d030cc"' > certs/blacklist.=
+txt
+$ scripts/config --set-str SYSTEM_BLACKLIST_HASH_LIST certs/blacklist.txt
+$ make certs/
+  DESCEND objtool
+  GEN     certs/blacklist_hash_list
+Unknown prefix (item 1): skid:3afbecd5ee1d3d787c61270797e5c85065d030cc
+make[3]: *** [certs/Makefile:21: certs/blacklist_hash_list] Error 1
+make[2]: *** [scripts/Makefile.build:572: certs] Error 2
+make[1]: *** [/home/brdeoliv/git/linux/Makefile:2244: .] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+It seems to be just a single line of code and the file documentation:
+
+-       if (!match(part1[1], "^(tbs|bin):(.*)$", part2)) {
++       if (!match(part1[1], "^(tbs|bin|skid):(.*)$", part2)) {
+
+At the same time, I noticed you also dropped the Kconfig documentation chan=
+ge
+for CONFIG_SYSTEM_BLACKLIST_HASH_LIST when you fixed Sashiko's report.
+
+> @@ -40,36 +41,30 @@ extern __initconst const u8 revocation_certificate_li=
+st[];
+>  extern __initconst const unsigned long revocation_certificate_list_size;
+>  #endif
+>
+> +static bool blacklist_prefix_valid(const char *desc, size_t len)
+> +{
+> +	return (len =3D=3D sizeof(tbs_prefix) - 1 &&
+> +		!strncmp(desc, tbs_prefix, len)) ||
+> +	       (len =3D=3D sizeof(bin_prefix) - 1 &&
+> +		!strncmp(desc, bin_prefix, len)) ||
+> +	       (len =3D=3D sizeof(skid_prefix) - 1 &&
+> +		!strncmp(desc, skid_prefix, len));
+> +}
+> +
+>  /*
+> - * The description must be a type prefix, a colon and then an even numbe=
+r of
+> - * hex digits.  The hash is kept in the description.
+> + * The description must be a type prefix ("tbs", "bin" or "skid"), a col=
+on and
+> + * then an even number of lower-case hex digits.  The hash (or, for "ski=
+d", the
+> + * Subject Key Identifier) is kept in the description.
+>   */
+>  static int blacklist_vet_description(const char *desc)
+>  {
+> -	int i, prefix_len, tbs_step =3D 0, bin_step =3D 0;
+> -
+> -	/* The following algorithm only works if prefix lengths match. */
+> -	BUILD_BUG_ON(sizeof(tbs_prefix) !=3D sizeof(bin_prefix));
+> -	prefix_len =3D sizeof(tbs_prefix) - 1;
+> -	for (i =3D 0; *desc; desc++, i++) {
+> -		if (*desc =3D=3D ':') {
+> -			if (tbs_step =3D=3D prefix_len)
+> -				goto found_colon;
+> -			if (bin_step =3D=3D prefix_len)
+> -				goto found_colon;
+> -			return -EINVAL;
+> -		}
+> -		if (i >=3D prefix_len)
+> -			return -EINVAL;
+> -		if (*desc =3D=3D tbs_prefix[i])
+> -			tbs_step++;
+> -		if (*desc =3D=3D bin_prefix[i])
+> -			bin_step++;
+> -	}
+> -	return -EINVAL;
+> +	const char *colon =3D strchr(desc, ':');
+> +	int i;
+>
+> -found_colon:
+> -	desc++;
+> +	if (!colon || !blacklist_prefix_valid(desc, colon - desc))
+> +		return -EINVAL;
+> +
+> +	desc =3D colon + 1;
+>  	for (i =3D 0; *desc && i < MAX_HASH_LEN; desc++, i++) {
+>  		if (!isxdigit(*desc) || isupper(*desc))
+>  			return -EINVAL;
+> @@ -160,6 +155,10 @@ static char *get_raw_hash(const u8 *hash, size_t has=
+h_len,
+>  		type_len =3D sizeof(bin_prefix) - 1;
+>  		type_prefix =3D bin_prefix;
+>  		break;
+> +	case BLACKLIST_HASH_SKID:
+> +		type_len =3D sizeof(skid_prefix) - 1;
+> +		type_prefix =3D skid_prefix;
+> +		break;
+>  	default:
+>  		WARN_ON_ONCE(1);
+>  		return ERR_PTR(-EINVAL);
+> @@ -244,6 +243,40 @@ int is_hash_blacklisted(const u8 *hash, size_t hash_=
+len,
+>  }
+>  EXPORT_SYMBOL_GPL(is_hash_blacklisted);
+>
+> +#ifdef CONFIG_ASYMMETRIC_KEY_TYPE
+> +/**
+> + * is_key_blacklisted - Determine if a key is blacklisted by its SKID
+> + * @key: The key to be checked, e.g. a trust anchor found in a keyring
+> + *
+> + * Unlike a "tbs:" entry, which is only compared against certificates be=
+ing
+> + * added or presented in a chain, this checks a key that is already load=
+ed, so
+> + * that keys that cannot be unlinked from their keyring can still be rev=
+oked.
+> + * The identifier is taken from the key itself, not from the caller.
+> + *
+> + * Returns -EKEYREJECTED if the key's Subject Key Identifier is blacklis=
+ted,
+> + * 0 if it is not (or the key has no SKID), or another negative error.
+> + */
+> +int is_key_blacklisted(const struct key *key)
+> +{
+> +	const struct asymmetric_key_ids *kids;
+> +	const struct asymmetric_key_id *skid;
+> +
+> +	if (!key || key->type !=3D &key_type_asymmetric)
+> +		return 0;
+> +
+> +	kids =3D asymmetric_key_ids(key);
+> +	if (!kids)
+> +		return 0;
+> +
+> +	skid =3D kids->id[1];
+> +	if (!skid || !skid->len)
+> +		return 0;
+> +
+> +	return is_hash_blacklisted(skid->data, skid->len, BLACKLIST_HASH_SKID);
+> +}
+> +EXPORT_SYMBOL_GPL(is_key_blacklisted);
+> +#endif
+> +
+>  int is_binary_blacklisted(const u8 *hash, size_t hash_len)
+>  {
+>  	if (is_hash_blacklisted(hash, hash_len, BLACKLIST_HASH_BINARY) =3D=3D
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.=
+h
+> index a6c2897bcc63..2ac1dae2063a 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -15,6 +15,8 @@ enum blacklist_hash_type {
+>  	BLACKLIST_HASH_X509_TBS =3D 1,
+>  	/* Raw data hash */
+>  	BLACKLIST_HASH_BINARY =3D 2,
+> +	/* Subject Key Identifier of a key (not a hash) */
+> +	BLACKLIST_HASH_SKID =3D 3,
+>  };
+>
+>  #ifdef CONFIG_SYSTEM_TRUSTED_KEYRING
+> @@ -92,6 +94,16 @@ static inline int is_binary_blacklisted(const u8 *hash=
+, size_t hash_len)
+>  }
+>  #endif
+>
+> +#if defined(CONFIG_SYSTEM_BLACKLIST_KEYRING) && \
+> +    defined(CONFIG_ASYMMETRIC_KEY_TYPE)
+> +extern int is_key_blacklisted(const struct key *key);
+> +#else
+> +static inline int is_key_blacklisted(const struct key *key)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+>  struct pkcs7_message;
+>  #ifdef CONFIG_SYSTEM_REVOCATION_LIST
+>  extern int add_key_to_revocation_list(const char *data, size_t size);
+> --
+> 2.56.0
+
+
+
+
+
+--
+Bruno Meneguele
+PGP Key: http://bmeneg.com/pubkey.txt
+
+
+--e2767366775068f5a60759cf64536a5c74e96766aee942698b581447a777
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP MESSAGE-----
+
+wsCpBAEBCABdBYJrCcKcCRBh1GQVH5GiQzUUAAAAAAAcABBzYWx0QG5vdGF0aW9u
+cy5vcGVucGdwanMub3JnEsYLSdME4OnumBKUuDqa4BYhBHVqOp0252XWw5l7rWHU
+ZBUfkaJDAABKogf9GFxVptXl/MrZOfzQGOGFT/B6iALGAAoKkZiVEHgsHB0MfH2m
+EbC0R7CpPjUmEDDfweR92J3Wu2NUUuYwcMxVH4YIqQbawoonD9aEku7G3URGaPWA
+qSBKYwoxbTG3/467wDf92snxLFDgC1bC4ofQwz9ynfvH9/9tuQznekWdaJ7G43c1
+42zygjLsyu748GGailNEjW/MrZTbSDvLjN6eOo89p2VhvvnDx5qGwzQv+b/bjF2p
+kt22schgopEOmmylq2RWUeHRTFlUNkhhlnw9JmRQaO021ImDHAB9BA0wsHnH/Wle
+uTcgB09hgZLG+Q0diUgv63eRitCw9ugUwCpdVw==
+=tSap
+-----END PGP MESSAGE-----
+--e2767366775068f5a60759cf64536a5c74e96766aee942698b581447a777--
 
