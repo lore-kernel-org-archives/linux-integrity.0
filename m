@@ -1,60 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.190
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795780402;
-	b=t3zxBAPnXF9FjT+niL6BulFThFO4nk8PZWFQxcrDdfMTlDgc6bnI6tN4aYQcslSCWHuQ
-	 pF/PpgENaNqASpDZZCmvWnqs/66+02tOLI4y5xklZlXOCbTqYNvRt7qnLE7rduthn8ukt
-	 UOd9nvfzNTKq1dOL7aCqiRGh3ugIrmEILUWNe0UfVllBYTZVBFskgF0dYCcKEPhEpWZmE
-	 iix5PFP7K6P2gVKeSELQ64pn4hWdTN9P2FeW4M1qLze1oLqpYy5F39ManAuMoIfqL+7TD
-	 M15SkdCasyqSF0zjXIL2lSAOQSKdhMWNYUIzuGA1bV3oitoHpi4+H7f6GVnqcWBHS2A==
+	t=1795795760;
+	b=dB8NvT+9Sn8F83ox8QTflFFoospiH0xs9pNRmcpsMn/D4qyOzOY7y5w8My2xkMp5TnNI
+	 wGnAORBotIXEGDHf3/NyLu0RpiBMQ4uPo6wMNwWOZQlM0ILen3NB8geXBWAQpu5oe8pxe
+	 xwCqyQKisJWDzR6teqDYl49FjURejcyhQ9DP+3W0sbw107krr2LfyJ6EgwWhP5Ku2KB+0
+	 dw2A5Qiy/ixTjScDLoVN3mmj17yK2IGERC200xKgeS30Yocr41A7zmq95uC2BwxMRIOr+
+	 P/vxMZLKdsU2kVWBC9FuHzFA8BIyoxAY3s12FZtA26RHfH6fQAeIFJIjaZuy5rdVz2A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795780402;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=rByPEfNf4XLcPucHVrwkNxEV0dJQaoEcaC2v04KImDc=;
-	b=pYKDC5pQr8yytRJx8PZFEri9Ub21bt8ie2DOyqDJND2TRReX7hbgSnNa3GT4uzYe3iai
-	 bn/ltHCm74V4L2VCZduTEAVUuwQQtLNplmyzMqxdb/MDS0q4lsL0MQblXuItCbWnUMDvt
-	 mCtcw0vPXMN5HbL43mA765gViRYC81msTvdAGn7DTB+F6rtbt3bTPkWYykIk//VujHGWk
-	 mEwRU8imGW34ZBAc8akUnJ0I7B9T4oxtMOrQv9wLzHz6aJZjlYDynucXt8KGqXT4+iVK1
-	 rA1kDt6/XeQnLH0uEZL2eEa4XFcTzuxHVegm9l4wyNEXEETPv4Hgt/1TYqdJrhaTnvA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795795760;
+	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
+	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Subject:Date:X-OQ-MSGID:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 MIME-Version;
+	bh=NXv6ov7j2JUiAHmIY3+LWvm5ECdzsKbptyp8TPWwrdU=;
+	b=4btVC/8oi2YeROBtBtfF1wZqU/nVNNxV8zb3FFtkPx1s6X2U5DUSamieHPFUufbNwYod
+	 byDDQDzS/Wp5tHj74u3TNxLAQYBVYAuF4ZW/f8Bl7Ns8UKDMWFBhE1LTubBfxanmB5dgK
+	 xeKbvwxle/y/XLDtygAawr4irALftJW3mxCs89WNVW0VD5QjEHPgdq48zNYZWvI6ltIB6
+	 Joa/yNFT5A5xvr/dCh7oXxIrUVOkPttO1XwDGKzuqjYInDx12tEQnEXQKo53clGbJpbP9
+	 VRAA+dKnC4q9B9G80ox1gIT9PD8f7INI8qSyrTUKktY6l5kZlP5CBYJzdDA6/+QX5tQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=itVam21t;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=qq.com;
+	spf=pass smtp.mailfrom=qq.com;
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=yOs1OJlX;
+	arc=none smtp.remote-ip=203.205.221.190
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 7EFCF606A31C;
-	Fri, 27 Nov 2026 11:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E9C606A332;
+	Fri, 27 Nov 2026 16:09:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B4E9C606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=itVam21t
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8862A1F000C1;
-	Fri, 27 Nov 2026 11:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795780402;
-	bh=rByPEfNf4XLcPucHVrwkNxEV0dJQaoEcaC2v04KImDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=itVam21tTHvEcaE5VJdWfQ/tgPSDAV6CDG2GMzdzyoN/mxuMlbjCKvTu2FworV8ko
-	 U7OM/C/AREEZstZ1VU3BDDwN/goi5NSVpHgyhlDjXS6qgi2nf64jSnYSLll7UVpryS
-	 WLdIPBh/exuiD/BBUBW5FXh68SNsHV4YssiLRrvITYGhcBKAd5wLXwjx7yGh5od1O1
-	 8hMFBo2DQVo3yX8N1qNr+U/E5QyfOPsa03nsb5nl21/an5e2Oegt8L8t1cEqRNbZkM
-	 efMDAmVRNTrhYS5cwidxYxi5Ge/AO1veZfDec67oehMQtdy9nU4FznwC7zn99d+vx+
-	 UcvATeB77jmlA==
-Date: Fri, 27 Nov 2026 13:53:18 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Cc: peterhuewe@gmx.de, lance@osuosl.org, rcu@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linuxppc-dev@lists.ozlabs.org,
-	linux-integrity@vger.kernel.org, Li Jun <lijun01@kylinos.cn>
-Subject: Re: [PATCH v2] tpm: ibmvtpm: Fix unused suspend callback with
- CONFIG_PM_SLEEP=n
-Message-ID: <awlvLjQT17DBZKpN@kernel.org>
-References: <20261127051359.852628-1-zhouzhouyi@gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=yOs1OJlX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1795795750; bh=NXv6ov7j2JUiAHmIY3+LWvm5ECdzsKbptyp8TPWwrdU=;
+	h=From:To:Subject:Date:In-Reply-To:References;
+	b=yOs1OJlXen1ssNgoXdNsu/+VN3Iqx9iBSJ9PIJmcYmmZxPdmfsYX0u63pBPWbx67Y
+	 lciprx5gpKQCaKiBD9QhEr3yzq8LiarSWQraRRjSzjSFu9jFHR3ha3Rj++1tSR9y/f
+	 IeQ86qpsT5uOv6I7oMwnAb0rafdyVL6PnY/JUDYY=
+Received: from [172.16.4.32] ([2408:8221:620:8610:f181:7ac4:be13:908a])
+	by newxmesmtplogicsvrszc56-0.qq.com (NewEsmtp) with SMTP
+	id 24693453; Sat, 28 Nov 2026 00:09:06 +0800
+X-QQ-mid: xmsmtpt1795795746tsbxqqkzk
+Message-ID: <tencent_2C2BD6A76160698ABD6C98DFEA45B7D72006@qq.com>
+X-QQ-XMAILINFO: OIJV+wUmQOUAYZJ1yPXDADI7prF8jlUSyveBgXjrUTk2icDAbvztgHmHnMZ6av
+	 mrY/6hjo5Bh55ZlWg1yNth7OFxT/79yezicuQX6KIDJDfYoiRc1zrjBkVGc2W4k8626SjpRrQnpU
+	 nxTyQA0Bo+SrNM7JjpMzBRhORhFXM7KLmi4EVgzyey65z9FSu8GQkag3XxYXoIaa5DL+cQdJrgOh
+	 0fnvol1RD52Cacgy8/AR9mJwo+Ye+31dpoeSkOgwTHpx8+d5uD/tzaU365REJtDV0XRMEIrFFJzR
+	 diHflhahm6cyGtCZYNbz4Wn3b+nXNI6ucMK97RLgt0KvqMtr55tQZPakvVTOYzBxgpYFMpc12/F9
+	 yd0K7yj4gypE2kVlIwtrbEa3v9wY4FstE8ny480hmhSevsGF0RIk2gkXiM5IeNt97c/hi1BsM+53
+	 PmlwTLr19szKKT7IVknKlvpjh7PCUEsawdTvbD9l+uEcZ+syQUViOpgAcU9eFyHVs1uxDOXOLCrz
+	 wLqIrx5d2jpZlR+TRCHPTsbpTv4d8ZZBaHCu7VWGfbJUc06A2IpCB198Wu388cXBEQmzPPX2Cwjl
+	 n7CvNo5fJRKosugMti+sWFexUFDcqM7eeCc6Q5dRIvGSDlylEo6wDivDG9XhYgtzOyd151xzG1y3
+	 w6TZzrAaICIT+aeiUwAfgNYyFuMFeE90gcSnPJVpOgRGYkkq1kheexPTWdAwBwWEQjgvZBPIvlVl
+	 sxBAbYaxjH79g6FPYd1Ad1xrINQKrC0TpuKufR0blUduRdtJ2ab7fGmITE5beNbOkN0I2Lm/83hL
+	 M4m2Ex/h1zbDw4mFPTmUnzk2GCU/BXIlmcO0MJXVn+dY2wYaHPwfr6ZmN08FRC42zpwiq0rZeSFV
+	 6E9VBYu1zDng5d/amPNaZnCVBKcMnAqr/Ka4YackX/94455MdFCoAI6XkC8vYrRAFULp0DyEZEW2
+	 z+EvETM9foJJ9i+Y4YCb5RwXTde0PDIHecJYi5wJ6rFWUHiALqzLz6Tg8sGPCBTTwpo/JItGW7+W
+	 NnscuyaQYjvbRrFpfOQFuhKkeRD5jrUHbbMucEUM9Y/9hKu3XRbT/XVzCFdD80ptwFnB+Cg8iZ8k
+	 WjQT+YJtEoLL7vrx7JNGV4LQ1l8w==
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+From: Chenshuo Zhang <abc0eichs@qq.com>
+To: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] lib/asn1_encoder: fix encoding of zero OID components
+Date: Fri, 27 Nov 2026 23:59:47 +0800
+X-OQ-MSGID: <179579518734.36512.17026717360352959442@qq.com>
+In-Reply-To: <20261123220311.9ee34b6c33545185d41d09ce@linux-foundation.org>
+References: <tencent_AFE15D698FFD4F18E16A6EF7CDA002D69806@qq.com>
+ <20261123220311.9ee34b6c33545185d41d09ce@linux-foundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -64,69 +80,15 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261127051359.852628-1-zhouzhouyi@gmail.com>
 
-On Fri, Nov 27, 2026 at 05:13:59AM +0000, Zhouyi Zhou wrote:
-> Discovered in the Open Source Lab of Oregon State University when running
-> RCU torture.sh on a ppc64le VM.
-> 
-> With CONFIG_TCG_IBMVTPM=y and CONFIG_PM_SLEEP disabled, SIMPLE_DEV_PM_OPS()
-> omits the references to the system sleep callbacks. This leaves
-> tpm_ibmvtpm_suspend() unused and produces the following warning:
-> 
->   warning: 'tpm_ibmvtpm_suspend' defined but not used [-Wunused-function]
-> 
-> Use DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() so that the compiler
-> sees the callback references and can discard the unused PM code when
-> system sleep is disabled. Preserve tpm_ibmvtpm_resume(), which is also
-> called directly from tpm_ibmvtpm_send().
-> 
-> Tested on PPC VM of the Open Source Lab
-> of Oregon State University.
-> 
-> Fixes: fc0ddb3174b0 ("char: tpm: Use SIMPLE_DEV_PM_OPS for ibmvtpm power management")
-> Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> ---
-> Changes in v2:
-> - Remove the blank line between Fixes: and Signed-off-by:.
-> - Keep DEFINE_SIMPLE_DEV_PM_OPS() and its arguments on one line.
->   Both changes address Jarkko Sakkinen's review comments.
-> 
-> Only a targeted compile check was performed; the full RCU torture test
-> was not run because it takes too long.
-> 
->  drivers/char/tpm/tpm_ibmvtpm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index 51c7e2add3d2..dd577f075c57 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -462,7 +462,7 @@ static const struct tpm_class_ops tpm_ibmvtpm = {
->  	.req_canceled = tpm_ibmvtpm_req_canceled,
->  };
->  
-> -static SIMPLE_DEV_PM_OPS(tpm_ibmvtpm_pm_ops, tpm_ibmvtpm_suspend, tpm_ibmvtpm_resume);
-> +static DEFINE_SIMPLE_DEV_PM_OPS(tpm_ibmvtpm_pm_ops, tpm_ibmvtpm_suspend, tpm_ibmvtpm_resume);
->  
->  /**
->   * ibmvtpm_crq_get_next - Get next responded crq
-> @@ -714,7 +714,7 @@ static struct vio_driver ibmvtpm_driver = {
->  	.remove		 = tpm_ibmvtpm_remove,
->  	.get_desired_dma = tpm_ibmvtpm_get_desired_dma,
->  	.name		 = tpm_ibmvtpm_driver_name,
-> -	.pm		 = &tpm_ibmvtpm_pm_ops,
-> +	.pm		 = pm_sleep_ptr(&tpm_ibmvtpm_pm_ops),
->  };
->  
->  /**
-> 
-> base-commit: 5f22fb20497f4983094131f00a734362300d22d2
+> So for now I'll rewrite this as From:me and Reported-by:zzz.
 
-Thanks.
+Thanks, Andrew. Please use Chenshuo Zhang for the patch attribution.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+I tested James's suggestion to share the final-octet path for
+single-octet subidentifiers. The UML KUnit tests and the x86_64 W=1
+build passed. Would you prefer a v2 to replace the queued patch,
+or a follow-up patch?
 
-Br, Jarkko
+Signed-off-by: Chenshuo Zhang <abc0eichs@qq.com>
+
