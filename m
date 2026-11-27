@@ -1,82 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795764575;
-	b=dE0Twf/VdLfhHR0zeowNtbfvDpiiTbdfbz281QMM9+0qgN53xjdFf2ikmmwixWgeeme/
-	 IUXJY9f+uFW+UuZBkALcOLbKQ/BOCyorQB2uC1OWM2PJReh4wIYKY7sC03P4jCZdGZZtr
-	 ry7OorQ6xCbYZXOwYmz7Z+z4MiCf203l9uVbASYUv+w87l/yuiH5IvDofoqiwqjbfhBv2
-	 mwfWWG1RXB3Dz5wfB/F80UjsaX3vds83TpHM+NBSE4r/BDfoWcvW5WgNJ3rW505c2p12W
-	 F16cEq+tP+G/9EIlHhoZ2m3sNyOEYo8b80dzTm3DVL7mJPwlc9NwAdsqMEgRL2CGiLw==
+	t=1795764761;
+	b=l31l3vvtkOkfJWlwGnTBa4XzQVv8R79kGlOHyQuzLEq/SoV2+Kg4zsV0ZjlWxJqq/Uv2
+	 /xCn+Wd7VC8fZzNphZcNno+M1psiKRpUXurzKdRIbiAXBg6mKq6kCAnnQZQltoANr5sBo
+	 yQ5KDDTe7nWzMPtnlR14UYH4xWM3GNXqfrPByEkq2YIyJWk6KkH4b+OvQmFo+20lTOO8g
+	 Sk44WSJnFn37ZL2A1jx3fc1LJ/qDICtAIAlVKGBDTBHnvxFk1k8WzqAKjXXs1aX+gqj+t
+	 nCPRt6yCYl3OS3ExpkGaz7n2kFMRMgSVkMH8wJPnKmfj5QJLket6/91V8aRtmEHFnOg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795764575;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795764761;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=zBDrPtxr95uLq+wwut/I4OrBKrfga94bFFGLEETXFFA=;
-	b=GwYimbV3qjHh54HJBST/G8+YS9Fs3GXBtylUf6ZXw43DF3bvZvcCL5hvQ5nlsNBXkUi9
-	 RI7C6t59k3gao4c+zsALJ90hLoGRIqs2WUBkr6rcJj6GcXL8UJFY0vPoQsA0HGSh3t9yZ
-	 quvxu5uyflFKxI7wDpsDOt6QrQcXdWzzS/R796ne3eX5Rrr30crfLyWCyQgYmWuPdqHT+
-	 tJ8aGKUdveJfEh2uJMiXQVDHofaoGicHfCnfcLCakVOLPJ+Ng5DrrEW7t7RXkoRxuu/GC
-	 ps1QNBArEpFPCWvZlygWeGxtxG8Ql97sM93wQ1ntTJfV9thWvXYfd2WMnFQgIobbh2g==
+	bh=5CHKL/ZtHCrib3BVjwLtVv0WqKmxeKuSdrXUeRFBD58=;
+	b=mVI88x/vmhsPNn0RAaoKKiR1NBQkeymFGOcSAf6vYn7OvB/nIJ5BMn3cgTommk6zAVr1
+	 3N6XhOB1CaL92Pp2S3M7w0Raf/CsVTjK3Lq1KW4aZaOWupOtb+bE78u+yWWtW2w7WAQTD
+	 Q10oqP3JZqPbXEMcNveOmwyKD3QjfQWEX03n8BqCrYrU8WtLynD6pLmifJAdKc0+wW7kT
+	 lG6s7CSQa593dPkHQ+Xni1pKE8/NV4c2Xk1jzfjJ5pRRnTNgKFhEiIl3Gd8FGDnNBrFBK
+	 4L4Pgjzrm2ApIZNVmzoLaCJK2GR08W8o0xYPWsO8WRnK14R2pQ3mnhDJHjGGruhuUoQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lJPXlrX8;
-	arc=none smtp.remote-ip=74.125.82.43
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Kzx9ZZrL;
+	arc=none smtp.remote-ip=74.125.82.171
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFFA606A326
-	for <linux-integrity@vger.kernel.org>; Fri, 27 Nov 2026 07:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DAFFA606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6740606A321
+	for <linux-integrity@vger.kernel.org>; Fri, 27 Nov 2026 07:32:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6740606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lJPXlrX8
-Received: by mail-dl1-f43.google.com with SMTP id a92af1059eb24-1aefd1bf74aso4254021c88.1
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 23:29:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Kzx9ZZrL
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-386c4d2e2ccso5706188eec.0
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 23:32:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795764574; x=1796369374; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795764760; x=1796369560; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zBDrPtxr95uLq+wwut/I4OrBKrfga94bFFGLEETXFFA=;
-        b=lJPXlrX8owYo6OLbUTNBkyNo5jNAAPWr5aS/HRbzwEah5/mBpk2X4Dh98goKV5/GTf
-         2gt1Ai6oEydB0nMvJQ6QXSz+QYwi3xJRaIQpwvY5q1Cg98OYjmwVEq3DFTdc5uq65zdW
-         +116mw94N9AXqHutGfGLOUryAJt3M8Shns6h4qPmPz/edRhjrw9FV2CE4e7zGcTyUvRT
-         c8IJshIvHKil6JlIfvWfQ1qpYr6/aQZCTI7cap4HNFbPKROia/4nwKVvhf7/qdwOd6A+
-         qqXjxyIfqvrISjENqmrTL9tSW8ajLn7HXvT2BFlY2a6tfduAzgYU47zA/A2gni0RAX7l
-         jvlQ==
+        bh=5CHKL/ZtHCrib3BVjwLtVv0WqKmxeKuSdrXUeRFBD58=;
+        b=Kzx9ZZrL/EDdPoNVDguy4uUQHvfrLbRe+5pu5vvCwHwBOKDtOYvENQXazWF9Q4QG9S
+         RErEtlF1I8fl2bbP5a8rpgtSfrjD1QE3vdZHreBqkNFQYUqwQiN4PMOnyNYzctbcCAWX
+         4+houz0x1MJ4+72svaeoYgBJLkQiZheUdD+2cHAY8jZb3xzDBcoc0Xm5MB1yiiH5/qoU
+         PekSK3e7BHqIOObn2z/hfEQWeLVAYugix34HFADqzQoQRH/3t7TRgYZqPrFrFyH9ots6
+         IEbgRQVnEzOTy5i56LoA0JcCJEwJbYRspYwvYu/qWQ0W2XD24HFFZo9K6lJadYizwakz
+         os5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795764574; x=1796369374;
+        d=1e100.net; s=20260707; t=1795764760; x=1796369560;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=zBDrPtxr95uLq+wwut/I4OrBKrfga94bFFGLEETXFFA=;
-        b=Gh8gg5CvD2enVuet9VPSZJ9vtLDBgCWqU6e99zcC8ATYvRp/lYPedQYmTqBSHbcfUd
-         wIj5i2lV3kVgF7Fc0ZQrM7HI+L5uLy3SQsFHuEVXciw8B6IpzQk0pu7LnERobYA76DC7
-         RaflHPI5V1Tph4/T0zfe/Y/Qo+AwWo66y2nKOtZtgQ+8NDhYLc7dHEnIc6SKJazv8CQM
-         S002oEt/cS+DEDi4qdJ0rgNLIvjw8gDw+FRG29L+cEzzJw1mhYLHu1sD7ys8doHDxNxV
-         8zA17UI4m+IcOwR0y3byi5TzwYc8S+xLAYp6PcHz9IYxO9XwAMuKyBC90pXAyZXWiPRo
-         +/Cg==
-X-Forwarded-Encrypted: i=1; AL+hErEAuBEM5rqnVrfKTA67CxpRJ9WBTzFD8f1Kk8D38dtYDh//yzO8DG8Jwo+vf0C7oHJQIvdN8wIyX6TXN6kS/Ng=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/V4C7ZSJnaLJ4V1znAIv9Yy6hr/IUnTcq1ihpptffpFzsv7lsq
-	4eyRJfy/zNHm324V4zBWCTandnHaVnDuThsFyoXVfbMDCculOJzjEhN/
-X-Gm-Gg: AZFdTZcxFsLuXX+nkRPlNrFEbOnk3i1mzsaGKx93w6R0H5+wjq7TrAZ6v+R+k5Ykp8G
-	sEFpxpIrWeVdlFq36bcRD26kI4+27OUr6eF1bPWJEfqOgqmDtywnwYdBINx3/g3PZzyafYvxag+
-	48URfLuix5APWcA669e1reDu7dGsBk3vjp6k9aYDkTBa/A2HptEByRRLWqGdZnVS0TILfqM1D0d
-	rETexRxa7DCSsOPPeS6+fbFl41dm6lTQ1DomqIxBFQXsobsDRRbqDcX/QYYvYR2Kn0zfA4qfUW1
-	mWI3kMnpnyQL6mPeY91rj+sERWlnL2RQiKvj7fg0BlguKz+sYFRwGMiWemwodavblBeaN6A2Eoe
-	FSQuUG9iQ7kCiproJtBwIDRe8eS48jplid4NXZtnmHJzx1/fkq62KSvX7GUFSKJ9Iws9r63NUoD
-	Kr4Qqy3IgFIZkp0mmZO+DhQTKXV0x3ol6EJPjC83meF85ZMu/Y77B6erAUMTcZMqqb6bFzAcr+Y
-	z7BN1Y2ppmn0NYjuA49ZakXm/8l6uAMUzpBvWzi2z42oD/1yhaVjfJwDyvPFx3r0cBa3Q5QRmun
-	gT1p66FDb14EWvOjDTbtkihRVlT4NeLGkDGiJ9tBKWzWwv98
-X-Received: by 2002:a05:7022:f90b:b0:1b2:6d4d:9d8a with SMTP id a92af1059eb24-1b56f36d5fbmr14790665c88.2.1795764573739;
-        Thu, 26 Nov 2026 23:29:33 -0800 (PST)
+        bh=5CHKL/ZtHCrib3BVjwLtVv0WqKmxeKuSdrXUeRFBD58=;
+        b=0+A2rHd/GGV0b7d1NYfc2JqcryjQYb/FrzEsLajdoM08R8AfpgzSg0uwioLbIOHDvr
+         QBVZv2fqg0Hx30tdtPW3CBImN11oD1xVZEgiSZgpumFayQWF5yp0yD3PDSbdNCyON9AQ
+         FbOa7d481X8+79+dQOHy2rC6/SChBpivqaSkd0cbmh6ocQhV1jLb/P6cQhSaskMxHqAt
+         j3CPENoG4ReeCxyAhJRXLt98u014LlopubR+mDmm3Aq4dwyKpW7N6VQj4MGWtQqTStc+
+         dZXQsGsQSXMUqANYL0uWO68+QHjUXp3es8h8oxbHqkayWCOIqmV8njeEKz9Chc1xo4oQ
+         4vRA==
+X-Forwarded-Encrypted: i=1; AL+hErHZ5Z9MdLITuaNTJEX98OcxnGco8AjUjSWT2L1kYJJvjl0fkO9NR1/6SohdqXOV4YVdo1ebxaLqZb1Wg5psbFs=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8AEcNe3NGGSNrPKvW/X6jJGmQ8GVgcTTnShcRDOAE4e/9AFfWB
+	B6HiXDVNlETjbpiZ7/Sn3eug+vx/d4Zz/md+S9GjOl5fWFIzDpUf7AqhB19teQ==
+X-Gm-Gg: AZFdTZcnVNXX3Ipq8MTUqJjZn2Gito+Hz8T2CMN50VJluxvHeG1dyPIcJjnJf4CxHjJ
+	DSLem7aXXbyAX42WCkZK2a8FywBwzko3LBq2xRTJ983en/wnipVpCHtVlNXQCWRUgsXBwtd6S0P
+	1rPYtDAD4hIp9ANLTZnAeW+iJ0OJ8TkXwaGG6qKIFmnv2S1TIFLK7+DFsppNrdZE0YkqTs0jALm
+	hYFMPitUcTFCMSrBXjKt3mxSansvYxvfcrwYX4xXkaKEnnK7RuOk/Ayyfl7d55fGq7W62VzhMh+
+	IbP+pKQaRQB4HJhAy1PAK9HFz6Enfw1ngsAiBSqu0LfGqYXE92P70wh+oT/bIz/zosGgS70bCSL
+	hOKxjoZvsLnPGmaMbvxKHT6FSlAETqywCSl22IkJOX8mssoTHvB++y0fd9fWyzkgYgkQZ+cU6RT
+	ktenq7Or16Ymx1WiO1LiiesKTM0HuJwJB0G8qhz9OB44PQj+FB4axKaNlkFuofAAjC7D7dXGpKi
+	cepjPywlijG/3aBwQLH5Y1E4s4p8ghXwHdkNoOc8iuNsM3HEE7pgQjOWoocCq8VJgdGPdUii2Ow
+	JIqyGKg5Rwp8JkYW7aigBN2cAp0NhxJ/f9rVUMx5d88gpP4=
+X-Received: by 2002:a05:7300:2301:b0:385:4c54:3c8c with SMTP id 5a478bee46e88-3856c0c9403mr33946786eec.1.1795764759968;
+        Thu, 26 Nov 2026 23:32:39 -0800 (PST)
 Received: from SGN-LDSENG.tasernet.com ([2405:4800:5cc3:11a:1ac0:4dff:fe8b:4a69])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b55681301asm54799871c88.8.2026.11.26.23.29.31
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-385c6830815sm62804163eec.20.2026.11.26.23.32.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2026 23:29:33 -0800 (PST)
+        Thu, 26 Nov 2026 23:32:39 -0800 (PST)
 From: Cong Nguyen <congnt264@gmail.com>
 To: Mimi Zohar <zohar@linux.ibm.com>,
 	Roberto Sassu <roberto.sassu@huawei.com>
@@ -85,9 +85,9 @@ Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
 	linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] ima: free the rule label list in ima_free_rule()
-Date: Fri, 27 Nov 2026 14:29:27 +0700
-Message-Id: <20261127072927.172066-1-congnt264@gmail.com>
+Subject: [PATCH] ima: free the restored template entry on error in ima_restore_measurement_list()
+Date: Fri, 27 Nov 2026 14:32:33 +0700
+Message-Id: <20261127073233.181925-1-congnt264@gmail.com>
 X-Mailer: git-send-email 2.25.1
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -100,31 +100,45 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ima_parse_rule() allocates entry->label as an option list, like
-entry->keyrings, but ima_free_rule() only frees entry->keyrings. The label
-list is leaked when a rule is freed, for example when a policy write
-containing "label=" is rejected.
+ima_restore_template_data() allocates a template entry that the caller
+owns once it returns success. ima_restore_measurement_list() breaks out
+of its loop without freeing it when ima_calc_field_array_hash() fails
+or when ima_restore_measurement_entry() fails, so the entry, its digests
+and its field data are leaked.
 
-Free entry->label next to the keyrings list.
+Free the entry with ima_free_template_entry() on both paths.
 
-Fixes: 47d76a484050 ("IMA: limit critical data measurement based on a label")
+Fixes: 1ea973df6e21 ("ima: Calculate and extend PCR with digests in ima_template_entry")
+Fixes: 94c3aac567a9 ("ima: on soft reboot, restore the measurement list")
 Signed-off-by: Cong Nguyen <congnt264@gmail.com>
 ---
- security/integrity/ima/ima_policy.c | 1 +
- 1 file changed, 1 insertion(+)
+ security/integrity/ima/ima_template.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 2dc1d93aa768..c3c4faa99f5f 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -410,6 +410,7 @@ static void ima_free_rule(struct ima_rule_entry *entry)
- 	kfree(entry->fsname);
- 	kfree(entry->fs_subtype);
- 	ima_free_rule_opt_list(entry->keyrings);
-+	ima_free_rule_opt_list(entry->label);
- 	ima_lsm_free_rule(entry);
- 	kfree(entry);
- }
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 16154078fd70..d5256da8f76e 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -526,6 +526,7 @@ int ima_restore_measurement_list(loff_t size, void *buf)
+ 						entry);
+ 			if (ret < 0) {
+ 				pr_err("cannot calculate template digest\n");
++				ima_free_template_entry(entry);
+ 				ret = -EINVAL;
+ 				break;
+ 			}
+@@ -541,8 +542,10 @@ int ima_restore_measurement_list(loff_t size, void *buf)
+ 		entry->pcr = !ima_canonical_fmt ? *(u32 *)(hdr[HDR_PCR].data) :
+ 			     le32_to_cpu(*(__le32 *)(hdr[HDR_PCR].data));
+ 		ret = ima_restore_measurement_entry(entry);
+-		if (ret < 0)
++		if (ret < 0) {
++			ima_free_template_entry(entry);
+ 			break;
++		}
+ 
+ 	}
+ 	return ret;
 -- 
 2.25.1
 
