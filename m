@@ -1,94 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795766261;
-	b=whdg56GWS4a0IlBSw907iJXZaKXsVCgVDImcdWIUqeTneNrurtLKh9/RCiGrTuaQ5VEv
-	 HgEv7zsouZ6JzTzH8/bhsRI9Y1qa1T9ojVjUJBFB+DP7SR47pCozRHyrtLsn5lc3CSMuB
-	 nzo8G9bG5pukN0Jutvp7PXMBxJtfNdKfSGw8jU87/vZFjf8TJebwGRp+kHaPwPTn2Axb0
-	 xuox/UsWD5GFR2LwwCu2c/c0re6UggAMThg8XZcRpTjfVom5Par4NOA4tLFKmwytJqumU
-	 8xXfTG/arOWUO3pbt8UCWqGr2YPpCXYiMBIQOPHY0sLmXtr1O/5ezB8Og1nONdu0l1w==
+	t=1795780402;
+	b=t3zxBAPnXF9FjT+niL6BulFThFO4nk8PZWFQxcrDdfMTlDgc6bnI6tN4aYQcslSCWHuQ
+	 pF/PpgENaNqASpDZZCmvWnqs/66+02tOLI4y5xklZlXOCbTqYNvRt7qnLE7rduthn8ukt
+	 UOd9nvfzNTKq1dOL7aCqiRGh3ugIrmEILUWNe0UfVllBYTZVBFskgF0dYCcKEPhEpWZmE
+	 iix5PFP7K6P2gVKeSELQ64pn4hWdTN9P2FeW4M1qLze1oLqpYy5F39ManAuMoIfqL+7TD
+	 M15SkdCasyqSF0zjXIL2lSAOQSKdhMWNYUIzuGA1bV3oitoHpi4+H7f6GVnqcWBHS2A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795766261;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=zhpeeEWvxQlHrVzNb+mIhoDErkTSVTwiHheVg6+HwpA=;
-	b=opLfwJ7g8YKppN/AmWKhaHz4smeF/rNJ7xpfXoZK+gjbw5dFZDel9ikHkckXoZLEIQ8V
-	 YY5sPOpEZaEOmLJ9Tc8/vT+V3yFS8ts7Jo0p/CcpmseNqmCNwhyXp9b+r9W/pKxkAaRAT
-	 L/uQAwOpWy/H4rzXyTYxmi9j25sK/HHopKtmqCqdP1q3FePmMEHvsQFhbOoHP8J+ahNO3
-	 wTnyxDvDobkVIdrE7JemuF8oCB8cl6CSQVXacLeWX2/GQf41PLFe4nkqYiO8DGN6hm2VU
-	 x5M6Woj1EkvwlDKbg0FZUjiB4HvZAUrUX2iWJzUerbWhsCahQ7IJkkItcIvmiIqpXMw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795780402;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=rByPEfNf4XLcPucHVrwkNxEV0dJQaoEcaC2v04KImDc=;
+	b=pYKDC5pQr8yytRJx8PZFEri9Ub21bt8ie2DOyqDJND2TRReX7hbgSnNa3GT4uzYe3iai
+	 bn/ltHCm74V4L2VCZduTEAVUuwQQtLNplmyzMqxdb/MDS0q4lsL0MQblXuItCbWnUMDvt
+	 mCtcw0vPXMN5HbL43mA765gViRYC81msTvdAGn7DTB+F6rtbt3bTPkWYykIk//VujHGWk
+	 mEwRU8imGW34ZBAc8akUnJ0I7B9T4oxtMOrQv9wLzHz6aJZjlYDynucXt8KGqXT4+iVK1
+	 rA1kDt6/XeQnLH0uEZL2eEa4XFcTzuxHVegm9l4wyNEXEETPv4Hgt/1TYqdJrhaTnvA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=VljMGSJL;
-	arc=none smtp.remote-ip=74.125.82.174
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=itVam21t;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0663B606A31E
-	for <linux-integrity@vger.kernel.org>; Fri, 27 Nov 2026 07:57:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0663B606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 7EFCF606A31C;
+	Fri, 27 Nov 2026 11:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=VljMGSJL
-Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-386b8f2f671so4512333eec.1
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Nov 2026 23:57:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795766259; x=1796371059; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zhpeeEWvxQlHrVzNb+mIhoDErkTSVTwiHheVg6+HwpA=;
-        b=VljMGSJLexutiimCumKOoGUm6WsO6r/0+Z+nXt61SWCA+zdAzM06ZztMCKGHP5EFiY
-         2miqjQh01oYY6Vkt1FCTBvV1m9iWlhmsjdsU/ne6eqvLoVCQqhEGzpMbd0dDaTjcnHkL
-         ofx5oF9kCDnCON3nxwDvOdv06bVfa2YMcco5eDy7dvlJQbnDiol+7uZqUuiAs4CaNQyq
-         O8DQWDvUbJ6rm0vWQ3iBKxBq5PyTbMubnM7o7d63l8JsHx5yUs7nPpLjd8SWF54fE+fF
-         ej9rj2DVrUcKf6Wc7eFW92ewj4XjHVg6tZhlVYbG5GYz0vk3W4k7yEfR8iYtt0ns7AOT
-         rh/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795766259; x=1796371059;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=zhpeeEWvxQlHrVzNb+mIhoDErkTSVTwiHheVg6+HwpA=;
-        b=OiKSoVcOpvp/3Qg4+NRVgf4CHO2wkwPdSfwzlsp0S2B4y0HYsNT65kLRSPcKydq6TS
-         iMts+TC+3NQd8433oFFfWc8dDqWpH2ouBV/nEcpOEXd+SIysdP7wBjZHLNsA9Z/7FYi0
-         oey7f3j0KScNH0PEdi7OWrhsTXCLJs954dWfu2FqnkU8B1CcSn2HJMdHaslpuWnj9SVB
-         cN/9JzUGvJlcrfuTV7EskIAsiNsqKY/rbVu5OK/Ilynb/nHQdUH0drGVhSvFK3vMRk3w
-         GIconnqFeu6AHPBydwe48igj4Xq8Lslg4WE7JoOvhm0am4LWV1pgGVxRJQgP2/8p1VLz
-         BbUg==
-X-Forwarded-Encrypted: i=1; AL+hErEbES4ngySl87qs3UXxWLU/QVlIC9w2MGqUZNt4lIZ/VbR6fhMt1Vo/ZNhzlx2MWaEPqw1Uz2pxmcYFPS0VsPA=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9Fe0BoqOAq+jmpvjh/MCILbzQ8loZtMiXGh6dhoVsYQ3Ludct3
-	pmPY0CORBRw8DrfezI+8bf5ExeTmetrJyXRs3fKNhlMRSasjsrs16j6A
-X-Gm-Gg: AZFdTZfaDfFUp0NBUkAfsTBP0AUT/QRup/tgimq8vh4Umbns9xyc5ewQ83MGqLuMoHe
-	tUw7EfJMI5Hvjv3xhVQqKFYsXxBH/SsZenMeHi5B6K18aVCf5Wj3rawLOmthLdN9XUWJWbS4AyG
-	Sfam770SEDKXmaoj4oRXJqibE8zPzeUPTWTvxrergS75jLe71HRFFvXq4sYf9frLpbFHsIK2o0a
-	sICRf5njLB5ryYrJ4KtNq5wSxgOqJP/aTF5qMBQKQzrSa+VJh9PyCSwFxh2ZLq39Hf/4zEhw7aP
-	rkzKbWOcALiq0Pd2/KrGwATX9QR2Xwa6Z3mc2Lodgob0/gxuoOCLHczVgMFb0bDPkXCsX5RTlD6
-	d0ET93pe6q22+3tizhYoHgwN/DOaPAFfNA0K+sI636CgOQifFUclWDiKEgQkqwWc1dZHhAQr0cf
-	e1jBjN3oRqReZ1tc0s3UZPL9o6AvHNEv8wNW62J0QeW+8t6yL8folVW7Wyw2GvE4p/TSZPomzbI
-	VXoqAO7JfBsIJfiaBFrD4vngwIQfMZs45aqa99MZNMzITBbkXEbkLDK+V2pxT6mlFhIp17K+rhq
-	KwjCiguQU4D1eUZwuDR0CLuH0GTyuSE9es08Um+yLJrOVK0=
-X-Received: by 2002:a05:7301:d81c:b0:386:b7d2:a279 with SMTP id 5a478bee46e88-386b7d2aba6mr12774546eec.34.1795766258950;
-        Thu, 26 Nov 2026 23:57:38 -0800 (PST)
-Received: from SGN-LDSENG.tasernet.com ([2405:4800:5cc3:11a:1ac0:4dff:fe8b:4a69])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-385f68bc0adsm65363944eec.13.2026.11.26.23.57.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2026 23:57:38 -0800 (PST)
-From: Cong Nguyen <congnt264@gmail.com>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ima: allocate the new hash table before detaching staged measurements
-Date: Fri, 27 Nov 2026 14:57:32 +0700
-Message-Id: <20261127075732.252471-1-congnt264@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=itVam21t
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8862A1F000C1;
+	Fri, 27 Nov 2026 11:53:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795780402;
+	bh=rByPEfNf4XLcPucHVrwkNxEV0dJQaoEcaC2v04KImDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=itVam21tTHvEcaE5VJdWfQ/tgPSDAV6CDG2GMzdzyoN/mxuMlbjCKvTu2FworV8ko
+	 U7OM/C/AREEZstZ1VU3BDDwN/goi5NSVpHgyhlDjXS6qgi2nf64jSnYSLll7UVpryS
+	 WLdIPBh/exuiD/BBUBW5FXh68SNsHV4YssiLRrvITYGhcBKAd5wLXwjx7yGh5od1O1
+	 8hMFBo2DQVo3yX8N1qNr+U/E5QyfOPsa03nsb5nl21/an5e2Oegt8L8t1cEqRNbZkM
+	 efMDAmVRNTrhYS5cwidxYxi5Ge/AO1veZfDec67oehMQtdy9nU4FznwC7zn99d+vx+
+	 UcvATeB77jmlA==
+Date: Fri, 27 Nov 2026 13:53:18 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Cc: peterhuewe@gmx.de, lance@osuosl.org, rcu@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linuxppc-dev@lists.ozlabs.org,
+	linux-integrity@vger.kernel.org, Li Jun <lijun01@kylinos.cn>
+Subject: Re: [PATCH v2] tpm: ibmvtpm: Fix unused suspend callback with
+ CONFIG_PM_SLEEP=n
+Message-ID: <awlvLjQT17DBZKpN@kernel.org>
+References: <20261127051359.852628-1-zhouzhouyi@gmail.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -98,59 +64,69 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261127051359.852628-1-zhouzhouyi@gmail.com>
 
-ima_queue_staged_delete_all() moves the staged measurements to a local
-list and clears the staged counters before it allocates the replacement
-hash table with ima_alloc_replace_htable(). If that allocation fails, the
-function returns -ENOMEM with the entries already detached from
-ima_measurements_staged and never freed, because ima_queue_delete() is
-only reached on success. The entries are then on no list, and a retry
-finds nothing to delete.
+On Fri, Nov 27, 2026 at 05:13:59AM +0000, Zhouyi Zhou wrote:
+> Discovered in the Open Source Lab of Oregon State University when running
+> RCU torture.sh on a ppc64le VM.
+> 
+> With CONFIG_TCG_IBMVTPM=y and CONFIG_PM_SLEEP disabled, SIMPLE_DEV_PM_OPS()
+> omits the references to the system sleep callbacks. This leaves
+> tpm_ibmvtpm_suspend() unused and produces the following warning:
+> 
+>   warning: 'tpm_ibmvtpm_suspend' defined but not used [-Wunused-function]
+> 
+> Use DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() so that the compiler
+> sees the callback references and can discard the unused PM code when
+> system sleep is disabled. Preserve tpm_ibmvtpm_resume(), which is also
+> called directly from tpm_ibmvtpm_send().
+> 
+> Tested on PPC VM of the Open Source Lab
+> of Oregon State University.
+> 
+> Fixes: fc0ddb3174b0 ("char: tpm: Use SIMPLE_DEV_PM_OPS for ibmvtpm power management")
+> Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+> ---
+> Changes in v2:
+> - Remove the blank line between Fixes: and Signed-off-by:.
+> - Keep DEFINE_SIMPLE_DEV_PM_OPS() and its arguments on one line.
+>   Both changes address Jarkko Sakkinen's review comments.
+> 
+> Only a targeted compile check was performed; the full RCU torture test
+> was not run because it takes too long.
+> 
+>  drivers/char/tpm/tpm_ibmvtpm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+> index 51c7e2add3d2..dd577f075c57 100644
+> --- a/drivers/char/tpm/tpm_ibmvtpm.c
+> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
+> @@ -462,7 +462,7 @@ static const struct tpm_class_ops tpm_ibmvtpm = {
+>  	.req_canceled = tpm_ibmvtpm_req_canceled,
+>  };
+>  
+> -static SIMPLE_DEV_PM_OPS(tpm_ibmvtpm_pm_ops, tpm_ibmvtpm_suspend, tpm_ibmvtpm_resume);
+> +static DEFINE_SIMPLE_DEV_PM_OPS(tpm_ibmvtpm_pm_ops, tpm_ibmvtpm_suspend, tpm_ibmvtpm_resume);
+>  
+>  /**
+>   * ibmvtpm_crq_get_next - Get next responded crq
+> @@ -714,7 +714,7 @@ static struct vio_driver ibmvtpm_driver = {
+>  	.remove		 = tpm_ibmvtpm_remove,
+>  	.get_desired_dma = tpm_ibmvtpm_get_desired_dma,
+>  	.name		 = tpm_ibmvtpm_driver_name,
+> -	.pm		 = &tpm_ibmvtpm_pm_ops,
+> +	.pm		 = pm_sleep_ptr(&tpm_ibmvtpm_pm_ops),
+>  };
+>  
+>  /**
+> 
+> base-commit: 5f22fb20497f4983094131f00a734362300d22d2
 
-Allocate the hash table first, so that the -ENOMEM return leaves the
-staged state unchanged. Both steps run under ima_extend_list_mutex.
+Thanks.
 
-Fixes: c26d9d9246cc ("ima: Add support for flushing the hash table when staging measurements")
-Signed-off-by: Cong Nguyen <congnt264@gmail.com>
----
- security/integrity/ima/ima_queue.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 67782c004cdf..d58b33950bcc 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -377,14 +377,6 @@ int ima_queue_staged_delete_all(void)
- 		return -ESTALE;
- 	}
- 
--	list_replace(&ima_measurements_staged, &ima_measurements_trim);
--	INIT_LIST_HEAD(&ima_measurements_staged);
--
--	atomic_long_set(&ima_num_records[BINARY_STAGED], 0);
--
--	if (IS_ENABLED(CONFIG_IMA_KEXEC))
--		binary_runtime_size[BINARY_STAGED] = 0;
--
- 	if (ima_flush_htable) {
- 		old_queue = ima_alloc_replace_htable();
- 		if (IS_ERR(old_queue)) {
-@@ -393,6 +385,14 @@ int ima_queue_staged_delete_all(void)
- 		}
- 	}
- 
-+	list_replace(&ima_measurements_staged, &ima_measurements_trim);
-+	INIT_LIST_HEAD(&ima_measurements_staged);
-+
-+	atomic_long_set(&ima_num_records[BINARY_STAGED], 0);
-+
-+	if (IS_ENABLED(CONFIG_IMA_KEXEC))
-+		binary_runtime_size[BINARY_STAGED] = 0;
-+
- 	mutex_unlock(&ima_extend_list_mutex);
- 
- 	if (ima_flush_htable) {
--- 
-2.25.1
-
+Br, Jarkko
