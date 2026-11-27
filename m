@@ -1,65 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795748401;
-	b=2+VEEAg0zZTBbMrwK3rX57NbiLRb6PSW7QYs0/h5ZAzu+eQc1FGSssf/lAKocTGTDJYW
-	 tWcuj2/Gxt8YsepK55tHgMTdXvas0Fkuuf8ciZwteBCOLZeh3hOuBNv2PBL6Zh18ckrKW
-	 R7oXpuGUsMDKwCNqja7HfUe08twCMScKRNzHuKvqBKiBtl37J2NTAttwrt+y5K9ePbc1C
-	 AIj1ctyzEOJlmSPnd4MP3sDX4VbRTfKNu2sEWuUCgarS/mxarLDiAcYg31RDstYtRke1P
-	 7A0iHO9f1gAk0Yly5QwbiM1FjEwk06oHEIGPJeDAGNVLEVF5IU+qUJSfAahUKAZcKng==
+	t=1795748404;
+	b=yd91CYfRNOiEEkbRB0kYpRkC6wFFShJhfSr5FrCj7ImsKkuRB4FL45lAf83hJ/1f/ZNS
+	 528Ne/fiEf69zKxD6xcxFucC0xxSL92K8I+uZ2Ehn3ntcZAxoN8bFFtw/nqfvmbObc7Yp
+	 cAV+gPbstrIDQ9m3kQ2JMfToC03W+BVBnEgbrq9BlVBxnMtqrpGr49hXbGFTjIt1cEO3q
+	 KmZmKZehiuXM1oTioVSLQO3N6KE/bRfh+HYMxB5aDBUXad3ynmieG+tgO5miUVaNs97ko
+	 PrUqajs7GmwTbSTbRL54MuvoQc59tjaCbFluHOEABB5JhhAZ2ReGuDIkUAapWZ6yy3A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795748401;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795748404;
 	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
 	 X-Mimecast-MFC-AGG-ID:Received:Received:From:To:Cc:Subject:Date:
 	 Message-ID:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:X-Scanned-By;
-	bh=BS+yhTYj4vK3YDb5NCzbtC6qzi+fzRiTH0kBAne+IUA=;
-	b=I01zX21ksgpvPNC8fKoR3e6B/AaT64wdOhLIwHGTkieYBtnQl7vOtIxqqA0+CvysuhCi
-	 ieBS3phgNxF7PRBUN5IV+s9WCEKuiv7XuI+4nusjpGcuYK4pxDM1GN2vBB16glgPbfjVz
-	 sISo3GoLH8/gmQ4d9sYOEr3lHzqLj68VWUHL5NbWjxgjO+5KbQlkVBUAUdmkCz7a7LFDF
-	 DgvuvT4uNrvMxesKkp2pzJRdbwoD1f1T3RiH2f54cpF9EoEybL4e9mlnSgqNm/nwpoIft
-	 lbkfjIkU86BOyRcMj0GCB+SmhZkr9HVvMwuuUZM0DpilT6tm38yIhePKA0NqiP/ttXg==
+	bh=cXL13ZdaJrq8Pxpnq5CNNNCF9aHaOxDVvF8l/dqqouA=;
+	b=stM8rndAPpu2tg6p8AuknjDc0KNyoSy0bdFPKp9llKwXsVD/jaTlO40tyPJXc542eHSl
+	 kSW2ZoeN8AbY3F6NGo+k/k06wLJWzBfmWvT0JjDKkd/CfKof72VdvxOBFsX8bpLFfdume
+	 edzUp3+h13rthhYjODgVmaHPUR3py0ZcQIcxfZCs7zIeLX3P/G34khYUYQ1J4+Qdce3fb
+	 dGLyP7DQgiTz55nuK6HOfwQxmHP/4BITGWhP6PBITKTQD26wekEzeBqisCz0XexKjbRe5
+	 +cKHQsr3lHjNn2Gb2QLXMzVK/ztTYZuevcihzxGU3F5Xm+gjmN8ULGzyNNoVnJTbASg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=redhat.com;
 	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=h6dIsj1q;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=fl58FZqu;
 	arc=none smtp.remote-ip=170.10.133.124
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04374606A332
-	for <linux-integrity@vger.kernel.org>; Fri, 27 Nov 2026 03:00:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 04374606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C3B606A68E
+	for <linux-integrity@vger.kernel.org>; Fri, 27 Nov 2026 03:00:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93C3B606A68E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=h6dIsj1q
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=fl58FZqu
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1795748399;
+	s=mimecast20190719; t=1795748402;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BS+yhTYj4vK3YDb5NCzbtC6qzi+fzRiTH0kBAne+IUA=;
-	b=h6dIsj1qg5J/iAFmwYu7XvQI2vhmj5cS8AlSyd8mQArXGp/nJ9e+IRg56Uy3Dul/pOIOgH
-	cLyMXXQmjsqpzNtjrpKDZtRvC2Z8zdwA5zqMTcvzMlsHYaAv9Omj54EWAO9bMVnDVMlMb8
-	FAbaxOCmiJg5QepxG+biAml1HWR1FEw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=cXL13ZdaJrq8Pxpnq5CNNNCF9aHaOxDVvF8l/dqqouA=;
+	b=fl58FZqur1mxvjc1PU5fPGFLP1W3MSFvNqLYcOCJp/rhHxrDz/hhe9I7UqAumGQ6I2JybG
+	G0qBqx2OwS9fAJoH0Fws+bngREF9ugPG6MHcQFsigqEEPA3OGeESZaM4GzYyjCjJ3Vg/Ar
+	U5REFwt6tGHV51b9mmrYmK4cQPV64ts=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-U_Vk9U-PONG2pOyhlaijlQ-1; Fri,
- 27 Nov 2026 02:59:58 +0000
-X-MC-Unique: U_Vk9U-PONG2pOyhlaijlQ-1
-X-Mimecast-MFC-AGG-ID: U_Vk9U-PONG2pOyhlaijlQ_1795748397
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-hP5MrW1yPRqequ3ZQpQFRA-1; Fri,
+ 27 Nov 2026 03:00:00 +0000
+X-MC-Unique: hP5MrW1yPRqequ3ZQpQFRA-1
+X-Mimecast-MFC-AGG-ID: hP5MrW1yPRqequ3ZQpQFRA_1795748399
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD0E9180054A;
-	Fri, 27 Nov 2026 02:59:56 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D5AA7193FAA5;
+	Fri, 27 Nov 2026 02:59:58 +0000 (UTC)
 Received: from localhost (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3C3C31956056;
-	Fri, 27 Nov 2026 02:59:56 +0000 (UTC)
+	by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 343595B1;
+	Fri, 27 Nov 2026 02:59:57 +0000 (UTC)
 From: Bruno Meneguele <bmeneg@redhat.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -69,9 +69,9 @@ Cc: linux-kernel@vger.kernel.org,
 	dhowells@redhat.com,
 	bauerman@linux.ibm.com,
 	Bruno Meneguele <bmeneg@redhat.com>
-Subject: [RFC PATCH 7/8] ima: define the ima-modsigv2 template
-Date: Thu, 26 Nov 2026 23:59:10 -0300
-Message-ID: <20261127025912.1383750-8-bmeneg@redhat.com>
+Subject: [RFC PATCH 8/8] ima: check the digest of every modsig signer against the blacklist
+Date: Thu, 26 Nov 2026 23:59:11 -0300
+Message-ID: <20261127025912.1383750-9-bmeneg@redhat.com>
 In-Reply-To: <20261127025912.1383750-1-bmeneg@redhat.com>
 References: <20261127025912.1383750-1-bmeneg@redhat.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
@@ -84,47 +84,50 @@ List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
 
-Add the "ima-modsigv2" template with the following format:
-
-	d-ngv2|n-ng|sig|d-modsig-list|modsig
-
-the counterpart of ima-modsig with support for multiple appended signatures
-that records the content digest for every signer instead of just one. The
-existing ima-modsig template and its 'd-modsig' field are left unchanged.
+When checking the binary blacklist, traverse every signer content digest
+appended to the file. If one digest fails (-EPERM), the content is deemed
+blocked.
 
 Signed-off-by: Bruno Meneguele <bmeneg@redhat.com>
 ---
- Documentation/security/IMA-templates.rst | 1 +
- security/integrity/ima/ima_template.c    | 2 ++
- 2 files changed, 3 insertions(+)
+ security/integrity/ima/ima_appraise.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
-index 161aed3da8b7..38d6d27344e2 100644
---- a/Documentation/security/IMA-templates.rst
-+++ b/Documentation/security/IMA-templates.rst
-@@ -99,6 +99,7 @@ Below, there is the list of defined template descriptors:
-  - "ima-sigv2": its format is ``d-ngv2|n-ng|sig``;
-  - "ima-buf": its format is ``d-ng|n-ng|buf``;
-  - "ima-modsig": its format is ``d-ng|n-ng|sig|d-modsig|modsig``;
-+ - "ima-modsigv2": its format is ``d-ngv2|n-ng|sig|d-modsig-list|modsig``;
-  - "evm-sig": its format is ``d-ng|n-ng|evmsig|xattrnames|xattrlengths|xattrvalues|iuid|igid|imode``;
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 8aeec2778984..a62dc1aa93b4 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -432,18 +432,23 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
+ 	const char *sig_algo;
+ 	const u8 *digest = NULL;
+ 	u32 digestsize = 0;
++	unsigned int i, count;
+ 	int rc = 0;
  
+ 	if (!(iint->flags & IMA_CHECK_BLACKLIST))
+ 		return 0;
  
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 584f970e553e..721af4b1828b 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -24,6 +24,8 @@ static struct ima_template_desc builtin_templates[] = {
- 	{.name = "ima-sigv2", .fmt = "d-ngv2|n-ng|sig"},
- 	{.name = "ima-buf", .fmt = "d-ng|n-ng|buf"},
- 	{.name = "ima-modsig", .fmt = "d-ng|n-ng|sig|d-modsig|modsig"},
-+	{.name = "ima-modsigv2",
-+	 .fmt = "d-ngv2|n-ng|sig|d-modsig-list|modsig"},
- 	{.name = "evm-sig",
- 	 .fmt = "d-ng|n-ng|evmsig|xattrnames|xattrlengths|xattrvalues|iuid|igid|imode"},
- 	{.name = "", .fmt = ""},	/* placeholder for a custom format */
+ 	if (iint->flags & IMA_MODSIG_ALLOWED && modsig) {
+-		if (ima_get_modsig_signer_count(modsig) == 1 &&
+-		    !ima_get_modsig_digest(modsig, 0, &hash_algo, &digest,
+-					   &digestsize, &sig_algo))
+-			rc = is_binary_blacklisted(digest, digestsize);
+-	} else if (iint->flags & IMA_DIGSIG_REQUIRED && iint->ima_hash)
++		count = ima_get_modsig_signer_count(modsig);
++		for (i = 0; i < count && rc != -EPERM; i++) {
++			if (!ima_get_modsig_digest(modsig, i, &hash_algo,
++						   &digest, &digestsize,
++						   &sig_algo) && digestsize)
++				rc = is_binary_blacklisted(digest, digestsize);
++		}
++	} else if (iint->flags & IMA_DIGSIG_REQUIRED && iint->ima_hash) {
+ 		rc = is_binary_blacklisted(iint->ima_hash->digest, iint->ima_hash->length);
++	}
+ 
+ 	if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
+ 		process_buffer_measurement(&nop_mnt_idmap, NULL, digest, digestsize,
 -- 
 2.55.0
 
