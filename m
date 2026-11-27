@@ -1,79 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795748404;
-	b=yd91CYfRNOiEEkbRB0kYpRkC6wFFShJhfSr5FrCj7ImsKkuRB4FL45lAf83hJ/1f/ZNS
-	 528Ne/fiEf69zKxD6xcxFucC0xxSL92K8I+uZ2Ehn3ntcZAxoN8bFFtw/nqfvmbObc7Yp
-	 cAV+gPbstrIDQ9m3kQ2JMfToC03W+BVBnEgbrq9BlVBxnMtqrpGr49hXbGFTjIt1cEO3q
-	 KmZmKZehiuXM1oTioVSLQO3N6KE/bRfh+HYMxB5aDBUXad3ynmieG+tgO5miUVaNs97ko
-	 PrUqajs7GmwTbSTbRL54MuvoQc59tjaCbFluHOEABB5JhhAZ2ReGuDIkUAapWZ6yy3A==
+	t=1795754542;
+	b=m7fD1HOzwebg1iGHWqZwHMfyXV+dSsC7IAvdCmkjtp7Dysg6+xm+YRzvik9Lf5BbSILd
+	 0VKcPh1T9TOkGQ0tcN/SrQ3XfvlrIE1lxIQRk55P58tiijcUZ99OhcsaW4uLOLhVVwVFf
+	 dfumcHVObfvVaLxLZ9R1tPvQt2/Tb3mhmwrgvT198sSIJ0bwn/WKJ1S0Al92ea6nUolrS
+	 bIp4OeDkahN1CBRbRd/IRAZcURI0KrbpJ23cSegUZtPR3+b0/r4cg3QcrSNXaFgj49wfc
+	 glczh4T5s3xLckfRRvo+U1KlWF7DfBoiXZW4IueYv+rkktEbx6lqKlTVl/99bHWTnrA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795748404;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:Received:From:To:Cc:Subject:Date:
-	 Message-ID:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:X-Scanned-By;
-	bh=cXL13ZdaJrq8Pxpnq5CNNNCF9aHaOxDVvF8l/dqqouA=;
-	b=stM8rndAPpu2tg6p8AuknjDc0KNyoSy0bdFPKp9llKwXsVD/jaTlO40tyPJXc542eHSl
-	 kSW2ZoeN8AbY3F6NGo+k/k06wLJWzBfmWvT0JjDKkd/CfKof72VdvxOBFsX8bpLFfdume
-	 edzUp3+h13rthhYjODgVmaHPUR3py0ZcQIcxfZCs7zIeLX3P/G34khYUYQ1J4+Qdce3fb
-	 dGLyP7DQgiTz55nuK6HOfwQxmHP/4BITGWhP6PBITKTQD26wekEzeBqisCz0XexKjbRe5
-	 +cKHQsr3lHjNn2Gb2QLXMzVK/ztTYZuevcihzxGU3F5Xm+gjmN8ULGzyNNoVnJTbASg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795754542;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=2r21NtFZutp/tNeLCkdxw3coUtlf6pJI45+P6Sov/yw=;
+	b=vUM4zg8IclXT3PBsZompqk3uJ7E2SZaflMz5Z3SzSDKP3ojpJuz8vDN7ob0fp57BUd3Y
+	 FzWHk9/nexfd0uSbQxQ8VeJSR1BlYL2Umz4YpR8ELnxvDbmDBPqq5pW7dPEwM/AE7QNP1
+	 SWa9W1gNQ2m5nuypMsd0tQdvIDHItJYDcJtqBWo5EdoQRcTbE+BkXqlBesAReb9oY/+Ls
+	 0NEPbvgaZnG7QikVbO+Ujkw4wmvJts8Vt9GghhqlwXgUyWTPO3F5JgHQlKaUt1iFnmG8V
+	 upJOtlDezRYSuBLFaUoT4+qS86k/AO3UF14wUXgloCW+xdfxJfJUNnreXQRIaQMBblw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=redhat.com;
-	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=fl58FZqu;
-	arc=none smtp.remote-ip=170.10.133.124
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cgkvq8fq;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C3B606A68E
-	for <linux-integrity@vger.kernel.org>; Fri, 27 Nov 2026 03:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93C3B606A68E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 29305606A682;
+	Fri, 27 Nov 2026 04:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=fl58FZqu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1795748402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cXL13ZdaJrq8Pxpnq5CNNNCF9aHaOxDVvF8l/dqqouA=;
-	b=fl58FZqur1mxvjc1PU5fPGFLP1W3MSFvNqLYcOCJp/rhHxrDz/hhe9I7UqAumGQ6I2JybG
-	G0qBqx2OwS9fAJoH0Fws+bngREF9ugPG6MHcQFsigqEEPA3OGeESZaM4GzYyjCjJ3Vg/Ar
-	U5REFwt6tGHV51b9mmrYmK4cQPV64ts=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-hP5MrW1yPRqequ3ZQpQFRA-1; Fri,
- 27 Nov 2026 03:00:00 +0000
-X-MC-Unique: hP5MrW1yPRqequ3ZQpQFRA-1
-X-Mimecast-MFC-AGG-ID: hP5MrW1yPRqequ3ZQpQFRA_1795748399
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D5AA7193FAA5;
-	Fri, 27 Nov 2026 02:59:58 +0000 (UTC)
-Received: from localhost (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
-	by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 343595B1;
-	Fri, 27 Nov 2026 02:59:57 +0000 (UTC)
-From: Bruno Meneguele <bmeneg@redhat.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dhowells@redhat.com,
-	bauerman@linux.ibm.com,
-	Bruno Meneguele <bmeneg@redhat.com>
-Subject: [RFC PATCH 8/8] ima: check the digest of every modsig signer against the blacklist
-Date: Thu, 26 Nov 2026 23:59:11 -0300
-Message-ID: <20261127025912.1383750-9-bmeneg@redhat.com>
-In-Reply-To: <20261127025912.1383750-1-bmeneg@redhat.com>
-References: <20261127025912.1383750-1-bmeneg@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cgkvq8fq
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 467E11F00893;
+	Fri, 27 Nov 2026 04:42:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795754541;
+	bh=2r21NtFZutp/tNeLCkdxw3coUtlf6pJI45+P6Sov/yw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=cgkvq8fqkP+xA1zj8/b/I1DdDLoXTTRaYx2FBzVV+laUoQ9f0ED2nub0ukGbKyWcf
+	 HKe/241oXskPPGsjn2UdnmUJ7EEd34wJwCvpdczkuXEmGuTY3ggAg4V8gM764iXgkb
+	 I0wBpAy1ubPW7VD7g8zvekIHWDgFA+7ah6nKOCFWlFiAOwrntc65iLUZ+ZPxS5WWeR
+	 AzBIAvNEP526ONeFRTKeuC4dpqib1cwYeV9vQ9GHENszoNXTNdEFskaAqSZwWIJZmw
+	 2Ue9Smr1mbBVwfV9/uiNk10dy4YUUcgCzKvryyzt7XdPMKCinH+rPQyjy5UujNS/5O
+	 8+GUeKtk1Me/g==
+Date: Fri, 27 Nov 2026 06:42:17 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Cc: peterhuewe@gmx.de, lance@osuosl.org, rcu@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linuxppc-dev@lists.ozlabs.org,
+	linux-integrity@vger.kernel.org, Li Jun <lijun01@kylinos.cn>
+Subject: Re: [PATCH] tpm: ibmvtpm: Fix unused suspend callback with
+ CONFIG_PM_SLEEP=n
+Message-ID: <awkKKfv4ZrVYy0Ky@kernel.org>
+References: <20261127010124.848125-1-zhouzhouyi@gmail.com>
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Post: <mailto:linux-integrity@vger.kernel.org>
@@ -83,51 +64,67 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-integrity+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261127010124.848125-1-zhouzhouyi@gmail.com>
 
-When checking the binary blacklist, traverse every signer content digest
-appended to the file. If one digest fails (-EPERM), the content is deemed
-blocked.
+On Fri, Nov 27, 2026 at 01:01:24AM +0000, Zhouyi Zhou wrote:
+> Discovered in the Open Source Lab of Oregon State University when running
+> RCU torture.sh on a ppc64le VM.
+> 
+> With CONFIG_TCG_IBMVTPM=y and CONFIG_PM_SLEEP disabled, SIMPLE_DEV_PM_OPS()
+> omits the references to the system sleep callbacks. This leaves
+> tpm_ibmvtpm_suspend() unused and produces the following warning:
+> 
+>   warning: 'tpm_ibmvtpm_suspend' defined but not used [-Wunused-function]
+> 
+> Use DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() so that the compiler
+> sees the callback references and can discard the unused PM code when
+> system sleep is disabled. Preserve tpm_ibmvtpm_resume(), which is also
+> called directly from tpm_ibmvtpm_send().
+> 
+> Tested on PPC VM of the Open Source Lab
+> of Oregon State University.
+> 
+> Fixes: fc0ddb3174b0 ("char: tpm: Use SIMPLE_DEV_PM_OPS for ibmvtpm power management")
+> 
 
-Signed-off-by: Bruno Meneguele <bmeneg@redhat.com>
----
- security/integrity/ima/ima_appraise.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+nit: should not have empty line here.
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 8aeec2778984..a62dc1aa93b4 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -432,18 +432,23 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- 	const char *sig_algo;
- 	const u8 *digest = NULL;
- 	u32 digestsize = 0;
-+	unsigned int i, count;
- 	int rc = 0;
- 
- 	if (!(iint->flags & IMA_CHECK_BLACKLIST))
- 		return 0;
- 
- 	if (iint->flags & IMA_MODSIG_ALLOWED && modsig) {
--		if (ima_get_modsig_signer_count(modsig) == 1 &&
--		    !ima_get_modsig_digest(modsig, 0, &hash_algo, &digest,
--					   &digestsize, &sig_algo))
--			rc = is_binary_blacklisted(digest, digestsize);
--	} else if (iint->flags & IMA_DIGSIG_REQUIRED && iint->ima_hash)
-+		count = ima_get_modsig_signer_count(modsig);
-+		for (i = 0; i < count && rc != -EPERM; i++) {
-+			if (!ima_get_modsig_digest(modsig, i, &hash_algo,
-+						   &digest, &digestsize,
-+						   &sig_algo) && digestsize)
-+				rc = is_binary_blacklisted(digest, digestsize);
-+		}
-+	} else if (iint->flags & IMA_DIGSIG_REQUIRED && iint->ima_hash) {
- 		rc = is_binary_blacklisted(iint->ima_hash->digest, iint->ima_hash->length);
-+	}
- 
- 	if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
- 		process_buffer_measurement(&nop_mnt_idmap, NULL, digest, digestsize,
--- 
-2.55.0
+> Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+> ---
+>  drivers/char/tpm/tpm_ibmvtpm.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+> index 51c7e2add3d2..9840d0ebe6a3 100644
+> --- a/drivers/char/tpm/tpm_ibmvtpm.c
+> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
+> @@ -462,7 +462,8 @@ static const struct tpm_class_ops tpm_ibmvtpm = {
+>  	.req_canceled = tpm_ibmvtpm_req_canceled,
+>  };
+>  
+> -static SIMPLE_DEV_PM_OPS(tpm_ibmvtpm_pm_ops, tpm_ibmvtpm_suspend, tpm_ibmvtpm_resume);
+> +static DEFINE_SIMPLE_DEV_PM_OPS(tpm_ibmvtpm_pm_ops,
+> +				tpm_ibmvtpm_suspend, tpm_ibmvtpm_resume);
 
+I'd keep these in same line.
+
+>  
+>  /**
+>   * ibmvtpm_crq_get_next - Get next responded crq
+> @@ -714,7 +715,7 @@ static struct vio_driver ibmvtpm_driver = {
+>  	.remove		 = tpm_ibmvtpm_remove,
+>  	.get_desired_dma = tpm_ibmvtpm_get_desired_dma,
+>  	.name		 = tpm_ibmvtpm_driver_name,
+> -	.pm		 = &tpm_ibmvtpm_pm_ops,
+> +	.pm		 = pm_sleep_ptr(&tpm_ibmvtpm_pm_ops),
+>  };
+>  
+>  /**
+> 
+> base-commit: 5f22fb20497f4983094131f00a734362300d22d2
+
+Otherwise, it's good.
+
+Br, Jarkko
